@@ -71,4 +71,4 @@ jobs:
         run: |
           curl -sL https://sentry.io/get-cli/ | bash
       - name: Update sentry
-        run: ./scripts/build-web.sh
+        run: ./scripts/upload-sentry.sh
