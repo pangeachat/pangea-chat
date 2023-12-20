@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - gh-actions-improvements
 
 env:
   # Setting an environment variable with the value of a configuration variable
@@ -27,6 +28,8 @@ jobs:
         run: ./scripts/prepare-web.sh
       - name: Build Release Web
         run: ./scripts/build-web.sh
+      - name: Update sentry staging
+        run: ./scripts/upload-sentry.sh
       - name: Build Website
         run: |
           mv build/web public
@@ -40,19 +43,3 @@ jobs:
           publish_dir: ./public
           publish_branch: gh-pages
           cname: app.staging.pangea.chat
-
-  update_sentry:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Create Sentry release
-        uses: getsentry/action-release@v1
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
-        with:
-          environment: staging
