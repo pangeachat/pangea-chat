@@ -7,8 +7,8 @@ on:
       - gh-actions-improvements
 
 env:
-  # Setting an environment variable with the value of a configuration variable
   WEB_APP_ENV: ${{ vars.WEB_APP_ENV }}
+  CI_COMMIT_SHA: ${{ github.sha }}
   
 jobs:
   build_web:
@@ -32,7 +32,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: web
-          path: build
+          path: build/web
 
   deploy_web:
     runs-on: ubuntu-latest
@@ -43,6 +43,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: web
+          path: build/web
       - name: Update Website files
         run: |
           mv build/web public
@@ -67,6 +68,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: web
+          path: build/web
       - name: Install sentry CLI
         run: |
           curl -sL https://sentry.io/get-cli/ | bash
