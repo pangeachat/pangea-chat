@@ -4,11 +4,9 @@ on:
   push:
     branches:
       - main
-      - gh-actions-improvements
 
 env:
   WEB_APP_ENV: ${{ vars.WEB_APP_ENV }}
-  CI_COMMIT_SHA: ${{ github.sha }}
   
 jobs:
   build_web:
@@ -67,6 +65,7 @@ jobs:
       SENTRY_BASE_TOKEN: ${{ secrets.SENTRY_BASE_TOKEN }}
       SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
       SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+      CI_COMMIT_SHA: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v2
       - name: Download web
