@@ -28,8 +28,6 @@ jobs:
         run: ./scripts/prepare-web.sh
       - name: Build Release Web
         run: ./scripts/build-web.sh
-      - name: Update sentry staging
-        run: ./scripts/upload-sentry.sh
       - name: Build Website
         run: |
           mv build/web public
@@ -43,3 +41,24 @@ jobs:
           publish_dir: ./public
           publish_branch: gh-pages
           cname: app.staging.pangea.chat
+      - name: Upload files
+        uses: actions/upload-artifact@v3
+        with:
+          name: web
+          path: public
+
+  update_sentry:
+    runs-on: ubuntu-latest
+    needs: deploy_web
+    steps:
+      - uses: actions/checkout@v2
+      - uses: getsentry/sentry-cli
+      - name: Download web
+        uses: actions/download-artifact@v3
+        with:
+          name: web
+      - name: Move files to orignal
+        run: |
+          mv public build/web
+      - name: Update sentry
+        run: ./scripts/build-web.sh
