@@ -52,7 +52,7 @@ jobs:
     needs: deploy_web
     steps:
       - uses: actions/checkout@v2
-      - uses: getsentry/sentry-cli
+      - uses: getsentry/sentry-cli@v2
       - name: Download web
         uses: actions/download-artifact@v3
         with:
