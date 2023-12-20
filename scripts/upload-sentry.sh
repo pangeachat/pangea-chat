@@ -7,6 +7,7 @@ SENTRY_PROJECT="client"
 SENTRY_ORG="pangea-chat"
 
 echo "[run] Uploading sourcemaps for $SENTRY_RELEASE"
+echo "[run] $SENTRY_PROJECT @ $SENTRY_ORG / $OUTPUT_FOLDER_WEB"
 sentry-cli releases new $SENTRY_RELEASE
 sentry-cli releases set-commits $CI_COMMIT_SHA --auto
 sentry-cli releases files $SENTRY_RELEASE upload-sourcemaps . \
