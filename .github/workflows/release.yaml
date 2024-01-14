@@ -62,7 +62,7 @@ jobs:
           cache: true
       - name: Apply Google Services Patch
         # #Pangea
-          run: git apply --reject --whitespace=fix ./scripts/enable-android-google-services.patch
+        run: git apply --reject --whitespace=fix ./scripts/enable-android-google-services.patch
         # run: git apply ./scripts/enable-android-google-services.patch
         #Pangea#
       - name: Remove Emoji Font
