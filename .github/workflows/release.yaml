@@ -1,9 +1,6 @@
 name: Release Workflow
 
 on:
-  push:
-    branches:
-      - produciton-deploy
   release:
     types:
       - created
