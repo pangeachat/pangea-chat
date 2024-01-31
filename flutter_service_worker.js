@@ -72,8 +72,8 @@ const RESOURCES = {"assets/assets/pangea/bot_faces/down.png": "f54059b94b20848cb
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "d01916c39715ed253fb11cdad27c4d67",
 "assets/packages/flutter_map/lib/assets/flutter_map_logo.png": "208d63cc917af9713fc9572bd5c09362",
 "manifest.json": "cc4b6aa791018840b65fd0b0e325b201",
-"index.html": "e694eb28c637d0f0e04c9bc1e9e5041e",
-"/": "e694eb28c637d0f0e04c9bc1e9e5041e",
+"index.html": "e4e81c7d0ea7ea19e94d48b8d1af0832",
+"/": "e4e81c7d0ea7ea19e94d48b8d1af0832",
 "canvaskit/chromium/canvaskit.wasm": "143af6ff368f9cd21c863bfa4274c406",
 "canvaskit/chromium/canvaskit.js": "0ae8bbcc58155679458a0f7a00f66873",
 "canvaskit/skwasm.wasm": "2fc47c0a0c3c7af8542b601634fe9674",
@@ -95,7 +95,7 @@ const RESOURCES = {"assets/assets/pangea/bot_faces/down.png": "f54059b94b20848cb
 "splash/img/dark-4x.png": "ead87864be6b8f2f3efbb04acd30549d",
 "splash/splash.js": "c6a271349a0cd249bdb6d3c4d12f5dcf",
 "splash/style.css": "adebf1d2354fbed5890fff78eac514ee",
-"main.dart.js": "ae781cf11b32db56010976e49287d943",
+"main.dart.js": "3b8e28a1e1b93257d1f1c1685f6e84ad",
 "flutter.js": "7d69e653079438abfbb24b82a655b0a4",
 "version.json": "c6b14b360748c659b36491928ec89134"};
 // The application shell files that are downloaded before a service worker can
