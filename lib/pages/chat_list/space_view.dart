@@ -45,6 +45,7 @@ class _SpaceViewState extends State<SpaceView> {
   bool loading = false;
   // #Pangea
   StreamSubscription<SyncUpdate>? _roomSubscription;
+  bool refreshing = false;
   // Pangea#
 
   @override
@@ -381,9 +382,10 @@ class _SpaceViewState extends State<SpaceView> {
     /* refresh on leave, invite, and space child update
       not join events, because there's already a listener on 
       onTapSpaceChild, and they interfere with each other */
-    if (widget.controller.activeSpaceId == null || !mounted) {
+    if (widget.controller.activeSpaceId == null || !mounted || refreshing) {
       return;
     }
+    setState(() => refreshing = true);
     final client = Matrix.of(context).client;
     if (event.isMembershipUpdateByType(
           Membership.leave,
@@ -398,6 +400,7 @@ class _SpaceViewState extends State<SpaceView> {
         )) {
       _refresh();
     }
+    setState(() => refreshing = false);
   }
   // Pangea#
 
