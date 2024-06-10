@@ -118,8 +118,9 @@ class ChatView extends StatelessWidget {
             ],
           ),
       ];
-      // #Pangea
-    } else {
+    }
+    // #Pangea
+    else {
       return [
         ChatSettingsPopupMenu(
           controller.room,
@@ -127,7 +128,6 @@ class ChatView extends StatelessWidget {
         ),
       ];
     }
-
     // else if (!controller.room.isArchived) {
     //   return [
     //     if (Matrix.of(context).voipPlugin != null &&
@@ -169,7 +169,8 @@ class ChatView extends StatelessWidget {
         }
       },
       child: StreamBuilder(
-        stream: controller.room.onUpdate.stream
+        stream: controller.room.client.onRoomState.stream
+            .where((update) => update.roomId == controller.room.id)
             .rateLimit(const Duration(seconds: 1)),
         builder: (context, snapshot) => FutureBuilder(
           future: controller.loadTimelineFuture,
@@ -206,7 +207,7 @@ class ChatView extends StatelessWidget {
                             // #Pangea
                             &&
                             !r.isAnalyticsRoom,
-                        // Pangea#,
+                        // Pangea#
                         badgePosition: BadgePosition.topEnd(end: 8, top: 4),
                         child: const Center(child: BackButton()),
                       ),
@@ -358,6 +359,7 @@ class ChatView extends StatelessWidget {
                                     clipBehavior: Clip.hardEdge,
                                     color: Theme.of(context)
                                         .colorScheme
+                                        // ignore: deprecated_member_use
                                         .surfaceVariant,
                                     borderRadius: const BorderRadius.all(
                                       Radius.circular(24),
@@ -450,8 +452,8 @@ class ChatView extends StatelessWidget {
                   // #Pangea
                   // if (controller.dragging)
                   //   Container(
-                  // color: Theme.of(context)
-                  //     .scaffoldBackgroundColor
+                  //     color: Theme.of(context)
+                  //         .scaffoldBackgroundColor
                   //         .withOpacity(0.9),
                   //     alignment: Alignment.center,
                   //     child: const Icon(

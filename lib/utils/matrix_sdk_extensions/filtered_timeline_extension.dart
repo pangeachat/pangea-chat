@@ -22,24 +22,12 @@ extension IsStateExtension on Event {
       // #Pangea
       content.tryGet(ModelKey.transcription) == null &&
       // Pangea#
-      // hide unimportant state events
-      (!AppConfig.hideUnimportantStateEvents ||
-          !isState ||
-          importantStateEvents.contains(type)) &&
       // hide simple join/leave member events in public rooms
       (!AppConfig.hideUnimportantStateEvents ||
           type != EventTypes.RoomMember ||
           room.joinRules != JoinRules.public ||
           content.tryGet<String>('membership') == 'ban' ||
           stateKey != senderId);
-
-  static const Set<String> importantStateEvents = {
-    EventTypes.Encryption,
-    EventTypes.RoomCreate,
-    EventTypes.RoomMember,
-    EventTypes.RoomTombstone,
-    EventTypes.CallInvite,
-  };
 
   bool get isState => !{
         EventTypes.Message,

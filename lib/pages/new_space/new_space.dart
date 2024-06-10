@@ -78,7 +78,7 @@ class NewSpaceController extends State<NewSpace> {
         content: {
           'events': {
             PangeaEventTypes.studentAnalyticsSummary: 0,
-            EventTypes.spaceChild: 0,
+            EventTypes.SpaceChild: 0,
           },
           'users_default': 0,
           'users': {

@@ -218,7 +218,6 @@ class ClientChooserButton extends StatelessWidget {
       //               name:
       //                   snapshot.data?.displayName ?? client.userID!.localpart,
       //               size: 32,
-      //               fontSize: 12,
       //             ),
       //             const SizedBox(width: 12),
       //             Expanded(
@@ -276,7 +275,6 @@ class ClientChooserButton extends StatelessWidget {
       builder: (context, snapshot) => Stack(
         alignment: Alignment.center,
         children: [
-          // #Pangea
           // ...List.generate(
           //   clientCount,
           //   (index) => KeyBoardShortcuts(
@@ -334,7 +332,6 @@ class ClientChooserButton extends StatelessWidget {
             //     name: snapshot.data?.displayName ??
             //         matrix.client.userID!.localpart,
             //     size: 32,
-            //     fontSize: 12,
             //   ),
             // ),
             // Pangea#

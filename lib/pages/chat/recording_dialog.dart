@@ -13,7 +13,10 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import 'events/audio_player.dart';
 
 class RecordingDialog extends StatefulWidget {
+  // #Pangea
   static const String recordingFileType = 'wav';
+  // static const String recordingFileType = 'm4a';
+  // Pangea#
   const RecordingDialog({
     super.key,
   });
@@ -35,12 +38,13 @@ class RecordingDialogState extends State<RecordingDialog> {
   final List<double> amplitudeTimeline = [];
 
   static const int bitRate = 64000;
-  static const int samplingRate = 22050;
+  // Gabby TODO: check if this breaks speech to text. Used to be 22050
+  static const int samplingRate = 44100;
 
   Future<void> startRecording() async {
     try {
       final tempDir = await getTemporaryDirectory();
-      _recordedPath =
+      final path = _recordedPath =
           '${tempDir.path}/recording${DateTime.now().microsecondsSinceEpoch}.${RecordingDialog.recordingFileType}';
 
       final result = await _audioRecorder.hasPermission();
@@ -51,9 +55,7 @@ class RecordingDialogState extends State<RecordingDialog> {
       await WakelockPlus.enable();
       // #Pangea
       final bool isNotError = await showUpdateVersionDialog(
-        future: () =>
-            // Pangea#
-            _audioRecorder.start(
+        future: () => _audioRecorder.start(
           path: _recordedPath!,
           const RecordConfig(
             bitRate: bitRate,
@@ -62,14 +64,19 @@ class RecordingDialogState extends State<RecordingDialog> {
             numChannels: 1,
           ),
         ),
-        // #Pangea
         context: context,
       );
-
-      if (!isNotError) {
-        Navigator.of(context).pop();
-        return;
-      }
+      // await _audioRecorder.start(
+      //   const RecordConfig(
+      //     bitRate: bitRate,
+      //     sampleRate: samplingRate,
+      //     numChannels: 1,
+      //     autoGain: true,
+      //     echoCancel: true,
+      //     noiseSuppress: true,
+      //   ),
+      //   path: path,
+      // );
       // Pangea#
       setState(() => _duration = Duration.zero);
       _recorderSubscription?.cancel();

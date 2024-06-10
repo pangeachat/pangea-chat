@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/enum/time_span.dart';
 import 'package:fluffychat/pangea/pages/analytics/class_list/class_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../../../widgets/matrix.dart';
-import '../../../constants/pangea_event_types.dart';
 import '../../../controllers/pangea_controller.dart';
 import '../../../models/chart_analytics_model.dart';
 import '../../../utils/sync_status_util_v2.dart';
@@ -22,7 +22,7 @@ class AnalyticsClassList extends StatefulWidget {
 class AnalyticsClassListController extends State<AnalyticsClassList> {
   PangeaController pangeaController = MatrixState.pangeaController;
   List<ChartAnalyticsModel> models = [];
-  StreamSubscription<Event>? stateSub;
+  StreamSubscription? stateSub;
   Map<String, Timer> refreshTimer = {};
 
   @override
@@ -31,9 +31,11 @@ class AnalyticsClassListController extends State<AnalyticsClassList> {
     Future.delayed(Duration.zero, () async {
       stateSub = pangeaController.matrixState.client.onRoomState.stream
           .where(
-            (event) => event.type == PangeaEventTypes.studentAnalyticsSummary,
+            (event) =>
+                event.state is Event &&
+                event.state.type == PangeaEventTypes.studentAnalyticsSummary,
           )
-          .listen(onStateUpdate);
+          .listen((event) => onStateUpdate(event.state as Event));
     });
   }
 

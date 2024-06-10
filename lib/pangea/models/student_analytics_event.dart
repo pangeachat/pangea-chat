@@ -15,7 +15,9 @@ class StudentAnalyticsEvent {
   StudentAnalyticsSummary? _contentCache;
   List<RecentMessageRecord> _messagesToSave = [];
 
-  StudentAnalyticsEvent({required Event event}) {
+  StudentAnalyticsEvent({
+    required Event event,
+  }) {
     if (event.type != PangeaEventTypes.studentAnalyticsSummary) {
       throw Exception(
         "${event.type} should not be used to make a StudentAnalyticsEvent",

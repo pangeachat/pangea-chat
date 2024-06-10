@@ -86,7 +86,7 @@ class _SpaceViewState extends State<SpaceView> {
     // Pangea#
   }
 
-  Future<GetSpaceHierarchyResponse> loadHierarchy([
+  Future<GetSpaceHierarchyResponse?> loadHierarchy([
     String? prevBatch,
     // #Pangea
     String? spaceId,
@@ -106,7 +106,6 @@ class _SpaceViewState extends State<SpaceView> {
       loading = true;
     });
     // Pangea#
-
     // #Pangea
     // final activeSpaceId = widget.controller.activeSpaceId!;
     final activeSpaceId = (widget.controller.activeSpaceId ?? spaceId)!;
@@ -242,11 +241,7 @@ class _SpaceViewState extends State<SpaceView> {
             icon: Icons.send_outlined,
           ),
         if (spaceChild != null &&
-            // #Pangea
-            room != null &&
-            room.ownPowerLevel >= ClassDefaultValues.powerLevelOfAdmin &&
-            // Pangea#
-            (activeSpace?.canChangeStateEvent(EventTypes.spaceChild) ?? false))
+            (activeSpace?.canChangeStateEvent(EventTypes.SpaceChild) ?? false))
           SheetAction(
             key: SpaceChildContextAction.removeFromSpace,
             label: L10n.of(context)!.removeFromSpace,
@@ -328,19 +323,7 @@ class _SpaceViewState extends State<SpaceView> {
       // #Pangea
       case SpaceChildContextAction.archive:
         widget.controller.cancelAction();
-        // #Pangea
         if (room == null) return;
-        // room.isSpace
-        // ? await showFutureLoadingDialog(
-        //         context: context,
-        //         future: () async {
-        //           await room.archiveSpace(
-        //             Matrix.of(context).client,
-        //           );
-        //           widget.controller.selectedRoomIds.clear();
-        //         },
-        //       )
-        //     : await widget.controller.archiveAction();
         if (room.isSpace) {
           await room.archiveSpace(
             context,
@@ -350,20 +333,16 @@ class _SpaceViewState extends State<SpaceView> {
           widget.controller.toggleSelection(room.id);
           await widget.controller.archiveAction();
         }
-        // Pangea#
         _refresh();
         break;
       case SpaceChildContextAction.addToSpace:
         widget.controller.cancelAction();
-        // #Pangea
         if (room == null) return;
-        // Pangea#
         widget.controller.toggleSelection(room.id);
         await widget.controller.addToSpace();
-        // #Pangea
         setState(() => widget.controller.selectedRoomIds.clear());
-        // Pangea#
         break;
+      // Pangea#
     }
   }
 
@@ -584,21 +563,19 @@ class _SpaceViewState extends State<SpaceView> {
     final allSpaces = client.rooms.where((room) => room.isSpace);
     if (activeSpaceId == null) {
       final rootSpaces = allSpaces
-          // #Pangea
-          // .where(
-          //  (space) =>
-          //      !allSpaces.any(
-          //        (parentSpace) => parentSpace.spaceChildren
-          //            .any((child) => child.roomId == space.id),
-          //      ) &&
-          //      space
-          //          .getLocalizedDisplayname(MatrixLocals(L10n.of(context)!))
-          //          .toLowerCase()
-          //          .contains(
-          //            widget.controller.searchController.text.toLowerCase(),
-          //          ),
-          //)
-          // Pangea#
+          .where(
+            (space) =>
+                !allSpaces.any(
+                  (parentSpace) => parentSpace.spaceChildren
+                      .any((child) => child.roomId == space.id),
+                ) &&
+                space
+                    .getLocalizedDisplayname(MatrixLocals(L10n.of(context)!))
+                    .toLowerCase()
+                    .contains(
+                      widget.controller.searchController.text.toLowerCase(),
+                    ),
+          )
           .toList();
 
       return SafeArea(
@@ -614,47 +591,24 @@ class _SpaceViewState extends State<SpaceView> {
                     MatrixLocals(L10n.of(context)!),
                   );
                   return Material(
-                    color: Theme.of(context).colorScheme.background,
+                    color: Theme.of(context).colorScheme.surface,
                     child: ListTile(
                       leading: Avatar(
                         mxContent: rootSpace.avatar,
                         name: displayname,
-                        // #Pangea
-                        littleIcon: rootSpace.roomTypeIcon,
-                        // Pangea#
                       ),
                       title: Text(
                         displayname,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      // #Pangea
-                      subtitle: Row(
-                        children: [
-                          spaceSubtitle(rootSpace),
-                          if (rootSpace.isLocked)
-                            const Padding(
-                              padding: EdgeInsets.only(left: 4.0),
-                              child: Icon(
-                                Icons.lock_outlined,
-                                size: 16,
-                              ),
-                            ),
-                        ],
+                      subtitle: Text(
+                        L10n.of(context)!.numChats(
+                          rootSpace.spaceChildren.length.toString(),
+                        ),
                       ),
-                      onTap: () => chatListHandleSpaceTap(
-                        context,
-                        widget.controller,
-                        rootSpaces[i],
-                      ),
-                      // subtitle: Text(
-                      //   L10n.of(context)!.numChats(
-                      //     rootSpace.spaceChildren.length.toString(),
-                      //   ),
-                      // ),
-                      // onTap: () =>
-                      //     widget.controller.setActiveSpace(rootSpace.id),
-                      // Pangea#
+                      onTap: () =>
+                          widget.controller.setActiveSpace(rootSpace.id),
                       onLongPress: () =>
                           _onSpaceChildContextMenu(null, rootSpace),
                       trailing: const Icon(Icons.chevron_right_outlined),
@@ -668,12 +622,6 @@ class _SpaceViewState extends State<SpaceView> {
         ),
       );
     }
-
-    // #Pangea
-    _roomSubscription ??= client.onSync.stream
-        .where((event) => event.hasRoomUpdate)
-        .listen(refreshOnUpdate);
-    // Pangea#
 
     final parentSpace = allSpaces.firstWhereOrNull(
       (space) =>
@@ -838,7 +786,6 @@ class _SpaceViewState extends State<SpaceView> {
                                   size: 24,
                                   mxContent: spaceChild.avatarUrl,
                                   name: spaceChild.name,
-                                  fontSize: 9,
                                 ),
                               ),
                               color: Theme.of(context)
@@ -861,7 +808,7 @@ class _SpaceViewState extends State<SpaceView> {
                             ),
                             // #Pangea
                             // if (activeSpace?.canChangeStateEvent(
-                            //       EventTypes.spaceChild,
+                            //       EventTypes.SpaceChild,
                             //     ) ==
                             //     true)
                             //   Material(
@@ -949,7 +896,7 @@ class _SpaceViewState extends State<SpaceView> {
                                     : L10n.of(context)!.enterRoom),
                             maxLines: 1,
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.onBackground,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                           trailing: isSpace

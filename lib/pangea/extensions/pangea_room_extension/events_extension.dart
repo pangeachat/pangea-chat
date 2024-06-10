@@ -301,8 +301,7 @@ extension EventsRoomExtension on Room {
   ConstructEvent? _vocabEventLocal(String lemma) {
     if (!isAnalyticsRoom) throw Exception("not an analytics room");
 
-    final Event? matrixEvent = getState(PangeaEventTypes.vocab, lemma);
-
+    final dynamic matrixEvent = getState(PangeaEventTypes.vocab, lemma);
     return matrixEvent != null ? ConstructEvent(event: matrixEvent) : null;
   }
 
@@ -382,7 +381,7 @@ extension EventsRoomExtension on Room {
     await postLoad();
     return states[PangeaEventTypes.vocab]
             ?.values
-            .map((Event event) => ConstructEvent(event: event))
+            .map((dynamic event) => ConstructEvent(event: event))
             .toList()
             .cast<ConstructEvent>() ??
         [];

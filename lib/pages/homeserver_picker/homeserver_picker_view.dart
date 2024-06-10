@@ -6,6 +6,7 @@ import 'package:fluffychat/widgets/layouts/login_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 
+import '../../config/themes.dart';
 import 'homeserver_picker.dart';
 
 class HomeserverPickerView extends StatelessWidget {
@@ -31,7 +32,7 @@ class HomeserverPickerView extends StatelessWidget {
       // appBar: AppBar(
       //   titleSpacing: 12,
       //   automaticallyImplyLeading: false,
-      //   surfaceTintColor: Theme.of(context).colorScheme.background,
+      //   surfaceTintColor: Theme.of(context).colorScheme.surface,
       //   title: HomeserverAppBar(controller: controller),
       // ),
       appBar: AppBar(
@@ -144,88 +145,87 @@ class HomeserverPickerView extends StatelessWidget {
                             ),
                           ),
                         ),
-                        //   ...identityProviders.map(
-                        //     (provider) => _LoginButton(
-                        //       icon: provider.icon == null
-                        //           ? const Icon(
-                        //               Icons.open_in_new_outlined,
-                        //               size: 16,
-                        //             )
-                        //           : Material(
-                        //               borderRadius: BorderRadius.circular(
-                        //                 AppConfig.borderRadius,
-                        //               ),
-                        //               clipBehavior: Clip.hardEdge,
-                        //               child: MxcImage(
-                        //                 placeholder: (_) => const Icon(
-                        //                   Icons.open_in_new_outlined,
-                        //                   size: 16,
-                        //                 ),
-                        //                 uri: Uri.parse(provider.icon!),
-                        //                 width: 24,
-                        //                 height: 24,
-                        //                 isThumbnail: false,
-                        //                 //isThumbnail: false,
-                        //               ),
+                        // ...identityProviders.map(
+                        //   (provider) => _LoginButton(
+                        //     icon: provider.icon == null
+                        //         ? const Icon(
+                        //             Icons.open_in_new_outlined,
+                        //             size: 16,
+                        //           )
+                        //         : Material(
+                        //             borderRadius: BorderRadius.circular(
+                        //               AppConfig.borderRadius,
                         //             ),
-                        //       label: L10n.of(context)!.signInWith(
-                        //         provider.name ??
-                        //             provider.brand ??
-                        //             L10n.of(context)!.singlesignon,
-                        //       ),
-                        //       onPressed: () =>
-                        //           controller.ssoLoginAction(provider.id),
+                        //             clipBehavior: Clip.hardEdge,
+                        //             child: MxcImage(
+                        //               placeholder: (_) => const Icon(
+                        //                 Icons.open_in_new_outlined,
+                        //                 size: 16,
+                        //               ),
+                        //               uri: Uri.parse(provider.icon!),
+                        //               width: 24,
+                        //               height: 24,
+                        //               isThumbnail: false,
+                        //               //isThumbnail: false,
+                        //             ),
+                        //           ),
+                        //     label: L10n.of(context)!.signInWith(
+                        //       provider.name ??
+                        //           provider.brand ??
+                        //           L10n.of(context)!.singlesignon,
                         //     ),
+                        //     onPressed: () =>
+                        //         controller.ssoLoginAction(provider.id),
                         //   ),
-                        // ],
+                        // ),
                         // Pangea#
-                        if (controller.supportsPasswordLogin)
-                          // #Pangea
-                          Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Hero(
-                              tag: 'signinButton',
-                              child: ElevatedButton(
-                                onPressed: controller.login,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const PangeaLogoSvg(width: 20),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                      ),
-                                      child: Text(
-                                        "${L10n.of(context)!.loginOrSignup} Pangea Chat",
-                                      ),
+                      ],
+                      if (controller.supportsPasswordLogin)
+                        // #Pangea
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Hero(
+                            tag: 'signinButton',
+                            child: ElevatedButton(
+                              onPressed: controller.login,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const PangeaLogoSvg(width: 20),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
                                     ),
-                                  ],
-                                ),
+                                    child: Text(
+                                      "${L10n.of(context)!.loginOrSignup} Pangea Chat",
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                        //   _LoginButton(
-                        //     onPressed: controller.login,
-                        //     label: L10n.of(context)!.signInWithPassword,
-                        //     icon: const Icon(Icons.lock_open_outlined, size: 16),
-                        //   ),
-                        // if (regLink != null)
-                        //   _LoginButton(
-                        //     onPressed: () => launchUrlString(regLink),
-                        //     icon: const Icon(
-                        //       Icons.open_in_new_outlined,
-                        //       size: 16,
-                        //     ),
-                        //     label: L10n.of(context)!.register,
-                        //   ),
-                        // _LoginButton(
-                        //   onPressed: controller.restoreBackup,
-                        //   label: L10n.of(context)!.hydrate,
-                        //   withBorder: false,
-                        // ),
-                        // const SizedBox(height: 16),
-                        // Pangea#
-                      ],
+                        ),
+                      //   _LoginButton(
+                      //     onPressed: controller.login,
+                      //     label: L10n.of(context)!.signInWithPassword,
+                      //     icon: const Icon(Icons.lock_open_outlined, size: 16),
+                      //   ),
+                      // if (regLink != null)
+                      //   _LoginButton(
+                      //     onPressed: () => launchUrlString(regLink),
+                      //     icon: const Icon(
+                      //       Icons.open_in_new_outlined,
+                      //       size: 16,
+                      //     ),
+                      //     label: L10n.of(context)!.register,
+                      //   ),
+                      // _LoginButton(
+                      //   onPressed: controller.restoreBackup,
+                      //   label: L10n.of(context)!.hydrate,
+                      //   withBorder: false,
+                      // ),
+                      // const SizedBox(height: 16),
+                      // Pangea#
                     ],
                   ),
           ),
@@ -259,18 +259,18 @@ class _LoginButton extends StatelessWidget {
         width: double.infinity,
         child: OutlinedButton.icon(
           style: OutlinedButton.styleFrom(
-            side: BorderSide(
-              width: withBorder ? 1 : 0,
-              color: withBorder
-                  ? Theme.of(context).colorScheme.onBackground
-                  : Colors.transparent,
-            ),
+            side: FluffyThemes.isColumnMode(context)
+                ? BorderSide.none
+                : BorderSide(
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                    width: 1,
+                  ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(99),
             ),
-            foregroundColor: Theme.of(context).colorScheme.onBackground,
+            foregroundColor: Theme.of(context).colorScheme.onSurface,
             backgroundColor: withBorder
-                ? Theme.of(context).colorScheme.background
+                ? Theme.of(context).colorScheme.surface
                 : Colors.transparent,
           ),
           onPressed: onPressed,

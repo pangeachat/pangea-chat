@@ -46,7 +46,8 @@ class ChatDetailsView extends StatelessWidget {
     }
 
     return StreamBuilder(
-      stream: room.onUpdate.stream,
+      stream: room.client.onRoomState.stream
+          .where((update) => update.roomId == room.id),
       builder: (context, snapshot) {
         var members = room.getParticipants().toList()
           ..sort((b, a) => a.powerLevel.compareTo(b.powerLevel));
@@ -76,17 +77,16 @@ class ChatDetailsView extends StatelessWidget {
             elevation: Theme.of(context).appBarTheme.elevation,
             actions: <Widget>[
               // #Pangea
-              //if (room.canonicalAlias.isNotEmpty)
-              //  IconButton(
-              //    tooltip: L10n.of(context)!.share,
-              //    icon: Icon(Icons.adaptive.share_outlined),
-              //    onPressed: () => FluffyShare.share(
-              //      L10n.of(context)!.youInvitedToBy(
-              //        AppConfig.inviteLinkPrefix + room.canonicalAlias,
-              //      ),
-              //      context,
-              //    ),
-              //  ),
+              // if (room.canonicalAlias.isNotEmpty)
+              //   IconButton(
+              //     tooltip: L10n.of(context)!.share,
+              //     icon: Icon(Icons.adaptive.share_outlined),
+              //     onPressed: () => FluffyShare.share(
+              //       AppConfig.inviteLinkPrefix + room.canonicalAlias,
+              //       context,
+              //     ),
+              //   ),
+              // Pangea#
               if (controller.widget.embeddedCloseButton == null)
                 ChatSettingsPopupMenu(room, false),
             ],
@@ -140,7 +140,6 @@ class ChatDetailsView extends StatelessWidget {
                                         mxContent: room.avatar,
                                         name: displayname,
                                         size: Avatar.defaultSize * 2.5,
-                                        fontSize: 18 * 2.5,
                                       ),
                                     ),
                                   ),
@@ -192,7 +191,7 @@ class ChatDetailsView extends StatelessWidget {
                                     style: TextButton.styleFrom(
                                       foregroundColor: Theme.of(context)
                                           .colorScheme
-                                          .onBackground,
+                                          .onSurface,
                                     ),
                                     label: Text(
                                       room.isDirectChat
@@ -292,10 +291,18 @@ class ChatDetailsView extends StatelessWidget {
                         // else
                         //   Padding(
                         //     padding: const EdgeInsets.all(16.0),
-                        //     child: OutlinedButton.icon(
+                        //     child: TextButton.icon(
                         //       onPressed: controller.setTopicAction,
                         //       label: Text(L10n.of(context)!.setChatDescription),
                         //       icon: const Icon(Icons.edit_outlined),
+                        //       style: TextButton.styleFrom(
+                        //         backgroundColor: Theme.of(context)
+                        //             .colorScheme
+                        //             .secondaryContainer,
+                        //         foregroundColor: Theme.of(context)
+                        //             .colorScheme
+                        //             .onSecondaryContainer,
+                        //       ),
                         //     ),
                         //   ),
                         // Padding(
@@ -330,23 +337,6 @@ class ChatDetailsView extends StatelessWidget {
                         //   height: 1,
                         //   color: Theme.of(context).dividerColor,
                         // ),
-                        // if (room.joinRules == JoinRules.public)
-                        //   ListTile(
-                        //     leading: CircleAvatar(
-                        //       backgroundColor:
-                        //           Theme.of(context).scaffoldBackgroundColor,
-                        //       foregroundColor: iconColor,
-                        //       child: const Icon(Icons.link_outlined),
-                        //     ),
-                        //     trailing: const Icon(Icons.chevron_right_outlined),
-                        //     onTap: controller.editAliases,
-                        //     title: Text(L10n.of(context)!.editRoomAliases),
-                        //     subtitle: Text(
-                        //       (room.canonicalAlias.isNotEmpty)
-                        //           ? room.canonicalAlias
-                        //           : L10n.of(context)!.none,
-                        //     ),
-                        //   ),
                         // ListTile(
                         //   leading: CircleAvatar(
                         //     backgroundColor:
@@ -356,83 +346,29 @@ class ChatDetailsView extends StatelessWidget {
                         //       Icons.insert_emoticon_outlined,
                         //     ),
                         //   ),
-                        //   title: Text(L10n.of(context)!.emoteSettings),
+                        //   title:
+                        //       Text(L10n.of(context)!.customEmojisAndStickers),
                         //   subtitle: Text(L10n.of(context)!.setCustomEmotes),
                         //   onTap: controller.goToEmoteSettings,
                         //   trailing: const Icon(Icons.chevron_right_outlined),
                         // ),
                         // if (!room.isDirectChat)
-                        // ListTile(
-                        //   leading: CircleAvatar(
-                        //     backgroundColor:
-                        //         Theme.of(context).scaffoldBackgroundColor,
-                        //     foregroundColor: iconColor,
-                        //     child: const Icon(Icons.shield_outlined),
-                        //   ),
-                        //   title: Text(
-                        //     L10n.of(context)!.whoIsAllowedToJoinThisGroup,
-                        //   ),
-                        //   trailing: room.canChangeJoinRules
-                        //       ? const Icon(Icons.chevron_right_outlined)
-                        //       : null,
-                        //   subtitle: Text(
-                        //     room.joinRules?.getLocalizedString(
-                        //           MatrixLocals(L10n.of(context)!),
-                        //         ) ??
-                        //         L10n.of(context)!.none,
-                        //   ),
-                        //   onTap: room.canChangeJoinRules
-                        //       ? controller.setJoinRules
-                        //       : null,
-                        // ),
-                        // if (!room.isDirectChat)
                         //   ListTile(
                         //     leading: CircleAvatar(
                         //       backgroundColor:
                         //           Theme.of(context).scaffoldBackgroundColor,
                         //       foregroundColor: iconColor,
-                        //       child: const Icon(Icons.visibility_outlined),
+                        //       child: const Icon(Icons.shield_outlined),
                         //     ),
-                        //     trailing: room.canChangeHistoryVisibility
-                        //         ? const Icon(Icons.chevron_right_outlined)
-                        //         : null,
                         //     title: Text(
-                        //       L10n.of(context)!.visibilityOfTheChatHistory,
+                        //       L10n.of(context)!.accessAndVisibility,
                         //     ),
                         //     subtitle: Text(
-                        //       room.historyVisibility?.getLocalizedString(
-                        //             MatrixLocals(L10n.of(context)!),
-                        //           ) ??
-                        //           L10n.of(context)!.none,
+                        //       L10n.of(context)!.accessAndVisibilityDescription,
                         //     ),
-                        //     onTap: room.canChangeHistoryVisibility
-                        //         ? controller.setHistoryVisibility
-                        //         : null,
-                        //   ),
-                        // if (room.jsoinRules == JoinRules.public)
-                        //   ListTile(
-                        //     leading: CircleAvatar(
-                        //       backgroundColor:
-                        //           Theme.of(context).scaffoldBackgroundColor,
-                        //       foregroundColor: iconColor,
-                        //       child: const Icon(
-                        //         Icons.person_add_alt_1_outlined,
-                        //       ),
-                        //     ),
-                        //     trailing: room.canChangeGuestAccess
-                        //         ? const Icon(Icons.chevron_right_outlined)
-                        //         : null,
-                        //     title: Text(
-                        //       L10n.of(context)!.areGuestsAllowedToJoin,
-                        //     ),
-                        //     subtitle: Text(
-                        //       room.guestAccess.getLocalizedString(
-                        //         MatrixLocals(L10n.of(context)!),
-                        //       ),
-                        //     ),
-                        //     onTap: room.canChangeGuestAccess
-                        //         ? controller.setGuestAccess
-                        //         : null,
+                        //     onTap: () => context
+                        //         .push('/rooms/${room.id}/details/access'),
+                        //     trailing: const Icon(Icons.chevron_right_outlined),
                         //   ),
                         // if (!room.isDirectChat)
                         if (!room.isDirectChat && !room.isSpace)
@@ -695,9 +631,12 @@ class ChatDetailsView extends StatelessWidget {
                         //   ListTile(
                         //     title: Text(L10n.of(context)!.inviteContact),
                         //     leading: CircleAvatar(
-                        //       backgroundColor:
-                        //           Theme.of(context).colorScheme.primary,
-                        //       foregroundColor: Colors.white,
+                        //       backgroundColor: Theme.of(context)
+                        //           .colorScheme
+                        //           .primaryContainer,
+                        //       foregroundColor: Theme.of(context)
+                        //           .colorScheme
+                        //           .onPrimaryContainer,
                         //       radius: Avatar.defaultSize / 2,
                         //       child: const Icon(Icons.add_outlined),
                         //     ),

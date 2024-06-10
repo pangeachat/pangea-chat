@@ -30,13 +30,13 @@ class ChatListView extends StatelessWidget {
             badgePosition: badgePosition,
             filter:
                 controller.getRoomFilterByActiveFilter(ActiveFilter.messages),
-            child: const Icon(Icons.forum_outlined),
+            child: const Icon(Icons.chat_outlined),
           ),
           selectedIcon: UnreadRoomsBadge(
             badgePosition: badgePosition,
             filter:
                 controller.getRoomFilterByActiveFilter(ActiveFilter.messages),
-            child: const Icon(Icons.forum),
+            child: const Icon(Icons.chat),
           ),
           //#Pangea
           // label: L10n.of(context)!.messages,
@@ -62,13 +62,13 @@ class ChatListView extends StatelessWidget {
             badgePosition: badgePosition,
             filter:
                 controller.getRoomFilterByActiveFilter(ActiveFilter.allChats),
-            child: const Icon(Icons.forum_outlined),
+            child: const Icon(Icons.chat_outlined),
           ),
           selectedIcon: UnreadRoomsBadge(
             badgePosition: badgePosition,
             filter:
                 controller.getRoomFilterByActiveFilter(ActiveFilter.allChats),
-            child: const Icon(Icons.forum),
+            child: const Icon(Icons.chat),
           ),
           // #Pangea
           // label: L10n.of(context)!.chats,
@@ -198,7 +198,6 @@ class ChatListView extends StatelessWidget {
                                 MatrixLocals(L10n.of(context)!),
                               ),
                               size: 32,
-                              fontSize: 12,
                               // #Pangea
                               littleIcon: room?.roomTypeIcon,
                               // Pangea#
@@ -225,12 +224,13 @@ class ChatListView extends StatelessWidget {
                         ? NavigationBar(
                             elevation: 4,
                             labelBehavior:
-                                NavigationDestinationLabelBehavior.alwaysHide,
-                            height: 64,
+                                NavigationDestinationLabelBehavior.alwaysShow,
                             shadowColor:
-                                Theme.of(context).colorScheme.onBackground,
+                                Theme.of(context).colorScheme.onSurface,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.surface,
                             surfaceTintColor:
-                                Theme.of(context).colorScheme.background,
+                                Theme.of(context).colorScheme.surface,
                             selectedIndex: controller.selectedIndex,
                             onDestinationSelected:
                                 controller.onDestinationSelected,

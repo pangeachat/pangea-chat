@@ -25,6 +25,7 @@ abstract class AppConfig {
   // #Pangea
   // static const Color primaryColor = Color(0xFF5625BA);
   // static const Color primaryColorLight = Color(0xFFCCBDEA);
+  // static const Color secondaryColor = Color(0xFF41a2bc);
   static const Color primaryColor = Color(0xFF8560E0);
   static const Color primaryColorLight = Color(0xFFDBC9FF);
   static const Color secondaryColor = Color(0xFF41a2bc);
@@ -32,7 +33,7 @@ abstract class AppConfig {
   static const Color success = Color(0xFF33D057);
   static const Color warning = Color.fromARGB(255, 210, 124, 12);
   // static String _privacyUrl =
-  //     'https://gitlab.com/famedly/fluffychat/-/blob/main/PRIVACY.md';
+  //     'https://github.com/krille-chan/fluffychat/blob/main/PRIVACY.md';
   static String _privacyUrl = "https://www.pangeachat.com/privacy";
   //Pangea#
   static String get privacyUrl => _privacyUrl;
@@ -46,13 +47,14 @@ abstract class AppConfig {
   // #Pangea
   // static const String appOpenUrlScheme = 'im.fluffychat';
   static const String appOpenUrlScheme = 'matrix.pangea.chat';
-  static String _webBaseUrl = 'https://fluffychat.im/web';
   // Pangea#
+  static String _webBaseUrl = 'https://fluffychat.im/web';
   static String get webBaseUrl => _webBaseUrl;
-  //#Pangea
-  static const String sourceCodeUrl = 'https://gitlab.com/famedly/fluffychat';
+  static const String sourceCodeUrl =
+      'https://github.com/krille-chan/fluffychat';
+  // #Pangea
   // static const String supportUrl =
-  //     'https://gitlab.com/famedly/fluffychat/issues';
+  //     'https://github.com/krille-chan/fluffychat/issues';
   static const String supportUrl = 'https://www.pangeachat.com/faqs';
   static const String termsOfServiceUrl =
       'https://www.pangeachat.com/terms-of-service';
@@ -62,12 +64,12 @@ abstract class AppConfig {
     host: 'github.com',
     path: '/krille-chan/fluffychat/issues/new',
   );
+  // #Pangea
   static const bool enableSentry = true;
   static const String sentryDns =
       'https://8591d0d863b646feb4f3dda7e5dcab38@o256755.ingest.sentry.io/5243143';
-  // #Pangea
-  static bool renderHtml = false;
   // static bool renderHtml = true;
+  static bool renderHtml = false;
   // Pangea#
   static bool hideRedactedEvents = false;
   static bool hideUnknownEvents = true;
@@ -75,11 +77,12 @@ abstract class AppConfig {
   static bool separateChatTypes = false;
   static bool autoplayImages = true;
   static bool sendTypingNotifications = true;
+  static bool sendPublicReadReceipts = true;
+  static bool swipeRightToLeftToReply = true;
   //#Pangea
   static bool sendOnEnter = true;
   // static bool sendOnEnter = false;
   //Pangea#
-  static bool sendPublicReadReceipts = true;
   static bool showPresences = true;
   static bool experimentalVoip = false;
   static const bool hideTypingUsernames = false;
@@ -89,9 +92,6 @@ abstract class AppConfig {
   static const String schemePrefix = 'matrix:';
   // #Pangea
   // static const String pushNotificationsChannelId = 'fluffychat_push';
-  // static const String pushNotificationsChannelName = 'FluffyChat push channel';
-  // static const String pushNotificationsChannelDescription =
-  //     'Push notifications for FluffyChat';
   // static const String pushNotificationsAppId = 'chat.fluffy.fluffychat';
   // static const String pushNotificationsGatewayUrl =
   //     'https://push.fluffychat.im/_matrix/push/v1/notify';

@@ -133,7 +133,7 @@ extension AnalyticsRoomExtension on Room {
       return null;
     }
 
-    final Event? matrixEvent = getState(
+    final dynamic matrixEvent = getState(
       PangeaEventTypes.studentAnalyticsSummary,
       studentId,
     );

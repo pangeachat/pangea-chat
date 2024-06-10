@@ -23,7 +23,8 @@ class LoginScaffold extends StatelessWidget {
         enforceMobileMode || !FluffyThemes.isColumnMode(context);
     final scaffold = Scaffold(
       key: const Key('LoginScaffold'),
-      // Pangea#
+      // #Pangea
+      extendBodyBehindAppBar: true,
       // appBar: appBar == null
       //     ? null
       //     : AppBar(
@@ -40,7 +41,6 @@ class LoginScaffold extends StatelessWidget {
         backgroundColor: Colors.transparent,
         // Pangea#
       ),
-      extendBodyBehindAppBar: true,
       // #Pangea
       // body: body,
       body: Container(
@@ -55,20 +55,20 @@ class LoginScaffold extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 480),
           child: body,
         ),
+        // backgroundColor: isMobileMode
+        //     ? null
+        //     : Theme.of(context).colorScheme.surface.withOpacity(0.8),
+        // bottomNavigationBar: isMobileMode
+        //     ? Material(
+        //         elevation: 4,
+        //         shadowColor: Theme.of(context).colorScheme.onSurface,
+        //         child: const _PrivacyButtons(
+        //           mainAxisAlignment: MainAxisAlignment.center,
+        //         ),
+        //       )
+        //     : null,
+        // Pangea#
       ),
-      // backgroundColor: isMobileMode
-      //     ? null
-      //     : Theme.of(context).colorScheme.background.withOpacity(0.8),
-      // bottomNavigationBar: isMobileMode
-      //     ? Material(
-      //         elevation: 4,
-      //         shadowColor: Theme.of(context).colorScheme.onBackground,
-      //         child: const _PrivacyButtons(
-      //           mainAxisAlignment: MainAxisAlignment.center,
-      //         ),
-      //       )
-      //     : null,
-      // Pangea#
     );
     // #Pangea
     return scaffold;

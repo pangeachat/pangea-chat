@@ -1,8 +1,10 @@
 part of "pangea_room_extension.dart";
 
 extension RoomInformationRoomExtension on Room {
-  DateTime? get _creationTime =>
-      getState(EventTypes.RoomCreate)?.originServerTs;
+  DateTime? get _creationTime {
+    final dynamic state = getState(EventTypes.RoomCreate);
+    return state.originServerTs;
+  }
 
   String? get _creatorId => getState(EventTypes.RoomCreate)?.senderId;
 

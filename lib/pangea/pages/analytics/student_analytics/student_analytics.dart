@@ -26,7 +26,7 @@ class StudentAnalyticsPage extends StatefulWidget {
 class StudentAnalyticsController extends State<StudentAnalyticsPage> {
   final PangeaController _pangeaController = MatrixState.pangeaController;
   AnalyticsSelected? selected;
-  StreamSubscription<Event>? stateSub;
+  StreamSubscription? stateSub;
   Timer? refreshTimer;
 
   List<Room> _chats = [];
@@ -53,10 +53,10 @@ class StudentAnalyticsController extends State<StudentAnalyticsPage> {
     stateSub = _pangeaController.matrixState.client.onRoomState.stream
         .where(
           (event) =>
-              event.type == PangeaEventTypes.studentAnalyticsSummary &&
-              event.senderId == userId,
+              event.state is Event &&
+              event.state.type == PangeaEventTypes.studentAnalyticsSummary,
         )
-        .listen(onStateUpdate);
+        .listen((event) => onStateUpdate(event.state as Event));
   }
 
   @override

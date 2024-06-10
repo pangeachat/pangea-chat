@@ -33,7 +33,7 @@ class ClassAnalyticsPage extends StatefulWidget {
 class ClassAnalyticsV2Controller extends State<ClassAnalyticsPage> {
   final PangeaController _pangeaController = MatrixState.pangeaController;
   bool _initialized = false;
-  StreamSubscription<Event>? stateSub;
+  StreamSubscription? stateSub;
   Timer? refreshTimer;
 
   List<SpaceRoomsChunk> chats = [];
@@ -84,10 +84,10 @@ class ClassAnalyticsV2Controller extends State<ClassAnalyticsPage> {
       stateSub = _pangeaController.matrixState.client.onRoomState.stream
           .where(
             (event) =>
-                event.type == PangeaEventTypes.studentAnalyticsSummary &&
-                event.roomId == classId,
+                event.state is Event &&
+                event.state.type == PangeaEventTypes.studentAnalyticsSummary,
           )
-          .listen(onStateUpdate);
+          .listen((event) => onStateUpdate(event.state as Event));
       getChatAndStudents();
     });
   }

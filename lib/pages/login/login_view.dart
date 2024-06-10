@@ -21,7 +21,8 @@ class LoginView extends StatelessWidget {
     // final titleParts = title.split(homeserver);
 
     // final textFieldFillColor = FluffyThemes.isColumnMode(context)
-    //     ? Theme.of(context).colorScheme.background
+    //     ? Theme.of(context).colorScheme.surface
+    //     // ignore: deprecated_member_use
     //     : Theme.of(context).colorScheme.surfaceVariant;
     // Pangea#
 
@@ -106,15 +107,13 @@ class LoginView extends StatelessWidget {
                         color: Theme.of(context).textTheme.bodyMedium?.color,
                         fontSize: 14,
                       ),
-                      // Pangea#
-                      hintText: L10n.of(context)!.emailOrUsername,
-                      // #Pangea
                       // fillColor: textFieldFillColor,
                       fillColor: Theme.of(context)
                           .colorScheme
                           .background
                           .withOpacity(0.75),
                       // Pangea#
+                      hintText: L10n.of(context)!.emailOrUsername,
                     ),
                   ),
                 ),

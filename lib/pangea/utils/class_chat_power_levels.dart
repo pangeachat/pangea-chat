@@ -14,7 +14,7 @@ class ClassChatPowerLevels {
     final Client client = Matrix.of(context).client;
     final Map<String, dynamic> powerLevelOverride = {};
     powerLevelOverride['events'] = {
-      EventTypes.spaceChild: 0,
+      EventTypes.SpaceChild: 0,
       PangeaEventTypes.studentAnalyticsSummary: 0,
     };
     powerLevelOverride['users'] = {};

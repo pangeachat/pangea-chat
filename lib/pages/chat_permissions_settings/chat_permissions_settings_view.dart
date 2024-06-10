@@ -48,13 +48,15 @@ class ChatPermissionsSettingsView extends StatelessWidget {
                       PermissionsListTile(
                         permissionKey: entry.key,
                         permission: entry.value,
-                        onTap: () => controller.editPowerLevel(
+                        onChanged: (level) => controller.editPowerLevel(
                           context,
                           entry.key,
                           entry.value,
+                          newLevel: level,
                         ),
+                        canEdit: room.canChangePowerLevel,
                       ),
-                    const Divider(thickness: 1),
+                    Divider(color: Theme.of(context).dividerColor),
                     ListTile(
                       title: Text(
                         L10n.of(context)!.notifications,
@@ -78,16 +80,18 @@ class ChatPermissionsSettingsView extends StatelessWidget {
                           permissionKey: key,
                           permission: value,
                           category: 'notifications',
-                          onTap: () => controller.editPowerLevel(
+                          canEdit: room.canChangePowerLevel,
+                          onChanged: (level) => controller.editPowerLevel(
                             context,
                             key,
                             value,
+                            newLevel: level,
                             category: 'notifications',
                           ),
                         );
                       },
                     ),
-                    const Divider(thickness: 1),
+                    Divider(color: Theme.of(context).dividerColor),
                     ListTile(
                       title: Text(
                         L10n.of(context)!.configureChat,
@@ -102,40 +106,15 @@ class ChatPermissionsSettingsView extends StatelessWidget {
                         permissionKey: entry.key,
                         category: 'events',
                         permission: entry.value ?? 0,
-                        onTap: () => controller.editPowerLevel(
+                        canEdit: room.canChangePowerLevel,
+                        onChanged: (level) => controller.editPowerLevel(
                           context,
                           entry.key,
                           entry.value ?? 0,
+                          newLevel: level,
                           category: 'events',
                         ),
                       ),
-                    if (room.canSendEvent(EventTypes.RoomTombstone)) ...{
-                      const Divider(thickness: 1),
-                      FutureBuilder<Capabilities>(
-                        future: room.client.getCapabilities(),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) {
-                            return const Center(
-                              child: CircularProgressIndicator.adaptive(
-                                strokeWidth: 2,
-                              ),
-                            );
-                          }
-                          final roomVersion = room
-                                  .getState(EventTypes.RoomCreate)!
-                                  .content['room_version'] as String? ??
-                              '1';
-
-                          return ListTile(
-                            title: Text(
-                              '${L10n.of(context)!.roomVersion}: $roomVersion',
-                            ),
-                            onTap: () =>
-                                controller.updateRoomAction(snapshot.data!),
-                          );
-                        },
-                      ),
-                    },
                   ],
                 ),
               ],

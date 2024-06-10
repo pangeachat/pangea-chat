@@ -119,7 +119,7 @@ class ConstructListViewState extends State<ConstructListView> {
   final List<PangeaMessageEvent> _msgEvents = [];
   bool fetchingUses = false;
 
-  StreamSubscription<Event>? stateSub;
+  StreamSubscription? stateSub;
   Timer? refreshTimer;
 
   @override
@@ -132,8 +132,12 @@ class ConstructListViewState extends State<ConstructListView> {
         .stream
         //could optimize here be determing if the vocab event is relevant for
         //currently displayed data
-        .where((event) => event.type == PangeaEventTypes.vocab)
-        .listen(onStateUpdate);
+        .where(
+          (event) =>
+              event.state is Event &&
+              event.state.type == PangeaEventTypes.vocab,
+        )
+        .listen((event) => onStateUpdate(event.state as Event));
   }
 
   Future<void> onStateUpdate(Event? newState) async {
