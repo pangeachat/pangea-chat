@@ -333,37 +333,42 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                   ),
           ),
           const SizedBox(width: 8),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (var i = 0; i < AudioPlayerWidget.wavesCount; i++)
-                GestureDetector(
-                  onTapDown: (_) => audioPlayer?.seek(
-                    Duration(
-                      milliseconds:
-                          (maxPosition / AudioPlayerWidget.wavesCount).round() *
-                              i,
-                    ),
-                  ),
-                  child: Container(
-                    height: 32,
-                    color: widget.color.withAlpha(0),
-                    alignment: Alignment.center,
-                    child: Opacity(
-                      opacity: currentPosition > i ? 1 : 0.5,
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 1),
-                        decoration: BoxDecoration(
-                          color: widget.color,
-                          borderRadius: BorderRadius.circular(2),
+          Expanded(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (var i = 0; i < AudioPlayerWidget.wavesCount; i++)
+                  Expanded(
+                    child: GestureDetector(
+                      onTapDown: (_) => audioPlayer?.seek(
+                        Duration(
+                          milliseconds:
+                              (maxPosition / AudioPlayerWidget.wavesCount)
+                                      .round() *
+                                  i,
                         ),
-                        width: 2,
-                        height: 32 * (waveform[i] / 1024),
+                      ),
+                      child: Container(
+                        height: 32,
+                        color: widget.color.withAlpha(0),
+                        alignment: Alignment.center,
+                        child: Opacity(
+                          opacity: currentPosition > i ? 1 : 0.5,
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 1),
+                            decoration: BoxDecoration(
+                              color: widget.color,
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                            width: 2,
+                            height: 32 * (waveform[i] / 1024),
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(width: 8),
           SizedBox(
