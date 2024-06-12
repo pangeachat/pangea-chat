@@ -15,12 +15,18 @@ class GetChatListItemSubtitle {
     ModelKey.transcription,
   ];
 
+  final List<String> hideEventTypes = [
+    EventTypes.SpaceChild,
+    EventTypes.SpaceParent,
+  ];
+
   bool moveBackInTimeline(Event event) =>
       hideContentKeys.any(
         (key) => event.content.tryGet(key) != null,
       ) ||
       event.type.startsWith("p.") ||
-      event.type.startsWith("pangea.");
+      event.type.startsWith("pangea.") ||
+      hideEventTypes.contains(event.type);
 
   Future<String> getSubtitle(
     L10n l10n,
