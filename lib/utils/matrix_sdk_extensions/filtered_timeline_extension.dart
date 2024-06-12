@@ -19,11 +19,11 @@ extension IsStateExtension on Event {
       (!AppConfig.hideUnknownEvents || isEventTypeKnown) &&
       // remove state events that we don't want to render
       (isState || !AppConfig.hideAllStateEvents) &&
+      // #Pangea
       // hide unimportant state events
       (!AppConfig.hideUnimportantStateEvents ||
           !isState ||
           importantStateEvents.contains(type)) &&
-      // #Pangea
       content.tryGet(ModelKey.transcription) == null &&
       // Pangea#
       // hide simple join/leave member events in public rooms
@@ -39,6 +39,7 @@ extension IsStateExtension on Event {
         EventTypes.Encrypted,
       }.contains(type);
 
+  // #Pangea
   static const Set<String> importantStateEvents = {
     EventTypes.Encryption,
     EventTypes.RoomCreate,
@@ -46,4 +47,5 @@ extension IsStateExtension on Event {
     EventTypes.RoomTombstone,
     EventTypes.CallInvite,
   };
+  // Pangea#
 }

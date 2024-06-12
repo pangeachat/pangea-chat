@@ -333,13 +333,19 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                   ),
           ),
           const SizedBox(width: 8),
+          // #Pangea
           Expanded(
-            child: Row(
+            child:
+                // Pangea#
+                Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 for (var i = 0; i < AudioPlayerWidget.wavesCount; i++)
+                  // #Pangea
                   Expanded(
-                    child: GestureDetector(
+                    child:
+                        // Pangea#
+                        GestureDetector(
                       onTapDown: (_) => audioPlayer?.seek(
                         Duration(
                           milliseconds:
