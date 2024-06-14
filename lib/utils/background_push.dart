@@ -35,7 +35,8 @@ import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:matrix/matrix.dart';
-import 'package:unifiedpush/unifiedpush.dart';
+
+// import 'package:unifiedpush/unifiedpush.dart';
 
 import '../config/app_config.dart';
 import '../config/setting_keys.dart';
@@ -96,14 +97,16 @@ class BackgroundPush {
       onNewToken: _newFcmToken,
       // Pangea#
     );
-    if (Platform.isAndroid) {
-      UnifiedPush.initialize(
-        onNewEndpoint: _newUpEndpoint,
-        onRegistrationFailed: _upUnregistered,
-        onUnregistered: _upUnregistered,
-        onMessage: _onUpMessage,
-      );
-    }
+    // #Pangea
+    // if (Platform.isAndroid) {
+    //   UnifiedPush.initialize(
+    //     onNewEndpoint: _newUpEndpoint,
+    //     onRegistrationFailed: _upUnregistered,
+    //     onUnregistered: _upUnregistered,
+    //     onMessage: _onUpMessage,
+    //   );
+    // }
+    // Pangea#
   }
 
   factory BackgroundPush.clientOnly(Client client) {
@@ -283,12 +286,16 @@ class BackgroundPush {
     if (upAction) {
       return;
     }
-    if (!PlatformInfos.isIOS &&
-        (await UnifiedPush.getDistributors()).isNotEmpty) {
-      await setupUp();
-    } else {
-      await setupFirebase();
-    }
+    // #Pangea
+    // if (!PlatformInfos.isIOS &&
+    //     (await UnifiedPush.getDistributors()).isNotEmpty) {
+    //   await setupUp();
+    // } else {
+    // Pangea#
+    await setupFirebase();
+    // #Pangea
+    // }
+    // Pangea#
 
     // ignore: unawaited_futures
     _flutterLocalNotificationsPlugin
@@ -313,15 +320,17 @@ class BackgroundPush {
     }
     await loadLocale();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (PlatformInfos.isAndroid) {
-        onFcmError?.call(
-          l10n!.noGoogleServicesWarning,
-          link: Uri.parse(
-            AppConfig.enablePushTutorial,
-          ),
-        );
-        return;
-      }
+      // #Pangea
+      // if (PlatformInfos.isAndroid) {
+      //   onFcmError?.call(
+      //     l10n!.noGoogleServicesWarning,
+      //     link: Uri.parse(
+      //       AppConfig.enablePushTutorial,
+      //     ),
+      //   );
+      //   return;
+      // }
+      // Pangea#
       onFcmError?.call(l10n!.oopsPushError);
     });
   }
@@ -369,9 +378,11 @@ class BackgroundPush {
     }
   }
 
-  Future<void> setupUp() async {
-    await UnifiedPush.registerAppWithDialog(matrix!.context);
-  }
+  // #Pangea
+  // Future<void> setupUp() async {
+  //   await UnifiedPush.registerAppWithDialog(matrix!.context);
+  // }
+  // Pangea#
 
   Future<void> _newUpEndpoint(String newEndpoint, String i) async {
     upAction = true;

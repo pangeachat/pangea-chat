@@ -1,4 +1,4 @@
-package chat.fluffy.fluffychat
+/*package chat.fluffy.fluffychat
 
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.dart.DartExecutor
@@ -20,4 +20,4 @@ class UnifiedPushReceiver : UnifiedPushReceiver() {
         }
         return engine
     }
-}
+}*/
