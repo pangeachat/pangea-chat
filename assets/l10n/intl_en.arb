@@ -4068,7 +4068,7 @@
   "hintTitle": "Hint:",
   "speechToTextBody": "See how well you did by looking at your Accuracy and Words Per Minute scores",
   "previous": "Previous",
-    "versionNotFound": "Version Not Found",
+  "versionNotFound": "Version Not Found",
   "fetchingVersion": "Fetching version...",
   "versionFetchError": "Error fetching version",
   "connectedToStaging": "Connected to Staging",
@@ -4112,5 +4112,19 @@
   "chatAnalytics": "Chat Analytics",
   "roomDetails": "Chat Details",
   "spaceDetails": "Space Details",
-  "participants": "Participants"
+  "participants": "Participants",
+  "levelNumber": "Level {level}",
+  "@levelNumber": {
+    "type": "text",
+    "placeholders": {
+      "level": {}
+    }
+  },
+  "xpPoints": "{points} xp",
+  "@xpPoints": {
+    "type": "text",
+    "placeholders": {
+      "points": {}
+    }
+  }
 }
