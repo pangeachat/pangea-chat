@@ -1,5 +1,6 @@
 import 'package:fluffychat/pages/chat_details/participant_list_item.dart';
 import 'package:fluffychat/pangea/widgets/common/bot_face_svg.dart';
+import 'package:fluffychat/pangea/widgets/conversation_bot/conversation_bot_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:go_router/go_router.dart';
@@ -47,7 +48,13 @@ class RoomDetailsParticipantsListState
                             width: 24.0,
                             expression: BotExpression.idle,
                           ),
-                          onPressed: () {},
+                          onPressed: () => showDialog<ConversationBotSettings>(
+                            context: context,
+                            builder: (context) => ConversationBotSettings(
+                              room: widget.room,
+                              startOpen: true,
+                            ),
+                          ),
                         ),
                       ),
                       Positioned(
