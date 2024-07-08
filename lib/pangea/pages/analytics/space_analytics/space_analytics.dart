@@ -98,10 +98,10 @@ class SpaceAnalyticsV2Controller extends State<SpaceAnalyticsPage> {
     }
   }
 
-  Future<void> setTargetLanguages() async {
+  void setTargetLanguages() {
     // get a list of language models, sorted by the
     // number of students who are learning that language
-    targetLanguages = await spaceRoom?.targetLanguages() ?? [];
+    targetLanguages = spaceRoom?.roomTargetLanguages() ?? [];
     setState(() {});
   }
 

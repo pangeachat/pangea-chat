@@ -4085,5 +4085,13 @@
     "type": "text",
     "placeholders": {}
   },
-  "changeAnalyticsView": "Change Analytics View"
+  "changeAnalyticsView": "Change Analytics View",
+  "messagesSent": "Messages Sent",
+  "wordsUsed": "Words Used",
+  "errorTypes": "Error Types",
+  "level": "Level",
+  "chatAnalytics": "Chat Analytics",
+  "roomDetails": "Chat Details",
+  "spaceDetails": "Space Details",
+  "participants": "Participants"
 }
