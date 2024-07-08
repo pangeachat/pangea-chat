@@ -175,20 +175,31 @@ class AnalyticsController extends BaseController {
   // Map of space ids to the last fetched hierarchy. Used when filtering
   // private chat analytics to determine which children are already visible
   // in the chat list
-  final Map<String, List<String>> _lastFetchedHierarchies = {};
+  final Map<String, GetSpaceHierarchyResponse> _lastFetchedHierarchies = {};
 
-  void setLatestHierarchy(String spaceId, GetSpaceHierarchyResponse resp) {
-    final List<String> roomIds = resp.rooms.map((room) => room.roomId).toList();
-    _lastFetchedHierarchies[spaceId] = roomIds;
+  Future<void> setLatestHierarchy(
+    String spaceId,
+  ) async {
+    // If a hierarchy has already been loaded for this space, get it
+    final GetSpaceHierarchyResponse? currentHierarchy =
+        _lastFetchedHierarchies[spaceId];
+
+    // if the hierarchy is already completely loaded, don't try to load more
+    if (currentHierarchy != null && currentHierarchy.nextBatch == null) {
+      return;
+    }
+
+    // load the next batch in the hierarchy and store it
+    final resp = await _pangeaController.matrixState.client.getSpaceHierarchy(
+      spaceId,
+      from: currentHierarchy?.nextBatch,
+    );
+    resp.rooms.addAll(currentHierarchy?.rooms ?? []);
+    _lastFetchedHierarchies[spaceId] = resp;
   }
 
-  Future<List<String>> getLatestSpaceHierarchy(String spaceId) async {
-    if (!_lastFetchedHierarchies.containsKey(spaceId)) {
-      final resp =
-          await _pangeaController.matrixState.client.getSpaceHierarchy(spaceId);
-      setLatestHierarchy(spaceId, resp);
-    }
-    return _lastFetchedHierarchies[spaceId] ?? [];
+  GetSpaceHierarchyResponse? getLatestSpaceHierarchy(String spaceId) {
+    return _lastFetchedHierarchies[spaceId];
   }
 
   /// Get all the summary analytics events for a user
@@ -199,7 +210,6 @@ class AnalyticsController extends BaseController {
     String? userID,
   }) async {
     userID ??= _pangeaController.matrixState.client.userID;
-    if (userID == null) return [];
     final Room? analyticsRoom = _pangeaController.matrixState.client
         .analyticsRoomLocal(currentAnalyticsLang.langCode, userID);
     if (analyticsRoom == null) return [];
@@ -208,7 +218,7 @@ class AnalyticsController extends BaseController {
         await analyticsRoom.getAnalyticsEvents(
       type: PangeaEventTypes.summaryAnalytics,
       since: timeSpan.cutOffDate,
-      userId: userID,
+      userId: userID!,
     );
     return roomEvents?.cast<SummaryAnalyticsEvent>() ?? [];
   }
@@ -346,7 +356,11 @@ class AnalyticsController extends BaseController {
     Room space,
   ) async {
     final List<String> privateChatIds = space.allSpaceChildRoomIds;
-    final List<String> lastFetched = await getLatestSpaceHierarchy(space.id);
+    final List<String> lastFetched = getLatestSpaceHierarchy(space.id)
+            ?.rooms
+            .map((room) => room.roomId)
+            .toList() ??
+        [];
     for (final id in lastFetched) {
       privateChatIds.removeWhere((e) => e == id);
     }
@@ -486,21 +500,8 @@ class AnalyticsController extends BaseController {
         room = _pangeaController.matrixState.client.getRoomById(
           defaultSelected.id,
         );
-        if (room == null) {
-          ErrorHandler.logError(
-            m: "room not found in getAnalytics",
-            data: {
-              "defaultSelected": defaultSelected,
-              "selected": selected,
-            },
-          );
-          return ChartAnalyticsModel(
-            msgs: [],
-            timeSpan: timeSpan,
-          );
-        }
-        await room.postLoad();
-        await room.requestParticipants();
+        await room?.postLoad();
+        await room?.requestParticipants();
       }
 
       DateTime? lastUpdated;
@@ -609,7 +610,6 @@ class AnalyticsController extends BaseController {
     String? userID,
   }) async {
     userID ??= _pangeaController.matrixState.client.userID;
-    if (userID == null) return [];
     final Room? analyticsRoom = _pangeaController.matrixState.client
         .analyticsRoomLocal(currentAnalyticsLang.langCode, userID);
     if (analyticsRoom == null) return [];
@@ -618,7 +618,7 @@ class AnalyticsController extends BaseController {
         (await analyticsRoom.getAnalyticsEvents(
       type: PangeaEventTypes.construct,
       since: timeSpan.cutOffDate,
-      userId: userID,
+      userId: userID!,
     ))
             ?.cast<ConstructAnalyticsEvent>();
     final List<ConstructAnalyticsEvent> allConstructs = roomEvents ?? [];
@@ -726,7 +726,11 @@ class AnalyticsController extends BaseController {
     Room space,
   ) async {
     final List<String> privateChatIds = space.allSpaceChildRoomIds;
-    final List<String> lastFetched = await getLatestSpaceHierarchy(space.id);
+    final List<String> lastFetched = getLatestSpaceHierarchy(space.id)
+            ?.rooms
+            .map((room) => room.roomId)
+            .toList() ??
+        [];
     for (final id in lastFetched) {
       privateChatIds.removeWhere((e) => e == id);
     }
@@ -890,24 +894,14 @@ class AnalyticsController extends BaseController {
       room = _pangeaController.matrixState.client.getRoomById(
         defaultSelected.id,
       );
-      if (room == null) {
-        ErrorHandler.logError(
-          m: "room not found in setConstructs",
-          data: {
-            "defaultSelected": defaultSelected,
-            "selected": selected,
-          },
-        );
-        return [];
-      }
 
       // reasoning of this call to postLoad is that the room's power level
       // events are needed to determine which users are admins
-      await room.postLoad();
+      await room?.postLoad();
 
       // need the full participant list to get overall last updated time
       // and to determine who we need analytics rooms for
-      await room.requestParticipants();
+      await room?.requestParticipants();
     }
 
     // get the overall last updated time for the selected filter

@@ -2,6 +2,8 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pages/chat_details/chat_details.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
+import 'package:fluffychat/pangea/pages/class_settings/p_class_widgets/class_details_toggle_add_students_tile.dart';
+import 'package:fluffychat/pangea/pages/class_settings/p_class_widgets/class_invitation_buttons.dart';
 import 'package:fluffychat/pangea/pages/class_settings/p_class_widgets/room_capacity_button.dart';
 import 'package:fluffychat/pangea/pages/class_settings/p_class_widgets/room_rules_editor.dart';
 import 'package:fluffychat/pangea/utils/lock_room.dart';
@@ -55,7 +57,24 @@ class RoomDetailsDropdownState extends State<RoomDetailsDropdown> {
             setState(() => isOpen = !isOpen);
           },
         ),
+        Divider(
+          height: 1,
+          color: Theme.of(context).dividerColor,
+        ),
         if (isOpen) ...[
+          if (room!.isSpace && room!.isRoomAdmin)
+            SpaceDetailsToggleAddStudentsTile(controller: widget.controller),
+          if (room!.isSpace &&
+              room!.isRoomAdmin &&
+              widget.controller.displayAddStudentOptions)
+            ClassInvitationButtons(roomId: room!.id),
+          if (room!.isSpace &&
+              room!.isRoomAdmin &&
+              widget.controller.displayAddStudentOptions)
+            Divider(
+              height: 1,
+              color: Theme.of(context).dividerColor,
+            ),
           if (room!.pangeaRoomRules != null)
             RoomRulesEditor(
               roomId: room!.id,

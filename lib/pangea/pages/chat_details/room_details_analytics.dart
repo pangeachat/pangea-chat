@@ -32,6 +32,25 @@ class RoomDetailsAnalytics extends StatefulWidget {
 }
 
 class RoomDetailsAnalyticsState extends State<RoomDetailsAnalytics> {
+  @override
+  void initState() {
+    super.initState();
+    // when you go to look at room details, you'll see analytics
+    // for all the participants in the room. Non-admins most likely
+    // not be in other user's analytics room, so try to join them
+    // to make the analytics visible. This is a temporary solution
+    // until analytics data is made available by the bot.
+    super.initState();
+    if (widget.room.isSpace) {
+      widget.room.joinAnalyticsRoomsInSpace().then((_) => setState(() {}));
+      return;
+    }
+
+    final spaceParents = widget.room.pangeaSpaceParents;
+    if (spaceParents.isEmpty) return;
+    spaceParents.first.joinAnalyticsRoomsInSpace();
+  }
+
   bool isOpen = true;
 
   @override

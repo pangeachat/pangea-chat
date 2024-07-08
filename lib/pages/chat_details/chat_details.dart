@@ -31,17 +31,22 @@ class ChatDetails extends StatefulWidget {
 }
 
 class ChatDetailsController extends State<ChatDetails> {
+  // #Pangea
+  Room? get room =>
+      roomId != null ? Matrix.of(context).client.getRoomById(roomId!) : null;
+
+  bool displayAddStudentOptions = false;
+
+  void toggleAddStudentOptions() =>
+      setState(() => displayAddStudentOptions = !displayAddStudentOptions);
+  // Pangea#
+
   bool displaySettings = false;
 
   void toggleDisplaySettings() =>
       setState(() => displaySettings = !displaySettings);
 
   String? get roomId => widget.roomId;
-
-  // #Pangea
-  Room? get room =>
-      roomId != null ? Matrix.of(context).client.getRoomById(roomId!) : null;
-  // Pangea#
 
   void setDisplaynameAction() async {
     final room = Matrix.of(context).client.getRoomById(roomId!)!;
