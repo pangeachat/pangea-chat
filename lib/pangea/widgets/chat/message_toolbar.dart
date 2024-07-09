@@ -9,6 +9,7 @@ import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dar
 import 'package:fluffychat/pangea/utils/any_state_holder.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/utils/overlay.dart';
+import 'package:fluffychat/pangea/widgets/chat/message_analytics_card.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_audio_card.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_speech_to_text_card.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_text_selection.dart';
@@ -199,7 +200,7 @@ class MessageToolbarState extends State<MessageToolbar> {
     final bool subscribed =
         MatrixState.pangeaController.subscriptionController.isSubscribed;
 
-    if (!newMode.isValidMode(widget.pangeaMessageEvent.event)) {
+    if (!newMode.isValidMode(widget.pangeaMessageEvent)) {
       ErrorHandler.logError(
         e: "Invalid mode for event",
         s: StackTrace.current,
@@ -246,6 +247,9 @@ class MessageToolbarState extends State<MessageToolbar> {
           break;
         case MessageMode.practiceActivity:
           showPracticeActivity();
+          break;
+        case MessageMode.analytics:
+          showMessageAnalytics();
           break;
         default:
           ErrorHandler.logError(
@@ -307,6 +311,12 @@ class MessageToolbarState extends State<MessageToolbar> {
   void showPracticeActivity() {
     toolbarContent = PracticeActivityCard(
       pangeaMessageEvent: widget.pangeaMessageEvent,
+    );
+  }
+
+  void showMessageAnalytics() {
+    toolbarContent = MessageAnalyticsCard(
+      messageEvent: widget.pangeaMessageEvent,
     );
   }
 
@@ -411,16 +421,7 @@ class MessageToolbarState extends State<MessageToolbar> {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: MessageMode.values.map((mode) {
-                    if ([
-                          MessageMode.definition,
-                          MessageMode.textToSpeech,
-                          MessageMode.translation,
-                        ].contains(mode) &&
-                        widget.pangeaMessageEvent.isAudioMessage) {
-                      return const SizedBox.shrink();
-                    }
-                    if (mode == MessageMode.speechToText &&
-                        !widget.pangeaMessageEvent.isAudioMessage) {
+                    if (!mode.isValidMode(widget.pangeaMessageEvent)) {
                       return const SizedBox.shrink();
                     }
                     return Tooltip(

@@ -108,11 +108,13 @@ class AnalyticsController extends BaseController {
   Future<DateTime?> userAnalyticsLastUpdated(
     String type, {
     String? userID,
+    LanguageModel? lang,
   }) async {
+    lang ??= currentAnalyticsLang;
     userID ??= _pangeaController.matrixState.client.userID;
     if (userID == null) return null;
     final Room? analyticsRoom = _pangeaController.matrixState.client
-        .analyticsRoomLocal(currentAnalyticsLang.langCode, userID);
+        .analyticsRoomLocal(lang.langCode, userID);
     return await analyticsRoom?.analyticsLastUpdated(type, userID);
 
     // final Map<String, DateTime> langCodeLastUpdates = {};
@@ -144,13 +146,15 @@ class AnalyticsController extends BaseController {
   /// their analytics. If any have, then the cache needs to be updated
   Future<DateTime?> participantAnalyticsLastUpdated(
     String type,
-    Room room,
-  ) async {
+    Room room, {
+    LanguageModel? lang,
+  }) async {
     // TODO - figure out how to do this on a per-user basis
+    lang ??= currentAnalyticsLang;
     final List<Future<DateTime?>> lastUpdatedFutures = [];
     for (final student in room.getParticipants()) {
       final Room? analyticsRoom = _pangeaController.matrixState.client
-          .analyticsRoomLocal(currentAnalyticsLang.langCode, student.id);
+          .analyticsRoomLocal(lang.langCode, student.id);
       if (analyticsRoom == null) continue;
       lastUpdatedFutures.add(
         analyticsRoom.analyticsLastUpdated(
@@ -207,11 +211,12 @@ class AnalyticsController extends BaseController {
   /// current timespan's cut off date
   Future<List<SummaryAnalyticsEvent>> userSummaryAnalytics({
     required TimeSpan timeSpan,
+    required LanguageModel lang,
     String? userID,
   }) async {
     userID ??= _pangeaController.matrixState.client.userID;
     final Room? analyticsRoom = _pangeaController.matrixState.client
-        .analyticsRoomLocal(currentAnalyticsLang.langCode, userID);
+        .analyticsRoomLocal(lang.langCode, userID);
     if (analyticsRoom == null) return [];
 
     final List<AnalyticsEvent>? roomEvents =
@@ -228,12 +233,13 @@ class AnalyticsController extends BaseController {
   Future<List<SummaryAnalyticsEvent>> roomMemberAnalytics(
     Room room,
     TimeSpan timeSpan,
+    LanguageModel lang,
   ) async {
     // TODO switch to using list of futures
     final List<SummaryAnalyticsEvent> analyticsEvents = [];
     for (final participant in room.getParticipants()) {
       final Room? analyticsRoom = _pangeaController.matrixState.client
-          .analyticsRoomLocal(currentAnalyticsLang.langCode, participant.id);
+          .analyticsRoomLocal(lang.langCode, participant.id);
 
       if (analyticsRoom != null) {
         final roomEvents = await analyticsRoom.getAnalyticsEvents(
@@ -254,8 +260,9 @@ class AnalyticsController extends BaseController {
   Future<List<SummaryAnalyticsEvent>> spaceMemberAnalytics(
     Room space,
     TimeSpan timeSpan,
+    LanguageModel lang,
   ) async {
-    final memberEvents = await roomMemberAnalytics(space, timeSpan);
+    final memberEvents = await roomMemberAnalytics(space, timeSpan, lang);
     final List<String> spaceChildrenIds = space.allSpaceChildRoomIds;
 
     // filter out the analyics events that don't belong to the space's children
@@ -273,6 +280,7 @@ class AnalyticsController extends BaseController {
   ChartAnalyticsModel? getAnalyticsLocal({
     required TimeSpan timeSpan,
     required AnalyticsSelected defaultSelected,
+    required LanguageModel lang,
     AnalyticsSelected? selected,
     bool forceUpdate = false,
     bool updateExpired = false,
@@ -285,7 +293,7 @@ class AnalyticsController extends BaseController {
           (e.defaultSelected.type == defaultSelected.type) &&
           (e.selected?.id == selected?.id) &&
           (e.selected?.type == selected?.type) &&
-          (e.langCode == currentAnalyticsLang.langCode),
+          (e.langCode == lang.langCode),
     );
 
     if (index != -1) {
@@ -306,6 +314,7 @@ class AnalyticsController extends BaseController {
     required ChartAnalyticsModel chartAnalyticsModel,
     required AnalyticsSelected defaultSelected,
     required TimeSpan timeSpan,
+    required LanguageModel lang,
     AnalyticsSelected? selected,
   }) {
     _cachedAnalyticsModels.add(
@@ -314,7 +323,7 @@ class AnalyticsController extends BaseController {
         chartAnalyticsModel: chartAnalyticsModel,
         defaultSelected: defaultSelected,
         selected: selected,
-        langCode: currentAnalyticsLang.langCode,
+        langCode: lang.langCode,
       ),
     );
   }
@@ -469,11 +478,13 @@ class AnalyticsController extends BaseController {
     required String id,
     required AnalyticsEntryType type,
     TimeSpan? timeSpan,
+    LanguageModel? lang,
   }) async {
     debugPrint("get analytics new");
     return await getAnalytics(
       defaultSelected: AnalyticsSelected(id, type, ''),
       timeSpan: timeSpan,
+      lang: lang,
     );
   }
 
@@ -488,10 +499,13 @@ class AnalyticsController extends BaseController {
     AnalyticsSelected? selected,
     bool forceUpdate = false,
     TimeSpan? timeSpan,
+    LanguageModel? lang,
   }) async {
     try {
       await _pangeaController.matrixState.client.roomsLoading;
+
       timeSpan ??= currentAnalyticsTimeSpan;
+      lang ??= currentAnalyticsLang;
 
       // if the user is looking at room or space analytics, then fetch the space
       Room? room;
@@ -509,6 +523,7 @@ class AnalyticsController extends BaseController {
         case AnalyticsEntryType.student:
           lastUpdated = await userAnalyticsLastUpdated(
             PangeaEventTypes.summaryAnalytics,
+            lang: lang,
             userID: defaultSelected.id,
           );
           break;
@@ -517,6 +532,7 @@ class AnalyticsController extends BaseController {
           lastUpdated = await participantAnalyticsLastUpdated(
             PangeaEventTypes.summaryAnalytics,
             room!,
+            lang: lang,
           );
           break;
         default:
@@ -531,6 +547,7 @@ class AnalyticsController extends BaseController {
         forceUpdate: forceUpdate,
         lastUpdated: lastUpdated,
         timeSpan: timeSpan,
+        lang: lang,
       );
       if (local != null && !forceUpdate) {
         debugPrint("returning local analytics");
@@ -544,6 +561,7 @@ class AnalyticsController extends BaseController {
         case AnalyticsEntryType.student:
           summaryEvents = await userSummaryAnalytics(
             userID: defaultSelected.id,
+            lang: lang,
             timeSpan: timeSpan,
           );
           break;
@@ -551,12 +569,14 @@ class AnalyticsController extends BaseController {
           summaryEvents = await roomMemberAnalytics(
             room!,
             timeSpan,
+            lang,
           );
           break;
         case AnalyticsEntryType.space:
           summaryEvents = await spaceMemberAnalytics(
             room!,
             timeSpan,
+            lang,
           );
           break;
         default:
@@ -589,6 +609,7 @@ class AnalyticsController extends BaseController {
         defaultSelected: defaultSelected,
         selected: selected,
         timeSpan: timeSpan,
+        lang: lang,
       );
 
       return newModel;
@@ -607,11 +628,12 @@ class AnalyticsController extends BaseController {
   Future<List<ConstructAnalyticsEvent>> allUserConstructs({
     required ConstructTypeEnum constructType,
     required TimeSpan timeSpan,
+    required LanguageModel lang,
     String? userID,
   }) async {
     userID ??= _pangeaController.matrixState.client.userID;
     final Room? analyticsRoom = _pangeaController.matrixState.client
-        .analyticsRoomLocal(currentAnalyticsLang.langCode, userID);
+        .analyticsRoomLocal(lang.langCode, userID);
     if (analyticsRoom == null) return [];
 
     final List<ConstructAnalyticsEvent>? roomEvents =
@@ -646,11 +668,12 @@ class AnalyticsController extends BaseController {
     Room room,
     ConstructTypeEnum constructType,
     TimeSpan timeSpan,
+    LanguageModel lang,
   ) async {
     final List<ConstructAnalyticsEvent> constructEvents = [];
     for (final student in room.nonAdminsLocal) {
       final Room? analyticsRoom = _pangeaController.matrixState.client
-          .analyticsRoomLocal(currentAnalyticsLang.langCode, student.id);
+          .analyticsRoomLocal(lang.langCode, student.id);
       if (analyticsRoom != null) {
         final List<ConstructAnalyticsEvent>? roomEvents =
             (await analyticsRoom.getAnalyticsEvents(
@@ -678,9 +701,10 @@ class AnalyticsController extends BaseController {
     Room room,
     ConstructTypeEnum constructType,
     TimeSpan timeSpan,
+    LanguageModel lang,
   ) async {
     final List<ConstructAnalyticsEvent> memberEvents =
-        await allRoomMemberConstructs(room, constructType, timeSpan);
+        await allRoomMemberConstructs(room, constructType, timeSpan, lang);
 
     final List<String> spaceChildrenIds = room.allSpaceChildRoomIds;
     final List<ConstructAnalyticsEvent> allConstructs = [];
@@ -767,6 +791,7 @@ class AnalyticsController extends BaseController {
     required TimeSpan timeSpan,
     required ConstructTypeEnum constructType,
     required AnalyticsSelected defaultSelected,
+    required LanguageModel lang,
     AnalyticsSelected? selected,
     DateTime? lastUpdated,
   }) {
@@ -778,7 +803,7 @@ class AnalyticsController extends BaseController {
           e.defaultSelected.type == defaultSelected.type &&
           e.selected?.id == selected?.id &&
           e.selected?.type == selected?.type &&
-          e.langCode == currentAnalyticsLang.langCode,
+          e.langCode == lang.langCode,
     );
 
     if (index > -1) {
@@ -798,6 +823,7 @@ class AnalyticsController extends BaseController {
     required List<ConstructAnalyticsEvent> events,
     required AnalyticsSelected defaultSelected,
     required TimeSpan timeSpan,
+    required LanguageModel lang,
     AnalyticsSelected? selected,
   }) {
     final entry = ConstructCacheEntry(
@@ -806,7 +832,7 @@ class AnalyticsController extends BaseController {
       events: List.from(events),
       defaultSelected: defaultSelected,
       selected: selected,
-      langCode: currentAnalyticsLang.langCode,
+      langCode: lang.langCode,
     );
     _cachedConstructs.add(entry);
   }
@@ -863,6 +889,7 @@ class AnalyticsController extends BaseController {
     required String id,
     required AnalyticsEntryType type,
     TimeSpan? timeSpan,
+    LanguageModel? lang,
   }) async {
     return await getConstructs(
       constructType: constructType,
@@ -877,13 +904,16 @@ class AnalyticsController extends BaseController {
     required ConstructTypeEnum constructType,
     required AnalyticsSelected defaultSelected,
     TimeSpan? timeSpan,
+    LanguageModel? lang,
     AnalyticsSelected? selected,
     bool removeIT = true,
     bool forceUpdate = false,
   }) async {
     debugPrint("getting constructs");
     await _pangeaController.matrixState.client.roomsLoading;
+
     timeSpan ??= currentAnalyticsTimeSpan;
+    lang ??= currentAnalyticsLang;
 
     // if getting analytics for a set of participants in a room (that is,
     // if the primary filter is a space or a room), get the room and load
@@ -911,6 +941,7 @@ class AnalyticsController extends BaseController {
       case AnalyticsEntryType.student:
         lastUpdated = await userAnalyticsLastUpdated(
           PangeaEventTypes.construct,
+          lang: lang,
           userID: defaultSelected.id,
         );
         break;
@@ -919,6 +950,7 @@ class AnalyticsController extends BaseController {
         lastUpdated = await participantAnalyticsLastUpdated(
           PangeaEventTypes.construct,
           room!,
+          lang: lang,
         );
         break;
       default:
@@ -935,6 +967,7 @@ class AnalyticsController extends BaseController {
       defaultSelected: defaultSelected,
       selected: selected,
       lastUpdated: lastUpdated,
+      lang: lang,
     );
     if (local != null && !forceUpdate) {
       debugPrint("returning local constructs");
@@ -949,6 +982,7 @@ class AnalyticsController extends BaseController {
           userID: defaultSelected.id,
           constructType: constructType,
           timeSpan: timeSpan,
+          lang: lang,
         );
         break;
       case AnalyticsEntryType.room:
@@ -956,6 +990,7 @@ class AnalyticsController extends BaseController {
           room!,
           constructType,
           timeSpan,
+          lang,
         );
         break;
       case AnalyticsEntryType.space:
@@ -963,6 +998,7 @@ class AnalyticsController extends BaseController {
           room!,
           constructType,
           timeSpan,
+          lang,
         );
         break;
       default:
@@ -1003,6 +1039,7 @@ class AnalyticsController extends BaseController {
         defaultSelected: defaultSelected,
         selected: selected,
         timeSpan: timeSpan,
+        lang: lang,
       );
     }
 

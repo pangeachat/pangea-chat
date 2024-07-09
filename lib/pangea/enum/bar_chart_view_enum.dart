@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 enum BarChartViewSelection {
   messages,
@@ -24,7 +25,7 @@ extension BarChartViewSelectionExtension on BarChartViewSelection {
       case BarChartViewSelection.messages:
         return Icons.chat_bubble;
       case BarChartViewSelection.vocab:
-        return Icons.abc;
+        return Symbols.dictionary;
       case BarChartViewSelection.grammar:
         return Icons.spellcheck_outlined;
     }

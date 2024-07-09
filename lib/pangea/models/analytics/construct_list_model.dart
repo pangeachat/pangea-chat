@@ -19,16 +19,20 @@ class ConstructListModel {
 
   /// A list of ConstructUses, each of which contains a lemma and
   /// a list of uses, sorted by the number of uses
-  List<ConstructUses> get constructs {
-    final List<OneConstructUse> filtered = List.from(constructEvents)
-        .map((event) => event.content.uses)
-        .expand((uses) => uses)
-        .cast<OneConstructUse>()
-        .where((use) => use.constructType == type)
-        .toList();
+  List<ConstructUses> get constructs => constructsFromUses(uses);
 
+  /// A list of all uses of the construct type
+  List<OneConstructUse> get uses => constructEvents
+      .map((event) => event.content.uses)
+      .expand((uses) => uses)
+      .cast<OneConstructUse>()
+      .where((use) => use.constructType == type)
+      .toList();
+
+  /// Takes a list of uses and sorts them into a list of ConstructUses
+  List<ConstructUses> constructsFromUses(List<OneConstructUse> uses) {
     final Map<String, List<OneConstructUse>> lemmaToUses = {};
-    for (final use in filtered) {
+    for (final use in uses) {
       if (use.lemma == null) continue;
       lemmaToUses[use.lemma!] ??= [];
       lemmaToUses[use.lemma!]!.add(use);
@@ -51,5 +55,15 @@ class ConstructListModel {
     });
 
     return constructUses;
+  }
+
+  // setting this up for accept multiple kinds of filters
+  // in the future, but for now, only need to filter by eventID
+
+  /// Given a filter, returns a list of ConstructUses that match the filter
+  List<ConstructUses> filteredUses({String? eventID}) {
+    final List<OneConstructUse> filtered =
+        uses.where((use) => use.msgId == eventID).toList();
+    return constructsFromUses(filtered);
   }
 }
