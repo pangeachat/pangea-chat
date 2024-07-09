@@ -4126,5 +4126,12 @@
     "placeholders": {
       "points": {}
     }
-  }
+  },
+  "l1TranslationBody": "Oops! It looks like this message wasn't sent in your target language. Messages not sent in your target language will not be translated.",
+  "continueText": "Continue",
+  "deleteSubscriptionWarningTitle": "You have an active subscription",
+  "deleteSubscriptionWarningBody": "Deleting your account will not automatically cancel your subscription.",
+  "manageSubscription": "Manage Subscription",
+  "createSpace": "Create space",
+  "createChat": "Create chat"
 }

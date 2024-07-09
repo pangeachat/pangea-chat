@@ -100,4 +100,10 @@ extension GeneralInfoClientExtension on Client {
         (a, b) => langCounts[b]!.compareTo(langCounts[a]!),
       );
   }
+
+  String? _powerLevelName(int powerLevel, L10n l10n) => {
+        0: l10n.user,
+        50: l10n.moderator,
+        100: l10n.admin,
+      }[powerLevel];
 }

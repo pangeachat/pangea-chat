@@ -94,7 +94,12 @@ class UserBottomSheetView extends StatelessWidget {
           ),
           actions: [
             if (userId != client.userID &&
-                !client.ignoredUsers.contains(userId))
+                    !client.ignoredUsers.contains(userId)
+                    // #Pangea
+                    &&
+                    userId != BotName.byEnvironment
+                // Pangea#
+                )
               Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: IconButton(

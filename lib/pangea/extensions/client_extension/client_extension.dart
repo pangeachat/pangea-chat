@@ -13,6 +13,7 @@ import 'package:fluffychat/pangea/utils/bot_name.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
 
 part "client_analytics_extension.dart";
@@ -94,4 +95,7 @@ extension PangeaClient on Client {
 
   List<LanguageModel> targetLanguages({required List<String> userIDs}) =>
       _targetLanguages(userIDs: userIDs);
+
+  String? powerLevelName(int powerLevel, L10n l10n) =>
+      _powerLevelName(powerLevel, l10n);
 }
