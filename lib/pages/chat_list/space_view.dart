@@ -618,7 +618,7 @@ class _SpaceViewState extends State<SpaceView> {
                         mxContent: rootSpace.avatar,
                         name: displayname,
                         // #Pangea
-                        littleIcon: rootSpace.roomTypeIcon,
+                        // littleIcon: rootSpace.roomTypeIcon,
                         // Pangea#
                       ),
                       title: Text(
@@ -891,7 +891,7 @@ class _SpaceViewState extends State<SpaceView> {
                             mxContent: spaceChild.avatarUrl,
                             name: spaceChild.name,
                             //#Pangea
-                            littleIcon: room?.roomTypeIcon,
+                            // littleIcon: room?.roomTypeIcon,
                             //Pangea#
                           ),
                           title: Row(

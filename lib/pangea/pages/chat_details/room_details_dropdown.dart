@@ -5,7 +5,6 @@ import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_e
 import 'package:fluffychat/pangea/pages/class_settings/p_class_widgets/class_details_toggle_add_students_tile.dart';
 import 'package:fluffychat/pangea/pages/class_settings/p_class_widgets/class_invitation_buttons.dart';
 import 'package:fluffychat/pangea/pages/class_settings/p_class_widgets/room_capacity_button.dart';
-import 'package:fluffychat/pangea/pages/class_settings/p_class_widgets/room_rules_editor.dart';
 import 'package:fluffychat/pangea/utils/lock_room.dart';
 import 'package:fluffychat/pangea/widgets/class/add_space_toggles.dart';
 import 'package:fluffychat/widgets/matrix.dart';
@@ -46,7 +45,7 @@ class RoomDetailsDropdownState extends State<RoomDetailsDropdown> {
           leading: CircleAvatar(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             foregroundColor: iconColor,
-            child: const Icon(Icons.chat_bubble_outline),
+            child: const Icon(Icons.settings_outlined),
           ),
           trailing: Icon(
             isOpen
@@ -57,10 +56,10 @@ class RoomDetailsDropdownState extends State<RoomDetailsDropdown> {
             setState(() => isOpen = !isOpen);
           },
         ),
-        Divider(
-          height: 1,
-          color: Theme.of(context).dividerColor,
-        ),
+        // Divider(
+        //   height: 1,
+        //   color: Theme.of(context).dividerColor,
+        // ),
         if (isOpen) ...[
           if (room!.isSpace && room!.isRoomAdmin)
             SpaceDetailsToggleAddStudentsTile(controller: widget.controller),
@@ -75,11 +74,11 @@ class RoomDetailsDropdownState extends State<RoomDetailsDropdown> {
               height: 1,
               color: Theme.of(context).dividerColor,
             ),
-          if (room!.pangeaRoomRules != null)
-            RoomRulesEditor(
-              roomId: room!.id,
-              startOpen: false,
-            ),
+          // if (room!.pangeaRoomRules != null)
+          //   RoomRulesEditor(
+          //     roomId: room!.id,
+          //     startOpen: false,
+          //   ),
           if (!room!.isDirectChat && !room!.isSpace && room!.isRoomAdmin)
             ListTile(
               title: Text(
