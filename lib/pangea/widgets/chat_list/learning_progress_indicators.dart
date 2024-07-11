@@ -1,9 +1,10 @@
 import 'package:fluffychat/config/app_config.dart';
+import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
 import 'package:fluffychat/pangea/enum/progress_indicators_enum.dart';
 import 'package:fluffychat/pangea/pages/analytics/base_analytics.dart';
-import 'package:fluffychat/pangea/utils/bot_style.dart';
+import 'package:fluffychat/utils/string_color.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
@@ -107,72 +108,88 @@ class LearningProgressIndicatorsState
 
   int get level => xpPoints ~/ 100;
 
+  Widget get avatar => FutureBuilder(
+        future: _pangeaController.matrixState.client.getProfileFromUserId(
+          _pangeaController.matrixState.client.userID!,
+        ),
+        builder: (context, snapshot) {
+          final mxid =
+              Matrix.of(context).client.userID ?? L10n.of(context)!.user;
+          return Avatar(
+            name: snapshot.data?.displayName ?? mxid.localpart ?? mxid,
+            mxContent: snapshot.data?.avatarUrl,
+          );
+        },
+      );
+
+  Widget get progressBar => LinearProgressIndicator(
+        value: (xpPoints % 100) / 100,
+        color: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
+        minHeight: 15,
+        borderRadius: BorderRadius.circular(AppConfig.borderRadius),
+      );
+
+  Widget get indicators => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: ProgressIndicatorEnum.values
+            .where(
+              (indicator) => indicator != ProgressIndicatorEnum.level,
+            )
+            .map(
+              (indicator) => ProgressIndicatorView(
+                points: getProgressPoints(indicator),
+                onTap: () {},
+                progressIndicator: indicator,
+              ),
+            )
+            .toList(),
+      );
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 10,
+        horizontal: 36,
+        vertical: 16,
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          FutureBuilder(
-            future: _pangeaController.matrixState.client.getProfileFromUserId(
-              _pangeaController.matrixState.client.userID!,
-            ),
-            builder: (context, snapshot) {
-              final mxid =
-                  Matrix.of(context).client.userID ?? L10n.of(context)!.user;
-              return Avatar(
-                name: snapshot.data?.displayName ?? mxid.localpart ?? mxid,
-                mxContent: snapshot.data?.avatarUrl,
-              );
-            },
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              avatar,
+              Expanded(child: indicators),
+            ],
           ),
-          Expanded(
-            child: Column(
+          const SizedBox(height: 4),
+          SizedBox(
+            height: 35,
+            child: Stack(
+              alignment: Alignment.centerLeft,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                Positioned(
+                  right: 0,
                   child: Row(
                     children: [
-                      Text(
-                        L10n.of(context)!.levelNumber(level.toString()),
-                        style: BotStyle.text(context),
-                      ),
-                      const SizedBox(width: 30),
-                      Text(
-                        L10n.of(context)!.xpPoints(xpPoints.toString()),
-                        style: BotStyle.text(context),
+                      SizedBox(
+                        width: FluffyThemes.columnWidth - (36 * 2) - 25,
+                        child: progressBar,
                       ),
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: LinearProgressIndicator(
-                    value: (xpPoints % 100) / 100,
-                    color: Theme.of(context).colorScheme.primary,
-                    backgroundColor: Theme.of(context).colorScheme.onPrimary,
-                    minHeight: 15,
-                    borderRadius: BorderRadius.circular(AppConfig.borderRadius),
+                Positioned(
+                  left: 0,
+                  child: CircleAvatar(
+                    backgroundColor: "$level $xpPoints".lightColorAvatar,
+                    radius: 16,
+                    child: Text(
+                      "$level",
+                      style: const TextStyle(color: Colors.white),
+                    ),
                   ),
-                ),
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  children: ProgressIndicatorEnum.values
-                      .where(
-                        (indicator) => indicator != ProgressIndicatorEnum.level,
-                      )
-                      .map(
-                        (indicator) => ProgressIndicatorView(
-                          points: getProgressPoints(indicator),
-                          onTap: () {},
-                          progressIndicator: indicator,
-                        ),
-                      )
-                      .toList(),
                 ),
               ],
             ),
@@ -198,7 +215,7 @@ class ProgressIndicatorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
       child: Tooltip(
         message: progressIndicator.tooltip(context),
         child: InkWell(
