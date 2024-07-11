@@ -103,7 +103,7 @@ class RoomDetailsDropdownState extends State<RoomDetailsDropdown> {
                 '/rooms/${room!.id}/details/permissions',
               ),
             ),
-          RoomCapacityButton(
+          RoomCapacityListTile(
             room: room!,
             controller: widget.controller,
           ),

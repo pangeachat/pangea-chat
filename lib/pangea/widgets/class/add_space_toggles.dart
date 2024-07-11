@@ -194,11 +194,11 @@ class AddToSpaceState extends State<AddToSpaceToggles> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          subtitle: Text(
-            widget.spaceMode || (room?.isSpace ?? false)
-                ? L10n.of(context)!.addSpaceToSpaceDesc
-                : L10n.of(context)!.addChatToSpaceDesc,
-          ),
+          // subtitle: Text(
+          //   widget.spaceMode || (room?.isSpace ?? false)
+          //       ? L10n.of(context)!.addSpaceToSpaceDesc
+          //       : L10n.of(context)!.addChatToSpaceDesc,
+          // ),
           leading: CircleAvatar(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             foregroundColor: Theme.of(context).textTheme.bodyLarge!.color,
@@ -214,7 +214,18 @@ class AddToSpaceState extends State<AddToSpaceToggles> {
           },
         ),
         if (isOpen) ...[
-          const Divider(height: 1),
+          // const Divider(height: 1),
+          // move subTitle text to a ListTile that is only shown when isOpen
+          ListTile(
+            title: Text(
+              widget.spaceMode || (room?.isSpace ?? false)
+                  ? L10n.of(context)!.addSpaceToSpaceDesc
+                  : L10n.of(context)!.addChatToSpaceDesc,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+          ),
           possibleParents.isNotEmpty
               ? Column(
                   children: [
@@ -255,6 +266,7 @@ class AddToSpaceState extends State<AddToSpaceToggles> {
                       L10n.of(context)!.inNoSpaces,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.secondary,
+                        fontStyle: FontStyle.italic,
                       ),
                     ),
                   ),

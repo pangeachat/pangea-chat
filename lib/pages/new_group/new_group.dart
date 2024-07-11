@@ -51,8 +51,8 @@ class NewGroupController extends State<NewGroup> {
   // #Pangea
   PangeaController pangeaController = MatrixState.pangeaController;
   final GlobalKey<AddToSpaceState> addToSpaceKey = GlobalKey<AddToSpaceState>();
-  final GlobalKey<RoomCapacityButtonState> addCapacityKey =
-      GlobalKey<RoomCapacityButtonState>();
+  final GlobalKey<RoomCapacityListTileState> addCapacityKey =
+      GlobalKey<RoomCapacityListTileState>();
   BotOptionsModel? botOptions;
 
   ChatTopic chatTopic = ChatTopic.empty;

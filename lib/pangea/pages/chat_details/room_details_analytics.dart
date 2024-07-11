@@ -67,6 +67,7 @@ class RoomDetailsAnalyticsState extends State<RoomDetailsAnalytics> {
               fontWeight: FontWeight.bold,
             ),
           ),
+          titleAlignment: ListTileTitleAlignment.center,
           leading: CircleAvatar(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             foregroundColor: Theme.of(context).textTheme.bodyLarge!.color,
@@ -81,11 +82,11 @@ class RoomDetailsAnalyticsState extends State<RoomDetailsAnalytics> {
             setState(() => isOpen = !isOpen);
           },
         ),
-        if (isOpen)
-          Divider(
-            height: 1,
-            color: Theme.of(context).dividerColor,
-          ),
+        // if (!isOpen)
+        //   Divider(
+        //     height: 1,
+        //     color: Theme.of(context).dividerColor,
+        //   ),
         if (isOpen)
           Container(
             constraints: const BoxConstraints(maxHeight: 400),

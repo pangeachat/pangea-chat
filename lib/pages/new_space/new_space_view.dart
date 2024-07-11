@@ -117,7 +117,7 @@ class NewSpaceView extends StatelessWidget {
             // ),
             // const SizedBox(height: 16),
 
-            RoomCapacityButton(
+            RoomCapacityListTile(
               key: controller.addCapacityKey,
             ),
             // commenting out language settings in spaces for now

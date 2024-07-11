@@ -97,7 +97,7 @@ class NewGroupView extends StatelessWidget {
             //     ),
             //   ),
             // ),
-            RoomCapacityButton(
+            RoomCapacityListTile(
               key: controller.addCapacityKey,
             ),
             ListTile(
