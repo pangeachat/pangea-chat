@@ -47,8 +47,8 @@ class SettingsLearningController extends State<SettingsLearning> {
           return profile..toolSettings.interactiveGrammar = value;
         case ToolSetting.immersionMode:
           return profile..toolSettings.immersionMode = value;
-        case ToolSetting.definitions:
-          return profile..toolSettings.definitions = value;
+        // case ToolSetting.definitions:
+        //   return profile..toolSettings.definitions = value;
         case ToolSetting.autoIGC:
           return profile..toolSettings.autoIGC = value;
       }
@@ -64,8 +64,8 @@ class SettingsLearningController extends State<SettingsLearning> {
         return toolSettings.interactiveGrammar;
       case ToolSetting.immersionMode:
         return toolSettings.immersionMode;
-      case ToolSetting.definitions:
-        return toolSettings.definitions;
+      // case ToolSetting.definitions:
+      //   return toolSettings.definitions;
       case ToolSetting.autoIGC:
         return toolSettings.autoIGC;
     }

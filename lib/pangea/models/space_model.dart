@@ -120,9 +120,9 @@ class PangeaRoomRules {
       case ToolSetting.immersionMode:
         immersionMode = value;
         break;
-      case ToolSetting.definitions:
-        definitions = value;
-        break;
+      // case ToolSetting.definitions:
+      //   definitions = value;
+      //   break;
       // case ToolSetting.translations:
       //   translations = value;
       //   break;
@@ -197,8 +197,8 @@ class PangeaRoomRules {
         return interactiveGrammar;
       case ToolSetting.immersionMode:
         return immersionMode;
-      case ToolSetting.definitions:
-        return definitions;
+      // case ToolSetting.definitions:
+      //   return definitions;
       // case ToolSetting.translations:
       //   return translations;
       case ToolSetting.autoIGC:
@@ -229,7 +229,7 @@ enum ToolSetting {
   interactiveTranslator,
   interactiveGrammar,
   immersionMode,
-  definitions,
+  // definitions,
   // translations,
   autoIGC,
 }
@@ -243,8 +243,8 @@ extension SettingCopy on ToolSetting {
         return L10n.of(context)!.interactiveGrammarSliderHeader;
       case ToolSetting.immersionMode:
         return L10n.of(context)!.toggleImmersionMode;
-      case ToolSetting.definitions:
-        return L10n.of(context)!.definitionsToolName;
+      // case ToolSetting.definitions:
+      //   return L10n.of(context)!.definitionsToolName;
       // case ToolSetting.translations:
       //   return L10n.of(context)!.messageTranslationsToolName;
       case ToolSetting.autoIGC:
@@ -261,8 +261,8 @@ extension SettingCopy on ToolSetting {
         return L10n.of(context)!.igcToggleDescription;
       case ToolSetting.immersionMode:
         return L10n.of(context)!.toggleImmersionModeDesc;
-      case ToolSetting.definitions:
-        return L10n.of(context)!.definitionsToolDescription;
+      // case ToolSetting.definitions:
+      //   return L10n.of(context)!.definitionsToolDescription;
       // case ToolSetting.translations:
       //   return L10n.of(context)!.translationsToolDescrption;
       case ToolSetting.autoIGC:

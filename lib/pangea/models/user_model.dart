@@ -138,7 +138,7 @@ class UserToolSettings {
         interactiveGrammar:
             json[ToolSetting.interactiveGrammar.toString()] ?? true,
         immersionMode: json[ToolSetting.immersionMode.toString()] ?? false,
-        definitions: json[ToolSetting.definitions.toString()] ?? true,
+        // definitions: json[ToolSetting.definitions.toString()] ?? true,
         autoIGC: json[ToolSetting.autoIGC.toString()] ?? false,
       );
 
@@ -147,7 +147,7 @@ class UserToolSettings {
     data[ToolSetting.interactiveTranslator.toString()] = interactiveTranslator;
     data[ToolSetting.interactiveGrammar.toString()] = interactiveGrammar;
     data[ToolSetting.immersionMode.toString()] = immersionMode;
-    data[ToolSetting.definitions.toString()] = definitions;
+    // data[ToolSetting.definitions.toString()] = definitions;
     data[ToolSetting.autoIGC.toString()] = autoIGC;
     return data;
   }
@@ -169,9 +169,9 @@ class UserToolSettings {
       immersionMode: (accountData[ToolSetting.immersionMode.toString()]
               ?.content[ToolSetting.immersionMode.toString()] as bool?) ??
           false,
-      definitions: (accountData[ToolSetting.definitions.toString()]
-              ?.content[ToolSetting.definitions.toString()] as bool?) ??
-          true,
+      // definitions: (accountData[ToolSetting.definitions.toString()]
+      //         ?.content[ToolSetting.definitions.toString()] as bool?) ??
+      //     true,
       autoIGC: (accountData[ToolSetting.autoIGC.toString()]
               ?.content[ToolSetting.autoIGC.toString()] as bool?) ??
           false,

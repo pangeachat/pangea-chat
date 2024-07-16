@@ -173,7 +173,7 @@ class ChatEventList extends StatelessWidget {
                 selectedDisplayLang:
                     controller.choreographer.messageOptions.selectedDisplayLang,
                 immersionMode: controller.choreographer.immersionMode,
-                definitions: controller.choreographer.definitionsEnabled,
+                // definitions: controller.choreographer.definitionsEnabled,
                 controller: controller,
                 // Pangea#
                 selected: controller.selectedEvents

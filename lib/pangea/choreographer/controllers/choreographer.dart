@@ -517,11 +517,11 @@ class Choreographer {
     return pangeaController.userController.profile.userSettings.itAutoPlay;
   }
 
-  bool get definitionsEnabled =>
-      pangeaController.permissionsController.isToolEnabled(
-        ToolSetting.definitions,
-        chatController.room,
-      );
+  // bool get definitionsEnabled =>
+  //     pangeaController.permissionsController.isToolEnabled(
+  //       ToolSetting.definitions,
+  //       chatController.room,
+  //     );
 
   bool get immersionMode =>
       pangeaController.permissionsController.isToolEnabled(

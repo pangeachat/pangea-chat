@@ -41,7 +41,7 @@ class Message extends StatelessWidget {
   // #Pangea
   final LanguageModel? selectedDisplayLang;
   final bool immersionMode;
-  final bool definitions;
+  // final bool definitions;
   final ChatController controller;
   // Pangea#
   final Color? avatarPresenceBackgroundColor;
@@ -66,7 +66,7 @@ class Message extends StatelessWidget {
     // #Pangea
     required this.selectedDisplayLang,
     required this.immersionMode,
-    required this.definitions,
+    // required this.definitions,
     required this.controller,
     // Pangea#
     super.key,

@@ -106,9 +106,9 @@ class PermissionsController extends BaseController {
       case ToolSetting.immersionMode:
         return _pangeaController
             .userController.profile.toolSettings.immersionMode;
-      case ToolSetting.definitions:
-        return _pangeaController
-            .userController.profile.toolSettings.definitions;
+      // case ToolSetting.definitions:
+      //   return _pangeaController
+      //       .userController.profile.toolSettings.definitions;
       case ToolSetting.autoIGC:
         return _pangeaController.userController.profile.toolSettings.autoIGC;
       default:
