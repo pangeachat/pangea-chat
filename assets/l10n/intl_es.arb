@@ -4737,5 +4737,7 @@
         "description": "El número de compilación de la aplicación."
       }
     }
-  }
+  },
+  "createGroupChat": "Crear Chat Grupal",
+  "groupChatName": "Nombre del chat grupal"
 }

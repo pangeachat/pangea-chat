@@ -25,12 +25,12 @@ class NewGroupView extends StatelessWidget {
             onPressed: controller.loading ? null : Navigator.of(context).pop,
           ),
         ),
-        title: Text(L10n.of(context)!.createGroup),
+        title: Text(L10n.of(context)!.createGroupChat),
       ),
       // #Pangea
       floatingActionButton: FloatingActionButton.extended(
         onPressed: controller.loading ? null : controller.submitAction,
-        icon: controller.loading ? null : const Icon(Icons.chat_bubble_outline),
+        icon: controller.loading ? null : const Icon(Icons.group_add_outlined),
         label: controller.loading
             ? const CircularProgressIndicator.adaptive()
             : Text(L10n.of(context)!.createChat),
@@ -74,7 +74,7 @@ class NewGroupView extends StatelessWidget {
                       readOnly: controller.loading,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.people_outlined),
-                        hintText: L10n.of(context)!.groupName,
+                        hintText: L10n.of(context)!.groupChatName,
                       ),
                     ),
                   ),
