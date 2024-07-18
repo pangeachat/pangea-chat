@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
-import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
@@ -10,9 +9,8 @@ import 'package:fluffychat/pangea/models/analytics/construct_list_model.dart';
 import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
 import 'package:fluffychat/pangea/models/pangea_match_model.dart';
 import 'package:fluffychat/pangea/pages/analytics/base_analytics.dart';
+import 'package:fluffychat/pangea/pages/analytics/construct_message.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
-import 'package:fluffychat/utils/date_time_extension.dart';
-import 'package:fluffychat/utils/string_color.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
@@ -386,193 +384,6 @@ class ConstructMessagesDialog extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class ConstructMessage extends StatelessWidget {
-  final PangeaMessageEvent msgEvent;
-  final PangeaMatch errorMessage;
-  final String lemma;
-
-  const ConstructMessage({
-    super.key,
-    required this.msgEvent,
-    required this.errorMessage,
-    required this.lemma,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final String? chosen = errorMessage.match.choices
-        ?.firstWhereOrNull(
-          (element) => element.selected == true,
-        )
-        ?.value;
-
-    if (chosen == null) {
-      return const SizedBox.shrink();
-    }
-
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Row(
-        children: [
-          ConstructMessageMetadata(msgEvent: msgEvent),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FutureBuilder<User?>(
-                      future: msgEvent.event.fetchSenderUser(),
-                      builder: (context, snapshot) {
-                        final displayname = snapshot.data?.calcDisplayname() ??
-                            msgEvent.event.senderFromMemoryOrFallback
-                                .calcDisplayname();
-                        return Text(
-                          displayname,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: (Theme.of(context).brightness ==
-                                    Brightness.light
-                                ? displayname.color
-                                : displayname.lightColorText),
-                          ),
-                        );
-                      },
-                    ),
-                    ConstructMessageBubble(
-                      errorText: errorMessage.match.fullText,
-                      replacementText: chosen,
-                      start: errorMessage.match.offset,
-                      end:
-                          errorMessage.match.offset + errorMessage.match.length,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ConstructMessageBubble extends StatelessWidget {
-  final String errorText;
-  final String replacementText;
-  final int start;
-  final int end;
-
-  const ConstructMessageBubble({
-    super.key,
-    required this.errorText,
-    required this.replacementText,
-    required this.start,
-    required this.end,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final defaultStyle = TextStyle(
-      color: Theme.of(context).colorScheme.onSurface,
-      fontSize: AppConfig.messageFontSize * AppConfig.fontSizeFactor,
-      height: 1.3,
-    );
-
-    return IntrinsicWidth(
-      child: Material(
-        color: Theme.of(context).colorScheme.primaryContainer,
-        clipBehavior: Clip.antiAlias,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(4),
-            topRight: Radius.circular(AppConfig.borderRadius),
-            bottomLeft: Radius.circular(AppConfig.borderRadius),
-            bottomRight: Radius.circular(AppConfig.borderRadius),
-          ),
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(
-              AppConfig.borderRadius,
-            ),
-          ),
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 8,
-          ),
-          child: RichText(
-            text: (end == null)
-                ? TextSpan(
-                    text: errorText,
-                    style: defaultStyle,
-                  )
-                : TextSpan(
-                    children: [
-                      TextSpan(
-                        text: errorText.substring(0, start),
-                        style: defaultStyle,
-                      ),
-                      TextSpan(
-                        text: errorText.substring(start, end),
-                        style: defaultStyle.merge(
-                          TextStyle(
-                            backgroundColor: Colors.red.withOpacity(0.25),
-                            decoration: TextDecoration.lineThrough,
-                            decorationThickness: 2.5,
-                          ),
-                        ),
-                      ),
-                      const TextSpan(text: " "),
-                      TextSpan(
-                        text: replacementText,
-                        style: defaultStyle.merge(
-                          TextStyle(
-                            backgroundColor: Colors.green.withOpacity(0.25),
-                          ),
-                        ),
-                      ),
-                      TextSpan(
-                        text: errorText.substring(end),
-                        style: defaultStyle,
-                      ),
-                    ],
-                  ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ConstructMessageMetadata extends StatelessWidget {
-  final PangeaMessageEvent msgEvent;
-
-  const ConstructMessageMetadata({
-    super.key,
-    required this.msgEvent,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final String roomName = msgEvent.event.room.getLocalizedDisplayname();
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 0, 30, 0),
-      child: Column(
-        children: [
-          Text(
-            msgEvent.event.originServerTs.localizedTime(context),
-            style: TextStyle(fontSize: 13 * AppConfig.fontSizeFactor),
-          ),
-          Text(roomName),
-        ],
-      ),
     );
   }
 }

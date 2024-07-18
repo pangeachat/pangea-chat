@@ -4,6 +4,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../constants/pangea_event_types.dart';
 
+/// note that the lemma of construct is specified by the stateKey of the event
 class ConstructAnalyticsEvent extends AnalyticsEvent {
   ConstructAnalyticsEvent({required Event event}) : super(event: event) {
     if (event.type != PangeaEventTypes.construct) {

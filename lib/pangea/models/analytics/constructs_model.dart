@@ -107,6 +107,9 @@ class OneConstructUse {
     );
   }
 
+  /// [condensed] modifier was added to reduce the size of the JSON
+  /// but only makes sense in the previous context of these being saved
+  /// in events where the statekey was the lemma. This is no longer the case.
   Map<String, dynamic> toJson([bool condensed = false]) {
     final Map<String, String?> data = {
       'useType': useType.string,
