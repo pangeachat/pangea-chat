@@ -146,16 +146,20 @@ class ToolbarDisplayController {
     Widget overlayEntry;
     if (toolbar == null) return;
     try {
-      overlayEntry = Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: pangeaMessageEvent.ownMessage
-            ? CrossAxisAlignment.end
-            : CrossAxisAlignment.start,
-        children: [
-          toolbarUp ? toolbar! : overlayMessage,
-          const SizedBox(height: 6),
-          toolbarUp ? overlayMessage : toolbar!,
-        ],
+      overlayEntry = Container(
+        constraints:
+            BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 300),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: pangeaMessageEvent.ownMessage
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
+          children: [
+            toolbarUp ? toolbar! : overlayMessage,
+            const SizedBox(height: 6),
+            toolbarUp ? overlayMessage : toolbar!,
+          ],
+        ),
       );
     } catch (err) {
       debugger(when: kDebugMode);
@@ -167,23 +171,12 @@ class ToolbarDisplayController {
       context: context,
       child: overlayEntry,
       transformTargetId: targetId,
-      targetAnchor: pangeaMessageEvent.ownMessage
-          ? toolbarUp
-              ? Alignment.bottomRight
-              : Alignment.topRight
-          : toolbarUp
-              ? Alignment.bottomLeft
-              : Alignment.topLeft,
-      followerAnchor: pangeaMessageEvent.ownMessage
-          ? toolbarUp
-              ? Alignment.bottomRight
-              : Alignment.topRight
-          : toolbarUp
-              ? Alignment.bottomLeft
-              : Alignment.topLeft,
+      targetAnchor: Alignment.center,
+      followerAnchor: Alignment.center,
       backgroundColor: const Color.fromRGBO(0, 0, 0, 1).withAlpha(100),
       closePrevOverlay:
           MatrixState.pangeaController.subscriptionController.isSubscribed,
+      centered: true,
     );
 
     if (MatrixState.pAnyState.entries.isNotEmpty) {
