@@ -13,7 +13,6 @@ import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../../enum/message_mode_enum.dart';
 import '../../models/pangea_match_model.dart';
 
 class PangeaRichText extends StatefulWidget {
@@ -151,7 +150,7 @@ class PangeaRichTextState extends State<PangeaRichText> {
         widget.toolbarController?.toolbar?.textSelection
             .onTextSelection(selection);
       },
-      onTap: () => widget.toolbarController?.showToolbar(context),
+      // onTap: () => widget.toolbarController?.showToolbar(context),
       enableInteractiveSelection:
           widget.toolbarController?.highlighted ?? false,
       contextMenuBuilder: (context, state) =>
@@ -160,14 +159,14 @@ class PangeaRichTextState extends State<PangeaRichText> {
               : MessageContextMenu.contextMenuOverride(
                   context: context,
                   textSelection: state,
-                  onDefine: () => widget.toolbarController?.showToolbar(
-                    context,
-                    mode: MessageMode.definition,
-                  ),
-                  onListen: () => widget.toolbarController?.showToolbar(
-                    context,
-                    mode: MessageMode.textToSpeech,
-                  ),
+                  // onDefine: () => widget.toolbarController?.showToolbar(
+                  //   context,
+                  //   mode: MessageMode.definition,
+                  // ),
+                  // onListen: () => widget.toolbarController?.showToolbar(
+                  //   context,
+                  //   mode: MessageMode.textToSpeech,
+                  // ),
                 ),
       TextSpan(
         text: textSpan,

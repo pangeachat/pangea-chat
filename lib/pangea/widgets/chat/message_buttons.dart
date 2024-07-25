@@ -11,10 +11,10 @@ class MessageButtons extends StatelessWidget {
   });
 
   void showActivity(BuildContext context) {
-    toolbarController?.showToolbar(
-      context,
-      mode: MessageMode.practiceActivity,
-    );
+    // toolbarController?.showToolbar(
+    //   context,
+    //   mode: MessageMode.practiceActivity,
+    // );
   }
 
   @override

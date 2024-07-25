@@ -6,6 +6,7 @@ import 'package:fluffychat/pages/chat/pinned_events.dart';
 import 'package:fluffychat/pages/chat/reactions_picker.dart';
 import 'package:fluffychat/pages/chat/reply_display.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/it_bar.dart';
+import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
 import 'package:fluffychat/widgets/connection_status_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
@@ -14,24 +15,23 @@ import 'package:matrix/matrix.dart';
 enum _EventContextAction { info, report }
 
 class SelectedMessageView extends StatelessWidget {
-  // Edit: add parameters
   final ChatController controller;
   final Room room;
+  final ToolbarDisplayController? toolbarController;
 
-  const SelectedMessageView(this.controller, this.room, {super.key});
-
-  // Edit: add any extra functions
+  const SelectedMessageView(
+    this.controller,
+    this.room, {
+    this.toolbarController,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // Edit: add any needed setup
     // Close keyboard, if open
     FocusManager.instance.primaryFocus?.unfocus();
     final bottomSheetPadding = FluffyThemes.isColumnMode(context) ? 16.0 : 8.0;
     final selectedEvent = controller.selectedEvents.single;
-    final toolbarController = controller.getToolbarDisplayController(
-      selectedEvent.eventId,
-    );
 
     final scrollUpBannerEventId = controller.scrollUpBannerEventId;
     var appbarBottomHeight = 0.0;

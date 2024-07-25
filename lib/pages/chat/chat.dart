@@ -1314,10 +1314,8 @@ class ChatController extends State<ChatPageWithRoom>
       //   );
       // }
 
-      // If delete first selected event with the selected eventID
-      final matches = selectedEvents.where((e) => e.eventId == event.eventId);
-      if (matches.isNotEmpty) {
-        setState(() => selectedEvents.remove(matches.first));
+      if (selectedEvents.isNotEmpty) {
+        setState(() => selectedEvents.remove(selectedEvents.first));
       }
       // Pangea#
       else {
@@ -1325,9 +1323,11 @@ class ChatController extends State<ChatPageWithRoom>
           () => selectedEvents.add(event),
         );
       }
-      selectedEvents.sort(
-        (a, b) => a.originServerTs.compareTo(b.originServerTs),
-      );
+      // #Pangea
+      // selectedEvents.sort(
+      //   (a, b) => a.originServerTs.compareTo(b.originServerTs),
+      // );
+      // Pangea
     }
   }
 

@@ -314,11 +314,11 @@ class Message extends StatelessWidget {
                                 padding: const EdgeInsets.only(left: 8),
                                 child: GestureDetector(
                                   // #Pangea
-                                  onTap: () => toolbarController?.showToolbar(
-                                    context,
-                                  ),
-                                  onDoubleTap: () =>
-                                      toolbarController?.showToolbar(context),
+                                  // onTap: () => toolbarController?.showToolbar(
+                                  //   context,
+                                  // ),
+                                  // onDoubleTap: () =>
+                                  //     toolbarController?.showToolbar(context),
                                   // Pangea#
                                   onLongPress: longPressSelect
                                       ? null

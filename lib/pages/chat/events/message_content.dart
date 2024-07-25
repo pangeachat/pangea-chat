@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:fluffychat/pages/chat/events/video_player.dart';
-import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_context_menu.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
@@ -322,21 +321,21 @@ class MessageContent extends StatelessWidget {
                 toolbarController?.toolbar?.textSelection
                     .onTextSelection(selection);
               },
-              onTap: () => toolbarController?.showToolbar(context),
+              // onTap: () => toolbarController?.showToolbar(context),
               contextMenuBuilder: (context, state) =>
                   (toolbarController?.highlighted ?? false)
                       ? const SizedBox.shrink()
                       : MessageContextMenu.contextMenuOverride(
                           context: context,
                           textSelection: state,
-                          onDefine: () => toolbarController?.showToolbar(
-                            context,
-                            mode: MessageMode.definition,
-                          ),
-                          onListen: () => toolbarController?.showToolbar(
-                            context,
-                            mode: MessageMode.textToSpeech,
-                          ),
+                          // onDefine: () => toolbarController?.showToolbar(
+                          //   context,
+                          //   mode: MessageMode.definition,
+                          // ),
+                          // onListen: () => toolbarController?.showToolbar(
+                          //   context,
+                          //   mode: MessageMode.textToSpeech,
+                          // ),
                         ),
               enableInteractiveSelection:
                   toolbarController?.highlighted ?? false,

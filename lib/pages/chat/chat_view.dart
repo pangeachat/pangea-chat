@@ -10,12 +10,12 @@ import 'package:fluffychat/pages/chat/pinned_events.dart';
 import 'package:fluffychat/pages/chat/reactions_picker.dart';
 import 'package:fluffychat/pages/chat/reply_display.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/it_bar.dart';
+import 'package:fluffychat/pangea/choreographer/widgets/selected_message_view.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/start_igc_button.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/widgets/chat/chat_floating_action_button.dart';
 import 'package:fluffychat/utils/account_config.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/chat_settings_popup_menu.dart';
 import 'package:fluffychat/widgets/connection_status_header.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:fluffychat/widgets/mxc_image.dart';
@@ -35,113 +35,114 @@ class ChatView extends StatelessWidget {
 
   const ChatView(this.controller, {super.key});
 
-  List<Widget> _appBarActions(BuildContext context) {
-    if (controller.selectMode) {
-      return [
-        if (controller.canEditSelectedEvents)
-          IconButton(
-            icon: const Icon(Icons.edit_outlined),
-            tooltip: L10n.of(context)!.edit,
-            onPressed: controller.editSelectedEventAction,
-          ),
-        // #Pangea
-        if (controller.selectedEvents.length == 1 &&
-            controller.selectedEvents.single.messageType == MessageTypes.Text)
-          // Pangea#
-          IconButton(
-            icon: const Icon(Icons.copy_outlined),
-            tooltip: L10n.of(context)!.copy,
-            onPressed: controller.copyEventsAction,
-          ),
-        if (controller.canSaveSelectedEvent)
-          // Use builder context to correctly position the share dialog on iPad
-          Builder(
-            builder: (context) => IconButton(
-              icon: Icon(Icons.adaptive.share),
-              tooltip: L10n.of(context)!.share,
-              onPressed: () => controller.saveSelectedEvent(context),
-            ),
-          ),
-        if (controller.canPinSelectedEvents)
-          IconButton(
-            icon: const Icon(Icons.push_pin_outlined),
-            onPressed: controller.pinEvent,
-            tooltip: L10n.of(context)!.pinMessage,
-          ),
-        if (controller.canRedactSelectedEvents)
-          IconButton(
-            icon: const Icon(Icons.delete_outlined),
-            tooltip: L10n.of(context)!.redactMessage,
-            onPressed: controller.redactEventsAction,
-          ),
-        if (controller.selectedEvents.length == 1)
-          PopupMenuButton<_EventContextAction>(
-            onSelected: (action) {
-              switch (action) {
-                case _EventContextAction.info:
-                  controller.showEventInfo();
-                  controller.clearSelectedEvents();
-                  break;
-                case _EventContextAction.report:
-                  controller.reportEventAction();
-                  break;
-              }
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: _EventContextAction.info,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.info_outlined),
-                    const SizedBox(width: 12),
-                    Text(L10n.of(context)!.messageInfo),
-                  ],
-                ),
-              ),
-              if (controller.selectedEvents.single.status.isSent)
-                PopupMenuItem(
-                  value: _EventContextAction.report,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.shield_outlined,
-                        color: Colors.red,
-                      ),
-                      const SizedBox(width: 12),
-                      Text(L10n.of(context)!.reportMessage),
-                    ],
-                  ),
-                ),
-            ],
-          ),
-      ];
-      // #Pangea
-    } else {
-      return [
-        ChatSettingsPopupMenu(
-          controller.room,
-          (!controller.room.isDirectChat && !controller.room.isArchived),
-        ),
-      ];
-    }
-    // else if (!controller.room.isArchived) {
-    //   return [
-    //     if (Matrix.of(context).voipPlugin != null &&
-    //         controller.room.isDirectChat)
-    //       IconButton(
-    //         onPressed: controller.onPhoneButtonTap,
-    //         icon: const Icon(Icons.call_outlined),
-    //         tooltip: L10n.of(context)!.placeCall,
-    //       ),
-    //     EncryptionButton(controller.room),
-    //     ChatSettingsPopupMenu(controller.room, true),
-    //   ];
-    // }
-    // return [];
-    // Pangea#
-  }
+// #Pangea
+  // List<Widget> _appBarActions(BuildContext context) {
+  //   if (controller.selectMode) {
+  //     return [
+  //       if (controller.canEditSelectedEvents)
+  //         IconButton(
+  //           icon: const Icon(Icons.edit_outlined),
+  //           tooltip: L10n.of(context)!.edit,
+  //           onPressed: controller.editSelectedEventAction,
+  //         ),
+  //       // #Pangea
+  //       if (
+  //           controller.selectedEvents.single.messageType == MessageTypes.Text)
+  //         // Pangea#
+  //         IconButton(
+  //           icon: const Icon(Icons.copy_outlined),
+  //           tooltip: L10n.of(context)!.copy,
+  //           onPressed: controller.copyEventsAction,
+  //         ),
+  //       if (controller.canSaveSelectedEvent)
+  //         // Use builder context to correctly position the share dialog on iPad
+  //         Builder(
+  //           builder: (context) => IconButton(
+  //             icon: Icon(Icons.adaptive.share),
+  //             tooltip: L10n.of(context)!.share,
+  //             onPressed: () => controller.saveSelectedEvent(context),
+  //           ),
+  //         ),
+  //       if (controller.canPinSelectedEvents)
+  //         IconButton(
+  //           icon: const Icon(Icons.push_pin_outlined),
+  //           onPressed: controller.pinEvent,
+  //           tooltip: L10n.of(context)!.pinMessage,
+  //         ),
+  //       if (controller.canRedactSelectedEvents)
+  //         IconButton(
+  //           icon: const Icon(Icons.delete_outlined),
+  //           tooltip: L10n.of(context)!.redactMessage,
+  //           onPressed: controller.redactEventsAction,
+  //         ),
+  //         PopupMenuButton<_EventContextAction>(
+  //           onSelected: (action) {
+  //             switch (action) {
+  //               case _EventContextAction.info:
+  //                 controller.showEventInfo();
+  //                 controller.clearSelectedEvents();
+  //                 break;
+  //               case _EventContextAction.report:
+  //                 controller.reportEventAction();
+  //                 break;
+  //             }
+  //           },
+  //           itemBuilder: (context) => [
+  //             PopupMenuItem(
+  //               value: _EventContextAction.info,
+  //               child: Row(
+  //                 mainAxisSize: MainAxisSize.min,
+  //                 children: [
+  //                   const Icon(Icons.info_outlined),
+  //                   const SizedBox(width: 12),
+  //                   Text(L10n.of(context)!.messageInfo),
+  //                 ],
+  //               ),
+  //             ),
+  //             if (controller.selectedEvents.single.status.isSent)
+  //               PopupMenuItem(
+  //                 value: _EventContextAction.report,
+  //                 child: Row(
+  //                   mainAxisSize: MainAxisSize.min,
+  //                   children: [
+  //                     const Icon(
+  //                       Icons.shield_outlined,
+  //                       color: Colors.red,
+  //                     ),
+  //                     const SizedBox(width: 12),
+  //                     Text(L10n.of(context)!.reportMessage),
+  //                   ],
+  //                 ),
+  //               ),
+  //           ],
+  //         ),
+  //     ];
+  //     // #Pangea
+  //   } else {
+  //     return [
+  //       ChatSettingsPopupMenu(
+  //         controller.room,
+  //         (!controller.room.isDirectChat && !controller.room.isArchived),
+  //       ),
+  //     ];
+  //   }
+  //   // else if (!controller.room.isArchived) {
+  //   //   return [
+  //   //     if (Matrix.of(context).voipPlugin != null &&
+  //   //         controller.room.isDirectChat)
+  //   //       IconButton(
+  //   //         onPressed: controller.onPhoneButtonTap,
+  //   //         icon: const Icon(Icons.call_outlined),
+  //   //         tooltip: L10n.of(context)!.placeCall,
+  //   //       ),
+  //   //     EncryptionButton(controller.room),
+  //   //     ChatSettingsPopupMenu(controller.room, true),
+  //   //   ];
+  //   // }
+  //   // return [];
+  //   // Pangea#
+  // }
+  // Pangea#
 
   @override
   Widget build(BuildContext context) {
@@ -193,30 +194,40 @@ class ChatView extends StatelessWidget {
             return Scaffold(
               appBar: AppBar(
                 actionsIconTheme: IconThemeData(
-                  color: controller.selectedEvents.isEmpty
-                      ? null
-                      : Theme.of(context).colorScheme.primary,
+                  color:
+                      // #Pangea
+                      // controller.selectedEvents.isEmpty
+                      //     ? null
+                      //     :
+                      // Pangea#
+                      Theme.of(context).colorScheme.primary,
                 ),
-                leading: controller.selectMode
-                    ? IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: controller.clearSelectedEvents,
-                        tooltip: L10n.of(context)!.close,
-                        color: Theme.of(context).colorScheme.primary,
-                      )
-                    : UnreadRoomsBadge(
-                        filter: (r) =>
-                            r.id != controller.roomId
-                            // #Pangea
-                            &&
-                            !r.isAnalyticsRoom,
-                        // Pangea#
-                        badgePosition: BadgePosition.topEnd(end: 8, top: 4),
-                        child: const Center(child: BackButton()),
-                      ),
+                leading:
+                    // #Pangea
+                    // controller.selectMode
+                    //     ? IconButton(
+                    //         icon: const Icon(Icons.close),
+                    //         onPressed: controller.clearSelectedEvents,
+                    //         tooltip: L10n.of(context)!.close,
+                    //         color: Theme.of(context).colorScheme.primary,
+                    //       )
+                    //     :
+                    // Pangea#
+                    UnreadRoomsBadge(
+                  filter: (r) =>
+                      r.id != controller.roomId
+                      // #Pangea
+                      &&
+                      !r.isAnalyticsRoom,
+                  // Pangea#
+                  badgePosition: BadgePosition.topEnd(end: 8, top: 4),
+                  child: const Center(child: BackButton()),
+                ),
                 titleSpacing: 0,
                 title: ChatAppBarTitle(controller),
-                actions: _appBarActions(context),
+                // #Pangea
+                // actions: _appBarActions(context),
+                // Pangea#
                 bottom: PreferredSize(
                   preferredSize: Size.fromHeight(appbarBottomHeight),
                   child: Column(
@@ -511,7 +522,16 @@ class ChatView extends StatelessWidget {
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    child: ChatEmojiPicker(controller),
+                    child: controller.selectMode
+                        ? SelectedMessageView(
+                            controller,
+                            controller.room,
+                            toolbarController:
+                                controller.getToolbarDisplayController(
+                              controller.selectedEvents.single.eventId,
+                            ),
+                          )
+                        : ChatEmojiPicker(controller),
                   ),
                   // Pangea#
                 ],
