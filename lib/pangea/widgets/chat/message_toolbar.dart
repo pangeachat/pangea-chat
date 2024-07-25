@@ -5,9 +5,7 @@ import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
-import 'package:fluffychat/pangea/utils/any_state_holder.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
-import 'package:fluffychat/pangea/utils/overlay.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_audio_card.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_speech_to_text_card.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_text_selection.dart';
@@ -58,75 +56,12 @@ class ToolbarDisplayController {
     );
   }
 
-  void showToolbar(BuildContext context, {MessageMode? mode}) {
-    // Close keyboard, if open
-    FocusManager.instance.primaryFocus?.unfocus();
-    bool toolbarUp = true;
-    if (highlighted) return;
-    if (controller.selectMode) {
-      controller.clearSelectedEvents();
-    }
+  Widget? getToolbar(BuildContext context, {MessageMode? mode}) {
     if (!MatrixState.pangeaController.languageController.languagesSet) {
       pLanguageDialog(context, () {});
-      return;
+      return null;
     }
     focusNode.requestFocus();
-
-    final LayerLinkAndKey layerLinkAndKey =
-        MatrixState.pAnyState.layerLinkAndKey(targetId);
-    final targetRenderBox =
-        layerLinkAndKey.key.currentContext?.findRenderObject();
-    if (targetRenderBox != null) {
-      final Size transformTargetSize = (targetRenderBox as RenderBox).size;
-      messageWidth = transformTargetSize.width;
-      final Offset targetOffset = (targetRenderBox).localToGlobal(Offset.zero);
-
-      // If there is enough space above, procede as normal
-      // Else if there is enough space below, show toolbar underneath
-      if (targetOffset.dy < 320) {
-        final spaceBeneath = MediaQuery.of(context).size.height -
-            (targetOffset.dy + transformTargetSize.height);
-        // If toolbar is open, opening toolbar beneath without scrolling can cause issues
-        // if (spaceBeneath >= 320) {
-        //   toolbarUp = false;
-        // }
-
-        // See if it's possible to scroll up to make space
-        if (controller.scrollController.offset - targetOffset.dy + 320 >=
-                controller.scrollController.position.minScrollExtent &&
-            controller.scrollController.offset - targetOffset.dy + 320 <=
-                controller.scrollController.position.maxScrollExtent) {
-          controller.scrollController.animateTo(
-            controller.scrollController.offset - targetOffset.dy + 320,
-            duration: FluffyThemes.animationDuration,
-            curve: FluffyThemes.animationCurve,
-          );
-        }
-
-        // See if it's possible to scroll down to make space
-        else if (controller.scrollController.offset + spaceBeneath - 320 >=
-                controller.scrollController.position.minScrollExtent &&
-            controller.scrollController.offset + spaceBeneath - 320 <=
-                controller.scrollController.position.maxScrollExtent) {
-          controller.scrollController.animateTo(
-            controller.scrollController.offset + spaceBeneath - 320,
-            duration: FluffyThemes.animationDuration,
-            curve: FluffyThemes.animationCurve,
-          );
-          toolbarUp = false;
-        }
-
-        // If message is too big and can't scroll either way
-        // Scroll up as much as possible, and show toolbar above
-        else {
-          controller.scrollController.animateTo(
-            controller.scrollController.position.minScrollExtent,
-            duration: FluffyThemes.animationDuration,
-            curve: FluffyThemes.animationCurve,
-          );
-        }
-      }
-    }
 
     final Widget overlayMessage = OverlayMessage(
       pangeaMessageEvent.event,
@@ -138,46 +73,38 @@ class ToolbarDisplayController {
       nextEvent: nextEvent,
       previousEvent: previousEvent,
     );
-
-    // I'm not sure why I put this here, but it causes the toolbar
-    // not to open immediately after clicking (user has to scroll or move their cursor)
-    // so I'm commenting it out for now
-    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
     Widget overlayEntry;
-    if (toolbar == null) return;
+    if (toolbar == null) return null;
     try {
       overlayEntry = Container(
         constraints:
             BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 300),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: pangeaMessageEvent.ownMessage
-              ? CrossAxisAlignment.end
-              : CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            toolbarUp ? toolbar! : overlayMessage,
+            toolbar!,
             const SizedBox(height: 6),
-            toolbarUp ? overlayMessage : toolbar!,
+            overlayMessage,
           ],
         ),
       );
     } catch (err) {
       debugger(when: kDebugMode);
       ErrorHandler.logError(e: err, s: StackTrace.current);
-      return;
+      return null;
     }
 
-    OverlayUtil.showOverlay(
-      context: context,
-      child: overlayEntry,
-      transformTargetId: targetId,
-      targetAnchor: Alignment.center,
-      followerAnchor: Alignment.center,
-      backgroundColor: const Color.fromRGBO(0, 0, 0, 1).withAlpha(100),
-      closePrevOverlay:
-          MatrixState.pangeaController.subscriptionController.isSubscribed,
-      centered: true,
-    );
+    // OverlayUtil.showOverlay(
+    //   context: context,
+    //   child: overlayEntry,
+    //   transformTargetId: targetId,
+    //   targetAnchor: Alignment.center,
+    //   followerAnchor: Alignment.center,
+    //   backgroundColor: const Color.fromRGBO(0, 0, 0, 1).withAlpha(100),
+    //   closePrevOverlay:
+    //       MatrixState.pangeaController.subscriptionController.isSubscribed,
+    // );
 
     if (MatrixState.pAnyState.entries.isNotEmpty) {
       overlayId = MatrixState.pAnyState.entries.last.hashCode.toString();
@@ -189,7 +116,8 @@ class ToolbarDisplayController {
         () => toolbarModeStream.add(mode),
       );
     }
-    // });
+
+    return overlayEntry;
   }
 
   bool get highlighted {
