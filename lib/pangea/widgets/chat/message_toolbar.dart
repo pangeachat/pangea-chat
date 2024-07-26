@@ -18,7 +18,6 @@ import 'package:fluffychat/pangea/widgets/user_settings/p_language_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
 
 class ToolbarDisplayController {
@@ -54,6 +53,10 @@ class ToolbarDisplayController {
       immersionMode: immersionMode,
       controller: controller,
     );
+  }
+
+  void showToolbar({MessageMode? mode}) {
+    controller.onSelectMessage(pangeaMessageEvent.event);
   }
 
   Widget? getToolbar(BuildContext context, {MessageMode? mode}) {
@@ -282,11 +285,6 @@ class MessageToolbarState extends State<MessageToolbar> {
 
   void spellCheck() {}
 
-  void showMore() {
-    MatrixState.pAnyState.closeOverlay();
-    widget.controller.onSelectMessage(widget.pangeaMessageEvent.event);
-  }
-
   @override
   void initState() {
     super.initState();
@@ -375,40 +373,31 @@ class MessageToolbarState extends State<MessageToolbar> {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: MessageMode.values.map((mode) {
-                    if ([
-                          MessageMode.definition,
-                          MessageMode.textToSpeech,
-                          MessageMode.translation,
-                        ].contains(mode) &&
-                        widget.pangeaMessageEvent.isAudioMessage) {
-                      return const SizedBox.shrink();
-                    }
-                    if (mode == MessageMode.speechToText &&
-                        !widget.pangeaMessageEvent.isAudioMessage) {
-                      return const SizedBox.shrink();
-                    }
-                    return Tooltip(
-                      message: mode.tooltip(context),
-                      child: IconButton(
-                        icon: Icon(mode.icon),
-                        color: mode.iconColor(
-                          widget.pangeaMessageEvent,
-                          currentMode,
-                          context,
-                        ),
-                        onPressed: () => updateMode(mode),
-                      ),
-                    );
-                  }).toList() +
-                  [
-                    Tooltip(
-                      message: L10n.of(context)!.more,
-                      child: IconButton(
-                        icon: const Icon(Icons.add_reaction_outlined),
-                        onPressed: showMore,
-                      ),
+                if ([
+                      MessageMode.definition,
+                      MessageMode.textToSpeech,
+                      MessageMode.translation,
+                    ].contains(mode) &&
+                    widget.pangeaMessageEvent.isAudioMessage) {
+                  return const SizedBox.shrink();
+                }
+                if (mode == MessageMode.speechToText &&
+                    !widget.pangeaMessageEvent.isAudioMessage) {
+                  return const SizedBox.shrink();
+                }
+                return Tooltip(
+                  message: mode.tooltip(context),
+                  child: IconButton(
+                    icon: Icon(mode.icon),
+                    color: mode.iconColor(
+                      widget.pangeaMessageEvent,
+                      currentMode,
+                      context,
                     ),
-                  ],
+                    onPressed: () => updateMode(mode),
+                  ),
+                );
+              }).toList(),
             ),
           ],
         ),

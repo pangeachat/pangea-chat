@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/enum/instructions_enum.dart';
+import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/representation_content_model.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
@@ -150,7 +151,7 @@ class PangeaRichTextState extends State<PangeaRichText> {
         widget.toolbarController?.toolbar?.textSelection
             .onTextSelection(selection);
       },
-      // onTap: () => widget.toolbarController?.showToolbar(context),
+      onTap: () => widget.toolbarController?.showToolbar(),
       enableInteractiveSelection:
           widget.toolbarController?.highlighted ?? false,
       contextMenuBuilder: (context, state) =>
@@ -159,14 +160,12 @@ class PangeaRichTextState extends State<PangeaRichText> {
               : MessageContextMenu.contextMenuOverride(
                   context: context,
                   textSelection: state,
-                  // onDefine: () => widget.toolbarController?.showToolbar(
-                  //   context,
-                  //   mode: MessageMode.definition,
-                  // ),
-                  // onListen: () => widget.toolbarController?.showToolbar(
-                  //   context,
-                  //   mode: MessageMode.textToSpeech,
-                  // ),
+                  onDefine: () => widget.toolbarController?.showToolbar(
+                    mode: MessageMode.definition,
+                  ),
+                  onListen: () => widget.toolbarController?.showToolbar(
+                    mode: MessageMode.textToSpeech,
+                  ),
                 ),
       TextSpan(
         text: textSpan,
