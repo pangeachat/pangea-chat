@@ -56,7 +56,10 @@ class ToolbarDisplayController {
   }
 
   void showToolbar({MessageMode? mode}) {
-    controller.onSelectMessage(pangeaMessageEvent.event);
+    controller.onSelectMessage(
+      pangeaMessageEvent.event,
+      mode: mode,
+    );
   }
 
   Widget? getToolbar(BuildContext context, {MessageMode? mode}) {

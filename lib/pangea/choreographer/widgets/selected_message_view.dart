@@ -181,7 +181,10 @@ class SelectedMessageView extends StatelessWidget {
         ),
       ),
       body: Center(
-        child: toolbarController?.getToolbar(context),
+        child: toolbarController?.getToolbar(
+          context,
+          mode: controller.selectedMessageMode,
+        ),
       ),
       bottomSheet: Container(
         margin: EdgeInsets.only(

@@ -16,6 +16,7 @@ import 'package:fluffychat/pages/chat/recording_dialog.dart';
 import 'package:fluffychat/pages/chat_details/chat_details.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/choreographer.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
+import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/choreo_record.dart';
@@ -122,6 +123,10 @@ class ChatController extends State<ChatPageWithRoom>
   Timeline? timeline;
 
   String? readMarkerEventId;
+
+  // #Pangea
+  MessageMode? selectedMessageMode;
+  // Pangea#
 
   String get roomId => widget.room.id;
 
@@ -1300,8 +1305,9 @@ class ChatController extends State<ChatPageWithRoom>
     }
   }
 
-  void onSelectMessage(Event event) {
-    // #Pangea
+  // #Pangea
+  // void onSelectMessage(Event event) {
+  void onSelectMessage(Event event, {MessageMode? mode}) {
     if (choreographer.itController.isOpen) {
       return;
     }
@@ -1316,9 +1322,13 @@ class ChatController extends State<ChatPageWithRoom>
 
       if (selectedEvents.isNotEmpty) {
         setState(() => selectedEvents.remove(selectedEvents.first));
+        selectedMessageMode = null;
       }
       // Pangea#
       else {
+        // #Pangea
+        selectedMessageMode = mode;
+        // Pangea#
         setState(
           () => selectedEvents.add(event),
         );
