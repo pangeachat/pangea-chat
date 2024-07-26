@@ -47,173 +47,207 @@ class SelectedMessageView extends StatelessWidget {
       appbarBottomHeight += 42;
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        actionsIconTheme: IconThemeData(
-          color: Theme.of(context).colorScheme.primary,
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: controller.clearSelectedEvents,
-          tooltip: L10n.of(context)!.close,
-          color: Theme.of(context).colorScheme.primary,
-        ),
-        titleSpacing: 0,
-        title: ChatAppBarTitle(controller),
-        actions: [
-          if (controller.canEditSelectedEvents)
-            IconButton(
-              icon: const Icon(Icons.edit_outlined),
-              tooltip: L10n.of(context)!.edit,
-              onPressed: controller.editSelectedEventAction,
-            ),
-          if (selectedEvent.messageType == MessageTypes.Text)
-            IconButton(
-              icon: const Icon(Icons.copy_outlined),
-              tooltip: L10n.of(context)!.copy,
-              onPressed: controller.copyEventsAction,
-            ),
-          if (controller.canSaveSelectedEvent)
-            // Use builder context to correctly position the share dialog on iPad
-            Builder(
-              builder: (context) => IconButton(
-                icon: Icon(Icons.adaptive.share),
-                tooltip: L10n.of(context)!.share,
-                onPressed: () => controller.saveSelectedEvent(context),
-              ),
-            ),
-          if (controller.canPinSelectedEvents)
-            IconButton(
-              icon: const Icon(Icons.push_pin_outlined),
-              onPressed: controller.pinEvent,
-              tooltip: L10n.of(context)!.pinMessage,
-            ),
-          if (controller.canRedactSelectedEvents)
-            IconButton(
-              icon: const Icon(Icons.delete_outlined),
-              tooltip: L10n.of(context)!.redactMessage,
-              onPressed: controller.redactEventsAction,
-            ),
-          PopupMenuButton<_EventContextAction>(
-            onSelected: (action) {
-              switch (action) {
-                case _EventContextAction.info:
-                  controller.showEventInfo();
-                  controller.clearSelectedEvents();
-                  break;
-                case _EventContextAction.report:
-                  controller.reportEventAction();
-                  break;
-              }
+    return Stack(
+      children: [
+        Material(
+          borderOnForeground: false,
+          color: Colors.grey,
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            hoverColor: Colors.transparent,
+            splashColor: Colors.transparent,
+            focusColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            onTap: () {
+              controller.clearSelectedEvents();
             },
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: _EventContextAction.info,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.info_outlined),
-                    const SizedBox(width: 12),
-                    Text(L10n.of(context)!.messageInfo),
-                  ],
+            child: Container(
+              height: double.infinity,
+              width: double.infinity,
+              color: Colors.transparent,
+            ),
+          ),
+        ),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 0,
+          top: 0,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              AppBar(
+                actionsIconTheme: IconThemeData(
+                  color: Theme.of(context).colorScheme.primary,
                 ),
-              ),
-              if (selectedEvent.status.isSent)
-                PopupMenuItem(
-                  value: _EventContextAction.report,
-                  child: Row(
+                leading: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: controller.clearSelectedEvents,
+                  tooltip: L10n.of(context)!.close,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                titleSpacing: 0,
+                title: ChatAppBarTitle(controller),
+                actions: [
+                  if (controller.canEditSelectedEvents)
+                    IconButton(
+                      icon: const Icon(Icons.edit_outlined),
+                      tooltip: L10n.of(context)!.edit,
+                      onPressed: controller.editSelectedEventAction,
+                    ),
+                  if (selectedEvent.messageType == MessageTypes.Text)
+                    IconButton(
+                      icon: const Icon(Icons.copy_outlined),
+                      tooltip: L10n.of(context)!.copy,
+                      onPressed: controller.copyEventsAction,
+                    ),
+                  if (controller.canSaveSelectedEvent)
+                    // Use builder context to correctly position the share dialog on iPad
+                    Builder(
+                      builder: (context) => IconButton(
+                        icon: Icon(Icons.adaptive.share),
+                        tooltip: L10n.of(context)!.share,
+                        onPressed: () => controller.saveSelectedEvent(context),
+                      ),
+                    ),
+                  if (controller.canPinSelectedEvents)
+                    IconButton(
+                      icon: const Icon(Icons.push_pin_outlined),
+                      onPressed: controller.pinEvent,
+                      tooltip: L10n.of(context)!.pinMessage,
+                    ),
+                  if (controller.canRedactSelectedEvents)
+                    IconButton(
+                      icon: const Icon(Icons.delete_outlined),
+                      tooltip: L10n.of(context)!.redactMessage,
+                      onPressed: controller.redactEventsAction,
+                    ),
+                  PopupMenuButton<_EventContextAction>(
+                    onSelected: (action) {
+                      switch (action) {
+                        case _EventContextAction.info:
+                          controller.showEventInfo();
+                          controller.clearSelectedEvents();
+                          break;
+                        case _EventContextAction.report:
+                          controller.reportEventAction();
+                          break;
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: _EventContextAction.info,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.info_outlined),
+                            const SizedBox(width: 12),
+                            Text(L10n.of(context)!.messageInfo),
+                          ],
+                        ),
+                      ),
+                      if (selectedEvent.status.isSent)
+                        PopupMenuItem(
+                          value: _EventContextAction.report,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.shield_outlined,
+                                color: Colors.red,
+                              ),
+                              const SizedBox(width: 12),
+                              Text(L10n.of(context)!.reportMessage),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+                bottom: PreferredSize(
+                  preferredSize: Size.fromHeight(appbarBottomHeight),
+                  child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
-                        Icons.shield_outlined,
-                        color: Colors.red,
-                      ),
-                      const SizedBox(width: 12),
-                      Text(L10n.of(context)!.reportMessage),
+                      PinnedEvents(controller),
+                      if (tombstoneEvent != null)
+                        ChatAppBarListTile(
+                          title: tombstoneEvent.parsedTombstoneContent.body,
+                          leading: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Icon(Icons.upgrade_outlined),
+                          ),
+                          trailing: TextButton(
+                            onPressed: controller.goToNewRoomAction,
+                            child: Text(L10n.of(context)!.goToTheNewRoom),
+                          ),
+                        ),
+                      if (scrollUpBannerEventId != null)
+                        ChatAppBarListTile(
+                          leading: IconButton(
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            icon: const Icon(Icons.close),
+                            tooltip: L10n.of(context)!.close,
+                            onPressed: () {
+                              controller.discardScrollUpBannerEventId();
+                              controller.setReadMarker();
+                            },
+                          ),
+                          title: L10n.of(context)!.jumpToLastReadMessage,
+                          trailing: TextButton(
+                            onPressed: () {
+                              controller.scrollToEventId(
+                                scrollUpBannerEventId,
+                              );
+                              controller.discardScrollUpBannerEventId();
+                            },
+                            child: Text(L10n.of(context)!.jump),
+                          ),
+                        ),
                     ],
                   ),
                 ),
-            ],
-          ),
-        ],
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(appbarBottomHeight),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              PinnedEvents(controller),
-              if (tombstoneEvent != null)
-                ChatAppBarListTile(
-                  title: tombstoneEvent.parsedTombstoneContent.body,
-                  leading: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Icon(Icons.upgrade_outlined),
-                  ),
-                  trailing: TextButton(
-                    onPressed: controller.goToNewRoomAction,
-                    child: Text(L10n.of(context)!.goToTheNewRoom),
-                  ),
-                ),
-              if (scrollUpBannerEventId != null)
-                ChatAppBarListTile(
-                  leading: IconButton(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    icon: const Icon(Icons.close),
-                    tooltip: L10n.of(context)!.close,
-                    onPressed: () {
-                      controller.discardScrollUpBannerEventId();
-                      controller.setReadMarker();
-                    },
-                  ),
-                  title: L10n.of(context)!.jumpToLastReadMessage,
-                  trailing: TextButton(
-                    onPressed: () {
-                      controller.scrollToEventId(
-                        scrollUpBannerEventId,
-                      );
-                      controller.discardScrollUpBannerEventId();
-                    },
-                    child: Text(L10n.of(context)!.jump),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
-      body: Center(
-        child: toolbarController?.getToolbar(
-          context,
-          mode: controller.selectedMessageMode,
-        ),
-      ),
-      bottomSheet: Container(
-        margin: EdgeInsets.only(
-          bottom: bottomSheetPadding,
-          left: bottomSheetPadding,
-          right: bottomSheetPadding,
-        ),
-        constraints: const BoxConstraints(
-          maxWidth: FluffyThemes.columnWidth * 2.5,
-        ),
-        alignment: Alignment.center,
-        child: Material(
-          clipBehavior: Clip.hardEdge,
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          borderRadius: const BorderRadius.all(
-            Radius.circular(24),
-          ),
-          child: Column(
-            children: [
-              const ConnectionStatusHeader(),
-              ITBar(
-                choreographer: controller.choreographer,
               ),
-              ReactionsPicker(controller),
-              ReplyDisplay(controller),
+              Center(
+                child: toolbarController?.getToolbar(
+                  context,
+                  mode: controller.selectedMessageMode,
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(
+                  bottom: bottomSheetPadding,
+                  left: bottomSheetPadding,
+                  right: bottomSheetPadding,
+                ),
+                constraints: const BoxConstraints(
+                  maxWidth: FluffyThemes.columnWidth * 2.5,
+                ),
+                alignment: Alignment.center,
+                child: Material(
+                  clipBehavior: Clip.hardEdge,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(24),
+                  ),
+                  child: Column(
+                    children: [
+                      const ConnectionStatusHeader(),
+                      ITBar(
+                        choreographer: controller.choreographer,
+                      ),
+                      ReactionsPicker(controller),
+                      ReplyDisplay(controller),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
-      ),
+      ],
     );
   }
 }

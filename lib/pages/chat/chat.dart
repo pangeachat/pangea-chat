@@ -1242,6 +1242,9 @@ class ChatController extends State<ChatPageWithRoom>
   void clearSelectedEvents() => setState(() {
         selectedEvents.clear();
         showEmojiPicker = false;
+        // #Pangea
+        selectedMessageMode = null;
+        // Pangea#
       });
 
   void clearSingleSelectedEvent() {
@@ -1321,8 +1324,7 @@ class ChatController extends State<ChatPageWithRoom>
       // }
 
       if (selectedEvents.isNotEmpty) {
-        setState(() => selectedEvents.remove(selectedEvents.first));
-        selectedMessageMode = null;
+        clearSelectedEvents();
       }
       // Pangea#
       else {
