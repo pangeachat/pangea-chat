@@ -28,6 +28,8 @@ import 'package:fluffychat/pages/settings_security/settings_security.dart';
 import 'package:fluffychat/pages/settings_style/settings_style.dart';
 import 'package:fluffychat/pangea/enum/bar_chart_view_enum.dart';
 import 'package:fluffychat/pangea/guard/p_vguard.dart';
+import 'package:fluffychat/pangea/pages/analytics/space_analytics/space_analytics.dart';
+import 'package:fluffychat/pangea/pages/analytics/space_list/space_list.dart';
 import 'package:fluffychat/pangea/pages/analytics/student_analytics/student_analytics.dart';
 import 'package:fluffychat/pangea/pages/find_partner/find_partner.dart';
 import 'package:fluffychat/pangea/pages/p_user_age/p_user_age.dart';
@@ -173,27 +175,27 @@ abstract class AppRoutes {
               ),
               redirect: loggedOutRedirect,
             ),
-            // GoRoute(
-            //   path: 'analytics',
-            //   pageBuilder: (context, state) => defaultPageBuilder(
-            //     context,
-            //     state,
-            //     const AnalyticsSpaceList(),
-            //   ),
-            //   redirect: loggedOutRedirect,
-            //   routes: [
-            //     GoRoute(
-            //       path: ':spaceid',
-            //       pageBuilder: (context, state) => defaultPageBuilder(
-            //         context,
-            //         state,
-            //         const SpaceAnalyticsPage(
-            //           selectedView: BarChartViewSelection.messages,
-            //         ),
-            //       ),
-            //     ),
-            //   ],
-            // ),
+            GoRoute(
+              path: 'analytics',
+              pageBuilder: (context, state) => defaultPageBuilder(
+                context,
+                state,
+                const AnalyticsSpaceList(),
+              ),
+              redirect: loggedOutRedirect,
+              routes: [
+                GoRoute(
+                  path: ':spaceid',
+                  pageBuilder: (context, state) => defaultPageBuilder(
+                    context,
+                    state,
+                    const SpaceAnalyticsPage(
+                      selectedView: BarChartViewSelection.messages,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             // Pangea#
             GoRoute(
               path: 'archive',

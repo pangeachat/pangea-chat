@@ -1,4 +1,5 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:fluffychat/pangea/constants/class_default_values.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/utils/find_conversation_partner_dialog.dart';
 import 'package:fluffychat/pangea/utils/logout.dart';
@@ -52,21 +53,21 @@ class ClientChooserButton extends StatelessWidget {
           ],
         ),
       ),
-      // PopupMenuItem(
-      //   enabled: matrix.client.rooms.any(
-      //     (room) =>
-      //         room.isSpace &&
-      //         room.ownPowerLevel >= ClassDefaultValues.powerLevelOfAdmin,
-      //   ),
-      //   value: SettingsAction.spaceAnalytics,
-      //   child: Row(
-      //     children: [
-      //       const Icon(Icons.analytics_outlined),
-      //       const SizedBox(width: 18),
-      //       Expanded(child: Text(L10n.of(context)!.spaceAnalytics)),
-      //     ],
-      //   ),
-      // ),
+      PopupMenuItem(
+        enabled: matrix.client.rooms.any(
+          (room) =>
+              room.isSpace &&
+              room.ownPowerLevel >= ClassDefaultValues.powerLevelOfAdmin,
+        ),
+        value: SettingsAction.spaceAnalytics,
+        child: Row(
+          children: [
+            const Icon(Icons.analytics_outlined),
+            const SizedBox(width: 18),
+            Expanded(child: Text(L10n.of(context)!.spaceAnalytics)),
+          ],
+        ),
+      ),
       PopupMenuItem(
         enabled: matrix.client.rooms.any(
           (room) => !room.isSpace && !room.isArchived && !room.isAnalyticsRoom,
@@ -401,9 +402,9 @@ class ClientChooserButton extends StatelessWidget {
             controller.pangeaController,
           );
           break;
-        // case SettingsAction.spaceAnalytics:
-        //   context.go('/rooms/analytics');
-        //   break;
+        case SettingsAction.spaceAnalytics:
+          context.go('/rooms/analytics');
+          break;
         case SettingsAction.myAnalytics:
           context.go('/rooms/mylearning');
           break;
@@ -496,7 +497,7 @@ enum SettingsAction {
   // #Pangea
   learning,
   joinWithClassCode,
-  // spaceAnalytics,
+  spaceAnalytics,
   myAnalytics,
   findAConversationPartner,
   logout,
