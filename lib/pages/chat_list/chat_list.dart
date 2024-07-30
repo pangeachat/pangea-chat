@@ -909,6 +909,11 @@ class ChatListController extends State<ChatList>
   Future<void> _waitForFirstSync() async {
     final client = Matrix.of(context).client;
     await client.roomsLoading;
+    // #Pangea
+    if (client.prevBatch == null) {
+      onDestinationSelected(0);
+    }
+    // Pangea#
     await client.accountDataLoading;
     await client.userDeviceKeysLoading;
     if (client.prevBatch == null) {
@@ -930,6 +935,17 @@ class ChatListController extends State<ChatList>
     }
 
     // #Pangea
+    lowerPrioritySyncs(client);
+    // debugger(when: kDebugMode);
+    // Pangea#
+    if (!mounted) return;
+    setState(() {
+      waitForFirstSync = true;
+    });
+  }
+
+  // #Pangea
+  Future<void> lowerPrioritySyncs(Client client) async {
     if (mounted) {
       // TODO try not to await so much
       GoogleAnalytics.analyticsUserUpdate(client.userID);
@@ -943,14 +959,9 @@ class ChatListController extends State<ChatList>
       ErrorHandler.logError(
         m: "didn't run afterSyncAndFirstLoginInitialization because not mounted",
       );
-      // debugger(when: kDebugMode);
     }
-    // Pangea#
-    if (!mounted) return;
-    setState(() {
-      waitForFirstSync = true;
-    });
   }
+  // Pangea#
 
   void cancelAction() {
     if (selectMode == SelectMode.share) {
