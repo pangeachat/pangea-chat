@@ -123,7 +123,6 @@ class Choreographer {
     final PangeaRepresentation originalSent = PangeaRepresentation(
       langCode:
           igc.igcTextData?.detectedLanguage ?? LanguageKeys.unknownLanguage,
-      text: currentText,
       originalSent: true,
       originalWritten: originalWritten == null,
     );

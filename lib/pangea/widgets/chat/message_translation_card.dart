@@ -167,7 +167,7 @@ class MessageTranslationCardState extends State<MessageTranslationCard> {
                         style: BotStyle.text(context),
                       )
                     : Text(
-                        repEvent!.text,
+                        repEvent!.text ?? widget.messageEvent.body,
                         style: BotStyle.text(context),
                       ),
                 const SizedBox(height: 10),

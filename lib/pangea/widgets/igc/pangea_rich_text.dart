@@ -120,7 +120,7 @@ class PangeaRichTextState extends State<PangeaRichText> {
 
       _setTextSpan(widget.pangeaMessageEvent.body);
     } else {
-      _setTextSpan(repEvent!.text);
+      _setTextSpan(repEvent!.text ?? widget.pangeaMessageEvent.body);
     }
   }
 

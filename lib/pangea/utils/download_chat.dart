@@ -143,8 +143,12 @@ String getOriginalText(PangeaMessageEvent message) {
     final List<ChoreoRecordStep>? steps =
         message.originalSent?.choreo?.choreoSteps;
     if (steps != null && steps.isNotEmpty) return steps.first.text;
-    if (message.originalWritten != null) return message.originalWritten!.text;
-    if (message.originalSent != null) return message.originalSent!.text;
+    if (message.originalWritten != null) {
+      return message.originalWritten?.text ?? message.event.body;
+    }
+    if (message.originalSent != null) {
+      return message.originalSent?.text ?? message.event.body;
+    }
     return message.body;
   } catch (err) {
     return message.body;

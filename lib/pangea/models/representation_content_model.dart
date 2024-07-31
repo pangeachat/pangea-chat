@@ -14,7 +14,7 @@ class PangeaRepresentation {
 
   /// final sent text
   /// if this was a process, a [PangeaIGCEvent] will contain changes
-  String text;
+  String? text;
 
   bool originalSent;
   bool originalWritten;
@@ -46,7 +46,7 @@ class PangeaRepresentation {
 
   PangeaRepresentation({
     required this.langCode,
-    required this.text,
+    this.text,
     required this.originalSent,
     required this.originalWritten,
     this.speechToText,

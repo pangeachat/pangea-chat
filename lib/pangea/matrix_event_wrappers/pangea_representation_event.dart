@@ -55,7 +55,7 @@ class RepresentationEvent {
     return _content!;
   }
 
-  String get text => content.text;
+  String? get text => content.text;
 
   String get langCode => content.langCode;
 
@@ -121,7 +121,7 @@ class RepresentationEvent {
       room: _event!.room,
       // Jordan - for just tokens, it's not clear which languages to pass
       req: TokensRequestModel(
-        fullText: text,
+        fullText: text ?? _event!.body,
         userL1:
             MatrixState.pangeaController.languageController.userL1?.langCode ??
                 LanguageKeys.unknownLanguage,
@@ -168,6 +168,7 @@ class RepresentationEvent {
   }
 
   String? formatBody() {
-    return markdown(content.text);
+    if (content.text == null && _event == null) return null;
+    return markdown(content.text ?? _event!.body);
   }
 }
