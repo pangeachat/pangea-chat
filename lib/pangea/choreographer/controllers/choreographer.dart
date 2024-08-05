@@ -95,9 +95,9 @@ class Choreographer {
       if (content != null) {
         messages.add(
           PreviousMessage(
-            event.content,
-            event.senderId,
-            event.originServerTs,
+            content: event.content,
+            sender: event.senderId,
+            timestamp: event.originServerTs,
           ),
         );
         if (messages.length >= howFarBack) {
