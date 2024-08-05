@@ -145,8 +145,6 @@ class IGCTextData {
     matches.removeAt(matchIndex);
 
     for (final match in matches) {
-      final matchOffset = match.match.offset;
-      final matchLength = match.match.length;
       match.match.fullText = originalInput;
       if (match.match.offset > pangeaMatch.match.offset) {
         match.match.offset += replacement.length - pangeaMatch.match.length;
@@ -310,7 +308,7 @@ class IGCTextData {
     // create a pointer to the current index in the original input
     // and iterate until the pointer has reached the end of the input
     int currentIndex = 0;
-    while (currentIndex < originalInput.characters.length - 1) {
+    while (currentIndex < originalInput.characters.length) {
       // check if the pointer is at a match, and if so, get the index of the match
       final int matchIndex = matchRanges.indexWhere(
         (range) => currentIndex >= range[0] && currentIndex < range[1],
