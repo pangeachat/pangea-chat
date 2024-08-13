@@ -22,9 +22,10 @@ class UserBottomSheetView extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = controller.widget.user;
     final userId = (user?.id ?? controller.widget.profile?.userId)!;
-    final displayname = (user?.calcDisplayname() ??
-        controller.widget.profile?.displayName ??
-        controller.widget.profile?.userId.localpart)!;
+    // final displayname = (user?.calcDisplayname() ??
+    //     controller.widget.profile?.displayName ??
+    //     controller.widget.profile?.userId.localpart)!;
+    const displayname = "?";
     final avatarUrl = user?.avatarUrl ?? controller.widget.profile?.avatarUrl;
 
     final client = Matrix.of(controller.widget.outerContext).client;
@@ -39,7 +40,7 @@ class UserBottomSheetView extends StatelessWidget {
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(displayname),
+              const Text(displayname),
               PresenceBuilder(
                 userId: userId,
                 client: client,
@@ -213,7 +214,7 @@ class UserBottomSheetView extends StatelessWidget {
                               foregroundColor:
                                   Theme.of(context).colorScheme.onSurface,
                             ),
-                            label: Text(
+                            label: const Text(
                               displayname,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -370,15 +371,17 @@ class UserBottomSheetView extends StatelessWidget {
                     onTap: () => controller
                         .participantAction(UserBottomSheetAction.unban),
                   ),
-                if (user != null && user.id != client.userID)
-                  ListTile(
-                    textColor: Theme.of(context).colorScheme.onErrorContainer,
-                    iconColor: Theme.of(context).colorScheme.onErrorContainer,
-                    title: Text(L10n.of(context)!.reportUser),
-                    leading: const Icon(Icons.report_outlined),
-                    onTap: () => controller
-                        .participantAction(UserBottomSheetAction.report),
-                  ),
+                // #Pangea
+                // if (user != null && user.id != client.userID)
+                //   ListTile(
+                //     textColor: Theme.of(context).colorScheme.onErrorContainer,
+                //     iconColor: Theme.of(context).colorScheme.onErrorContainer,
+                //     title: Text(L10n.of(context)!.reportUser),
+                //     leading: const Icon(Icons.report_outlined),
+                //     onTap: () => controller
+                //         .participantAction(UserBottomSheetAction.report),
+                //   ),
+                // Pangea#
                 if (profileSearchError != null)
                   ListTile(
                     leading: const Icon(

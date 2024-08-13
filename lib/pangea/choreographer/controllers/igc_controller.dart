@@ -47,7 +47,7 @@ class IgcController {
       );
 
       final IGCTextData igcTextDataResponse = await IgcRepo.getIGC(
-        await choreographer.accessToken,
+        choreographer.accessToken,
         igcRequest: reqBody,
       );
 
