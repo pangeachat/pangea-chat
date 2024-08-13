@@ -2,6 +2,7 @@ import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/enum/use_type.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
+import 'package:fluffychat/pangea/utils/bot_name.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_buttons.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
 import 'package:fluffychat/utils/date_time_extension.dart';
@@ -84,6 +85,7 @@ class Message extends StatelessWidget {
         controller.clearEditingEvent();
       }
     });
+    final bool isBot = event.senderId.equals(BotName.byEnvironment);
     // Pangea#
     if (!{
       EventTypes.Message,
@@ -266,10 +268,13 @@ class Message extends StatelessWidget {
                                 // mxContent: user.avatarUrl,
                                 // name: user.calcDisplayname(),
                                 // presenceUserId: user.stateKey,
-                                name: "?",
-                                presenceBackgroundColor:
-                                    avatarPresenceBackgroundColor,
-                                onTap: () => onAvatarTab(event),
+                                name: isBot ? user.calcDisplayname() : "?",
+                                mxContent: isBot ? user.avatarUrl : null,
+                                presenceUserId: isBot ? user.stateKey : null,
+                                presenceBackgroundColor: isBot
+                                    ? null
+                                    : avatarPresenceBackgroundColor,
+                                // onTap: () => onAvatarTab(event),
                               );
                             },
                           ),
@@ -293,7 +298,13 @@ class Message extends StatelessWidget {
                                             //         ?.calcDisplayname() ??
                                             //     event.senderFromMemoryOrFallback
                                             //         .calcDisplayname();
-                                            const displayname = "?";
+                                            final displayname = isBot
+                                                ? snapshot.data
+                                                        ?.calcDisplayname() ??
+                                                    event
+                                                        .senderFromMemoryOrFallback
+                                                        .calcDisplayname()
+                                                : "?";
                                             return Text(
                                               displayname,
                                               style: TextStyle(
