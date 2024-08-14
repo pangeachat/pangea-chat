@@ -12,6 +12,7 @@ class GameRoundModel {
   final Duration roundDuration = const Duration(
     seconds: GameConstants.timerMaxSeconds,
   );
+  final String gameMaster = BotName.byEnvironment;
 
   final Room room;
 
@@ -35,10 +36,7 @@ class GameRoundModel {
         currentRoundStart!,
       );
       final roundFinished = currentRoundDuration > roundDuration;
-
-      if (roundFinished) {
-        endRound();
-      }
+      if (roundFinished) endRound();
     }
 
     // listen to syncs for new bot messages to start and stop rounds
@@ -52,18 +50,26 @@ class GameRoundModel {
   DateTime? get currentRoundStart => gameState.currentRoundStartTime;
   DateTime? get previousRoundEnd => gameState.previousRoundEndTime;
 
+  /// Check if a game event is visible in the GUI.
+  bool gameEventIsVisibleInGui(Event event) {
+    // if it's not a message, it's sent by the GM,
+    // or it's sent after the previous round ended
+    return event.type != EventTypes.Message ||
+        event.senderId == gameMaster ||
+        previousRoundEnd == null ||
+        event.originServerTs.isAfter(previousRoundEnd!);
+  }
+
   void _handleSync(SyncUpdate update) {
     final newMessages = update
         .messages(room)
         .where((msg) => msg.originServerTs.isAfter(createdAt))
         .toList();
 
-    final botMessages = newMessages
-        .where((msg) => msg.senderId == BotName.byEnvironment)
-        .toList();
-    final userMessages = newMessages
-        .where((msg) => msg.senderId != BotName.byEnvironment)
-        .toList();
+    final botMessages =
+        newMessages.where((msg) => msg.senderId == gameMaster).toList();
+    final userMessages =
+        newMessages.where((msg) => msg.senderId != gameMaster).toList();
 
     final hasNewBotMessage = botMessages.any(
       (msg) => !botMessageIDs.contains(msg.eventId),
@@ -103,7 +109,10 @@ class GameRoundModel {
     );
 
     game.currentRoundStartTime = currentRoundStart;
-    game.previousRoundEndTime = previousRoundEnd;
+
+    if (previousRoundEnd != null) {
+      game.previousRoundEndTime = previousRoundEnd;
+    }
 
     await room.client.setRoomStateWithKey(
       room.id,
@@ -117,7 +126,6 @@ class GameRoundModel {
   void startRound() {
     setRoundTimes(
       currentRoundStart: DateTime.now(),
-      previousRoundEnd: null,
     ).then((_) => timer = Timer(roundDuration, endRound));
   }
 
