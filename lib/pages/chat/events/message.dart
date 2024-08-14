@@ -3,6 +3,7 @@ import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/enum/use_type.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
+import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_buttons.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
 import 'package:fluffychat/utils/date_time_extension.dart';
@@ -105,7 +106,12 @@ class Message extends StatelessWidget {
 
     final client = Matrix.of(context).client;
     final ownMessage = event.senderId == client.userID;
-    final alignment = ownMessage ? Alignment.topRight : Alignment.topLeft;
+
+    // #Pangea
+    // final alignment = ownMessage ? Alignment.topRight : Alignment.topLeft;
+    final alignment = controller.messageAlignment(event);
+    // Pangea#
+
     // ignore: deprecated_member_use
     var color = Theme.of(context).colorScheme.surfaceVariant;
     final displayTime = event.type == EventTypes.RoomCreate ||
@@ -249,7 +255,10 @@ class Message extends StatelessWidget {
                                 width: 16,
                                 height: 16,
                                 child: event.status == EventStatus.error
-                                    ? const Icon(Icons.error, color: Colors.red)
+                                    ? const Icon(
+                                        Icons.error,
+                                        color: Colors.red,
+                                      )
                                     : event.fileSendingStatus != null
                                         ? const CircularProgressIndicator
                                             .adaptive(
@@ -395,8 +404,9 @@ class Message extends StatelessWidget {
                                               if (event.relationshipType ==
                                                   RelationshipTypes.reply)
                                                 FutureBuilder<Event?>(
-                                                  future: event
-                                                      .getReplyEvent(timeline),
+                                                  future: event.getReplyEvent(
+                                                    timeline,
+                                                  ),
                                                   builder: (
                                                     BuildContext context,
                                                     snapshot,
@@ -512,7 +522,9 @@ class Message extends StatelessWidget {
                                                           ' - ${displayEvent.originServerTs.localizedTimeShort(context)}',
                                                           style: TextStyle(
                                                             color: textColor
-                                                                .withAlpha(164),
+                                                                .withAlpha(
+                                                              164,
+                                                            ),
                                                             fontSize: 12,
                                                           ),
                                                         ),

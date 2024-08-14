@@ -75,55 +75,58 @@ class ChatView extends StatelessWidget {
             tooltip: L10n.of(context)!.redactMessage,
             onPressed: controller.redactEventsAction,
           ),
-        // #Pangea
-        // if (controller.selectedEvents.length == 1)
-        //   PopupMenuButton<_EventContextAction>(
-        //     onSelected: (action) {
-        //       switch (action) {
-        //         case _EventContextAction.info:
-        //           controller.showEventInfo();
-        //           controller.clearSelectedEvents();
-        //           break;
-        //         case _EventContextAction.report:
-        //           controller.reportEventAction();
-        //           break;
-        //       }
-        //     },
-        //     itemBuilder: (context) => [
-        //       PopupMenuItem(
-        //         value: _EventContextAction.info,
-        //         child: Row(
-        //           mainAxisSize: MainAxisSize.min,
-        //           children: [
-        //             const Icon(Icons.info_outlined),
-        //             const SizedBox(width: 12),
-        //             Text(L10n.of(context)!.messageInfo),
-        //           ],
-        //         ),
-        //       ),
-        //       if (controller.selectedEvents.single.status.isSent)
-        //         PopupMenuItem(
-        //           value: _EventContextAction.report,
-        //           child: Row(
-        //             mainAxisSize: MainAxisSize.min,
-        //             children: [
-        //               const Icon(
-        //                 Icons.shield_outlined,
-        //                 color: Colors.red,
-        //               ),
-        //               const SizedBox(width: 12),
-        //               Text(L10n.of(context)!.reportMessage),
-        //             ],
-        //           ),
-        //         ),
-        //     ],
-        //   ),
-        // Pangea#
+        if (controller.selectedEvents.length == 1
+                // #Pangea
+                &&
+                !controller.isStoryGameMode
+            // Pangea#
+            )
+          PopupMenuButton<_EventContextAction>(
+            onSelected: (action) {
+              switch (action) {
+                case _EventContextAction.info:
+                  controller.showEventInfo();
+                  controller.clearSelectedEvents();
+                  break;
+                case _EventContextAction.report:
+                  controller.reportEventAction();
+                  break;
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: _EventContextAction.info,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.info_outlined),
+                    const SizedBox(width: 12),
+                    Text(L10n.of(context)!.messageInfo),
+                  ],
+                ),
+              ),
+              if (controller.selectedEvents.single.status.isSent)
+                PopupMenuItem(
+                  value: _EventContextAction.report,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.shield_outlined,
+                        color: Colors.red,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(L10n.of(context)!.reportMessage),
+                    ],
+                  ),
+                ),
+            ],
+          ),
       ];
       // #Pangea
     } else {
       return [
-        RoundTimer(controller: controller),
+        if (controller.isStoryGameMode) RoundTimer(controller: controller),
         const SizedBox(
           width: 10,
         ),

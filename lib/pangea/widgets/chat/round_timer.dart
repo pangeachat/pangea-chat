@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
-import 'package:fluffychat/pangea/models/game_state_model.dart';
+import 'package:fluffychat/pangea/models/games/game_state_model.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
@@ -63,6 +63,7 @@ class RoundTimerState extends State<RoundTimer> {
     final GameModel gameState = GameModel.fromJson(
       (update.state as Event).content,
     );
+    debugPrint("game state update: ${gameState.toJson()}");
     final startTime = gameState.currentRoundStartTime;
     final endTime = gameState.previousRoundEndTime;
 

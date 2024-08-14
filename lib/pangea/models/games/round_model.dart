@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/extensions/sync_update_extension.dart';
-import 'package:fluffychat/pangea/models/game_state_model.dart';
+import 'package:fluffychat/pangea/models/games/game_state_model.dart';
 import 'package:matrix/matrix.dart';
 
 /// A model of a game round. Manages the round's state and duration.
