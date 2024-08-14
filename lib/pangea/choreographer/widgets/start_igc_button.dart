@@ -41,16 +41,24 @@ class StartIGCButtonState extends State<StartIGCButton>
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _controller?.dispose();
+    choreoListener?.cancel();
+    super.dispose();
+  }
+
   void updateSpinnerState(_) {
     if (prevState != AssistanceState.fetching &&
         assistanceState == AssistanceState.fetching) {
       _controller?.repeat();
     } else if (prevState == AssistanceState.fetching &&
         assistanceState != AssistanceState.fetching) {
-      _controller?.stop();
-      _controller?.reverse();
+      _controller?.reset();
     }
-    setState(() => prevState = assistanceState);
+    if (mounted) {
+      setState(() => prevState = assistanceState);
+    }
   }
 
   bool get itEnabled => widget.controller.choreographer.itEnabled;
