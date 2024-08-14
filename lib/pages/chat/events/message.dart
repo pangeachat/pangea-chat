@@ -319,38 +319,49 @@ class Message extends StatelessWidget {
                                     left: 8.0,
                                     bottom: 4,
                                   ),
-                                  child: ownMessage || event.room.isDirectChat
-                                      ? const SizedBox(height: 12)
-                                      : FutureBuilder<User?>(
-                                          future: event.fetchSenderUser(),
-                                          builder: (context, snapshot) {
-                                            // final displayname = snapshot.data
-                                            //         ?.calcDisplayname() ??
-                                            //     event.senderFromMemoryOrFallback
-                                            //         .calcDisplayname();
-                                            final displayname = isBot
-                                                ? snapshot.data
-                                                        ?.calcDisplayname() ??
-                                                    event
-                                                        .senderFromMemoryOrFallback
-                                                        .calcDisplayname()
-                                                : "?";
-                                            return Text(
-                                              displayname,
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color: (Theme.of(context)
-                                                            .brightness ==
-                                                        Brightness.light
-                                                    ? displayname.color
-                                                    : displayname
-                                                        .lightColorText),
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            );
-                                          },
-                                        ),
+                                  child:
+                                      // #Pangea
+                                      isNarration
+                                          ? const SizedBox()
+                                          :
+                                          // Pangea#
+                                          ownMessage || event.room.isDirectChat
+                                              ? const SizedBox(height: 12)
+                                              : FutureBuilder<User?>(
+                                                  future:
+                                                      event.fetchSenderUser(),
+                                                  builder: (context, snapshot) {
+                                                    // #Pangea
+                                                    // final displayname = snapshot.data
+                                                    //         ?.calcDisplayname() ??
+                                                    //     event.senderFromMemoryOrFallback
+                                                    //         .calcDisplayname();
+                                                    final displayname = isBot
+                                                        ? snapshot.data
+                                                                ?.calcDisplayname() ??
+                                                            event
+                                                                .senderFromMemoryOrFallback
+                                                                .calcDisplayname()
+                                                        : "?";
+                                                    // Pangea#
+                                                    return Text(
+                                                      displayname,
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: (Theme.of(
+                                                                  context,
+                                                                ).brightness ==
+                                                                Brightness.light
+                                                            ? displayname.color
+                                                            : displayname
+                                                                .lightColorText),
+                                                      ),
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    );
+                                                  },
+                                                ),
                                 ),
                               Container(
                                 alignment: alignment,
