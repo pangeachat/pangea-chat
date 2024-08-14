@@ -126,10 +126,6 @@ class ChatView extends StatelessWidget {
       // #Pangea
     } else {
       return [
-        if (controller.isStoryGameMode) RoundTimer(controller: controller),
-        const SizedBox(
-          width: 10,
-        ),
         ChatSettingsPopupMenu(
           controller.room,
           (!controller.room.isDirectChat && !controller.room.isArchived),
@@ -525,6 +521,15 @@ class ChatView extends StatelessWidget {
                             ],
                           ),
                         ),
+                        if (controller.isStoryGameMode)
+                          Positioned(
+                            right: 20,
+                            child: SizedBox(
+                              height: 100,
+                              width: 100,
+                              child: RoundTimer(controller: controller),
+                            ),
+                          ),
                         // Pangea#
                       ],
                     ),

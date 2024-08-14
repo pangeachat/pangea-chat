@@ -117,14 +117,20 @@ class Message extends StatelessWidget {
     final displayTime = event.type == EventTypes.RoomCreate ||
         nextEvent == null ||
         !event.originServerTs.sameEnvironment(nextEvent!.originServerTs);
-    final nextEventSameSender = nextEvent != null &&
-        {
-          EventTypes.Message,
-          EventTypes.Sticker,
-          EventTypes.Encrypted,
-        }.contains(nextEvent!.type) &&
-        nextEvent!.senderId == event.senderId &&
-        !displayTime;
+    final nextEventSameSender =
+        // #Pangea
+        controller.isStoryGameMode
+            ? controller.storyGameNextEventSameSender(event, nextEvent)
+            :
+            // Pangea#
+            nextEvent != null &&
+                {
+                  EventTypes.Message,
+                  EventTypes.Sticker,
+                  EventTypes.Encrypted,
+                }.contains(nextEvent!.type) &&
+                nextEvent!.senderId == event.senderId &&
+                !displayTime;
 
     final previousEventSameSender = previousEvent != null &&
         {
@@ -237,7 +243,17 @@ class Message extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: rowMainAxisAlignment,
                       children: [
-                        if (longPressSelect)
+                        // #Pangea
+                        if (controller.isStoryGameMode &&
+                            event.senderId == GameConstants.gameMaster)
+                          controller.storyGameAvatar(
+                            event,
+                            nextEvent,
+                            onAvatarTab,
+                          )
+                        // if (longPressSelect)
+                        else if (longPressSelect)
+                          // Pangea#
                           SizedBox(
                             height: 32,
                             width: Avatar.defaultSize,
@@ -307,17 +323,19 @@ class Message extends StatelessWidget {
                                           future: event.fetchSenderUser(),
                                           builder: (context, snapshot) {
                                             // #Pangea
-                                            // final displayname = snapshot.data
-                                            //         ?.calcDisplayname() ??
-                                            //     event.senderFromMemoryOrFallback
-                                            //         .calcDisplayname();
-                                            final displayname = sentByGM
-                                                ? snapshot.data
-                                                        ?.calcDisplayname() ??
-                                                    event
-                                                        .senderFromMemoryOrFallback
-                                                        .calcDisplayname()
-                                                : "?";
+                                            String displayname;
+                                            if (!controller.isStoryGameMode) {
+                                              // Pangea#
+                                              displayname = snapshot.data
+                                                      ?.calcDisplayname() ??
+                                                  event
+                                                      .senderFromMemoryOrFallback
+                                                      .calcDisplayname();
+                                              // #Pangea
+                                            } else {
+                                              displayname = controller
+                                                  .storyGameDisplayName(event);
+                                            }
                                             // Pangea#
                                             return Text(
                                               displayname,
