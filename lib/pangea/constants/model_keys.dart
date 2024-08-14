@@ -114,6 +114,13 @@ class ModelKey {
       "custom_trigger_reaction_enabled";
   static const String customTriggerReactionKey = "custom_trigger_reaction_key";
 
+  static const String textAdventureGameMasterInstructions =
+      "text_adventure_game_master_instructions";
+
   static const String prevEventId = "prev_event_id";
   static const String prevLastUpdated = "prev_last_updated";
+
+  static const String gameState = "game_state";
+  static const String currentRoundStartTime = "start_time";
+  static const String previousRoundEndTime = "message_visible_from";
 }
