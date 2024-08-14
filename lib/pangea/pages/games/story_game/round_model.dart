@@ -4,7 +4,6 @@ import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/extensions/sync_update_extension.dart';
 import 'package:fluffychat/pangea/models/game_state_model.dart';
-import 'package:fluffychat/pangea/utils/bot_name.dart';
 import 'package:matrix/matrix.dart';
 
 /// A model of a game round. Manages the round's state and duration.
@@ -12,7 +11,6 @@ class GameRoundModel {
   final Duration roundDuration = const Duration(
     seconds: GameConstants.timerMaxSeconds,
   );
-  final String gameMaster = BotName.byEnvironment;
 
   final Room room;
 
@@ -55,7 +53,7 @@ class GameRoundModel {
     // if it's not a message, it's sent by the GM,
     // or it's sent after the previous round ended
     return event.type != EventTypes.Message ||
-        event.senderId == gameMaster ||
+        event.senderId == GameConstants.gameMaster ||
         previousRoundEnd == null ||
         event.originServerTs.isAfter(previousRoundEnd!);
   }
@@ -66,10 +64,12 @@ class GameRoundModel {
         .where((msg) => msg.originServerTs.isAfter(createdAt))
         .toList();
 
-    final botMessages =
-        newMessages.where((msg) => msg.senderId == gameMaster).toList();
-    final userMessages =
-        newMessages.where((msg) => msg.senderId != gameMaster).toList();
+    final botMessages = newMessages
+        .where((msg) => msg.senderId == GameConstants.gameMaster)
+        .toList();
+    final userMessages = newMessages
+        .where((msg) => msg.senderId != GameConstants.gameMaster)
+        .toList();
 
     final hasNewBotMessage = botMessages.any(
       (msg) => !botMessageIDs.contains(msg.eventId),

@@ -66,7 +66,7 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
 
   void _showPointsGained(List<OneConstructUse> constructs) {
     setState(() => _addedPoints = (_currentXP ?? 0) - (_prevXP ?? 0));
-    if (_prevXP != _currentXP && !_controller.isAnimating) {
+    if (_prevXP != null && _prevXP != _currentXP && !_controller.isAnimating) {
       _controller.reset();
       _controller.forward();
     }
