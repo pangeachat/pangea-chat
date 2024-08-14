@@ -39,6 +39,7 @@ class MessageContent extends StatelessWidget {
   final bool immersionMode;
   final ToolbarDisplayController? toolbarController;
   final bool isOverlay;
+  final bool isNarration;
   // Pangea#
 
   const MessageContent(
@@ -52,6 +53,7 @@ class MessageContent extends StatelessWidget {
     required this.immersionMode,
     required this.toolbarController,
     this.isOverlay = false,
+    this.isNarration = false,
     // Pangea#
     required this.borderRadius,
   });
@@ -124,7 +126,12 @@ class MessageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fontSize = AppConfig.messageFontSize * AppConfig.fontSizeFactor;
+    var fontSize = AppConfig.messageFontSize * AppConfig.fontSizeFactor;
+    // #Pangea
+    if (isNarration) {
+      fontSize *= 1.3;
+    }
+    // Pangea#
     final buttonTextColor = textColor;
     switch (event.type) {
       // #Pangea

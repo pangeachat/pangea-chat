@@ -12,11 +12,12 @@ import 'package:matrix/matrix.dart';
 extension GameChatController on ChatController {
   String? get userID => room.client.userID;
 
-  Alignment messageAlignment(Event event) {
+  Alignment messageAlignment(Event event, bool isNarration) {
     final ownMessage = event.senderId == userID;
     if (!isStoryGameMode || event.senderId != GameConstants.gameMaster) {
       return ownMessage ? Alignment.topRight : Alignment.topLeft;
     }
+    if (isNarration) return Alignment.center;
     return Alignment.topLeft;
   }
 
