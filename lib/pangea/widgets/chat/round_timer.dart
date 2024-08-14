@@ -7,6 +7,7 @@ import 'package:fluffychat/pangea/models/games/game_state_model.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 
 /// Create a timer that counts down to the given time
 /// Default duration is 180 seconds
@@ -102,38 +103,18 @@ class RoundTimerState extends State<RoundTimer> {
   int get remainingTime => GameConstants.timerMaxSeconds - currentSeconds;
 
   String get timerText =>
-      '${(remainingTime ~/ 60).toString().padLeft(2, '0')}: ${(remainingTime % 60).toString().padLeft(2, '0')}';
+      '${(remainingTime ~/ 60).toString().padLeft(2, '0')}:${(remainingTime % 60).toString().padLeft(2, '0')}';
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: const Color.fromARGB(255, 126, 22, 14),
-      child: Padding(
-        padding: const EdgeInsets.all(5),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(timerText),
-              const Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // IconButton(
-                  //   onPressed: widget.currentRound.timer == null
-                  //       ? widget.currentRound.startRound
-                  //       : null,
-                  //   icon: Icon(
-                  //     widget.currentRound.timer != null
-                  //         ? Icons.pause_circle
-                  //         : Icons.play_circle,
-                  //   ),
-                  // ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+    return CircularPercentIndicator(
+      radius: 40.0,
+      percent: currentSeconds / GameConstants.timerMaxSeconds,
+      backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+      progressColor: Theme.of(context).colorScheme.primary,
+      animation: true,
+      animateFromLastPercent: true,
+      center: Text(timerText),
     );
   }
 }

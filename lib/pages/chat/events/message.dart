@@ -1,5 +1,6 @@
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
+import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/enum/use_type.dart';
@@ -126,14 +127,20 @@ class Message extends StatelessWidget {
     final displayTime = event.type == EventTypes.RoomCreate ||
         nextEvent == null ||
         !event.originServerTs.sameEnvironment(nextEvent!.originServerTs);
-    final nextEventSameSender = nextEvent != null &&
-        {
-          EventTypes.Message,
-          EventTypes.Sticker,
-          EventTypes.Encrypted,
-        }.contains(nextEvent!.type) &&
-        nextEvent!.senderId == event.senderId &&
-        !displayTime;
+    final nextEventSameSender =
+        // #Pangea
+        controller.isStoryGameMode
+            ? controller.storyGameNextEventSameSender(event, nextEvent)
+            :
+            // Pangea#
+            nextEvent != null &&
+                {
+                  EventTypes.Message,
+                  EventTypes.Sticker,
+                  EventTypes.Encrypted,
+                }.contains(nextEvent!.type) &&
+                nextEvent!.senderId == event.senderId &&
+                !displayTime;
 
     final previousEventSameSender = previousEvent != null &&
         {
@@ -256,7 +263,17 @@ class Message extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: rowMainAxisAlignment,
                       children: [
-                        if (longPressSelect)
+                        // #Pangea
+                        if (controller.isStoryGameMode &&
+                            event.senderId == GameConstants.gameMaster)
+                          controller.storyGameAvatar(
+                            event,
+                            nextEvent,
+                            onAvatarTab,
+                          )
+                        // if (longPressSelect)
+                        else if (longPressSelect)
+                          // Pangea#
                           SizedBox(
                             height: 32,
                             width: Avatar.defaultSize,
@@ -325,49 +342,42 @@ class Message extends StatelessWidget {
                                     left: 8.0,
                                     bottom: 4,
                                   ),
-                                  child:
-                                      // #Pangea
-                                      isNarration
-                                          ? const SizedBox()
-                                          :
-                                          // Pangea#
-                                          ownMessage || event.room.isDirectChat
-                                              ? const SizedBox(height: 12)
-                                              : FutureBuilder<User?>(
-                                                  future:
-                                                      event.fetchSenderUser(),
-                                                  builder: (context, snapshot) {
-                                                    // #Pangea
-                                                    // final displayname = snapshot.data
-                                                    //         ?.calcDisplayname() ??
-                                                    //     event.senderFromMemoryOrFallback
-                                                    //         .calcDisplayname();
-                                                    final displayname = isBot
-                                                        ? snapshot.data
-                                                                ?.calcDisplayname() ??
-                                                            event
-                                                                .senderFromMemoryOrFallback
-                                                                .calcDisplayname()
-                                                        : "?";
-                                                    // Pangea#
-                                                    return Text(
-                                                      displayname,
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: (Theme.of(
-                                                                  context,
-                                                                ).brightness ==
-                                                                Brightness.light
-                                                            ? displayname.color
-                                                            : displayname
-                                                                .lightColorText),
-                                                      ),
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    );
-                                                  },
-                                                ),
+                                  child: ownMessage || event.room.isDirectChat
+                                      ? const SizedBox(height: 12)
+                                      : FutureBuilder<User?>(
+                                          future: event.fetchSenderUser(),
+                                          builder: (context, snapshot) {
+                                            // #Pangea
+                                            String displayname;
+                                            if (!controller.isStoryGameMode) {
+                                              // Pangea#
+                                              displayname = snapshot.data
+                                                      ?.calcDisplayname() ??
+                                                  event
+                                                      .senderFromMemoryOrFallback
+                                                      .calcDisplayname();
+                                              // #Pangea
+                                            } else {
+                                              displayname = controller
+                                                  .storyGameDisplayName(event);
+                                            }
+                                            // Pangea#
+                                            return Text(
+                                              displayname,
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: (Theme.of(context)
+                                                            .brightness ==
+                                                        Brightness.light
+                                                    ? displayname.color
+                                                    : displayname
+                                                        .lightColorText),
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            );
+                                          },
+                                        ),
                                 ),
                               Container(
                                 alignment: alignment,
