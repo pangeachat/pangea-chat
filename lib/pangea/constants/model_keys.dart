@@ -126,4 +126,6 @@ class ModelKey {
   static const String currentCharacter = "current_character";
   static const String messagesVisibleTo = "message_visible_to";
   static const String score = "score";
+  static const String narrator = "narrator";
+  static const String character = "character";
 }
