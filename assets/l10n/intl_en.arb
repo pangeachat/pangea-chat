@@ -4125,5 +4125,12 @@
   "wordsUsed": "Words Used",
   "errorTypes": "Error Types",
   "level": "Level",
-  "canceledSend": "Canceled send"
+  "canceledSend": "Canceled send",
+  "currentCharDialoguePrompt": "{character} says...",
+  "@currentCharDialoguePrompt": {
+    "type": "text",
+    "placeholders": {
+      "character": {}
+    }
+  }
 }
