@@ -1,10 +1,12 @@
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/constants/model_keys.dart';
+import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/enum/use_type.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
 import 'package:fluffychat/pangea/utils/bot_name.dart';
+import 'package:fluffychat/pangea/widgets/chat/game_divider.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_buttons.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
 import 'package:fluffychat/utils/date_time_extension.dart';
@@ -90,6 +92,10 @@ class Message extends StatelessWidget {
     final bool isBot = event.senderId.equals(BotName.byEnvironment);
     final bool isNarration =
         event.content[ModelKey.character] == ModelKey.narrator;
+    // In case of game event, display current character
+    if (event.type == PangeaEventTypes.storyGame) {
+      return GameDivider(controller, event);
+    }
     // Pangea#
     if (!{
       EventTypes.Message,
