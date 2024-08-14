@@ -59,6 +59,7 @@ class GetAnalyticsController {
     _analyticsUpdateSubscription?.cancel();
     _analyticsUpdateSubscription = null;
     _cache.clear();
+    analyticsStream.add([]);
   }
 
   Future<void> onAnalyticsUpdate(AnalyticsUpdateType type) async {

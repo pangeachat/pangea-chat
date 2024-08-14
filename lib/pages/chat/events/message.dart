@@ -1,8 +1,8 @@
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
+import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/enum/use_type.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
-import 'package:fluffychat/pangea/utils/bot_name.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_buttons.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
 import 'package:fluffychat/utils/date_time_extension.dart';
@@ -85,7 +85,6 @@ class Message extends StatelessWidget {
         controller.clearEditingEvent();
       }
     });
-    final bool isBot = event.senderId.equals(BotName.byEnvironment);
     // Pangea#
     if (!{
       EventTypes.Message,
@@ -177,6 +176,8 @@ class Message extends StatelessWidget {
         previousEvent: previousEvent,
       );
     }
+
+    final bool sentByGM = GameConstants.gameMaster == event.senderId;
     // Pangea#
 
     final resetAnimateIn = this.resetAnimateIn;
@@ -265,16 +266,18 @@ class Message extends StatelessWidget {
                               final user = snapshot.data ??
                                   event.senderFromMemoryOrFallback;
                               return Avatar(
+                                // #Pangea
                                 // mxContent: user.avatarUrl,
                                 // name: user.calcDisplayname(),
                                 // presenceUserId: user.stateKey,
-                                name: isBot ? user.calcDisplayname() : "?",
-                                mxContent: isBot ? user.avatarUrl : null,
-                                presenceUserId: isBot ? user.stateKey : null,
-                                presenceBackgroundColor: isBot
+                                name: sentByGM ? user.calcDisplayname() : "?",
+                                mxContent: sentByGM ? user.avatarUrl : null,
+                                presenceUserId: sentByGM ? user.stateKey : null,
+                                presenceBackgroundColor: sentByGM
                                     ? null
                                     : avatarPresenceBackgroundColor,
                                 // onTap: () => onAvatarTab(event),
+                                // Pangea#
                               );
                             },
                           ),
@@ -294,17 +297,19 @@ class Message extends StatelessWidget {
                                       : FutureBuilder<User?>(
                                           future: event.fetchSenderUser(),
                                           builder: (context, snapshot) {
+                                            // #Pangea
                                             // final displayname = snapshot.data
                                             //         ?.calcDisplayname() ??
                                             //     event.senderFromMemoryOrFallback
                                             //         .calcDisplayname();
-                                            final displayname = isBot
+                                            final displayname = sentByGM
                                                 ? snapshot.data
                                                         ?.calcDisplayname() ??
                                                     event
                                                         .senderFromMemoryOrFallback
                                                         .calcDisplayname()
                                                 : "?";
+                                            // Pangea#
                                             return Text(
                                               displayname,
                                               style: TextStyle(

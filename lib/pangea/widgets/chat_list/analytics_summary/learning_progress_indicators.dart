@@ -47,9 +47,19 @@ class LearningProgressIndicatorsState
 
   bool loading = true;
 
-  int get serverXP => _pangeaController.analytics.serverXP;
-  int get totalXP => _pangeaController.analytics.currentXP;
-  int get level => _pangeaController.analytics.level;
+  // Spme buggy stuff is happening with this data not being updated at login, so switching
+  // to stateful variables for now. Will switch this back later when I have more time to
+  // figure out why it's now working.
+  // int get serverXP => _pangeaController.analytics.serverXP;
+  // int get totalXP => _pangeaController.analytics.currentXP;
+  // int get level => _pangeaController.analytics.level;
+  List<OneConstructUse> currentConstructs = [];
+  int get currentXP => _pangeaController.analytics.calcXP(currentConstructs);
+  int get localXP => _pangeaController.analytics.calcXP(
+        _pangeaController.analytics.locallyCachedConstructs,
+      );
+  int get serverXP => currentXP - localXP;
+  int get level => currentXP ~/ AnalyticsConstants.xpPerLevel;
 
   @override
   void initState() {
@@ -57,7 +67,8 @@ class LearningProgressIndicatorsState
     updateAnalyticsData(
       _pangeaController.analytics.analyticsStream.value ?? [],
     );
-    _pangeaController.analytics.analyticsStream.stream
+    _analyticsUpdateSubscription = _pangeaController
+        .analytics.analyticsStream.stream
         .listen(updateAnalyticsData);
   }
 
@@ -79,6 +90,7 @@ class LearningProgressIndicatorsState
       uses: constructs,
     );
 
+    currentConstructs = constructs;
     if (loading) loading = false;
     if (mounted) setState(() {});
   }
@@ -97,7 +109,7 @@ class LearningProgressIndicatorsState
 
   double get levelBarWidth => FluffyThemes.columnWidth - (32 * 2) - 25;
   double get pointsBarWidth {
-    final percent = (totalXP % AnalyticsConstants.xpPerLevel) /
+    final percent = (currentXP % AnalyticsConstants.xpPerLevel) /
         AnalyticsConstants.xpPerLevel;
     return levelBarWidth * percent;
   }
@@ -124,7 +136,7 @@ class LearningProgressIndicatorsState
       levelBars: [
         LevelBarDetails(
           fillColor: const Color.fromARGB(255, 0, 190, 83),
-          currentPoints: totalXP,
+          currentPoints: currentXP,
         ),
         LevelBarDetails(
           fillColor: Theme.of(context).colorScheme.primary,
