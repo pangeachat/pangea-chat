@@ -12,6 +12,7 @@ import 'package:fluffychat/pages/chat/reply_display.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/it_bar.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/start_igc_button.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
+import 'package:fluffychat/pangea/widgets/animations/gain_points.dart';
 import 'package:fluffychat/pangea/widgets/chat/chat_floating_action_button.dart';
 import 'package:fluffychat/pangea/widgets/chat/round_timer.dart';
 import 'package:fluffychat/utils/account_config.dart';
@@ -74,48 +75,50 @@ class ChatView extends StatelessWidget {
             tooltip: L10n.of(context)!.redactMessage,
             onPressed: controller.redactEventsAction,
           ),
-        if (controller.selectedEvents.length == 1)
-          PopupMenuButton<_EventContextAction>(
-            onSelected: (action) {
-              switch (action) {
-                case _EventContextAction.info:
-                  controller.showEventInfo();
-                  controller.clearSelectedEvents();
-                  break;
-                case _EventContextAction.report:
-                  controller.reportEventAction();
-                  break;
-              }
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: _EventContextAction.info,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.info_outlined),
-                    const SizedBox(width: 12),
-                    Text(L10n.of(context)!.messageInfo),
-                  ],
-                ),
-              ),
-              if (controller.selectedEvents.single.status.isSent)
-                PopupMenuItem(
-                  value: _EventContextAction.report,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.shield_outlined,
-                        color: Colors.red,
-                      ),
-                      const SizedBox(width: 12),
-                      Text(L10n.of(context)!.reportMessage),
-                    ],
-                  ),
-                ),
-            ],
-          ),
+        // #Pangea
+        // if (controller.selectedEvents.length == 1)
+        //   PopupMenuButton<_EventContextAction>(
+        //     onSelected: (action) {
+        //       switch (action) {
+        //         case _EventContextAction.info:
+        //           controller.showEventInfo();
+        //           controller.clearSelectedEvents();
+        //           break;
+        //         case _EventContextAction.report:
+        //           controller.reportEventAction();
+        //           break;
+        //       }
+        //     },
+        //     itemBuilder: (context) => [
+        //       PopupMenuItem(
+        //         value: _EventContextAction.info,
+        //         child: Row(
+        //           mainAxisSize: MainAxisSize.min,
+        //           children: [
+        //             const Icon(Icons.info_outlined),
+        //             const SizedBox(width: 12),
+        //             Text(L10n.of(context)!.messageInfo),
+        //           ],
+        //         ),
+        //       ),
+        //       if (controller.selectedEvents.single.status.isSent)
+        //         PopupMenuItem(
+        //           value: _EventContextAction.report,
+        //           child: Row(
+        //             mainAxisSize: MainAxisSize.min,
+        //             children: [
+        //               const Icon(
+        //                 Icons.shield_outlined,
+        //                 color: Colors.red,
+        //               ),
+        //               const SizedBox(width: 12),
+        //               Text(L10n.of(context)!.reportMessage),
+        //             ],
+        //           ),
+        //         ),
+        //     ],
+        //   ),
+        // Pangea#
       ];
       // #Pangea
     } else {
@@ -471,8 +474,15 @@ class ChatView extends StatelessWidget {
                                       StartIGCButton(
                                         controller: controller,
                                       ),
-                                      ChatFloatingActionButton(
-                                        controller: controller,
+                                      Row(
+                                        children: [
+                                          const PointsGainedAnimation(
+                                            color: Colors.blue,
+                                          ),
+                                          ChatFloatingActionButton(
+                                            controller: controller,
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
