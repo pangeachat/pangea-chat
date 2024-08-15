@@ -9,7 +9,10 @@ import 'package:matrix/matrix.dart';
 /// A model of a game round. Manages the round's state and duration.
 class GameRoundModel {
   final Duration roundDuration = const Duration(
-    seconds: GameConstants.timerMaxSeconds,
+    seconds: GameConstants.roundLength,
+  );
+  final Duration afterRoundDuration = const Duration(
+    seconds: GameConstants.betweenRoundLength,
   );
 
   final Room room;
@@ -148,7 +151,7 @@ class GameRoundModel {
     setRoundTimes(
       currentRoundStart: null,
       previousRoundEnd: DateTime.now(),
-    );
+    ).then((_) => timer = Timer(afterRoundDuration, startRound));
   }
 
   void dispose() {

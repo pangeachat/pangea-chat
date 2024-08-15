@@ -80,7 +80,7 @@ class GameDivider extends StatelessWidget {
             ),
           ),
         ),
-        if (roundOngoing) RoundTimer(controller: controller),
+        RoundTimer(controller: controller),
         const SizedBox(
           height: 9,
         ),

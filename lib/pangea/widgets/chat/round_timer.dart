@@ -26,20 +26,32 @@ class RoundTimerState extends State<RoundTimer> {
   int currentSeconds = 0;
   Timer? timer;
   StreamSubscription? stateSubscription;
+  bool ongoingRound = false;
+  DateTime? timerStart;
 
   @override
   void initState() {
     super.initState();
 
-    final roundStartTime = widget.controller.currentRound?.currentRoundStart;
-    if (roundStartTime != null) {
-      final roundDuration = DateTime.now().difference(roundStartTime).inSeconds;
-      if (roundDuration > GameConstants.timerMaxSeconds) return;
+    timerStart = widget.controller.currentRound?.currentRoundStart;
+    ongoingRound = timerStart != null;
+    if (!ongoingRound) {
+      timerStart = widget.controller.currentRound?.previousRoundEnd;
+    }
+    if (timerStart != null) {
+      final roundDuration = DateTime.now().difference(timerStart!).inSeconds;
+      if (roundDuration >
+          (ongoingRound
+              ? GameConstants.roundLength
+              : GameConstants.betweenRoundLength)) return;
 
       currentSeconds = roundDuration;
       timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
         currentSeconds++;
-        if (currentSeconds >= GameConstants.timerMaxSeconds) {
+        if (currentSeconds >=
+            (ongoingRound
+                ? GameConstants.roundLength
+                : GameConstants.betweenRoundLength)) {
           t.cancel();
         }
         setState(() {});
@@ -76,7 +88,10 @@ class RoundTimerState extends State<RoundTimer> {
     if (startTime != null) {
       timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
         currentSeconds++;
-        if (currentSeconds >= GameConstants.timerMaxSeconds) {
+        if (currentSeconds >=
+            (ongoingRound
+                ? GameConstants.roundLength
+                : GameConstants.betweenRoundLength)) {
           t.cancel();
         }
         setState(() {});
@@ -100,20 +115,32 @@ class RoundTimerState extends State<RoundTimer> {
     timer = null;
   }
 
-  int get remainingTime => GameConstants.timerMaxSeconds - currentSeconds;
+  int get remainingTime =>
+      (ongoingRound
+          ? GameConstants.roundLength
+          : GameConstants.betweenRoundLength) -
+      currentSeconds;
 
   String get timerText =>
       '${(remainingTime ~/ 60).toString().padLeft(2, '0')}:${(remainingTime % 60).toString().padLeft(2, '0')}';
 
   @override
   Widget build(BuildContext context) {
-    double percent = currentSeconds / GameConstants.timerMaxSeconds;
+    double percent = currentSeconds /
+        (ongoingRound
+            ? GameConstants.roundLength
+            : GameConstants.betweenRoundLength);
     if (percent > 1) percent = 1;
     return CircularPercentIndicator(
       radius: 40.0,
       percent: percent,
-      backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
-      progressColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: (ongoingRound
+              ? GameConstants.roundColor
+              : GameConstants.betweenRoundColor)
+          .withOpacity(0.5),
+      progressColor: ongoingRound
+          ? GameConstants.roundColor
+          : GameConstants.betweenRoundColor,
       animation: true,
       animateFromLastPercent: true,
       center: Text(timerText),
