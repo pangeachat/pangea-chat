@@ -10,24 +10,17 @@ import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
 
 class GameDivider extends StatelessWidget {
-  ChatController controller;
+  final ChatController controller;
   final Event event;
 
-  GameDivider(this.controller, this.event, {super.key});
+  const GameDivider(this.controller, this.event, {super.key});
 
   @override
   Widget build(BuildContext context) {
     final gameState = controller.currentRound?.gameState;
     final eventState = GameModel.fromJson(event.content);
     final bool roundOngoing = eventState.previousRoundEndTime == null;
-    // Only show most recent divider
-    // Check that event time == current round start/end time
-    if (roundOngoing
-        ? (eventState.currentRoundStartTime != gameState?.currentRoundStartTime)
-        : (eventState.previousRoundEndTime !=
-            gameState?.previousRoundEndTime)) {
-      return const SizedBox();
-    }
+
     // Don't show if there is no current character
     if (gameState?.currentCharacter == null) {
       return const SizedBox();

@@ -1,12 +1,10 @@
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
-import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/enum/use_type.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
-import 'package:fluffychat/pangea/utils/bot_name.dart';
 import 'package:fluffychat/pangea/widgets/chat/game_divider.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_buttons.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
@@ -90,7 +88,6 @@ class Message extends StatelessWidget {
         controller.clearEditingEvent();
       }
     });
-    final bool isBot = event.senderId.equals(BotName.byEnvironment);
     final bool isNarration =
         event.content[ModelKey.character] == ModelKey.narrator;
     // In case of game event, display current character
@@ -120,7 +117,7 @@ class Message extends StatelessWidget {
 
     // #Pangea
     // final alignment = ownMessage ? Alignment.topRight : Alignment.topLeft;
-    final alignment = controller.messageAlignment(event, isNarration);
+    final alignment = controller.messageAlignment(event);
     // Pangea#
     // ignore: deprecated_member_use
     var color = Theme.of(context).colorScheme.surfaceVariant;
@@ -162,8 +159,12 @@ class Message extends StatelessWidget {
     const roundedCorner = Radius.circular(AppConfig.borderRadius);
     final borderRadius =
         // #Pangea
-        isNarration
-            ? const BorderRadius.all(roundedCorner)
+        controller.isStoryGameMode
+            ? controller.storyGameBorderRadius(
+                event,
+                nextEvent,
+                previousEventSameSender,
+              )
             :
             // Pangea#
             BorderRadius.only(
@@ -264,8 +265,7 @@ class Message extends StatelessWidget {
                       mainAxisAlignment: rowMainAxisAlignment,
                       children: [
                         // #Pangea
-                        if (controller.isStoryGameMode &&
-                            event.senderId == GameConstants.gameMaster)
+                        if (controller.isStoryGameMode)
                           controller.storyGameAvatar(
                             event,
                             nextEvent,
@@ -283,11 +283,7 @@ class Message extends StatelessWidget {
                               onChanged: (_) => onSelect(event),
                             ),
                           )
-                        else if (
-                            // #Pangea
-                            (!isNarration &&
-                                // Pangea#
-                                (nextEventSameSender || ownMessage)))
+                        else if (nextEventSameSender || ownMessage)
                           SizedBox(
                             width: Avatar.defaultSize,
                             child: Center(
@@ -309,25 +305,16 @@ class Message extends StatelessWidget {
                             ),
                           )
                         else
-                        // #Pangea
-                        if (!isNarration)
-                          // Pangea#
                           FutureBuilder<User?>(
                             future: event.fetchSenderUser(),
                             builder: (context, snapshot) {
                               final user = snapshot.data ??
                                   event.senderFromMemoryOrFallback;
                               return Avatar(
-                                // mxContent: user.avatarUrl,
-                                // name: user.calcDisplayname(),
-                                // presenceUserId: user.stateKey,
-                                name: isBot ? user.calcDisplayname() : "?",
-                                mxContent: isBot ? user.avatarUrl : null,
-                                presenceUserId: isBot ? user.stateKey : null,
-                                presenceBackgroundColor: isBot
-                                    ? null
-                                    : avatarPresenceBackgroundColor,
-                                // onTap: () => onAvatarTab(event),
+                                mxContent: user.avatarUrl,
+                                name: user.calcDisplayname(),
+                                presenceUserId: user.stateKey,
+                                onTap: () => onAvatarTab(event),
                               );
                             },
                           ),
@@ -359,7 +346,9 @@ class Message extends StatelessWidget {
                                               // #Pangea
                                             } else {
                                               displayname = controller
-                                                  .storyGameDisplayName(event);
+                                                  .storyGameDisplayName(
+                                                event,
+                                              );
                                             }
                                             // Pangea#
                                             return Text(
@@ -512,7 +501,6 @@ class Message extends StatelessWidget {
                                                 immersionMode: immersionMode,
                                                 toolbarController:
                                                     toolbarController,
-                                                isNarration: isNarration,
                                                 // Pangea#
                                               ),
                                               if (event.hasAggregatedEvents(
@@ -608,14 +596,7 @@ class Message extends StatelessWidget {
       container = Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment:
-            // #Pangea
-            isNarration
-                ? CrossAxisAlignment.center
-                :
-                // Pangea#
-                ownMessage
-                    ? CrossAxisAlignment.end
-                    : CrossAxisAlignment.start,
+            ownMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: <Widget>[
           if (displayTime || selected)
             Padding(

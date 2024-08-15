@@ -1,3 +1,4 @@
+import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/constants/model_keys.dart';
@@ -12,13 +13,17 @@ import 'package:matrix/matrix.dart';
 extension GameChatController on ChatController {
   String? get userID => room.client.userID;
 
-  Alignment messageAlignment(Event event, bool isNarration) {
+  Alignment messageAlignment(Event event) {
     final ownMessage = event.senderId == userID;
-    if (!isStoryGameMode || event.senderId != GameConstants.gameMaster) {
+    final character = event.content[ModelKey.character] as String?;
+    final isGM = event.senderId == GameConstants.gameMaster;
+    if (!isStoryGameMode || !isGM) {
       return ownMessage ? Alignment.topRight : Alignment.topLeft;
     }
-    if (isNarration) return Alignment.center;
-    return Alignment.topLeft;
+
+    return character == ModelKey.narrator
+        ? Alignment.center
+        : Alignment.topLeft;
   }
 
   bool storyGameNextEventSameSender(Event event, Event? nextEvent) {
@@ -58,6 +63,12 @@ extension GameChatController on ChatController {
     Event? nextEvent,
     void Function(Event) onAvatarTab,
   ) {
+    final String? character = event.content[ModelKey.character] as String?;
+    if (character == ModelKey.narrator ||
+        event.senderId == room.client.userID) {
+      return const SizedBox();
+    }
+
     if (storyGameNextEventSameSender(event, nextEvent)) {
       return const SizedBox(
         width: Avatar.defaultSize,
@@ -69,14 +80,13 @@ extension GameChatController on ChatController {
         ),
       );
     }
-
-    final String? character = event.content[ModelKey.character] as String?;
     return Avatar(name: character ?? "?");
   }
 
   String storyGameDisplayName(Event event) {
     if (event.senderId != GameConstants.gameMaster) return "?";
     final character = event.content[ModelKey.character] as String?;
+    if (character == ModelKey.narrator) return "";
     return character ?? "?";
   }
 
@@ -97,5 +107,33 @@ extension GameChatController on ChatController {
     }).then((_) {
       if (mounted) setRound();
     });
+  }
+
+  BorderRadius storyGameBorderRadius(
+    Event event,
+    Event? nextEvent,
+    bool previousEventSameSender,
+  ) {
+    const hardCorner = Radius.circular(4);
+    const roundedCorner = Radius.circular(AppConfig.borderRadius);
+
+    final character = event.content[ModelKey.character] as String?;
+    final ownMessage = event.senderId == userID;
+    final nextEventSameSender = storyGameNextEventSameSender(event, nextEvent);
+
+    return character == ModelKey.narrator
+        ? const BorderRadius.all(roundedCorner)
+        : BorderRadius.only(
+            topLeft:
+                !ownMessage && nextEventSameSender ? hardCorner : roundedCorner,
+            topRight:
+                ownMessage && nextEventSameSender ? hardCorner : roundedCorner,
+            bottomLeft: !ownMessage && previousEventSameSender
+                ? hardCorner
+                : roundedCorner,
+            bottomRight: ownMessage && previousEventSameSender
+                ? hardCorner
+                : roundedCorner,
+          );
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:fluffychat/pages/chat/events/video_player.dart';
+import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_context_menu.dart';
@@ -39,7 +40,6 @@ class MessageContent extends StatelessWidget {
   final bool immersionMode;
   final ToolbarDisplayController? toolbarController;
   final bool isOverlay;
-  final bool isNarration;
   // Pangea#
 
   const MessageContent(
@@ -53,7 +53,6 @@ class MessageContent extends StatelessWidget {
     required this.immersionMode,
     required this.toolbarController,
     this.isOverlay = false,
-    this.isNarration = false,
     // Pangea#
     required this.borderRadius,
   });
@@ -126,9 +125,10 @@ class MessageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var fontSize = AppConfig.messageFontSize * AppConfig.fontSizeFactor;
     // #Pangea
-    if (isNarration) {
+    // final fontSize = AppConfig.messageFontSize * AppConfig.fontSizeFactor;
+    double fontSize = AppConfig.messageFontSize * AppConfig.fontSizeFactor;
+    if (event.content[ModelKey.character] == ModelKey.narrator) {
       fontSize *= 1.3;
     }
     // Pangea#

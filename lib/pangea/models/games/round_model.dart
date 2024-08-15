@@ -52,6 +52,14 @@ class GameRoundModel {
   bool gameEventIsVisibleInGui(Event event) {
     // if it's not a message, it's sent by the GM,
     // or it's sent after the previous round ended
+    if (event.type == PangeaEventTypes.storyGame) {
+      final bool roundOngoing = gameState.previousRoundEndTime == null;
+      final eventState = GameModel.fromJson(event.content);
+      return roundOngoing
+          ? eventState.currentRoundStartTime == currentRoundStart
+          : eventState.previousRoundEndTime == previousRoundEnd;
+    }
+
     return event.type != EventTypes.Message ||
         event.senderId == GameConstants.gameMaster ||
         previousRoundEnd == null ||

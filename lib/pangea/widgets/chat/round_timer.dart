@@ -107,9 +107,11 @@ class RoundTimerState extends State<RoundTimer> {
 
   @override
   Widget build(BuildContext context) {
+    double percent = currentSeconds / GameConstants.timerMaxSeconds;
+    if (percent > 1) percent = 1;
     return CircularPercentIndicator(
       radius: 40.0,
-      percent: currentSeconds / GameConstants.timerMaxSeconds,
+      percent: percent,
       backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
       progressColor: Theme.of(context).colorScheme.primary,
       animation: true,
