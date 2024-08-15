@@ -4132,5 +4132,14 @@
     "placeholders": {
       "character": {}
     }
-  }
+  },
+  "winnerAnnouncement": "{winner} won!",
+  "@winnerAnnouncement": {
+    "type": "text",
+    "placeholders": {
+      "winner": {}
+    }
+  },
+  "narrationPrompt": "What happens next?",
+  "botWinAnnouncement": "The bot won..."
 }

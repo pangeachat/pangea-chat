@@ -1,5 +1,8 @@
+import 'package:collection/collection.dart';
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
+import 'package:fluffychat/pangea/constants/game_constants.dart';
+import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/models/games/game_state_model.dart';
 import 'package:fluffychat/pangea/widgets/chat/round_timer.dart';
 import 'package:flutter/material.dart';
@@ -16,9 +19,10 @@ class GameDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     final gameState = controller.currentRound?.gameState;
     final eventState = GameModel.fromJson(event.content);
+    final bool roundOngoing = eventState.previousRoundEndTime == null;
     // Only show most recent divider
     // Check that event time == current round start/end time
-    if ((eventState.previousRoundEndTime == null)
+    if (roundOngoing
         ? (eventState.currentRoundStartTime != gameState?.currentRoundStartTime)
         : (eventState.previousRoundEndTime !=
             gameState?.previousRoundEndTime)) {
@@ -29,6 +33,20 @@ class GameDivider extends StatelessWidget {
       return const SizedBox();
     }
 
+    final character = gameState!.currentCharacter;
+    // If there is no ongoing round, get winner of previous round
+    String? winner;
+    if (!roundOngoing) {
+      final recentBotMessage = controller.timeline!.events.firstWhereOrNull(
+        (e) =>
+            e.senderId == GameConstants.gameMaster &&
+            e.originServerTs.isBefore(event.originServerTs),
+      );
+      winner = recentBotMessage?.content[ModelKey.winner]?.toString();
+      if (winner == null) {
+        return const SizedBox();
+      }
+    }
     final color = Theme.of(context).colorScheme.surfaceContainerHighest;
 
     return Column(
@@ -50,10 +68,17 @@ class GameDivider extends StatelessWidget {
                 16,
               ),
               child: Text(
-                // TODO: use L10n instead of hardcoding this
-                L10n.of(context)!.currentCharDialoguePrompt(
-                  gameState!.currentCharacter!,
-                ),
+                roundOngoing
+                    ? character! != ModelKey.narrator
+                        ? L10n.of(context)!.currentCharDialoguePrompt(
+                            character,
+                          )
+                        : L10n.of(context)!.narrationPrompt
+                    : winner == GameConstants.gameMaster
+                        ? L10n.of(context)!.botWinAnnouncement
+                        : L10n.of(context)!.winnerAnnouncement(
+                            winner!,
+                          ),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 20 * AppConfig.fontSizeFactor,
@@ -62,8 +87,7 @@ class GameDivider extends StatelessWidget {
             ),
           ),
         ),
-        // if (startTime != null)
-        RoundTimer(controller: controller),
+        if (roundOngoing) RoundTimer(controller: controller),
         const SizedBox(
           height: 9,
         ),

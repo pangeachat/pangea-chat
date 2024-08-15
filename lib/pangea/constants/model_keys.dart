@@ -128,4 +128,5 @@ class ModelKey {
   static const String score = "score";
   static const String narrator = "narrator";
   static const String character = "character";
+  static const String winner = "winner";
 }
