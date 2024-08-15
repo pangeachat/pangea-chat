@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
@@ -7,21 +9,99 @@ import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/models/games/game_state_model.dart';
 import 'package:fluffychat/pangea/widgets/chat/round_timer.dart';
+import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
 
-class GameDivider extends StatelessWidget {
+class GameDivider extends StatefulWidget {
   final ChatController controller;
   final Event event;
 
   const GameDivider(this.controller, this.event, {super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final gameState = controller.room.gameState;
-    final eventState = GameModel.fromJson(event.content);
+  GameDividerState createState() => GameDividerState();
+}
 
+class GameDividerState extends State<GameDivider> {
+  int currentSeconds = 0;
+  Timer? timer;
+  StreamSubscription? stateSubscription;
+
+  get gameState => widget.controller.room.gameState;
+  get eventState => GameModel.fromJson(widget.event.content);
+
+  @override
+  void initState() {
+    super.initState();
+
+    final roundStartTime =
+        widget.controller.room.gameState.currentRoundStartTime;
+    if (roundStartTime != null) {
+      final roundDuration = DateTime.now().difference(roundStartTime).inSeconds;
+      if (roundDuration > GameConstants.timerMaxSeconds) return;
+
+      currentSeconds = roundDuration;
+      timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
+        currentSeconds++;
+        if (currentSeconds >= GameConstants.timerMaxSeconds) {
+          t.cancel();
+        }
+        setState(() {});
+      });
+    }
+
+    stateSubscription = Matrix.of(context)
+        .client
+        .onRoomState
+        .stream
+        .where(isRoundUpdate)
+        .listen(onRoundUpdate);
+  }
+
+  bool isRoundUpdate(update) {
+    return update.roomId == widget.controller.room.id &&
+        update.state is Event &&
+        (update.state as Event).type == PangeaEventTypes.storyGame;
+  }
+
+  void onRoundUpdate(update) {
+    final GameModel gameState = GameModel.fromJson(
+      (update.state as Event).content,
+    );
+    final startTime = gameState.currentRoundStartTime;
+
+    if (startTime == null) return;
+    timer?.cancel();
+
+    if (!widget.controller.room.isActiveRound) {
+      currentSeconds = 0;
+      setState(() {});
+      return;
+    }
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
+      currentSeconds++;
+      if (currentSeconds >= GameConstants.timerMaxSeconds) {
+        t.cancel();
+      }
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    stateSubscription?.cancel();
+    stateSubscription = null;
+
+    timer?.cancel();
+    timer = null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     // Don't show if there is no current character
     if (gameState.currentCharacter == null ||
         eventState.currentRoundStartTime == null) {
@@ -30,11 +110,14 @@ class GameDivider extends StatelessWidget {
 
     // If there is no ongoing round, get winner of previous round
     String? winner;
-    if (!controller.room.isActiveRound) {
-      final recentBotMessage = controller.timeline!.events.firstWhereOrNull(
+    if (!widget.controller.room.isActiveRound) {
+      final recentBotMessage =
+          widget.controller.timeline!.events.firstWhereOrNull(
         (e) =>
             e.senderId == GameConstants.gameMaster &&
-            e.originServerTs.isBefore(event.originServerTs),
+            e.originServerTs.isBefore(
+              widget.event.originServerTs,
+            ),
       );
       winner = recentBotMessage?.content[ModelKey.winner]?.toString();
       // ignore: prefer_conditional_assignment
@@ -66,7 +149,7 @@ class GameDivider extends StatelessWidget {
                 16,
               ),
               child: Text(
-                controller.room.isActiveRound
+                widget.controller.room.isActiveRound
                     ? character! != ModelKey.narrator
                         ? L10n.of(context)!.currentCharDialoguePrompt(
                             character,
@@ -85,7 +168,7 @@ class GameDivider extends StatelessWidget {
             ),
           ),
         ),
-        if (controller.room.isActiveRound) RoundTimer(controller: controller),
+        if (widget.controller.room.isActiveRound) RoundTimer(currentSeconds),
         const SizedBox(
           height: 9,
         ),
