@@ -26,6 +26,7 @@ class RoundTimer extends StatelessWidget {
       animation: true,
       animateFromLastPercent: true,
       center: Text(timerText),
+      animateToInitialPercent: false,
     );
   }
 }

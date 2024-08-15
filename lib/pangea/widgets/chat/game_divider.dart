@@ -25,68 +25,44 @@ class GameDivider extends StatefulWidget {
 }
 
 class GameDividerState extends State<GameDivider> {
-  int currentSeconds = 0;
   Timer? timer;
   StreamSubscription? stateSubscription;
 
   get gameState => widget.controller.room.gameState;
   get eventState => GameModel.fromJson(widget.event.content);
+  int get currentSeconds => widget.controller.room.isActiveRound
+      ? (widget.controller.room.currentRoundDuration?.inSeconds ?? 0)
+      : 0;
 
   @override
   void initState() {
     super.initState();
 
-    final roundStartTime =
-        widget.controller.room.gameState.currentRoundStartTime;
-    if (roundStartTime != null) {
-      final roundDuration = DateTime.now().difference(roundStartTime).inSeconds;
-      if (roundDuration > GameConstants.timerMaxSeconds) return;
-
-      currentSeconds = roundDuration;
-      timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
-        currentSeconds++;
-        if (currentSeconds >= GameConstants.timerMaxSeconds) {
-          t.cancel();
-        }
-        setState(() {});
-      });
-    }
+    setTimer();
 
     stateSubscription = Matrix.of(context)
         .client
         .onRoomState
         .stream
         .where(isRoundUpdate)
-        .listen(onRoundUpdate);
+        .listen((_) => setTimer());
+  }
+
+  void setTimer() {
+    if (!widget.controller.room.isActiveRound) return;
+    timer?.cancel();
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
+      if (currentSeconds >= GameConstants.timerMaxSeconds) {
+        t.cancel();
+      }
+      setState(() {});
+    });
   }
 
   bool isRoundUpdate(update) {
     return update.roomId == widget.controller.room.id &&
         update.state is Event &&
         (update.state as Event).type == PangeaEventTypes.storyGame;
-  }
-
-  void onRoundUpdate(update) {
-    final GameModel gameState = GameModel.fromJson(
-      (update.state as Event).content,
-    );
-    final startTime = gameState.currentRoundStartTime;
-
-    if (startTime == null) return;
-    timer?.cancel();
-
-    if (!widget.controller.room.isActiveRound) {
-      currentSeconds = 0;
-      setState(() {});
-      return;
-    }
-    timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
-      currentSeconds++;
-      if (currentSeconds >= GameConstants.timerMaxSeconds) {
-        t.cancel();
-      }
-      setState(() {});
-    });
   }
 
   @override

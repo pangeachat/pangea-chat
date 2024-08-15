@@ -317,13 +317,12 @@ extension PangeaRoom on Room {
   GameModel get gameState =>
       GameModel.fromJson(getState(PangeaEventTypes.storyGame)?.content ?? {});
 
+  Duration? get currentRoundDuration => gameState.currentRoundStartTime != null
+      ? DateTime.now().difference(gameState.currentRoundStartTime!)
+      : null;
+
   bool get isActiveRound => gameState.currentRoundStartTime != null
-      ? DateTime.now()
-              .difference(
-                gameState.currentRoundStartTime!,
-              )
-              .inSeconds <
-          GameConstants.timerMaxSeconds
+      ? currentRoundDuration!.inSeconds < GameConstants.timerMaxSeconds
       : false;
 
   bool isEventVisibleInGame(Event event) {
