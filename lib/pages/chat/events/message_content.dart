@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:fluffychat/pages/chat/events/video_player.dart';
+import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_context_menu.dart';
@@ -124,7 +125,13 @@ class MessageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fontSize = AppConfig.messageFontSize * AppConfig.fontSizeFactor;
+    // #Pangea
+    // final fontSize = AppConfig.messageFontSize * AppConfig.fontSizeFactor;
+    double fontSize = AppConfig.messageFontSize * AppConfig.fontSizeFactor;
+    if (event.content[ModelKey.character] == ModelKey.narrator) {
+      fontSize *= 1.3;
+    }
+    // Pangea#
     final buttonTextColor = textColor;
     switch (event.type) {
       // #Pangea
