@@ -3,6 +3,8 @@ import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/constants/model_keys.dart';
+import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
+import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/models/games/game_state_model.dart';
 import 'package:fluffychat/pangea/widgets/chat/round_timer.dart';
 import 'package:flutter/material.dart';
@@ -17,29 +19,32 @@ class GameDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gameState = controller.currentRound?.gameState;
+    final gameState = controller.room.gameState;
     final eventState = GameModel.fromJson(event.content);
-    final bool roundOngoing = eventState.previousRoundEndTime == null;
 
     // Don't show if there is no current character
-    if (gameState?.currentCharacter == null) {
+    if (gameState.currentCharacter == null ||
+        eventState.currentRoundStartTime == null) {
       return const SizedBox();
     }
 
-    final character = gameState!.currentCharacter;
     // If there is no ongoing round, get winner of previous round
     String? winner;
-    if (!roundOngoing) {
+    if (!controller.room.isActiveRound) {
       final recentBotMessage = controller.timeline!.events.firstWhereOrNull(
         (e) =>
             e.senderId == GameConstants.gameMaster &&
             e.originServerTs.isBefore(event.originServerTs),
       );
       winner = recentBotMessage?.content[ModelKey.winner]?.toString();
+      // ignore: prefer_conditional_assignment
       if (winner == null) {
-        return const SizedBox();
+        // return const SizedBox();
+        winner = "?";
       }
     }
+
+    final character = gameState.currentCharacter;
     final color = Theme.of(context).colorScheme.surfaceContainerHighest;
 
     return Column(
@@ -61,7 +66,7 @@ class GameDivider extends StatelessWidget {
                 16,
               ),
               child: Text(
-                roundOngoing
+                controller.room.isActiveRound
                     ? character! != ModelKey.narrator
                         ? L10n.of(context)!.currentCharDialoguePrompt(
                             character,
@@ -80,11 +85,42 @@ class GameDivider extends StatelessWidget {
             ),
           ),
         ),
-        if (roundOngoing) RoundTimer(controller: controller),
+        if (controller.room.isActiveRound) RoundTimer(controller: controller),
         const SizedBox(
           height: 9,
         ),
       ],
+    );
+  }
+}
+
+// TODO delete this - just for testing
+class StartRoundButton extends StatelessWidget {
+  final ChatController controller;
+
+  const StartRoundButton(this.controller, {super.key});
+
+  void startRound() {
+    debugPrint("starting round");
+    final gameState = controller.room.gameState;
+    gameState.currentRoundStartTime = DateTime.now();
+    gameState.currentCharacter = "Sally May";
+    controller.room.client.setRoomStateWithKey(
+      controller.roomId,
+      PangeaEventTypes.storyGame,
+      '',
+      gameState.toJson(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: IconButton(
+        icon: const Icon(Icons.play_arrow),
+        onPressed: startRound,
+      ),
     );
   }
 }

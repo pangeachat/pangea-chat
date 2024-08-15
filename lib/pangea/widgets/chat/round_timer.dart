@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
+import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/models/games/game_state_model.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,8 @@ class RoundTimerState extends State<RoundTimer> {
   void initState() {
     super.initState();
 
-    final roundStartTime = widget.controller.currentRound?.currentRoundStart;
+    final roundStartTime =
+        widget.controller.room.gameState.currentRoundStartTime;
     if (roundStartTime != null) {
       final roundDuration = DateTime.now().difference(roundStartTime).inSeconds;
       if (roundDuration > GameConstants.timerMaxSeconds) return;
@@ -66,27 +68,22 @@ class RoundTimerState extends State<RoundTimer> {
     );
     debugPrint("game state update: ${gameState.toJson()}");
     final startTime = gameState.currentRoundStartTime;
-    final endTime = gameState.previousRoundEndTime;
 
-    if (startTime == null && endTime == null) return;
+    if (startTime == null) return;
     timer?.cancel();
-    timer = null;
 
-    // if this update is the start of a round
-    if (startTime != null) {
-      timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
-        currentSeconds++;
-        if (currentSeconds >= GameConstants.timerMaxSeconds) {
-          t.cancel();
-        }
-        setState(() {});
-      });
+    if (!widget.controller.room.isActiveRound) {
+      currentSeconds = 0;
+      setState(() {});
       return;
     }
-
-    // if this update is the end of a round
-    currentSeconds = 0;
-    setState(() {});
+    timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
+      currentSeconds++;
+      if (currentSeconds >= GameConstants.timerMaxSeconds) {
+        t.cancel();
+      }
+      setState(() {});
+    });
   }
 
   @override
