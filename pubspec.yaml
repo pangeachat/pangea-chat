@@ -119,6 +119,7 @@ dependencies:
   language_tool: ^2.2.0
   material_symbols_icons: ^4.2741.0
   open_file: ^3.3.2
+  percent_indicator: ^4.2.3
   purchases_flutter: ^6.26.0
   sentry_flutter: ^8.2.0
   shimmer: ^3.0.0
