@@ -440,7 +440,7 @@ class ChatView extends StatelessWidget {
                             // #Pangea
                             // Keep messages above minimum input bar height
                             const SizedBox(
-                              height: 60,
+                              height: 100,
                             ),
                             // Pangea#
                           ],
