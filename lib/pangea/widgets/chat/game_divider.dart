@@ -33,9 +33,14 @@ class GameDividerState extends State<GameDivider> {
 
   get gameState => widget.controller.room.gameState;
   get eventState => GameModel.fromJson(widget.event.content);
-  int get currentSeconds => widget.controller.room.isActiveRound
+  int get currentSeconds => isActiveRound
       ? (widget.controller.room.currentRoundDuration?.inSeconds ?? 0)
-      : 0;
+      : DateTime.now().difference(widget.event.originServerTs).inSeconds;
+  bool get isActiveRound => widget.controller.room.isActiveRound;
+  int get maxSeconds => isActiveRound ? GameConstants.timerMaxSeconds : 5;
+  Color get timerColor => isActiveRound
+      ? GameConstants.roundColor
+      : GameConstants.betweenRoundColor;
 
   @override
   void initState() {
@@ -183,7 +188,7 @@ class GameDividerState extends State<GameDivider> {
                           ],
                         ),
                       ),
-                      RoundTimer(currentSeconds),
+                      RoundTimer(currentSeconds, 2, timerColor),
                     ],
                   ),
                 ),
