@@ -29,6 +29,15 @@ class ReactionsPicker extends StatelessWidget {
       '\u{1F44E}',
       '\u{2B50}',
       '\u{1F440}',
+      '\u{1F3DE}',
+      '\u{1F3DC}',
+      '\u{1F305}',
+      '\u{1F304}',
+      '\u{1F306}',
+      '\u{1F307}',
+      '\u{1F309}',
+      '\u{1F301}',
+      '\u{1F3D9}',
     ];
     for (final code in emojiCodes) {
       final Emoji? emoji = Emoji.byChar(code);
