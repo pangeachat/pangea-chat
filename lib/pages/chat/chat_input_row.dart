@@ -55,11 +55,6 @@ class ChatInputRow extends StatelessWidget {
     final bottomSheetPadding = FluffyThemes.isColumnMode(context) ? 16.0 : 8.0;
 
     return Container(
-      margin: EdgeInsets.only(
-        bottom: bottomSheetPadding,
-        left: bottomSheetPadding,
-        right: bottomSheetPadding,
-      ),
       constraints: const BoxConstraints(
         maxWidth: FluffyThemes.columnWidth * 2.5,
       ),
@@ -135,8 +130,10 @@ class ChatInputRow extends StatelessWidget {
                                       children: <Widget>[
                                         Text(L10n.of(context)!.tryToSendAgain),
                                         const SizedBox(width: 4),
-                                        const Icon(Icons.send_outlined,
-                                            size: 16),
+                                        const Icon(
+                                          Icons.send_outlined,
+                                          size: 16,
+                                        ),
                                       ],
                                     ),
                                   ),

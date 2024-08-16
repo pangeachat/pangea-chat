@@ -478,11 +478,11 @@ class ChatView extends StatelessWidget {
                                   ),
                                 ),
                               Container(
-                                // margin: EdgeInsets.only(
-                                //   bottom: bottomSheetPadding,
-                                //   left: bottomSheetPadding,
-                                //   right: bottomSheetPadding,
-                                // ),
+                                margin: EdgeInsets.only(
+                                  bottom: bottomSheetPadding,
+                                  left: bottomSheetPadding,
+                                  right: bottomSheetPadding,
+                                ),
                                 constraints: const BoxConstraints(
                                   maxWidth: FluffyThemes.columnWidth * 2.5,
                                 ),
