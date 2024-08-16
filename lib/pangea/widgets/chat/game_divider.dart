@@ -37,7 +37,8 @@ class GameDividerState extends State<GameDivider> {
       ? (widget.controller.room.currentRoundDuration?.inSeconds ?? 0)
       : DateTime.now().difference(widget.event.originServerTs).inSeconds;
   bool get isActiveRound => widget.controller.room.isActiveRound;
-  int get maxSeconds => isActiveRound ? GameConstants.timerMaxSeconds : 5;
+  int get maxSeconds =>
+      isActiveRound ? GameConstants.timerMaxSeconds : gameState.nextRoundDelay;
   Color get timerColor => isActiveRound
       ? GameConstants.roundColor
       : GameConstants.betweenRoundColor;
@@ -188,7 +189,7 @@ class GameDividerState extends State<GameDivider> {
                           ],
                         ),
                       ),
-                      RoundTimer(currentSeconds, 2, timerColor),
+                      RoundTimer(currentSeconds, maxSeconds, timerColor),
                     ],
                   ),
                 ),

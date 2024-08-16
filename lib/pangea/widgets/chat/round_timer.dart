@@ -9,8 +9,12 @@ class RoundTimer extends StatelessWidget {
   final int maxSeconds;
   final Color timerColor;
 
-  const RoundTimer(this.currentSeconds, this.maxSeconds, this.timerColor,
-      {super.key});
+  const RoundTimer(
+    this.currentSeconds,
+    this.maxSeconds,
+    this.timerColor, {
+    super.key,
+  });
 
   int get remainingTime => maxSeconds - currentSeconds;
 
@@ -24,8 +28,8 @@ class RoundTimer extends StatelessWidget {
     return CircularPercentIndicator(
       radius: 40.0,
       percent: percent,
-      backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
-      progressColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: timerColor.withOpacity(0.5),
+      progressColor: timerColor,
       animation: true,
       animateFromLastPercent: true,
       center: Text(timerText),
