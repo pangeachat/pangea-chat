@@ -193,52 +193,57 @@ class GameDividerState extends State<GameDivider> {
   }
 }
 
+// TODO delete this - just for testing
+class StartRoundButton extends StatelessWidget {
+  final ChatController controller;
+
+  const StartRoundButton(this.controller, {super.key});
+
+  void startRound() {
+    final gameState = controller.room.gameState;
+    debugPrint("gameState: ${gameState.toJson()}");
+    gameState.currentRoundStartTime = DateTime.now();
+    gameState.currentCharacter = "Sally May";
+    controller.room.client.setRoomStateWithKey(
+      controller.roomId,
+      PangeaEventTypes.storyGame,
+      '',
+      gameState.toJson(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: IconButton(
+        icon: const Icon(Icons.play_arrow),
+        onPressed: startRound,
+      ),
+    );
+  }
+}
+
 // // TODO delete this - just for testing
-// class StartRoundButton extends StatelessWidget {
+// class SendGMMessageButton extends StatelessWidget {
 //   final ChatController controller;
+//   final bool isNarration;
 
-//   const StartRoundButton(this.controller, {super.key});
-
-//   void startRound() {
-//     final gameState = controller.room.gameState;
-//     debugPrint("gameState: ${gameState.toJson()}");
-//     gameState.currentRoundStartTime = DateTime.now();
-//     gameState.currentCharacter = "Sally May";
-//     controller.room.client.setRoomStateWithKey(
-//       controller.roomId,
-//       PangeaEventTypes.storyGame,
-//       '',
-//       gameState.toJson(),
-//     );
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.all(16),
-//       child: IconButton(
-//         icon: const Icon(Icons.play_arrow),
-//         onPressed: startRound,
-//       ),
-//     );
-//   }
-// }
-
-// // TODO delete this - just for testing
-// class SendWinnerButton extends StatelessWidget {
-//   final ChatController controller;
-
-//   const SendWinnerButton(this.controller, {super.key});
+//   const SendGMMessageButton(this.controller, this.isNarration, {super.key});
 
 //   void sendWinner() {
-//     controller.room.sendEvent({
-//       ModelKey.character: "Sally May",
-//       // ModelKey.character: ModelKey.narrator,
-//       ModelKey.winner: "@test_7_30_1:staging.pangea.chat",
-//       "body": "Here's the winning message",
-//       // "body": "Here's a message from the narrator",
+//     final content = {
+//       ModelKey.character: isNarration ? ModelKey.narrator : "Sally May",
+//       "body": isNarration
+//           ? "Here's a message from the narrator"
+//           : "Here's the winning message",
 //       "msgtype": "m.text",
-//     });
+//     };
+//     if (!isNarration) {
+//       content[ModelKey.winner] = "@test_7_30_1:staging.pangea.chat";
+//     }
+
+//     controller.room.sendEvent(content);
 //   }
 
 //   @override
@@ -246,7 +251,7 @@ class GameDividerState extends State<GameDivider> {
 //     return Padding(
 //       padding: const EdgeInsets.all(16),
 //       child: IconButton(
-//         icon: const Icon(Icons.message),
+//         icon: Icon(isNarration ? Icons.speaker : Icons.message),
 //         onPressed: sendWinner,
 //       ),
 //     );

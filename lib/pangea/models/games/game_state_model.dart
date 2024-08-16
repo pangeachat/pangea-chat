@@ -12,6 +12,7 @@ class GameModel {
   String? currentCharacter;
   DateTime? messageVisibleTo;
   Map<String, int>? score;
+  int nextRoundDelay;
 
   GameModel({
     this.currentRoundStartTime,
@@ -19,6 +20,7 @@ class GameModel {
     this.currentCharacter,
     this.messageVisibleTo,
     this.score,
+    this.nextRoundDelay = 10,
   });
 
   factory GameModel.fromJson(json) {
@@ -36,6 +38,7 @@ class GameModel {
       score: json[ModelKey.score] != null
           ? Map<String, int>.from(json[ModelKey.score])
           : null,
+      nextRoundDelay: json[ModelKey.nextRoundDelay] ?? 10,
     );
   }
 
@@ -49,6 +52,7 @@ class GameModel {
       data[ModelKey.currentCharacter] = currentCharacter;
       data[ModelKey.messagesVisibleTo] = messageVisibleTo?.toIso8601String();
       data[ModelKey.score] = score;
+      data[ModelKey.nextRoundDelay] = nextRoundDelay;
       return data;
     } catch (e, s) {
       debugger(when: kDebugMode);
