@@ -11,6 +11,10 @@ extension GameChatController on ChatController {
   String? get userID => room.client.userID;
 
   Alignment messageAlignment(Event event) {
+    if (event.messageType == MessageTypes.Image) {
+      return Alignment.center;
+    }
+
     final ownMessage = event.senderId == userID;
     final character = event.content[ModelKey.character] as String?;
     final isGM = event.senderId == GameConstants.gameMaster;
