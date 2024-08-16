@@ -122,7 +122,7 @@ class ModelKey {
 
   static const String gameState = "game_state";
   static const String currentRoundStartTime = "start_time";
-  static const String previousRoundEndTime = "message_visible_from";
+  static const String messagesVisibleFrom = "message_visible_from";
   static const String currentCharacter = "current_character";
   static const String messagesVisibleTo = "message_visible_to";
   static const String score = "score";

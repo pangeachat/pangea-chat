@@ -335,13 +335,15 @@ extension PangeaRoom on Room {
     }.contains(event.type)) return true;
 
     final startTime = gameState.currentRoundStartTime;
+    final visibleFrom = gameState.messagesVisibleFrom;
     if (event.type == PangeaEventTypes.storyGame) {
       if (startTime == null) return false;
       final eventGameState = GameModel.fromJson(event.content);
       return eventGameState.currentRoundStartTime == startTime;
     }
 
-    if (startTime == null) return true;
-    return event.originServerTs.isAfter(startTime);
+    return event.senderId == GameConstants.gameMaster ||
+        ((startTime == null || event.originServerTs.isAfter(startTime)) &&
+            (visibleFrom == null || event.originServerTs.isAfter(visibleFrom)));
   }
 }

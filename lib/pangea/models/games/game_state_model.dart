@@ -8,14 +8,14 @@ import 'package:matrix/matrix_api_lite/generated/model.dart';
 
 class GameModel {
   DateTime? currentRoundStartTime;
-  DateTime? previousRoundEndTime;
+  DateTime? messagesVisibleFrom;
   String? currentCharacter;
   DateTime? messageVisibleTo;
   Map<String, int>? score;
 
   GameModel({
     this.currentRoundStartTime,
-    this.previousRoundEndTime,
+    this.messagesVisibleFrom,
     this.currentCharacter,
     this.messageVisibleTo,
     this.score,
@@ -26,8 +26,8 @@ class GameModel {
       currentRoundStartTime: json[ModelKey.currentRoundStartTime] != null
           ? DateTime.parse(json[ModelKey.currentRoundStartTime])
           : null,
-      previousRoundEndTime: json[ModelKey.previousRoundEndTime] != null
-          ? DateTime.parse(json[ModelKey.previousRoundEndTime])
+      messagesVisibleFrom: json[ModelKey.messagesVisibleFrom] != null
+          ? DateTime.parse(json[ModelKey.messagesVisibleFrom])
           : null,
       currentCharacter: json[ModelKey.currentCharacter],
       messageVisibleTo: json[ModelKey.messagesVisibleTo] != null
@@ -44,8 +44,8 @@ class GameModel {
     try {
       data[ModelKey.currentRoundStartTime] =
           currentRoundStartTime?.toIso8601String();
-      data[ModelKey.previousRoundEndTime] =
-          previousRoundEndTime?.toIso8601String();
+      data[ModelKey.messagesVisibleFrom] =
+          messagesVisibleFrom?.toIso8601String();
       data[ModelKey.currentCharacter] = currentCharacter;
       data[ModelKey.messagesVisibleTo] = messageVisibleTo?.toIso8601String();
       data[ModelKey.score] = score;

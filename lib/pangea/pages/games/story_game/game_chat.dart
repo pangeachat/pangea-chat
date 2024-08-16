@@ -100,7 +100,7 @@ extension GameChatController on ChatController {
     final nextEventSameSender = storyGameNextEventSameSender(event, nextEvent);
 
     return character == ModelKey.narrator
-        ? const BorderRadius.all(roundedCorner)
+        ? const BorderRadius.all(hardCorner)
         : BorderRadius.only(
             topLeft:
                 !ownMessage && nextEventSameSender ? hardCorner : roundedCorner,
