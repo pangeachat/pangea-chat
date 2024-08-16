@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:collection/collection.dart';
 import 'package:fluffychat/pangea/constants/class_default_values.dart';
+import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/constants/language_constants.dart';
 import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/constants/pangea_room_types.dart';
@@ -12,6 +13,7 @@ import 'package:fluffychat/pangea/controllers/language_list_controller.dart';
 import 'package:fluffychat/pangea/models/analytics/constructs_event.dart';
 import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
 import 'package:fluffychat/pangea/models/bot_options_model.dart';
+import 'package:fluffychat/pangea/models/games/game_state_model.dart';
 import 'package:fluffychat/pangea/models/language_model.dart';
 import 'package:fluffychat/pangea/models/space_model.dart';
 import 'package:fluffychat/pangea/models/tokens_event_content_model.dart';
@@ -311,4 +313,37 @@ extension PangeaRoom on Room {
   bool pangeaCanSendEvent(String eventType) => _pangeaCanSendEvent(eventType);
 
   int? get eventsDefaultPowerLevel => _eventsDefaultPowerLevel;
+
+  GameModel get gameState =>
+      GameModel.fromJson(getState(PangeaEventTypes.storyGame)?.content ?? {});
+
+  Duration? get currentRoundDuration => gameState.currentRoundStartTime != null
+      ? DateTime.now().difference(gameState.currentRoundStartTime!)
+      : null;
+
+  bool get isActiveRound => gameState.currentRoundStartTime != null
+      ? currentRoundDuration!.inSeconds < GameConstants.timerMaxSeconds
+      : false;
+
+  bool isEventVisibleInGame(Event event) {
+    if (!{
+      EventTypes.Message,
+      EventTypes.Sticker,
+      EventTypes.Encrypted,
+      EventTypes.CallInvite,
+      PangeaEventTypes.storyGame,
+    }.contains(event.type)) return true;
+
+    final startTime = gameState.currentRoundStartTime;
+    final visibleFrom = gameState.messagesVisibleFrom;
+    if (event.type == PangeaEventTypes.storyGame) {
+      if (startTime == null) return false;
+      final eventGameState = GameModel.fromJson(event.content);
+      return eventGameState.currentRoundStartTime == startTime;
+    }
+
+    return event.senderId == GameConstants.gameMaster ||
+        ((startTime == null || event.originServerTs.isAfter(startTime)) &&
+            (visibleFrom == null || event.originServerTs.isAfter(visibleFrom)));
+  }
 }

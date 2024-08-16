@@ -125,6 +125,9 @@ class ChatView extends StatelessWidget {
       // #Pangea
     } else {
       return [
+        // // TODO REMOVE this is only for testing
+        // StartRoundButton(controller),
+        // SendWinnerButton(controller),
         ChatSettingsPopupMenu(
           controller.room,
           (!controller.room.isDirectChat && !controller.room.isArchived),

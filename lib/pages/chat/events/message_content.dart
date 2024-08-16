@@ -4,6 +4,7 @@ import 'package:fluffychat/pages/chat/events/video_player.dart';
 import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
+import 'package:fluffychat/pangea/utils/bot_style.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_context_menu.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
 import 'package:fluffychat/pangea/widgets/igc/pangea_rich_text.dart';
@@ -125,13 +126,7 @@ class MessageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // #Pangea
-    // final fontSize = AppConfig.messageFontSize * AppConfig.fontSizeFactor;
-    double fontSize = AppConfig.messageFontSize * AppConfig.fontSizeFactor;
-    if (event.content[ModelKey.character] == ModelKey.narrator) {
-      fontSize *= 1.3;
-    }
-    // Pangea#
+    final fontSize = AppConfig.messageFontSize * AppConfig.fontSizeFactor;
     final buttonTextColor = textColor;
     switch (event.type) {
       // #Pangea
@@ -360,11 +355,21 @@ class MessageContent extends StatelessWidget {
                 MatrixLocals(L10n.of(context)!),
                 hideReply: true,
               ),
-              style: TextStyle(
-                color: textColor,
-                fontSize: bigEmotes ? fontSize * 3 : fontSize,
-                decoration: event.redacted ? TextDecoration.lineThrough : null,
-              ),
+              // #Pangea
+              // style: TextStyle(
+              //   color: textColor,
+              //   fontSize: bigEmotes ? fontSize * 3 : fontSize,
+              //   decoration: event.redacted ? TextDecoration.lineThrough : null,
+              // ),
+              style: event.content[ModelKey.character] != ModelKey.narrator
+                  ? TextStyle(
+                      color: textColor,
+                      fontSize: bigEmotes ? fontSize * 3 : fontSize,
+                      decoration:
+                          event.redacted ? TextDecoration.lineThrough : null,
+                    )
+                  : BotStyle.text(context, big: true, italics: true),
+              // Pangea#
               options: const LinkifyOptions(humanize: false),
               linkStyle: TextStyle(
                 color: textColor.withAlpha(150),

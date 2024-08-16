@@ -19,10 +19,8 @@ import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/choreo_record.dart';
-import 'package:fluffychat/pangea/models/games/round_model.dart';
 import 'package:fluffychat/pangea/models/representation_content_model.dart';
 import 'package:fluffychat/pangea/models/tokens_event_content_model.dart';
-import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/utils/firebase_analytics.dart';
 import 'package:fluffychat/pangea/utils/report_message.dart';
@@ -116,9 +114,6 @@ class ChatController extends State<ChatPageWithRoom>
   final PangeaController pangeaController = MatrixState.pangeaController;
   late Choreographer choreographer = Choreographer(pangeaController, this);
   bool isStoryGameMode = true;
-
-  /// Model of the current story game round
-  GameRoundModel? currentRound;
   // Pangea#
 
   Room get room => sendingClient.getRoomById(roomId) ?? widget.room;
@@ -315,9 +310,6 @@ class ChatController extends State<ChatPageWithRoom>
     sendingClient = Matrix.of(context).client;
     WidgetsBinding.instance.addObserver(this);
     // #Pangea
-    if (isStoryGameMode) {
-      setRound();
-    }
 
     if (!mounted) return;
     Future.delayed(const Duration(seconds: 1), () async {
@@ -405,7 +397,7 @@ class ChatController extends State<ChatPageWithRoom>
   List<Event> get visibleEvents =>
       timeline?.events
           .where(
-            (x) => x.isVisibleInGui,
+            (x) => x.isVisibleInGui && room.isEventVisibleInGame(x),
           )
           .toList() ??
       <Event>[];
@@ -543,7 +535,6 @@ class ChatController extends State<ChatPageWithRoom>
     //#Pangea
     choreographer.stateListener.close();
     choreographer.dispose();
-    currentRound?.dispose();
     //Pangea#
     super.dispose();
   }
