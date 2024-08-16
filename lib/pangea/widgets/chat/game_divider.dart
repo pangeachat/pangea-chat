@@ -35,6 +35,7 @@ class GameDividerState extends State<GameDivider> {
   get eventState => GameModel.fromJson(widget.event.content);
   int get currentSeconds => isActiveRound
       ? (widget.controller.room.currentRoundDuration?.inSeconds ?? 0)
+      // Should probably use something beside originServerTs here
       : DateTime.now().difference(widget.event.originServerTs).inSeconds;
   bool get isActiveRound => widget.controller.room.isActiveRound;
   int get maxSeconds =>
