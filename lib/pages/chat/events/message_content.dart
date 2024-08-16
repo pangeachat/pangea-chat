@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/events/video_player.dart';
 import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
@@ -172,8 +173,12 @@ class MessageContent extends StatelessWidget {
             }
             return ImageBubble(
               event,
-              width: width,
-              height: height,
+              // #Pangea
+              // width: width,
+              // height: height,
+              width: FluffyThemes.columnWidth * 2.5,
+              height: FluffyThemes.columnWidth * 1.5,
+              // Pangea#
               fit: fit,
               borderRadius: borderRadius,
             );

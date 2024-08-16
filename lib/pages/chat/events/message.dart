@@ -424,9 +424,17 @@ class Message extends StatelessWidget {
                                                   horizontal: 16,
                                                   vertical: 8,
                                                 ),
-                                          constraints: const BoxConstraints(
+                                          constraints: BoxConstraints(
                                             maxWidth:
-                                                FluffyThemes.columnWidth * 1.5,
+                                                // #Pangea
+                                                // FluffyThemes.columnWidth * 1.5,
+                                                event.messageType ==
+                                                        MessageTypes.Image
+                                                    ? FluffyThemes.columnWidth *
+                                                        2.5
+                                                    : FluffyThemes.columnWidth *
+                                                        1.5,
+                                            // Pangea#
                                           ),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
