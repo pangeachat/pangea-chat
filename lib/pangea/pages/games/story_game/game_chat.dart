@@ -32,13 +32,20 @@ extension GameChatController on ChatController {
         nextEvent == null ||
         !event.originServerTs.sameEnvironment(nextEvent.originServerTs);
 
+    final eventRevealed = timeline != null && event.isRevealed(timeline!);
+    final nextEventRevealed = timeline != null &&
+        nextEvent != null &&
+        nextEvent.isRevealed(timeline!);
+
     if (nextEvent == null ||
         !{
           EventTypes.Message,
           EventTypes.Sticker,
           EventTypes.Encrypted,
         }.contains(nextEvent.type) ||
-        displayTime) return false;
+        displayTime ||
+        eventRevealed ||
+        nextEventRevealed) return false;
 
     // if the senders are both not the game master, return whether or not they're the same
     // if sender of one event is the game master, return false
@@ -62,8 +69,24 @@ extension GameChatController on ChatController {
   Widget storyGameAvatar(
     Event event,
     Event? nextEvent,
-    void Function(Event) onAvatarTab,
   ) {
+    if (event.senderId != room.client.userID &&
+        event.senderId != GameConstants.gameMaster &&
+        timeline != null &&
+        event.isRevealed(timeline!)) {
+      return FutureBuilder<User?>(
+        future: event.fetchSenderUser(),
+        builder: (context, snapshot) {
+          final user = snapshot.data ?? event.senderFromMemoryOrFallback;
+          return Avatar(
+            mxContent: user.avatarUrl,
+            name: user.calcDisplayname(),
+            presenceUserId: user.stateKey,
+          );
+        },
+      );
+    }
+
     final String? character = event.content[ModelKey.character] as String?;
     if (character == ModelKey.narrator ||
         event.senderId == room.client.userID) {
@@ -85,7 +108,12 @@ extension GameChatController on ChatController {
   }
 
   String storyGameDisplayName(Event event) {
-    if (event.senderId != GameConstants.gameMaster) return "?";
+    if (event.senderId != GameConstants.gameMaster) {
+      return timeline != null && event.isRevealed(timeline!)
+          ? event.senderFromMemoryOrFallback.calcDisplayname()
+          : "?";
+    }
+
     final character = event.content[ModelKey.character] as String?;
     if (character == ModelKey.narrator) return "";
     return character ?? "?";
@@ -117,5 +145,22 @@ extension GameChatController on ChatController {
                 ? hardCorner
                 : roundedCorner,
           );
+  }
+}
+
+extension StoryGameEvent on Event {
+  bool isRevealed(Timeline timeline) {
+    final Set<Event> events = aggregatedEvents(
+      timeline,
+      RelationshipTypes.reaction,
+    );
+    final reactions = events
+        .map(
+          (r) => r.content
+              .tryGetMap<String, dynamic>('m.relates_to')
+              ?.tryGet<String>('key'),
+        )
+        .toList();
+    return reactions.contains('👀');
   }
 }

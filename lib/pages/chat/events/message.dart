@@ -269,7 +269,6 @@ class Message extends StatelessWidget {
                           controller.storyGameAvatar(
                             event,
                             nextEvent,
-                            onAvatarTab,
                           )
                         // if (longPressSelect)
                         else if (longPressSelect)
