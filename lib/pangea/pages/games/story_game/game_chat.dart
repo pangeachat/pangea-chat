@@ -6,7 +6,6 @@ import 'package:fluffychat/pangea/utils/overlay.dart';
 import 'package:fluffychat/pangea/widgets/chat/game_leaderboard.dart';
 import 'package:fluffychat/utils/date_time_extension.dart';
 import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
@@ -155,36 +154,12 @@ extension GameChatController on ChatController {
       context: context,
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: const BorderRadius.all(
-            Radius.circular(10),
-          ),
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(color: Theme.of(context).colorScheme.primary),
         ),
-        height: 175,
         width: 300,
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                SizedBox(
-                  height: 16,
-                  width: 16,
-                  child: IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => MatrixState.pAnyState.closeOverlay(),
-                    iconSize: 16,
-                    padding: EdgeInsets.zero,
-                  ),
-                ),
-              ],
-            ),
-            Expanded(
-              child: GameLeaderBoard(room: room, width: 300),
-            ),
-          ],
+        child: Material(
+          child: GameLeaderBoard(room: room, width: 300),
         ),
       ),
       transformTargetId: 'leaderboard_btn',
