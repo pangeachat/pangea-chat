@@ -11,11 +11,13 @@ class LevelBarDetails {
 }
 
 class ProgressBarDetails {
+  final int pointsPerLevel;
   final double totalWidth;
   final Color borderColor;
   final double height;
 
   const ProgressBarDetails({
+    required this.pointsPerLevel,
     required this.totalWidth,
     required this.borderColor,
     this.height = 16,

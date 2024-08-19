@@ -108,11 +108,6 @@ class LearningProgressIndicatorsState
   }
 
   double get levelBarWidth => FluffyThemes.columnWidth - (32 * 2) - 25;
-  double get pointsBarWidth {
-    final percent = (currentXP % AnalyticsConstants.xpPerLevel) /
-        AnalyticsConstants.xpPerLevel;
-    return levelBarWidth * percent;
-  }
 
   Color levelColor(int level) {
     final colors = [
@@ -144,6 +139,7 @@ class LearningProgressIndicatorsState
         ),
       ],
       progressBarDetails: ProgressBarDetails(
+        pointsPerLevel: AnalyticsConstants.xpPerLevel,
         totalWidth: levelBarWidth,
         borderColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
       ),
