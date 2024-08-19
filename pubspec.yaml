@@ -119,6 +119,10 @@ dependencies:
   language_tool: ^2.2.0
   material_symbols_icons: ^4.2741.0
   open_file: ^3.3.2
+  percent_indicator:
+    git:
+        url: https://github.com/diegoveloper/flutter_percent_indicator.git
+        ref: 29b2a6859854c79dbc32a268a2a4ec4b3e9efc8b
   purchases_flutter: ^6.26.0
   sentry_flutter: ^8.2.0
   shimmer: ^3.0.0

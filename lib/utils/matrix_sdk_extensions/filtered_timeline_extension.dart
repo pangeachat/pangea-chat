@@ -5,6 +5,9 @@ import '../../config/app_config.dart';
 
 extension IsStateExtension on Event {
   bool get isVisibleInGui =>
+      // #Pangea
+      // Most recent story game event should be visible
+      // Pangea#
       // always filter out edit and reaction relationships
       !{RelationshipTypes.edit, RelationshipTypes.reaction}
           .contains(relationshipType) &&

@@ -1,7 +1,9 @@
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
+import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/enum/use_type.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
+import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_buttons.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
 import 'package:fluffychat/utils/date_time_extension.dart';
@@ -84,6 +86,8 @@ class Message extends StatelessWidget {
         controller.clearEditingEvent();
       }
     });
+    final bool isNarration =
+        event.content[ModelKey.character] == ModelKey.narrator;
     // Pangea#
     if (!{
       EventTypes.Message,
@@ -104,20 +108,30 @@ class Message extends StatelessWidget {
 
     final client = Matrix.of(context).client;
     final ownMessage = event.senderId == client.userID;
-    final alignment = ownMessage ? Alignment.topRight : Alignment.topLeft;
+
+    // #Pangea
+    // final alignment = ownMessage ? Alignment.topRight : Alignment.topLeft;
+    final alignment = controller.messageAlignment(event);
+    // Pangea#
     // ignore: deprecated_member_use
     var color = Theme.of(context).colorScheme.surfaceVariant;
     final displayTime = event.type == EventTypes.RoomCreate ||
         nextEvent == null ||
         !event.originServerTs.sameEnvironment(nextEvent!.originServerTs);
-    final nextEventSameSender = nextEvent != null &&
-        {
-          EventTypes.Message,
-          EventTypes.Sticker,
-          EventTypes.Encrypted,
-        }.contains(nextEvent!.type) &&
-        nextEvent!.senderId == event.senderId &&
-        !displayTime;
+    final nextEventSameSender =
+        // #Pangea
+        controller.isStoryGameMode
+            ? controller.storyGameNextEventSameSender(event, nextEvent)
+            :
+            // Pangea#
+            nextEvent != null &&
+                {
+                  EventTypes.Message,
+                  EventTypes.Sticker,
+                  EventTypes.Encrypted,
+                }.contains(nextEvent!.type) &&
+                nextEvent!.senderId == event.senderId &&
+                !displayTime;
 
     final previousEventSameSender = previousEvent != null &&
         {
@@ -137,14 +151,30 @@ class Message extends StatelessWidget {
     final displayEvent = event.getDisplayEvent(timeline);
     const hardCorner = Radius.circular(4);
     const roundedCorner = Radius.circular(AppConfig.borderRadius);
-    final borderRadius = BorderRadius.only(
-      topLeft: !ownMessage && nextEventSameSender ? hardCorner : roundedCorner,
-      topRight: ownMessage && nextEventSameSender ? hardCorner : roundedCorner,
-      bottomLeft:
-          !ownMessage && previousEventSameSender ? hardCorner : roundedCorner,
-      bottomRight:
-          ownMessage && previousEventSameSender ? hardCorner : roundedCorner,
-    );
+    final borderRadius =
+        // #Pangea
+        controller.isStoryGameMode
+            ? controller.storyGameBorderRadius(
+                event,
+                nextEvent,
+                previousEventSameSender,
+              )
+            :
+            // Pangea#
+            BorderRadius.only(
+                topLeft: !ownMessage && nextEventSameSender
+                    ? hardCorner
+                    : roundedCorner,
+                topRight: ownMessage && nextEventSameSender
+                    ? hardCorner
+                    : roundedCorner,
+                bottomLeft: !ownMessage && previousEventSameSender
+                    ? hardCorner
+                    : roundedCorner,
+                bottomRight: ownMessage && previousEventSameSender
+                    ? hardCorner
+                    : roundedCorner,
+              );
     final noBubble = {
           MessageTypes.Video,
           MessageTypes.Image,
@@ -228,7 +258,15 @@ class Message extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: rowMainAxisAlignment,
                       children: [
-                        if (longPressSelect)
+                        // #Pangea
+                        if (controller.isStoryGameMode)
+                          controller.storyGameAvatar(
+                            event,
+                            nextEvent,
+                          )
+                        // if (longPressSelect)
+                        else if (longPressSelect)
+                          // Pangea#
                           SizedBox(
                             height: 32,
                             width: Avatar.defaultSize,
@@ -246,7 +284,10 @@ class Message extends StatelessWidget {
                                 width: 16,
                                 height: 16,
                                 child: event.status == EventStatus.error
-                                    ? const Icon(Icons.error, color: Colors.red)
+                                    ? const Icon(
+                                        Icons.error,
+                                        color: Colors.red,
+                                      )
                                     : event.fileSendingStatus != null
                                         ? const CircularProgressIndicator
                                             .adaptive(
@@ -263,12 +304,9 @@ class Message extends StatelessWidget {
                               final user = snapshot.data ??
                                   event.senderFromMemoryOrFallback;
                               return Avatar(
-                                // mxContent: user.avatarUrl,
-                                // name: user.calcDisplayname(),
-                                // presenceUserId: user.stateKey,
-                                name: "?",
-                                presenceBackgroundColor:
-                                    avatarPresenceBackgroundColor,
+                                mxContent: user.avatarUrl,
+                                name: user.calcDisplayname(),
+                                presenceUserId: user.stateKey,
                                 onTap: () => onAvatarTab(event),
                               );
                             },
@@ -289,11 +327,23 @@ class Message extends StatelessWidget {
                                       : FutureBuilder<User?>(
                                           future: event.fetchSenderUser(),
                                           builder: (context, snapshot) {
-                                            // final displayname = snapshot.data
-                                            //         ?.calcDisplayname() ??
-                                            //     event.senderFromMemoryOrFallback
-                                            //         .calcDisplayname();
-                                            const displayname = "?";
+                                            // #Pangea
+                                            String displayname;
+                                            if (!controller.isStoryGameMode) {
+                                              // Pangea#
+                                              displayname = snapshot.data
+                                                      ?.calcDisplayname() ??
+                                                  event
+                                                      .senderFromMemoryOrFallback
+                                                      .calcDisplayname();
+                                              // #Pangea
+                                            } else {
+                                              displayname = controller
+                                                  .storyGameDisplayName(
+                                                event,
+                                              );
+                                            }
+                                            // Pangea#
                                             return Text(
                                               displayname,
                                               style: TextStyle(
@@ -367,9 +417,17 @@ class Message extends StatelessWidget {
                                                   horizontal: 16,
                                                   vertical: 8,
                                                 ),
-                                          constraints: const BoxConstraints(
+                                          constraints: BoxConstraints(
                                             maxWidth:
-                                                FluffyThemes.columnWidth * 1.5,
+                                                // #Pangea
+                                                // FluffyThemes.columnWidth * 1.5,
+                                                event.messageType ==
+                                                        MessageTypes.Image
+                                                    ? FluffyThemes.columnWidth *
+                                                        2.5
+                                                    : FluffyThemes.columnWidth *
+                                                        1.5,
+                                            // Pangea#
                                           ),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
@@ -379,8 +437,9 @@ class Message extends StatelessWidget {
                                               if (event.relationshipType ==
                                                   RelationshipTypes.reply)
                                                 FutureBuilder<Event?>(
-                                                  future: event
-                                                      .getReplyEvent(timeline),
+                                                  future: event.getReplyEvent(
+                                                    timeline,
+                                                  ),
                                                   builder: (
                                                     BuildContext context,
                                                     snapshot,
@@ -496,7 +555,9 @@ class Message extends StatelessWidget {
                                                           ' - ${displayEvent.originServerTs.localizedTimeShort(context)}',
                                                           style: TextStyle(
                                                             color: textColor
-                                                                .withAlpha(164),
+                                                                .withAlpha(
+                                                              164,
+                                                            ),
                                                             fontSize: 12,
                                                           ),
                                                         ),
@@ -578,14 +639,33 @@ class Message extends StatelessWidget {
                 : Padding(
                     padding: EdgeInsets.only(
                       top: 4.0,
-                      left: (ownMessage ? 0 : Avatar.defaultSize) + 12.0,
-                      right: ownMessage ? 0 : 12.0,
+                      left: (ownMessage
+                                  // #Pangea
+                                  ||
+                                  isNarration
+                              // Pangea#
+                              ? 0
+                              : Avatar.defaultSize) +
+                          12.0,
+                      right: ownMessage
+                              // #Pangea
+                              ||
+                              isNarration
+                          // Pangea#
+                          ? 0
+                          : 12.0,
                     ),
                     // #Pangea
                     child: Row(
-                      mainAxisAlignment: ownMessage
-                          ? MainAxisAlignment.end
-                          : MainAxisAlignment.start,
+                      mainAxisAlignment:
+                          // #Pangea
+                          isNarration
+                              ? MainAxisAlignment.center
+                              :
+                              // Pangea#
+                              ownMessage
+                                  ? MainAxisAlignment.end
+                                  : MainAxisAlignment.start,
                       children: [
                         if (pangeaMessageEvent?.showMessageButtons ?? false)
                           MessageButtons(

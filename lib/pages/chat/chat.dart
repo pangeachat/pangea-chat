@@ -13,17 +13,14 @@ import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat_view.dart';
 import 'package:fluffychat/pages/chat/event_info_dialog.dart';
 import 'package:fluffychat/pages/chat/recording_dialog.dart';
-import 'package:fluffychat/pages/chat_details/chat_details.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/choreographer.dart';
-import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/choreo_record.dart';
-import 'package:fluffychat/pangea/models/game_state_model.dart';
 import 'package:fluffychat/pangea/models/representation_content_model.dart';
 import 'package:fluffychat/pangea/models/tokens_event_content_model.dart';
-import 'package:fluffychat/pangea/pages/games/story_game/round_model.dart';
+import 'package:fluffychat/pangea/pages/games/story_game/game_chat_details.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/utils/firebase_analytics.dart';
 import 'package:fluffychat/pangea/utils/report_message.dart';
@@ -116,9 +113,7 @@ class ChatController extends State<ChatPageWithRoom>
   // #Pangea
   final PangeaController pangeaController = MatrixState.pangeaController;
   late Choreographer choreographer = Choreographer(pangeaController, this);
-
-  /// Model of the current story game round
-  GameRoundModel? currentRound;
+  bool isStoryGameMode = true;
   // Pangea#
 
   Room get room => sendingClient.getRoomById(roomId) ?? widget.room;
@@ -300,27 +295,6 @@ class ChatController extends State<ChatPageWithRoom>
     }
   }
 
-  // #Pangea
-  /// Recursive function that sets the current round, waits for it to
-  /// finish, sets it, etc. until the chat view is no longer mounted.
-  void setRound() {
-    currentRound?.dispose();
-    currentRound = GameRoundModel(room: room);
-    room.client.onRoomState.stream.firstWhere((update) {
-      if (update.roomId != roomId) return false;
-      if (update.state is! Event) return false;
-      if ((update.state as Event).type != PangeaEventTypes.storyGame) {
-        return false;
-      }
-
-      final game = GameModel.fromJson((update.state as Event).content);
-      return game.previousRoundEndTime != null;
-    }).then((_) {
-      if (mounted) setRound();
-    });
-  }
-  // Pangea#
-
   @override
   void initState() {
     scrollController.addListener(_updateScrollController);
@@ -336,7 +310,7 @@ class ChatController extends State<ChatPageWithRoom>
     sendingClient = Matrix.of(context).client;
     WidgetsBinding.instance.addObserver(this);
     // #Pangea
-    setRound();
+
     if (!mounted) return;
     Future.delayed(const Duration(seconds: 1), () async {
       if (!mounted) return;
@@ -423,7 +397,7 @@ class ChatController extends State<ChatPageWithRoom>
   List<Event> get visibleEvents =>
       timeline?.events
           .where(
-            (x) => x.isVisibleInGui,
+            (x) => x.isVisibleInGui && room.isEventVisibleInGame(x),
           )
           .toList() ??
       <Event>[];
@@ -502,7 +476,7 @@ class ChatController extends State<ChatPageWithRoom>
       // Pangea#
       if (kIsWeb && !Matrix.of(context).webHasFocus) return;
       // #Pangea
-    } catch (err, s) {
+    } catch (err) {
       return;
     }
     // Pangea#
@@ -561,7 +535,6 @@ class ChatController extends State<ChatPageWithRoom>
     //#Pangea
     choreographer.stateListener.close();
     choreographer.dispose();
-    currentRound?.dispose();
     //Pangea#
     super.dispose();
   }
@@ -660,6 +633,22 @@ class ChatController extends State<ChatPageWithRoom>
         .then(
       (String? msgEventId) async {
         // #Pangea
+        // There's a listen in my_analytics_controller that decides when to auto-update
+        // analytics based on when / how many messages the logged in user send. This
+        // stream sends the data for newly sent messages.
+        if (msgEventId != null) {
+          pangeaController.myAnalytics.setState(
+            data: {
+              'eventID': msgEventId,
+              'eventType': EventTypes.Message,
+              'roomID': room.id,
+              'originalSent': originalSent,
+              'tokensSent': tokensSent,
+              'choreo': choreo,
+            },
+          );
+        }
+
         if (previousEdit != null) {
           pangeaEditingEvent = previousEdit;
         }
@@ -1662,25 +1651,28 @@ class ChatController extends State<ChatPageWithRoom>
                     width: 0,
                   );
                 }
-                return Container(
-                  width: FluffyThemes.columnWidth,
-                  clipBehavior: Clip.hardEdge,
-                  decoration: BoxDecoration(
-                    border: Border(
-                      left: BorderSide(
-                        width: 1,
-                        color: Theme.of(context).dividerColor,
-                      ),
-                    ),
-                  ),
-                  child: ChatDetails(
-                    roomId: roomId,
-                    embeddedCloseButton: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: toggleDisplayChatDetailsColumn,
-                    ),
-                  ),
-                );
+                // #Pangea
+                return GameChatDetailsView(controller: this);
+                // return Container(
+                //   width: FluffyThemes.columnWidth,
+                //   clipBehavior: Clip.hardEdge,
+                //   decoration: BoxDecoration(
+                //     border: Border(
+                //       left: BorderSide(
+                //         width: 1,
+                //         color: Theme.of(context).dividerColor,
+                //       ),
+                //     ),
+                //   ),
+                //   child: ChatDetails(
+                //     roomId: roomId,
+                //     embeddedCloseButton: IconButton(
+                //       icon: const Icon(Icons.close),
+                //       onPressed: toggleDisplayChatDetailsColumn,
+                //     ),
+                //   ),
+                // );
+                // Pangea#
               },
             ),
           ),
