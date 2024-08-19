@@ -1,5 +1,4 @@
 import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pangea/constants/analytics_constants.dart';
 import 'package:fluffychat/pangea/widgets/animations/progress_bar/animated_level_dart.dart';
 import 'package:fluffychat/pangea/widgets/animations/progress_bar/progress_bar_details.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +21,7 @@ class LevelBarState extends State<LevelBar> {
   double prevWidth = 0;
 
   double get width {
-    const perLevel = AnalyticsConstants.xpPerLevel;
+    final perLevel = widget.progressBarDetails.pointsPerLevel;
     final percent = (widget.details.currentPoints % perLevel) / perLevel;
     return widget.progressBarDetails.totalWidth * percent;
   }

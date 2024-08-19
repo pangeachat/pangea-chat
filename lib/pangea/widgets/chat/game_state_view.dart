@@ -16,23 +16,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
 
-class GameDivider extends StatefulWidget {
+class GameStateView extends StatefulWidget {
   final ChatController controller;
-  final Event event;
 
-  const GameDivider(this.controller, this.event, {super.key});
+  const GameStateView(this.controller, {super.key});
 
   @override
-  GameDividerState createState() => GameDividerState();
+  GameStateViewState createState() => GameStateViewState();
 }
 
-class GameDividerState extends State<GameDivider> {
+class GameStateViewState extends State<GameStateView> {
   Timer? timer;
   StreamSubscription? stateSubscription;
-  bool _animate = false;
 
-  get gameState => widget.controller.room.gameState;
-  get eventState => GameModel.fromJson(widget.event.content);
+  GameModel get gameState => widget.controller.room.gameState;
   int get currentSeconds => widget.controller.room.isActiveRound
       ? (widget.controller.room.currentRoundDuration?.inSeconds ?? 0)
       : 0;
@@ -52,15 +49,7 @@ class GameDividerState extends State<GameDivider> {
   }
 
   void setTimer({bool animate = true}) {
-    if (animate) {
-      setState(() {
-        _animate = true;
-        Future.delayed(const Duration(milliseconds: 500), () {
-          if (mounted) setState(() => _animate = false);
-        });
-      });
-    }
-
+    setState(() {});
     if (!widget.controller.room.isActiveRound) return;
     timer?.cancel();
     timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
@@ -92,20 +81,21 @@ class GameDividerState extends State<GameDivider> {
   Widget build(BuildContext context) {
     // Don't show if there is no current character
     if (gameState.currentCharacter == null ||
-        eventState.currentRoundStartTime == null) {
+        gameState.currentRoundStartTime == null) {
       return const SizedBox();
     }
 
     // If there is no ongoing round, get winner of previous round
     String? winner;
-    if (!widget.controller.room.isActiveRound) {
+    if (widget.controller.timeline != null) {
       final recentBotMessage =
           widget.controller.timeline!.events.firstWhereOrNull(
         (e) =>
             e.senderId == GameConstants.gameMaster &&
             e.originServerTs.isAfter(
               gameState.currentRoundStartTime!,
-            ),
+            ) &&
+            e.content.containsKey(ModelKey.winner),
       );
       winner = recentBotMessage?.content[ModelKey.winner]?.toString();
     }
@@ -114,7 +104,6 @@ class GameDividerState extends State<GameDivider> {
     final color = Theme.of(context).colorScheme.surfaceContainerHighest;
 
     final bool isActiveRound = widget.controller.room.isActiveRound;
-    final bool isCalculatingWinner = !isActiveRound && winner == null;
 
     String? blockText;
     String? avatarName;
@@ -123,7 +112,7 @@ class GameDividerState extends State<GameDivider> {
           ? L10n.of(context)!.currentCharDialoguePrompt(character)
           : L10n.of(context)!.narrationPrompt;
       avatarName = character;
-    } else if (isCalculatingWinner) {
+    } else if (winner == null) {
       blockText = L10n.of(context)!.calculatingWinner;
     } else {
       if (winner == GameConstants.gameMaster) {
@@ -135,59 +124,44 @@ class GameDividerState extends State<GameDivider> {
                   (u) => u.id == winner,
                 )
                 ?.calcDisplayname() ??
-            winner!.localpart;
+            winner.localpart;
         blockText = L10n.of(context)!.winnerAnnouncement(winnerDisplayName!);
         avatarName = winnerDisplayName;
       }
     }
 
-    return Center(
-      child: Container(
-        constraints: const BoxConstraints(
-          maxWidth: FluffyThemes.columnWidth * 1.25,
+    return Container(
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: const BorderRadius.all(
+          Radius.circular(4),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: AnimatedSize(
-          duration: FluffyThemes.animationDuration,
-          curve: FluffyThemes.animationCurve,
-          clipBehavior: Clip.none,
-          alignment: Alignment.center,
-          child: _animate
-              ? const SizedBox(height: 0, width: double.infinity)
-              : Container(
-                  decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(4),
-                    ),
-                  ),
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AnimatedSize(
-                              duration: FluffyThemes.animationDuration,
-                              child: avatarName == null
-                                  ? const SizedBox.shrink()
-                                  : Avatar(name: avatarName),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              blockText,
-                              textAlign: TextAlign.center,
-                              style: BotStyle.text(context, big: true),
-                            ),
-                          ],
-                        ),
-                      ),
-                      RoundTimer(currentSeconds),
-                    ],
-                  ),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AnimatedSize(
+                  duration: FluffyThemes.animationDuration,
+                  child: avatarName == null
+                      ? const SizedBox.shrink()
+                      : Avatar(name: avatarName),
                 ),
-        ),
+                const SizedBox(height: 8),
+                Text(
+                  blockText,
+                  textAlign: TextAlign.center,
+                  style: BotStyle.text(context, big: true),
+                ),
+              ],
+            ),
+          ),
+          RoundTimer(currentSeconds),
+        ],
       ),
     );
   }
@@ -223,37 +197,3 @@ class StartRoundButton extends StatelessWidget {
     );
   }
 }
-
-// // TODO delete this - just for testing
-// class SendGMMessageButton extends StatelessWidget {
-//   final ChatController controller;
-//   final bool isNarration;
-
-//   const SendGMMessageButton(this.controller, this.isNarration, {super.key});
-
-//   void sendWinner() {
-//     final content = {
-//       ModelKey.character: isNarration ? ModelKey.narrator : "Sally May",
-//       "body": isNarration
-//           ? "Here's a message from the narrator"
-//           : "Here's the winning message",
-//       "msgtype": "m.text",
-//     };
-//     if (!isNarration) {
-//       content[ModelKey.winner] = "@test_7_30_1:staging.pangea.chat";
-//     }
-
-//     controller.room.sendEvent(content);
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.all(16),
-//       child: IconButton(
-//         icon: Icon(isNarration ? Icons.speaker : Icons.message),
-//         onPressed: sendWinner,
-//       ),
-//     );
-//   }
-// }
