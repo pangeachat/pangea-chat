@@ -1,6 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:fluffychat/pangea/constants/model_keys.dart';
-import 'package:fluffychat/pangea/utils/bot_name.dart';
+import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
 import 'package:fluffychat/utils/string_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
@@ -13,19 +12,15 @@ class MessageSentBy extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (event.content[ModelKey.winner] == null ||
-        event.content[ModelKey.winner] == BotName.byEnvironment ||
-        event.content[ModelKey.character] == null) {
+    if (event.winner == null || event.isGMMessage || event.character == null) {
       return const SizedBox.shrink();
     }
-    final winnerID = event.content[ModelKey.winner] as String;
+
     final User? winner = event.room.getParticipants().firstWhereOrNull(
-          (u) => u.id == winnerID,
+          (u) => u.id == event.winner,
         );
     final senderName =
-        winner?.calcDisplayname() ?? winnerID.localpart ?? winnerID;
-
-    final character = event.content[ModelKey.character] as String;
+        winner?.calcDisplayname() ?? event.winner!.localpart ?? event.winner!;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -34,8 +29,8 @@ class MessageSentBy extends StatelessWidget {
         style: TextStyle(
           fontSize: 12,
           color: (Theme.of(context).brightness == Brightness.light
-              ? character.color
-              : character.lightColorText),
+              ? event.character?.color
+              : event.character?.lightColorText),
         ),
       ),
     );

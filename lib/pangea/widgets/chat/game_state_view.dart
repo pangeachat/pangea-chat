@@ -8,6 +8,7 @@ import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/models/games/game_state_model.dart';
+import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
 import 'package:fluffychat/pangea/utils/bot_style.dart';
 import 'package:fluffychat/pangea/widgets/chat/round_timer.dart';
 import 'package:fluffychat/widgets/avatar.dart';
@@ -91,13 +92,12 @@ class GameStateViewState extends State<GameStateView> {
       final recentBotMessage =
           widget.controller.timeline!.events.firstWhereOrNull(
         (e) =>
-            e.senderId == GameConstants.gameMaster &&
+            e.isWinnerMessage &&
             e.originServerTs.isAfter(
               gameState.currentRoundStartTime!,
-            ) &&
-            e.content.containsKey(ModelKey.winner),
+            ),
       );
-      winner = recentBotMessage?.content[ModelKey.winner]?.toString();
+      winner = recentBotMessage?.winner;
     }
 
     final character = gameState.currentCharacter;

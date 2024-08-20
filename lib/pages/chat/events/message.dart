@@ -1,6 +1,5 @@
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
-import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/enum/use_type.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
@@ -89,8 +88,7 @@ class Message extends StatelessWidget {
         controller.clearEditingEvent();
       }
     });
-    final bool isNarration =
-        event.content[ModelKey.character] == ModelKey.narrator;
+
     if (event.type == PangeaEventTypes.storyGame) {
       return Center(
         child: Container(
@@ -689,7 +687,7 @@ class Message extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment:
                           // #Pangea
-                          isNarration
+                          event.isNarratorMessage || event.isCandidateMessage
                               ? MainAxisAlignment.center
                               : controller.isStoryGameMode
                                   ? alignment == Alignment.topRight

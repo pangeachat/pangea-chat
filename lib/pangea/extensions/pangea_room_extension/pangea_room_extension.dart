@@ -17,6 +17,7 @@ import 'package:fluffychat/pangea/models/games/game_state_model.dart';
 import 'package:fluffychat/pangea/models/language_model.dart';
 import 'package:fluffychat/pangea/models/space_model.dart';
 import 'package:fluffychat/pangea/models/tokens_event_content_model.dart';
+import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
 import 'package:fluffychat/pangea/utils/bot_name.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
@@ -346,7 +347,7 @@ extension PangeaRoom on Room {
         (startTime == null || event.originServerTs.isAfter(startTime)) &&
             (visibleFrom == null || event.originServerTs.isAfter(visibleFrom));
 
-    if (event.senderId == GameConstants.gameMaster) {
+    if (event.isGMMessage) {
       return sentDuringRound ||
           event.content[ModelKey.character] != null ||
           event.messageType == MessageTypes.Image;
