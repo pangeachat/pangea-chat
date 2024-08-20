@@ -1,7 +1,6 @@
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/widgets/chat/game_leaderboard.dart';
-import 'package:fluffychat/pangea/widgets/chat/game_state_view.dart';
 import 'package:flutter/material.dart';
 
 class GameChatDetailsView extends StatelessWidget {
@@ -24,8 +23,6 @@ class GameChatDetailsView extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       child: Column(
         children: [
-          GameStateView(controller),
-          const SizedBox(height: 16),
           Expanded(
             child: GameLeaderBoard(room: controller.room),
           ),

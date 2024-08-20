@@ -1,6 +1,7 @@
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/constants/model_keys.dart';
+import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/enum/use_type.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
@@ -18,6 +19,7 @@ import 'package:matrix/matrix.dart';
 import 'package:swipe_to_action/swipe_to_action.dart';
 
 import '../../../config/app_config.dart';
+import '../../../pangea/widgets/chat/game_state_view.dart';
 import 'message_content.dart';
 import 'message_reactions.dart';
 import 'reply_content.dart';
@@ -89,6 +91,17 @@ class Message extends StatelessWidget {
     });
     final bool isNarration =
         event.content[ModelKey.character] == ModelKey.narrator;
+    if (event.type == PangeaEventTypes.storyGame) {
+      return Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          constraints: const BoxConstraints(
+            maxWidth: FluffyThemes.columnWidth * 1.25,
+          ),
+          child: GameStateView(controller),
+        ),
+      );
+    }
     // Pangea#
     if (!{
       EventTypes.Message,

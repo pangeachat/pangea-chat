@@ -336,6 +336,11 @@ extension PangeaRoom on Room {
 
     final startTime = gameState.currentRoundStartTime;
     final visibleFrom = gameState.messagesVisibleFrom;
+    if (event.type == PangeaEventTypes.storyGame) {
+      if (startTime == null) return false;
+      final eventGameState = GameModel.fromJson(event.content);
+      return eventGameState.currentRoundStartTime == startTime;
+    }
 
     if (event.senderId == GameConstants.gameMaster) {
       return event.content[ModelKey.character] != null ||
