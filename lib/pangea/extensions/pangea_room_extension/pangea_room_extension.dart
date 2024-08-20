@@ -342,12 +342,16 @@ extension PangeaRoom on Room {
       return event.originServerTs == mostRecentUpdate?.originServerTs;
     }
 
+    final bool sentDuringRound =
+        (startTime == null || event.originServerTs.isAfter(startTime)) &&
+            (visibleFrom == null || event.originServerTs.isAfter(visibleFrom));
+
     if (event.senderId == GameConstants.gameMaster) {
-      return event.content[ModelKey.character] != null ||
+      return sentDuringRound ||
+          event.content[ModelKey.character] != null ||
           event.messageType == MessageTypes.Image;
     }
 
-    return (startTime == null || event.originServerTs.isAfter(startTime)) &&
-        (visibleFrom == null || event.originServerTs.isAfter(visibleFrom));
+    return sentDuringRound;
   }
 }
