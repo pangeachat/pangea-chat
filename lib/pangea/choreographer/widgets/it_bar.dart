@@ -316,7 +316,11 @@ class ITChoices extends StatelessWidget {
                 chosenContinuance:
                     controller.currentITStep!.continuances[index].text,
                 bestContinuance: controller.currentITStep!.best.text,
-                feedbackLang: controller.targetLangCode,
+                // TODO: we want this to eventually switch between target and source lang,
+                // based on the learner's proficiency - maybe with the words involved in the translation
+                // maybe overall. For now, we'll just use the source lang.
+                feedbackLang: controller.choreographer.l1Lang?.langCode ??
+                    controller.sourceLangCode,
                 sourceTextLang: controller.sourceLangCode,
                 targetLang: controller.targetLangCode,
               ),
@@ -327,6 +331,26 @@ class ITChoices extends StatelessWidget {
       transformTargetId: controller.choreographer.itBarTransformTargetKey,
       backDropToDismiss: false,
     );
+  }
+
+  void selectContinuance(int index, BuildContext context) {
+    final Continuance continuance =
+        controller.currentITStep!.continuances[index];
+    if (continuance.level == 1 || continuance.wasClicked) {
+      Future.delayed(
+        const Duration(milliseconds: 500),
+        () => controller.selectTranslation(index),
+      );
+    } else {
+      showCard(
+        context,
+        index,
+        continuance.level == 2 ? ChoreoConstants.yellow : ChoreoConstants.red,
+        continuance.feedbackText(context),
+      );
+    }
+    controller.currentITStep!.continuances[index].wasClicked = true;
+    controller.choreographer.setState();
   }
 
   @override
@@ -353,31 +377,8 @@ class ITChoices extends StatelessWidget {
             return Choice(text: "error", color: Colors.red);
           }
         }).toList(),
-        onPressed: (int index) {
-          final Continuance continuance =
-              controller.currentITStep!.continuances[index];
-          debugPrint("is gold? ${continuance.gold}");
-          if (continuance.level == 1 || continuance.wasClicked) {
-            Future.delayed(
-              const Duration(milliseconds: 500),
-              () => controller.selectTranslation(index),
-            );
-          } else {
-            showCard(
-              context,
-              index,
-              continuance.level == 2
-                  ? ChoreoConstants.yellow
-                  : ChoreoConstants.red,
-              continuance.feedbackText(context),
-            );
-          }
-          controller.currentITStep!.continuances[index].wasClicked = true;
-          controller.choreographer.setState();
-        },
-        onLongPress: (int index) {
-          showCard(context, index);
-        },
+        onPressed: (int index) => selectContinuance(index, context),
+        onLongPress: (int index) => showCard(context, index),
         uniqueKeyForLayerLink: (int index) => "itChoices$index",
         selectedChoiceIndex: null,
       );
