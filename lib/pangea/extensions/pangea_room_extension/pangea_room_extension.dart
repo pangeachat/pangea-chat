@@ -325,7 +325,7 @@ extension PangeaRoom on Room {
       ? currentRoundDuration!.inSeconds < GameConstants.timerMaxSeconds
       : false;
 
-  bool isEventVisibleInGame(Event event) {
+  bool isEventVisibleInGame(Event event, Timeline timeline) {
     if (!{
       EventTypes.Message,
       EventTypes.Sticker,
@@ -337,9 +337,9 @@ extension PangeaRoom on Room {
     final startTime = gameState.currentRoundStartTime;
     final visibleFrom = gameState.messagesVisibleFrom;
     if (event.type == PangeaEventTypes.storyGame) {
-      if (startTime == null) return false;
-      final eventGameState = GameModel.fromJson(event.content);
-      return eventGameState.currentRoundStartTime == startTime;
+      final mostRecentUpdate = timeline.events
+          .firstWhereOrNull((e) => e.type == PangeaEventTypes.storyGame);
+      return event.originServerTs == mostRecentUpdate?.originServerTs;
     }
 
     if (event.senderId == GameConstants.gameMaster) {
