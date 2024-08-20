@@ -2,9 +2,9 @@ import 'dart:math';
 
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/events/video_player.dart';
-import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
+import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
 import 'package:fluffychat/pangea/utils/bot_style.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_context_menu.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
@@ -366,7 +366,7 @@ class MessageContent extends StatelessWidget {
               //   fontSize: bigEmotes ? fontSize * 3 : fontSize,
               //   decoration: event.redacted ? TextDecoration.lineThrough : null,
               // ),
-              style: event.content[ModelKey.character] != ModelKey.narrator
+              style: !event.isNarratorMessage
                   ? TextStyle(
                       color: textColor,
                       fontSize: bigEmotes ? fontSize * 3 : fontSize,

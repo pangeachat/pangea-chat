@@ -38,15 +38,11 @@ extension GameChatController on ChatController {
     //     get the character for both.
     //     if they're the same, return true
     //     if they're different, return false
-    if (event.senderId != GameConstants.gameMaster &&
-        nextEvent.senderId != GameConstants.gameMaster) {
+    if (!event.isGMMessage && !nextEvent.isGMMessage) {
       return event.senderId == nextEvent.senderId;
     }
-    if (event.senderId == GameConstants.gameMaster &&
-        nextEvent.senderId == GameConstants.gameMaster) {
-      final character = event.content[ModelKey.character] as String?;
-      final nextCharacter = nextEvent.content[ModelKey.character] as String?;
-      return character == nextCharacter;
+    if (event.isGMMessage && nextEvent.isGMMessage) {
+      return event.character == nextEvent.character;
     }
     return false;
   }
@@ -56,7 +52,7 @@ extension GameChatController on ChatController {
     Event? nextEvent,
   ) {
     if (event.senderId != room.client.userID &&
-        event.senderId != GameConstants.gameMaster &&
+        !event.isGMMessage &&
         timeline != null &&
         event.isRevealed(timeline!)) {
       return FutureBuilder<User?>(
@@ -72,9 +68,8 @@ extension GameChatController on ChatController {
       );
     }
 
-    final String? character = event.content[ModelKey.character] as String?;
-    if (character == null ||
-        character == ModelKey.narrator ||
+    if (event.character == null ||
+        event.isNarratorMessage ||
         event.senderId == room.client.userID) {
       return const SizedBox();
     }
@@ -90,19 +85,18 @@ extension GameChatController on ChatController {
         ),
       );
     }
-    return Avatar(name: character);
+    return Avatar(name: event.character);
   }
 
   String storyGameDisplayName(Event event) {
-    if (event.senderId != GameConstants.gameMaster) {
+    if (!event.isGMMessage) {
       return timeline != null && event.isRevealed(timeline!)
           ? event.senderFromMemoryOrFallback.calcDisplayname()
           : "?";
     }
 
-    final character = event.content[ModelKey.character] as String?;
-    if (character == ModelKey.narrator || character == null) return "";
-    return character;
+    if (event.isNarratorMessage || event.character == null) return "";
+    return event.character!;
   }
 
   BorderRadius storyGameBorderRadius(
@@ -113,13 +107,16 @@ extension GameChatController on ChatController {
     const hardCorner = Radius.circular(4);
     const roundedCorner = Radius.circular(AppConfig.borderRadius);
 
-    final character = event.content[ModelKey.character] as String?;
-    final rightAlign = characterAlignment(event) == Alignment.topRight;
-    final nextEventSameSender = storyGameNextEventSameSender(event, nextEvent);
+    if (event.isCandidateMessage) {
+      return const BorderRadius.all(roundedCorner);
+    }
 
-    if (character == ModelKey.narrator) {
+    if (event.isNarratorMessage) {
       return const BorderRadius.all(hardCorner);
     }
+
+    final rightAlign = characterAlignment(event) == Alignment.topRight;
+    final nextEventSameSender = storyGameNextEventSameSender(event, nextEvent);
 
     return BorderRadius.only(
       topLeft: rightAlign
@@ -167,26 +164,29 @@ extension GameChatController on ChatController {
 
   Alignment characterAlignment(Event event) {
     final ownMessage = event.senderId == userID;
-    final character = event.content[ModelKey.character] as String?;
-    final isGM = event.senderId == GameConstants.gameMaster;
-    if (!isStoryGameMode || !isGM) {
+    if (!isStoryGameMode) {
       return ownMessage ? Alignment.topRight : Alignment.topLeft;
     }
 
-    if (character == null) return Alignment.topLeft;
-    if (character == ModelKey.narrator) return Alignment.center;
-    if (characterAlignments.containsKey(character)) {
-      return characterAlignments[character]!;
+    if (event.isCandidateMessage) return Alignment.topCenter;
+
+    if (event.character == null) return Alignment.topLeft;
+    if (event.isNarratorMessage) return Alignment.center;
+    if (characterAlignments.containsKey(event.character)) {
+      return characterAlignments[event.character]!;
     }
 
-    characterAlignments[character] = characterAlignments.length % 2 == 0
+    characterAlignments[event.character!] = characterAlignments.length % 2 == 0
         ? Alignment.topLeft
         : Alignment.topRight;
-    return characterAlignments[character]!;
+    return characterAlignments[event.character]!;
   }
 }
 
 extension StoryGameEvent on Event {
+  String? get character => content[ModelKey.character] as String?;
+  String? get winner => content[ModelKey.winner] as String?;
+
   bool isRevealed(Timeline timeline) {
     final Set<Event> events = aggregatedEvents(
       timeline,
@@ -201,4 +201,13 @@ extension StoryGameEvent on Event {
         .toList();
     return reactions.contains('👀');
   }
+
+  bool get isGMMessage => senderId == GameConstants.gameMaster;
+
+  bool get isNarratorMessage => isGMMessage && character == ModelKey.narrator;
+
+  bool get isWinnerMessage => isGMMessage && winner != null;
+
+  bool get isCandidateMessage =>
+      messageType == MessageTypes.Text && character == null && winner == null;
 }
