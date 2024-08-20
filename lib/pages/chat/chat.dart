@@ -398,7 +398,7 @@ class ChatController extends State<ChatPageWithRoom>
   List<Event> get visibleEvents =>
       timeline?.events
           .where(
-            (x) => x.isVisibleInGui && room.isEventVisibleInGame(x),
+            (x) => x.isVisibleInGui && room.isEventVisibleInGame(x, timeline!),
           )
           .toList() ??
       <Event>[];
