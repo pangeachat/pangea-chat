@@ -90,7 +90,8 @@ extension GameChatController on ChatController {
     }
 
     final String? character = event.content[ModelKey.character] as String?;
-    if (character == ModelKey.narrator ||
+    if (character == null ||
+        character == ModelKey.narrator ||
         event.senderId == room.client.userID) {
       return const SizedBox();
     }
@@ -106,7 +107,7 @@ extension GameChatController on ChatController {
         ),
       );
     }
-    return Avatar(name: character ?? "?");
+    return Avatar(name: character);
   }
 
   String storyGameDisplayName(Event event) {
@@ -117,8 +118,8 @@ extension GameChatController on ChatController {
     }
 
     final character = event.content[ModelKey.character] as String?;
-    if (character == ModelKey.narrator) return "";
-    return character ?? "?";
+    if (character == ModelKey.narrator || character == null) return "";
+    return character;
   }
 
   BorderRadius storyGameBorderRadius(

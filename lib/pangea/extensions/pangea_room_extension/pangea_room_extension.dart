@@ -337,9 +337,12 @@ extension PangeaRoom on Room {
     final startTime = gameState.currentRoundStartTime;
     final visibleFrom = gameState.messagesVisibleFrom;
 
-    return (event.senderId == GameConstants.gameMaster &&
-            event.content[ModelKey.character] != null) ||
-        ((startTime == null || event.originServerTs.isAfter(startTime)) &&
-            (visibleFrom == null || event.originServerTs.isAfter(visibleFrom)));
+    if (event.senderId == GameConstants.gameMaster) {
+      return event.content[ModelKey.character] != null ||
+          event.messageType == MessageTypes.Image;
+    }
+
+    return (startTime == null || event.originServerTs.isAfter(startTime)) &&
+        (visibleFrom == null || event.originServerTs.isAfter(visibleFrom));
   }
 }
