@@ -5,6 +5,7 @@ import 'package:fluffychat/pangea/enum/use_type.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_buttons.dart';
+import 'package:fluffychat/pangea/widgets/chat/message_sent_by.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
 import 'package:fluffychat/utils/date_time_extension.dart';
 import 'package:fluffychat/utils/string_color.dart';
@@ -573,6 +574,9 @@ class Message extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                              // #Pangea
+                              MessageSentBy(event: event),
+                              // Pangea#
                             ],
                           ),
                         ),

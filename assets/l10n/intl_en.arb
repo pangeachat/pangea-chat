@@ -4142,5 +4142,12 @@
   },
   "narrationPrompt": "What happens next?",
   "botWinAnnouncement": "The bot won...",
-  "calculatingWinner": "Calculating winner..."
+  "calculatingWinner": "Calculating winner...",
+  "sentByUser": "Sent by {userID}",
+  "@sentByUser": {
+    "type": "text",
+    "placeholders": {
+      "userID": {}
+    }
+  }
 }
