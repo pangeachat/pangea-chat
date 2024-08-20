@@ -5,5 +5,9 @@
         "source.organizeImports": "explicit",
         "source.sortMembers": "never"
     },
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "[autolisp]": {
+        "editor.wordSeparators": "`|;'\",()"
+    }
 }

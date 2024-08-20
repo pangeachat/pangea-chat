@@ -462,6 +462,7 @@ class Choreographer {
     choreoRecord = ChoreoRecord.newRecord;
     itController.clear();
     igc.clear();
+    pangeaController.myAnalytics.clearDraftConstructUses(roomId);
     // errorService.clear();
     _resetDebounceTimer();
   }

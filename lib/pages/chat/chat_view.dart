@@ -12,8 +12,9 @@ import 'package:fluffychat/pages/chat/reply_display.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/it_bar.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/start_igc_button.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
+import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
+import 'package:fluffychat/pangea/widgets/animations/gain_points.dart';
 import 'package:fluffychat/pangea/widgets/chat/chat_floating_action_button.dart';
-import 'package:fluffychat/pangea/widgets/chat/round_timer.dart';
 import 'package:fluffychat/utils/account_config.dart';
 import 'package:fluffychat/widgets/chat_settings_popup_menu.dart';
 import 'package:fluffychat/widgets/connection_status_header.dart';
@@ -36,6 +37,19 @@ class ChatView extends StatelessWidget {
   const ChatView(this.controller, {super.key});
 
   List<Widget> _appBarActions(BuildContext context) {
+    // #Pangea
+    final leaderboardBtn = CompositedTransformTarget(
+      link: MatrixState.pAnyState.layerLinkAndKey('leaderboard_btn').link,
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: IconButton(
+          icon: const Icon(Icons.leaderboard_outlined),
+          onPressed: controller.showLeaderboard,
+          key: MatrixState.pAnyState.layerLinkAndKey('leaderboard_btn').key,
+        ),
+      ),
+    );
+    // Pangea#
     if (controller.selectMode) {
       return [
         if (controller.canEditSelectedEvents)
@@ -74,7 +88,12 @@ class ChatView extends StatelessWidget {
             tooltip: L10n.of(context)!.redactMessage,
             onPressed: controller.redactEventsAction,
           ),
-        if (controller.selectedEvents.length == 1)
+        if (controller.selectedEvents.length == 1
+            // #Pangea
+            // &&
+            // !controller.isStoryGameMode
+            // Pangea#
+            )
           PopupMenuButton<_EventContextAction>(
             onSelected: (action) {
               switch (action) {
@@ -116,14 +135,14 @@ class ChatView extends StatelessWidget {
                 ),
             ],
           ),
+        // #Pangea
+        leaderboardBtn,
+        // Pangea#
       ];
       // #Pangea
     } else {
       return [
-        controller.timer ?? const SizedBox(),
-        const SizedBox(
-          width: 10,
-        ),
+        leaderboardBtn,
         ChatSettingsPopupMenu(
           controller.room,
           (!controller.room.isDirectChat && !controller.room.isArchived),
@@ -471,8 +490,15 @@ class ChatView extends StatelessWidget {
                                       StartIGCButton(
                                         controller: controller,
                                       ),
-                                      ChatFloatingActionButton(
-                                        controller: controller,
+                                      Row(
+                                        children: [
+                                          const PointsGainedAnimation(
+                                            color: Colors.blue,
+                                          ),
+                                          ChatFloatingActionButton(
+                                            controller: controller,
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),

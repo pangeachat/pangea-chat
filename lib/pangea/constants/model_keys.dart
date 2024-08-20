@@ -123,4 +123,17 @@ class ModelKey {
 
   static const String prevEventId = "prev_event_id";
   static const String prevLastUpdated = "prev_last_updated";
+
+  static const String gameState = "game_state";
+
+  static const String currentRoundStartTime = "start_time";
+  static const String messagesVisibleFrom = "messages_visible_from";
+  static const String currentCharacter = "current_character";
+  static const String messagesVisibleTo = "messages_visible_to";
+  static const String score = "player_scores";
+  static const String narrator = "narrator";
+  static const String character = "character";
+  static const String winner = "winner";
+  static const String nextRoundDelay = "next_round_delay_seconds";
+  static const String phase = "phase";
 }

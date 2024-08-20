@@ -1614,6 +1614,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.1"
+  percent_indicator:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: "29b2a6859854c79dbc32a268a2a4ec4b3e9efc8b"
+      resolved-ref: "29b2a6859854c79dbc32a268a2a4ec4b3e9efc8b"
+      url: "https://github.com/diegoveloper/flutter_percent_indicator.git"
+    source: git
+    version: "4.2.3"
   permission_handler:
     dependency: "direct main"
     description:
