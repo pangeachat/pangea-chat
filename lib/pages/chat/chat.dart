@@ -114,6 +114,7 @@ class ChatController extends State<ChatPageWithRoom>
   final PangeaController pangeaController = MatrixState.pangeaController;
   late Choreographer choreographer = Choreographer(pangeaController, this);
   bool isStoryGameMode = true;
+  final Map<String, Alignment> characterAlignments = {};
   // Pangea#
 
   Room get room => sendingClient.getRoomById(roomId) ?? widget.room;

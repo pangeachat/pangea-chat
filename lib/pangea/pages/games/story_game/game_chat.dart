@@ -12,23 +12,6 @@ import 'package:matrix/matrix.dart';
 extension GameChatController on ChatController {
   String? get userID => room.client.userID;
 
-  Alignment messageAlignment(Event event) {
-    if (event.messageType == MessageTypes.Image) {
-      return Alignment.center;
-    }
-
-    final ownMessage = event.senderId == userID;
-    final character = event.content[ModelKey.character] as String?;
-    final isGM = event.senderId == GameConstants.gameMaster;
-    if (!isStoryGameMode || !isGM) {
-      return ownMessage ? Alignment.topRight : Alignment.topLeft;
-    }
-
-    return character == ModelKey.narrator
-        ? Alignment.center
-        : Alignment.topLeft;
-  }
-
   bool storyGameNextEventSameSender(Event event, Event? nextEvent) {
     final displayTime = event.type == EventTypes.RoomCreate ||
         nextEvent == null ||
@@ -131,23 +114,35 @@ extension GameChatController on ChatController {
     const roundedCorner = Radius.circular(AppConfig.borderRadius);
 
     final character = event.content[ModelKey.character] as String?;
-    final ownMessage = event.senderId == userID;
+    final rightAlign = characterAlignment(event) == Alignment.topRight;
     final nextEventSameSender = storyGameNextEventSameSender(event, nextEvent);
 
-    return character == ModelKey.narrator
-        ? const BorderRadius.all(hardCorner)
-        : BorderRadius.only(
-            topLeft:
-                !ownMessage && nextEventSameSender ? hardCorner : roundedCorner,
-            topRight:
-                ownMessage && nextEventSameSender ? hardCorner : roundedCorner,
-            bottomLeft: !ownMessage && previousEventSameSender
-                ? hardCorner
-                : roundedCorner,
-            bottomRight: ownMessage && previousEventSameSender
-                ? hardCorner
-                : roundedCorner,
-          );
+    if (character == ModelKey.narrator) {
+      return const BorderRadius.all(hardCorner);
+    }
+
+    return BorderRadius.only(
+      topLeft: rightAlign
+          ? roundedCorner
+          : previousEventSameSender
+              ? hardCorner
+              : roundedCorner,
+      topRight: rightAlign
+          ? previousEventSameSender
+              ? hardCorner
+              : roundedCorner
+          : roundedCorner,
+      bottomLeft: rightAlign
+          ? roundedCorner
+          : nextEventSameSender
+              ? hardCorner
+              : roundedCorner,
+      bottomRight: rightAlign
+          ? nextEventSameSender
+              ? hardCorner
+              : roundedCorner
+          : roundedCorner,
+    );
   }
 
   void showLeaderboard() {
@@ -168,6 +163,26 @@ extension GameChatController on ChatController {
       targetAnchor: Alignment.topRight,
       followerAnchor: Alignment.topRight,
     );
+  }
+
+  Alignment characterAlignment(Event event) {
+    final ownMessage = event.senderId == userID;
+    final character = event.content[ModelKey.character] as String?;
+    final isGM = event.senderId == GameConstants.gameMaster;
+    if (!isStoryGameMode || !isGM) {
+      return ownMessage ? Alignment.topRight : Alignment.topLeft;
+    }
+
+    if (character == null) return Alignment.topLeft;
+    if (character == ModelKey.narrator) return Alignment.center;
+    if (characterAlignments.containsKey(character)) {
+      return characterAlignments[character]!;
+    }
+
+    characterAlignments[character] = characterAlignments.length % 2 == 0
+        ? Alignment.topLeft
+        : Alignment.topRight;
+    return characterAlignments[character]!;
   }
 }
 
