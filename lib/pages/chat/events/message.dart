@@ -612,7 +612,9 @@ class Message extends StatelessWidget {
                           controller.storyGameAvatar(
                             event,
                             nextEvent,
-                          ),
+                          )
+                        else
+                          const SizedBox(width: Avatar.defaultSize),
                         // Pangea#
                       ],
                     ),
