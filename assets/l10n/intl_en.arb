@@ -4121,7 +4121,7 @@
   "createSpace": "Create space",
   "createChat": "Create chat",
   "error520Title": "Please try again.",
-  "error520Desc": "Sorry, we could not understand your message...", 
+  "error520Desc": "Sorry, we could not understand your message...",
   "translationChoicesBody": "Click and hold an option for a hint.",
   "error520Desc": "Sorry, we could not understand your message...",
   "wordsUsed": "Words Used",
@@ -4144,12 +4144,13 @@
   },
   "narrationPrompt": "What happens next?",
   "botWinAnnouncement": "The bot won...",
-  "calculatingWinner": "Calculating winner...",
   "sentByUser": "Sent by {userID}",
   "@sentByUser": {
     "type": "text",
     "placeholders": {
       "userID": {}
     }
-  }
+  },
+  "choosingPath": "Choosing path...",
+  "waitingForNextRound": "Waiting for next round..."
 }
