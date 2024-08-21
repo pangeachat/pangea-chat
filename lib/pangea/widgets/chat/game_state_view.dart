@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:collection/collection.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/constants/game_constants.dart';
@@ -8,7 +7,6 @@ import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/models/games/game_state_model.dart';
-import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
 import 'package:fluffychat/pangea/utils/bot_style.dart';
 import 'package:fluffychat/pangea/widgets/chat/round_timer.dart';
 import 'package:fluffychat/widgets/avatar.dart';
@@ -94,20 +92,6 @@ class GameStateViewState extends State<GameStateView> {
       return const SizedBox();
     }
 
-    // If there is no ongoing round, get winner of previous round
-    String? winner;
-    if (widget.controller.timeline != null) {
-      final recentBotMessage =
-          widget.controller.timeline!.events.firstWhereOrNull(
-        (e) =>
-            e.isWinnerMessage &&
-            e.originServerTs.isAfter(
-              gameState.currentRoundStartTime!,
-            ),
-      );
-      winner = recentBotMessage?.winner;
-    }
-
     final character = gameState.currentCharacter;
     final color = Theme.of(context).colorScheme.surfaceContainerHighest;
 
@@ -120,22 +104,10 @@ class GameStateViewState extends State<GameStateView> {
           ? L10n.of(context)!.currentCharDialoguePrompt(character)
           : L10n.of(context)!.narrationPrompt;
       avatarName = character;
-    } else if (winner == null) {
-      blockText = L10n.of(context)!.calculatingWinner;
+    } else if (!widget.controller.room.isBetweenRounds) {
+      blockText = L10n.of(context)!.choosingPath;
     } else {
-      if (winner == GameConstants.gameMaster) {
-        blockText = L10n.of(context)!.botWinAnnouncement;
-      } else {
-        final winnerDisplayName = widget.controller.room
-                .getParticipants()
-                .firstWhereOrNull(
-                  (u) => u.id == winner,
-                )
-                ?.calcDisplayname() ??
-            winner.localpart;
-        blockText = L10n.of(context)!.winnerAnnouncement(winnerDisplayName!);
-        avatarName = winnerDisplayName;
-      }
+      blockText = L10n.of(context)!.waitingForNextRound;
     }
 
     return Container(
