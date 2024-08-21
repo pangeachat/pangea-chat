@@ -17,6 +17,7 @@ import 'package:fluffychat/pangea/models/games/game_state_model.dart';
 import 'package:fluffychat/pangea/models/language_model.dart';
 import 'package:fluffychat/pangea/models/space_model.dart';
 import 'package:fluffychat/pangea/models/tokens_event_content_model.dart';
+import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
 import 'package:fluffychat/pangea/utils/bot_name.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
@@ -325,7 +326,7 @@ extension PangeaRoom on Room {
       ? currentRoundDuration!.inSeconds < GameConstants.timerMaxSeconds
       : false;
 
-  bool isEventVisibleInGame(Event event) {
+  bool isEventVisibleInGame(Event event, Timeline timeline) {
     if (!{
       EventTypes.Message,
       EventTypes.Sticker,
@@ -337,13 +338,21 @@ extension PangeaRoom on Room {
     final startTime = gameState.currentRoundStartTime;
     final visibleFrom = gameState.messagesVisibleFrom;
     if (event.type == PangeaEventTypes.storyGame) {
-      if (startTime == null) return false;
-      final eventGameState = GameModel.fromJson(event.content);
-      return eventGameState.currentRoundStartTime == startTime;
+      final mostRecentUpdate = timeline.events
+          .firstWhereOrNull((e) => e.type == PangeaEventTypes.storyGame);
+      return event.originServerTs == mostRecentUpdate?.originServerTs;
     }
 
-    return event.senderId == GameConstants.gameMaster ||
-        ((startTime == null || event.originServerTs.isAfter(startTime)) &&
-            (visibleFrom == null || event.originServerTs.isAfter(visibleFrom)));
+    final bool sentDuringRound =
+        (startTime == null || event.originServerTs.isAfter(startTime)) &&
+            (visibleFrom == null || event.originServerTs.isAfter(visibleFrom));
+
+    if (event.isGMMessage) {
+      return sentDuringRound ||
+          event.content[ModelKey.character] != null ||
+          event.messageType == MessageTypes.Image;
+    }
+
+    return sentDuringRound;
   }
 }

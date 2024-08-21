@@ -7,12 +7,10 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 class RoundTimer extends StatelessWidget {
   final int currentSeconds;
   final int maxSeconds;
-  final Color timerColor;
 
   const RoundTimer(
-    this.currentSeconds,
-    this.maxSeconds,
-    this.timerColor, {
+    this.currentSeconds, {
+    this.maxSeconds = GameConstants.timerMaxSeconds,
     super.key,
   });
 
@@ -28,8 +26,8 @@ class RoundTimer extends StatelessWidget {
     return CircularPercentIndicator(
       radius: 40.0,
       percent: percent,
-      backgroundColor: timerColor.withOpacity(0.5),
-      progressColor: timerColor,
+      backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+      progressColor: Theme.of(context).colorScheme.primary,
       animation: true,
       animateFromLastPercent: true,
       center: Text(timerText),

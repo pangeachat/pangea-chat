@@ -33,7 +33,7 @@ class ChatEventList extends StatelessWidget {
               // #Pangea
               &&
               // In story game, hide messages sent by non-bot users in previous round
-              controller.room.isEventVisibleInGame(event)
+              controller.room.isEventVisibleInGame(event, controller.timeline!)
           // Pangea#
           ,
         )

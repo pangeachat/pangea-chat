@@ -69,6 +69,10 @@ class ModelKey {
   static const String permissions = "permissions";
   static const String enableIGC = "enable_igc";
   static const String enableIT = "enable_it";
+  static const String prevMessages = "prev_messages";
+  static const String prevContent = "prev_content";
+  static const String prevSender = "prev_sender";
+  static const String prevTimestamp = "prev_timestamp";
 
   static const String originalSent = "original_sent";
   static const String originalWritten = "original_written";
@@ -121,13 +125,15 @@ class ModelKey {
   static const String prevLastUpdated = "prev_last_updated";
 
   static const String gameState = "game_state";
+
   static const String currentRoundStartTime = "start_time";
-  static const String messagesVisibleFrom = "message_visible_from";
+  static const String messagesVisibleFrom = "messages_visible_from";
   static const String currentCharacter = "current_character";
-  static const String messagesVisibleTo = "message_visible_to";
-  static const String score = "score";
+  static const String messagesVisibleTo = "messages_visible_to";
+  static const String score = "player_scores";
   static const String narrator = "narrator";
   static const String character = "character";
   static const String winner = "winner";
   static const String nextRoundDelay = "next_round_delay_seconds";
+  static const String phase = "phase";
 }

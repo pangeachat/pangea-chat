@@ -1,12 +1,11 @@
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
-import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/enum/use_type.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
-import 'package:fluffychat/pangea/widgets/chat/game_divider.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_buttons.dart';
+import 'package:fluffychat/pangea/widgets/chat/message_sent_by.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
 import 'package:fluffychat/utils/date_time_extension.dart';
 import 'package:fluffychat/utils/string_color.dart';
@@ -19,6 +18,7 @@ import 'package:matrix/matrix.dart';
 import 'package:swipe_to_action/swipe_to_action.dart';
 
 import '../../../config/app_config.dart';
+import '../../../pangea/widgets/chat/game_state_view.dart';
 import 'message_content.dart';
 import 'message_reactions.dart';
 import 'reply_content.dart';
@@ -88,11 +88,17 @@ class Message extends StatelessWidget {
         controller.clearEditingEvent();
       }
     });
-    final bool isNarration =
-        event.content[ModelKey.character] == ModelKey.narrator;
-    // In case of game event, display current character
+
     if (event.type == PangeaEventTypes.storyGame) {
-      return GameDivider(controller, event);
+      return Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          constraints: const BoxConstraints(
+            maxWidth: FluffyThemes.columnWidth * 1.25,
+          ),
+          child: GameStateView(controller),
+        ),
+      );
     }
     // Pangea#
     if (!{
@@ -117,7 +123,7 @@ class Message extends StatelessWidget {
 
     // #Pangea
     // final alignment = ownMessage ? Alignment.topRight : Alignment.topLeft;
-    final alignment = controller.messageAlignment(event);
+    final alignment = controller.characterAlignment(event);
     // Pangea#
     // ignore: deprecated_member_use
     var color = Theme.of(context).colorScheme.surfaceVariant;
@@ -266,10 +272,17 @@ class Message extends StatelessWidget {
                       children: [
                         // #Pangea
                         if (controller.isStoryGameMode)
-                          controller.storyGameAvatar(
-                            event,
-                            nextEvent,
+                          SizedBox(
+                            width: Avatar.defaultSize,
+                            height: Avatar.defaultSize,
+                            child: alignment == Alignment.topLeft
+                                ? controller.storyGameAvatar(
+                                    event,
+                                    nextEvent,
+                                  )
+                                : const SizedBox.shrink(),
                           )
+
                         // if (longPressSelect)
                         else if (longPressSelect)
                           // Pangea#
@@ -319,12 +332,18 @@ class Message extends StatelessWidget {
                           ),
                         Expanded(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            // crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: alignment == Alignment.topRight
+                                ? CrossAxisAlignment.end
+                                : CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               if (!nextEventSameSender)
                                 Padding(
                                   padding: const EdgeInsets.only(
+                                    // #Pangea
+                                    right: 8.0,
+                                    // Pangea#
                                     left: 8.0,
                                     bottom: 4,
                                   ),
@@ -369,7 +388,12 @@ class Message extends StatelessWidget {
                                 ),
                               Container(
                                 alignment: alignment,
-                                padding: const EdgeInsets.only(left: 8),
+                                padding: const EdgeInsets.only(
+                                  left: 8,
+                                  // #Pangea
+                                  right: 8,
+                                  // Pangea#
+                                ),
                                 child: GestureDetector(
                                   // #Pangea
                                   onTap: () => toolbarController?.showToolbar(
@@ -579,9 +603,25 @@ class Message extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                              // #Pangea
+                              MessageSentBy(event: event),
+                              // Pangea#
                             ],
                           ),
                         ),
+                        // #Pangea
+                        if (controller.isStoryGameMode &&
+                            alignment == Alignment.topRight)
+                          controller.storyGameAvatar(
+                            event,
+                            nextEvent,
+                          )
+                        else
+                          const SizedBox(
+                            width: Avatar.defaultSize,
+                            height: Avatar.defaultSize,
+                          ),
+                        // Pangea#
                       ],
                     ),
                   ],
@@ -645,33 +685,27 @@ class Message extends StatelessWidget {
                 : Padding(
                     padding: EdgeInsets.only(
                       top: 4.0,
-                      left: (ownMessage
-                                  // #Pangea
-                                  ||
-                                  isNarration
-                              // Pangea#
-                              ? 0
-                              : Avatar.defaultSize) +
-                          12.0,
-                      right: ownMessage
-                              // #Pangea
-                              ||
-                              isNarration
-                          // Pangea#
-                          ? 0
-                          : 12.0,
+                      left: (ownMessage ? 0 : Avatar.defaultSize) + 12.0,
+                      // #Pangea
+                      // right: ownMessage ? 0 : 12.0,
+                      right: (ownMessage ? 0 : Avatar.defaultSize) + 12.0,
+                      // Pangea#
                     ),
                     // #Pangea
                     child: Row(
                       mainAxisAlignment:
                           // #Pangea
-                          isNarration
+                          event.isNarratorMessage || event.isCandidateMessage
                               ? MainAxisAlignment.center
-                              :
-                              // Pangea#
-                              ownMessage
-                                  ? MainAxisAlignment.end
-                                  : MainAxisAlignment.start,
+                              : controller.isStoryGameMode
+                                  ? alignment == Alignment.topRight
+                                      ? MainAxisAlignment.end
+                                      : MainAxisAlignment.start
+                                  :
+                                  // Pangea#
+                                  ownMessage
+                                      ? MainAxisAlignment.end
+                                      : MainAxisAlignment.start,
                       children: [
                         if (pangeaMessageEvent?.showMessageButtons ?? false)
                           MessageButtons(
