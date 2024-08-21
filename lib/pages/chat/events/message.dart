@@ -272,12 +272,17 @@ class Message extends StatelessWidget {
                       children: [
                         // #Pangea
                         if (controller.isStoryGameMode)
-                          alignment == Alignment.topLeft
-                              ? controller.storyGameAvatar(
-                                  event,
-                                  nextEvent,
-                                )
-                              : const SizedBox(width: Avatar.defaultSize)
+                          SizedBox(
+                            width: Avatar.defaultSize,
+                            height: Avatar.defaultSize,
+                            child: alignment == Alignment.topLeft
+                                ? controller.storyGameAvatar(
+                                    event,
+                                    nextEvent,
+                                  )
+                                : const SizedBox.shrink(),
+                          )
+
                         // if (longPressSelect)
                         else if (longPressSelect)
                           // Pangea#
@@ -612,7 +617,10 @@ class Message extends StatelessWidget {
                             nextEvent,
                           )
                         else
-                          const SizedBox(width: Avatar.defaultSize),
+                          const SizedBox(
+                            width: Avatar.defaultSize,
+                            height: Avatar.defaultSize,
+                          ),
                         // Pangea#
                       ],
                     ),

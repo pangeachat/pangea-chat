@@ -178,8 +178,9 @@ class MessageContent extends StatelessWidget {
               // height: height,
               width: FluffyThemes.columnWidth * 2.5,
               height: FluffyThemes.columnWidth * 1.5,
+              fit: BoxFit.contain,
+              // fit: fit,
               // Pangea#
-              fit: fit,
               borderRadius: borderRadius,
             );
           case CuteEventContent.eventType:
