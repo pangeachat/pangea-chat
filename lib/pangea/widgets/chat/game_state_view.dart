@@ -27,12 +27,16 @@ class GameStateView extends StatefulWidget {
 class GameStateViewState extends State<GameStateView> {
   Timer? timer;
   StreamSubscription? stateSubscription;
-  // DateTime? waitBeginTime;
+  DateTime? waitBeginTime;
 
   GameModel get gameState => widget.controller.room.gameState;
   int get currentSeconds {
     if (widget.controller.room.isActiveRound) {
       return widget.controller.room.currentRoundDuration?.inSeconds ?? 0;
+    }
+    if (widget.controller.room.isBetweenRounds && waitBeginTime != null) {
+      return gameState.nextRoundDelay -
+          DateTime.now().difference(waitBeginTime!).inSeconds;
     }
     return 0;
   }
@@ -53,18 +57,19 @@ class GameStateViewState extends State<GameStateView> {
 
   void onGameStateUpdate({bool animate = true}) {
     setState(() {});
-    // if (gameState.phase == StoryGamePhase.beginWaitNextRound) {
-    //   debugPrint("BEGIN ROUND WAIT");
-    //   waitBeginTime = DateTime.now();
-    // }
-    if (!widget.controller.room.isActiveRound) return;
-    timer?.cancel();
-    timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
-      if (currentSeconds >= GameConstants.timerMaxSeconds) {
-        t.cancel();
-      }
-      setState(() {});
-    });
+    if (gameState.phase == StoryGamePhase.beginWaitNextRound) {
+      waitBeginTime = DateTime.now();
+    }
+    if (widget.controller.room.isActiveRound ||
+        widget.controller.room.isBetweenRounds) {
+      timer?.cancel();
+      timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
+        if (currentSeconds >= GameConstants.timerMaxSeconds) {
+          t.cancel();
+        }
+        setState(() {});
+      });
+    }
   }
 
   bool isRoundUpdate(update) {
@@ -88,26 +93,25 @@ class GameStateViewState extends State<GameStateView> {
   Widget build(BuildContext context) {
     // Don't show if there is no current character
     if (gameState.currentCharacter == null ||
-        gameState.currentRoundStartTime == null) {
-      return const SizedBox();
+        gameState.currentRoundStartTime == null ||
+        gameState.phase == null) {
+      return const SizedBox.shrink();
     }
 
     final character = gameState.currentCharacter;
     final color = Theme.of(context).colorScheme.surfaceContainerHighest;
 
-    final bool isActiveRound = widget.controller.room.isActiveRound;
-
     String? blockText;
     String? avatarName;
-    if (isActiveRound) {
+    if (widget.controller.room.isActiveRound) {
       blockText = character! != ModelKey.narrator
           ? L10n.of(context)!.currentCharDialoguePrompt(character)
           : L10n.of(context)!.narrationPrompt;
-      avatarName = character;
-    } else if (!widget.controller.room.isBetweenRounds) {
-      blockText = L10n.of(context)!.choosingPath;
+      if (character != ModelKey.narrator) {
+        avatarName = character;
+      }
     } else {
-      blockText = L10n.of(context)!.waitingForNextRound;
+      blockText = widget.controller.room.gameState.phase!.string(context);
     }
 
     return Container(
@@ -140,39 +144,14 @@ class GameStateViewState extends State<GameStateView> {
               ],
             ),
           ),
-          RoundTimer(currentSeconds),
+          RoundTimer(
+            currentSeconds,
+            maxSeconds: widget.controller.room.isBetweenRounds
+                ? gameState.nextRoundDelay
+                : GameConstants.timerMaxSeconds,
+            color: widget.controller.room.isBetweenRounds ? Colors.green : null,
+          ),
         ],
-      ),
-    );
-  }
-}
-
-// TODO delete this - just for testing
-class StartRoundButton extends StatelessWidget {
-  final ChatController controller;
-
-  const StartRoundButton(this.controller, {super.key});
-
-  void startRound() {
-    final gameState = controller.room.gameState;
-    debugPrint("gameState: ${gameState.toJson()}");
-    gameState.currentRoundStartTime = DateTime.now();
-    gameState.currentCharacter = "Sally May";
-    controller.room.client.setRoomStateWithKey(
-      controller.roomId,
-      PangeaEventTypes.storyGame,
-      '',
-      gameState.toJson(),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: IconButton(
-        icon: const Icon(Icons.play_arrow),
-        onPressed: startRound,
       ),
     );
   }

@@ -4,6 +4,8 @@ import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix_api_lite/generated/model.dart';
 
 enum StoryGamePhase {
@@ -20,7 +22,7 @@ enum StoryGamePhase {
 }
 
 extension StoryGamePhaseExtension on StoryGamePhase {
-  String get string {
+  String get key {
     switch (this) {
       case StoryGamePhase.beginProgressStory:
         return "begin_progress_story";
@@ -42,6 +44,26 @@ extension StoryGamePhaseExtension on StoryGamePhase {
         return "begin_end_game";
       case StoryGamePhase.endEndGame:
         return "end_end_game";
+    }
+  }
+
+  String string(BuildContext context) {
+    switch (this) {
+      case StoryGamePhase.beginProgressStory:
+      case StoryGamePhase.endProgressStory:
+        return L10n.of(context)!.startingNextRound;
+      case StoryGamePhase.beginPlayerCompetes:
+      case StoryGamePhase.endPlayerCompetes:
+        return L10n.of(context)!.competing;
+      case StoryGamePhase.beginDecideWinner:
+      case StoryGamePhase.endDecideWinner:
+        return L10n.of(context)!.choosingPath;
+      case StoryGamePhase.beginWaitNextRound:
+      case StoryGamePhase.endWaitNextRound:
+        return L10n.of(context)!.waitingForNextRound;
+      case StoryGamePhase.beginEndGame:
+      case StoryGamePhase.endEndGame:
+        return L10n.of(context)!.gameOver;
     }
   }
 }
@@ -125,7 +147,7 @@ class GameModel {
       data[ModelKey.messagesVisibleTo] = messageVisibleTo?.toIso8601String();
       data[ModelKey.score] = score;
       data[ModelKey.nextRoundDelay] = nextRoundDelay;
-      data[ModelKey.phase] = phase?.string;
+      data[ModelKey.phase] = phase?.key;
       return data;
     } catch (e, s) {
       debugger(when: kDebugMode);
