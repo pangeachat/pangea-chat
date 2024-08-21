@@ -92,7 +92,7 @@ extension GameChatController on ChatController {
     if (!event.isGMMessage) {
       return timeline != null && event.isRevealed(timeline!)
           ? event.senderFromMemoryOrFallback.calcDisplayname()
-          : "?";
+          : "";
     }
 
     if (event.isNarratorMessage || event.character == null) return "";
@@ -168,8 +168,7 @@ extension GameChatController on ChatController {
       return ownMessage ? Alignment.topRight : Alignment.topLeft;
     }
 
-    if (event.isCandidateMessage) return Alignment.topCenter;
-
+    if (event.isCandidateMessage) return Alignment.center;
     if (event.character == null) return Alignment.topLeft;
     if (event.isNarratorMessage) return Alignment.center;
     if (characterAlignments.containsKey(event.character)) {

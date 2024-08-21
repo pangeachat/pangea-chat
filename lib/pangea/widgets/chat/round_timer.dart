@@ -6,10 +6,15 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 /// Default duration is 180 seconds
 class RoundTimer extends StatelessWidget {
   final int currentSeconds;
+  final int maxSeconds;
 
-  const RoundTimer(this.currentSeconds, {super.key});
+  const RoundTimer(
+    this.currentSeconds, {
+    this.maxSeconds = GameConstants.timerMaxSeconds,
+    super.key,
+  });
 
-  int get remainingTime => GameConstants.timerMaxSeconds - currentSeconds;
+  int get remainingTime => maxSeconds - currentSeconds;
 
   String get timerText =>
       '${(remainingTime ~/ 60).toString().padLeft(2, '0')}:${(remainingTime % 60).toString().padLeft(2, '0')}';
