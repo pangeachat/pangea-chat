@@ -29,35 +29,36 @@ class GameStateView extends StatefulWidget {
 class GameStateViewState extends State<GameStateView> {
   Timer? timer;
   StreamSubscription? stateSubscription;
+  // DateTime? waitBeginTime;
 
   GameModel get gameState => widget.controller.room.gameState;
-  int get currentSeconds => widget.controller.room.isActiveRound
-      ? (widget.controller.room.currentRoundDuration?.inSeconds ?? 0)
-      // Should probably use something beside originServerTs here
-      : 0;
-  bool get isActiveRound => widget.controller.room.isActiveRound;
-  int get maxSeconds =>
-      isActiveRound ? GameConstants.timerMaxSeconds : gameState.nextRoundDelay;
-  Color get timerColor => isActiveRound
-      ? GameConstants.roundColor
-      : GameConstants.betweenRoundColor;
+  int get currentSeconds {
+    if (widget.controller.room.isActiveRound) {
+      return widget.controller.room.currentRoundDuration?.inSeconds ?? 0;
+    }
+    return 0;
+  }
 
   @override
   void initState() {
     super.initState();
 
-    setTimer(animate: false);
+    onGameStateUpdate(animate: false);
 
     stateSubscription = Matrix.of(context)
         .client
         .onRoomState
         .stream
         .where(isRoundUpdate)
-        .listen((_) => setTimer());
+        .listen((_) => onGameStateUpdate());
   }
 
-  void setTimer({bool animate = true}) {
+  void onGameStateUpdate({bool animate = true}) {
     setState(() {});
+    // if (gameState.phase == StoryGamePhase.beginWaitNextRound) {
+    //   debugPrint("BEGIN ROUND WAIT");
+    //   waitBeginTime = DateTime.now();
+    // }
     if (!widget.controller.room.isActiveRound) return;
     timer?.cancel();
     timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {

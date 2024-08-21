@@ -335,7 +335,9 @@ class Message extends StatelessWidget {
                             // crossAxisAlignment: CrossAxisAlignment.start,
                             crossAxisAlignment: alignment == Alignment.topRight
                                 ? CrossAxisAlignment.end
-                                : CrossAxisAlignment.start,
+                                : alignment == Alignment.topLeft
+                                    ? CrossAxisAlignment.start
+                                    : CrossAxisAlignment.center,
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               if (!nextEventSameSender)

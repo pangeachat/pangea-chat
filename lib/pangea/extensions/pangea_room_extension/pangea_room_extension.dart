@@ -326,6 +326,10 @@ extension PangeaRoom on Room {
       ? currentRoundDuration!.inSeconds < GameConstants.timerMaxSeconds
       : false;
 
+  bool get isBetweenRounds =>
+      gameState.phase == StoryGamePhase.beginWaitNextRound ||
+      gameState.phase == StoryGamePhase.endWaitNextRound;
+
   bool isEventVisibleInGame(Event event, Timeline timeline) {
     if (!{
       EventTypes.Message,
