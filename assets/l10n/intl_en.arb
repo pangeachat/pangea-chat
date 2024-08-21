@@ -4123,7 +4123,6 @@
   "error520Title": "Please try again.",
   "error520Desc": "Sorry, we could not understand your message...",
   "translationChoicesBody": "Click and hold an option for a hint.",
-  "error520Desc": "Sorry, we could not understand your message...",
   "wordsUsed": "Words Used",
   "errorTypes": "Error Types",
   "level": "Level",
@@ -4152,5 +4151,6 @@
     }
   },
   "choosingPath": "Choosing path...",
-  "waitingForNextRound": "Waiting for next round..."
+  "waitingForNextRound": "Waiting for next round...",
+  "morphsUsed": "Morphs Used"
 }
