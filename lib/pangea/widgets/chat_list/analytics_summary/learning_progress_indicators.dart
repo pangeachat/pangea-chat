@@ -45,6 +45,9 @@ class LearningProgressIndicatorsState
   /// Grammar constructs model
   ConstructListModel? errors;
 
+  /// Morph constructs model
+  ConstructListModel? morphs;
+
   bool loading = true;
 
   // Spme buggy stuff is happening with this data not being updated at login, so switching
@@ -89,6 +92,10 @@ class LearningProgressIndicatorsState
       type: ConstructTypeEnum.grammar,
       uses: constructs,
     );
+    morphs = ConstructListModel(
+      type: ConstructTypeEnum.morph,
+      uses: constructs,
+    );
 
     currentConstructs = constructs;
     if (loading) loading = false;
@@ -102,6 +109,8 @@ class LearningProgressIndicatorsState
         return words?.lemmas.length;
       case ProgressIndicatorEnum.errorTypes:
         return errors?.lemmas.length;
+      case ProgressIndicatorEnum.morphsUsed:
+        return morphs?.lemmas.length;
       case ProgressIndicatorEnum.level:
         return level;
     }

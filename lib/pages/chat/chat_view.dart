@@ -493,7 +493,7 @@ class ChatView extends StatelessWidget {
                                       Row(
                                         children: [
                                           const PointsGainedAnimation(
-                                            color: Colors.blue,
+                                            gainColor: Colors.blue,
                                           ),
                                           ChatFloatingActionButton(
                                             controller: controller,

@@ -7,9 +7,11 @@ import 'package:fluffychat/pangea/choreographer/widgets/it_bar_buttons.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/it_feedback_card.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/translation_finished_flow.dart';
 import 'package:fluffychat/pangea/constants/choreo_constants.dart';
+import 'package:fluffychat/pangea/enum/construct_use_type_enum.dart';
 import 'package:fluffychat/pangea/enum/instructions_enum.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/utils/inline_tooltip.dart';
+import 'package:fluffychat/pangea/widgets/animations/gain_points.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -80,7 +82,12 @@ class ITBarState extends State<ITBar> {
                   width: double.infinity,
                   padding: const EdgeInsets.fromLTRB(0, 3, 3, 3),
                   child: Stack(
+                    alignment: Alignment.topCenter,
                     children: [
+                      const Positioned(
+                        top: 60,
+                        child: PointsGainedAnimation(),
+                      ),
                       SingleChildScrollView(
                         child: Column(
                           children: [
@@ -347,6 +354,15 @@ class ITChoices extends StatelessWidget {
         index,
         continuance.level == 2 ? ChoreoConstants.yellow : ChoreoConstants.red,
         continuance.feedbackText(context),
+      );
+    }
+    if (!continuance.wasClicked) {
+      controller.choreographer.pangeaController.myAnalytics.addDraftUses(
+        continuance.tokens,
+        controller.choreographer.roomId,
+        continuance.level > 1
+            ? ConstructUseTypeEnum.incIt
+            : ConstructUseTypeEnum.corIt,
       );
     }
     controller.currentITStep!.continuances[index].wasClicked = true;
