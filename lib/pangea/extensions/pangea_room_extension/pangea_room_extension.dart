@@ -5,7 +5,6 @@ import 'dart:developer';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:collection/collection.dart';
 import 'package:fluffychat/pangea/constants/class_default_values.dart';
-import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/constants/language_constants.dart';
 import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/constants/pangea_room_types.dart';
@@ -322,13 +321,25 @@ extension PangeaRoom on Room {
       ? DateTime.now().difference(gameState.currentRoundStartTime!)
       : null;
 
-  bool get isActiveRound => gameState.currentRoundStartTime != null
-      ? currentRoundDuration!.inSeconds < GameConstants.timerMaxSeconds
-      : false;
+  Duration? roundWaitDuration(DateTime? beginWaitTime) =>
+      beginWaitTime != null ? DateTime.now().difference(beginWaitTime) : null;
 
-  bool get isBetweenRounds =>
-      gameState.phase == StoryGamePhase.beginWaitNextRound ||
-      gameState.phase == StoryGamePhase.endWaitNextRound;
+  bool get isActiveRound => [
+        StoryGamePhase.beginPlayerCompetes,
+        StoryGamePhase.endPlayerCompetes,
+      ].contains(gameState.phase);
+
+  bool get isBetweenRounds => [
+        StoryGamePhase.beginWaitNextRound,
+        StoryGamePhase.endWaitNextRound,
+        StoryGamePhase.beginDecideWinner,
+        StoryGamePhase.endDecideWinner,
+      ].contains(gameState.phase);
+
+  bool get isStartingNextRound => [
+        StoryGamePhase.beginProgressStory,
+        StoryGamePhase.endProgressStory,
+      ].contains(gameState.phase);
 
   bool isEventVisibleInGame(Event event, Timeline timeline) {
     if (!{

@@ -4152,5 +4152,8 @@
   },
   "choosingPath": "Choosing path...",
   "waitingForNextRound": "Waiting for next round...",
-  "morphsUsed": "Morphs Used"
+  "morphsUsed": "Morphs Used",
+  "startingNextRound": "Starting next round...",
+  "competing": "Competing...",
+  "gameOver": "Game over"
 }
