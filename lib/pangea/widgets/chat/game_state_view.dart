@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/models/games/game_state_model.dart';
 import 'package:fluffychat/pangea/utils/bot_style.dart';
+import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/widgets/chat/round_timer.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/matrix.dart';
@@ -16,29 +16,30 @@ import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
 
 class GameStateView extends StatefulWidget {
-  final ChatController controller;
-
-  const GameStateView(this.controller, {super.key});
+  final Room room;
+  const GameStateView(this.room, {super.key});
 
   @override
   GameStateViewState createState() => GameStateViewState();
 }
 
 class GameStateViewState extends State<GameStateView> {
+  final int roundDelaySeconds = 5;
   Timer? timer;
   StreamSubscription? stateSubscription;
   DateTime? waitBeginTime;
 
-  GameModel get gameState => widget.controller.room.gameState;
-  int get currentSeconds {
-    if (widget.controller.room.isActiveRound) {
-      return widget.controller.room.currentRoundDuration?.inSeconds ?? 0;
+  GameModel get gameState => room.gameState;
+  Room get room => widget.room;
+
+  int? get currentSeconds {
+    if (room.isActiveRound) {
+      return room.currentRoundDuration?.inSeconds;
     }
-    if (widget.controller.room.isBetweenRounds && waitBeginTime != null) {
-      return gameState.nextRoundDelay -
-          DateTime.now().difference(waitBeginTime!).inSeconds;
+    if (room.isBetweenRounds) {
+      return room.roundWaitDuration(waitBeginTime)?.inSeconds;
     }
-    return 0;
+    return null;
   }
 
   @override
@@ -55,27 +56,26 @@ class GameStateViewState extends State<GameStateView> {
         .listen((_) => onGameStateUpdate());
   }
 
+  bool isRoundUpdate(update) {
+    return update.roomId == room.id &&
+        update.state is Event &&
+        (update.state as Event).type == PangeaEventTypes.storyGame;
+  }
+
   void onGameStateUpdate({bool animate = true}) {
     setState(() {});
     if (gameState.phase == StoryGamePhase.beginWaitNextRound) {
       waitBeginTime = DateTime.now();
     }
-    if (widget.controller.room.isActiveRound ||
-        widget.controller.room.isBetweenRounds) {
+    if (room.isActiveRound || room.isBetweenRounds) {
       timer?.cancel();
       timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
-        if (currentSeconds >= GameConstants.timerMaxSeconds) {
+        if ((currentSeconds ?? 0) >= GameConstants.timerMaxSeconds) {
           t.cancel();
         }
         setState(() {});
       });
     }
-  }
-
-  bool isRoundUpdate(update) {
-    return update.roomId == widget.controller.room.id &&
-        update.state is Event &&
-        (update.state as Event).type == PangeaEventTypes.storyGame;
   }
 
   @override
@@ -89,6 +89,26 @@ class GameStateViewState extends State<GameStateView> {
     timer = null;
   }
 
+  String? get blockText {
+    if (room.isActiveRound) {
+      if (gameState.currentCharacter == null) {
+        ErrorHandler.logError(e: "currentCharacter is null in active round");
+        return null;
+      }
+      return gameState.currentCharacter! != ModelKey.narrator
+          ? L10n.of(context)!.currentCharDialoguePrompt(
+              gameState.currentCharacter!,
+            )
+          : L10n.of(context)!.narrationPrompt;
+    }
+    return room.gameState.phase!.string(context);
+  }
+
+  String? get avatarName =>
+      room.isActiveRound && gameState.currentCharacter != ModelKey.narrator
+          ? gameState.currentCharacter
+          : null;
+
   @override
   Widget build(BuildContext context) {
     // Don't show if there is no current character
@@ -98,28 +118,10 @@ class GameStateViewState extends State<GameStateView> {
       return const SizedBox.shrink();
     }
 
-    final character = gameState.currentCharacter;
-    final color = Theme.of(context).colorScheme.surfaceContainerHighest;
-
-    String? blockText;
-    String? avatarName;
-    if (widget.controller.room.isActiveRound) {
-      blockText = character! != ModelKey.narrator
-          ? L10n.of(context)!.currentCharDialoguePrompt(character)
-          : L10n.of(context)!.narrationPrompt;
-      if (character != ModelKey.narrator) {
-        avatarName = character;
-      }
-    } else {
-      blockText = widget.controller.room.gameState.phase!.string(context);
-    }
-
     return Container(
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: const BorderRadius.all(
-          Radius.circular(4),
-        ),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: const BorderRadius.all(Radius.circular(4)),
       ),
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -136,20 +138,22 @@ class GameStateViewState extends State<GameStateView> {
                       : Avatar(name: avatarName),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  blockText,
-                  textAlign: TextAlign.center,
-                  style: BotStyle.text(context, big: true),
-                ),
+                blockText != null
+                    ? Text(
+                        blockText!,
+                        textAlign: TextAlign.center,
+                        style: BotStyle.text(context, big: true),
+                      )
+                    : const Center(child: CircularProgressIndicator.adaptive()),
               ],
             ),
           ),
           RoundTimer(
-            currentSeconds,
-            maxSeconds: widget.controller.room.isBetweenRounds
+            currentSeconds ?? 0,
+            maxSeconds: room.isBetweenRounds
                 ? gameState.nextRoundDelay
                 : GameConstants.timerMaxSeconds,
-            color: widget.controller.room.isBetweenRounds ? Colors.green : null,
+            color: room.isBetweenRounds ? Colors.green : null,
           ),
         ],
       ),

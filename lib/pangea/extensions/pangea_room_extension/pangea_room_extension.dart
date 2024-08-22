@@ -321,6 +321,9 @@ extension PangeaRoom on Room {
       ? DateTime.now().difference(gameState.currentRoundStartTime!)
       : null;
 
+  Duration? roundWaitDuration(DateTime? beginWaitTime) =>
+      beginWaitTime != null ? DateTime.now().difference(beginWaitTime) : null;
+
   bool get isActiveRound => [
         StoryGamePhase.beginPlayerCompetes,
         StoryGamePhase.endPlayerCompetes,

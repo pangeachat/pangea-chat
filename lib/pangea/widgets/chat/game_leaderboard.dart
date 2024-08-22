@@ -4,6 +4,7 @@ import 'package:fluffychat/pangea/utils/bot_name.dart';
 import 'package:fluffychat/pangea/widgets/animations/progress_bar/progress_bar.dart';
 import 'package:fluffychat/pangea/widgets/animations/progress_bar/progress_bar_details.dart';
 import 'package:fluffychat/widgets/avatar.dart';
+import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
@@ -128,6 +129,41 @@ class UserProgressBar extends StatelessWidget {
           totalWidth: width * 0.75,
           borderColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
         ),
+      ),
+    );
+  }
+}
+
+class GameLeaderboardPopup extends StatelessWidget {
+  final Room room;
+  const GameLeaderboardPopup({super.key, required this.room});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Theme.of(context).colorScheme.primary),
+        color: Theme.of(context).scaffoldBackgroundColor,
+      ),
+      width: 300,
+      child: Stack(
+        children: [
+          GameLeaderBoard(room: room, width: 300),
+          Positioned(
+            right: 5,
+            top: 5,
+            child: SizedBox(
+              width: 30,
+              height: 30,
+              child: IconButton(
+                iconSize: 16,
+                icon: const Icon(Icons.close),
+                onPressed: () => MatrixState.pAnyState.closeOverlay(),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

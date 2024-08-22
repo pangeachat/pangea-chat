@@ -1,7 +1,6 @@
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
-import 'package:fluffychat/pangea/enum/use_type.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_buttons.dart';
@@ -96,7 +95,7 @@ class Message extends StatelessWidget {
           constraints: const BoxConstraints(
             maxWidth: FluffyThemes.columnWidth * 1.25,
           ),
-          child: GameStateView(controller),
+          child: GameStateView(controller.room),
         ),
       );
     }
@@ -557,20 +556,20 @@ class Message extends StatelessWidget {
                                                         MainAxisSize.min,
                                                     children: [
                                                       // #Pangea
-                                                      if (pangeaMessageEvent
-                                                              ?.showUseType ??
-                                                          false) ...[
-                                                        pangeaMessageEvent!
-                                                            .msgUseType
-                                                            .iconView(
-                                                          context,
-                                                          textColor
-                                                              .withAlpha(164),
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 4,
-                                                        ),
-                                                      ],
+                                                      // if (pangeaMessageEvent
+                                                      //         ?.showUseType ??
+                                                      //     false) ...[
+                                                      //   pangeaMessageEvent!
+                                                      //       .msgUseType
+                                                      //       .iconView(
+                                                      //     context,
+                                                      //     textColor
+                                                      //         .withAlpha(164),
+                                                      //   ),
+                                                      //   const SizedBox(
+                                                      //     width: 4,
+                                                      //   ),
+                                                      // ],
                                                       if (event
                                                           .hasAggregatedEvents(
                                                         timeline,

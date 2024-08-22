@@ -145,16 +145,7 @@ extension GameChatController on ChatController {
   void showLeaderboard() {
     OverlayUtil.showOverlay(
       context: context,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Theme.of(context).colorScheme.primary),
-        ),
-        width: 300,
-        child: Material(
-          child: GameLeaderBoard(room: room, width: 300),
-        ),
-      ),
+      child: GameLeaderboardPopup(room: room),
       transformTargetId: 'leaderboard_btn',
       backDropToDismiss: false,
       targetAnchor: Alignment.topRight,
