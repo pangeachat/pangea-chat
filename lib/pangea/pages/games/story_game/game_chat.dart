@@ -174,7 +174,7 @@ extension GameChatController on ChatController {
 }
 
 extension StoryGameEvent on Event {
-  String? get character => content[ModelKey.character] as String?;
+  String? get character => content[ModelKey.currentCharacter] as String?;
   String? get winner => content[ModelKey.winner] as String?;
 
   bool isRevealed(Timeline timeline) {

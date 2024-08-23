@@ -23,7 +23,7 @@ class GameLeaderBoard extends StatefulWidget {
 }
 
 class GameLeaderBoardState extends State<GameLeaderBoard> {
-  Map<String, int>? get currentScore => widget.room.gameState.score;
+  Map<String, int>? get currentScore => widget.room.gameState.playerScores;
   List<User> get users => widget.room
       .getParticipants()
       .where((user) => user.id != BotName.byEnvironment)
