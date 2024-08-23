@@ -317,8 +317,8 @@ extension PangeaRoom on Room {
   GameModel get gameState =>
       GameModel.fromJson(getState(PangeaEventTypes.storyGame)?.content ?? {});
 
-  Duration? get currentRoundDuration => gameState.currentRoundStartTime != null
-      ? DateTime.now().difference(gameState.currentRoundStartTime!)
+  Duration? get currentRoundDuration => gameState.startTime != null
+      ? DateTime.now().difference(gameState.startTime!)
       : null;
 
   Duration? roundWaitDuration(DateTime? beginWaitTime) =>
@@ -350,8 +350,8 @@ extension PangeaRoom on Room {
       PangeaEventTypes.storyGame,
     }.contains(event.type)) return true;
 
-    final startTime = gameState.currentRoundStartTime;
-    final visibleFrom = gameState.messagesVisibleFrom;
+    final startTime = gameState.startTime;
+    final visibleFrom = gameState.startTime;
     if (event.type == PangeaEventTypes.storyGame) {
       final mostRecentUpdate = timeline.events
           .firstWhereOrNull((e) => e.type == PangeaEventTypes.storyGame);
@@ -364,7 +364,7 @@ extension PangeaRoom on Room {
 
     if (event.isGMMessage) {
       return sentDuringRound ||
-          event.content[ModelKey.character] != null ||
+          event.content[ModelKey.currentCharacter] != null ||
           event.messageType == MessageTypes.Image;
     }
 

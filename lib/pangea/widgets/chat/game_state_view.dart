@@ -113,7 +113,7 @@ class GameStateViewState extends State<GameStateView> {
   Widget build(BuildContext context) {
     // Don't show if there is no current character
     if (gameState.currentCharacter == null ||
-        gameState.currentRoundStartTime == null ||
+        gameState.startTime == null ||
         gameState.phase == null) {
       return const SizedBox.shrink();
     }
@@ -151,7 +151,7 @@ class GameStateViewState extends State<GameStateView> {
           RoundTimer(
             currentSeconds ?? 0,
             maxSeconds: room.isBetweenRounds
-                ? gameState.nextRoundDelay
+                ? gameState.delayBeforeNextRoundSeconds
                 : GameConstants.timerMaxSeconds,
             color: room.isBetweenRounds ? Colors.green : null,
           ),

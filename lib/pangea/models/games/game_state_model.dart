@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
@@ -96,58 +97,92 @@ StoryGamePhase? getStoryGamePhase(String? phase) {
 }
 
 class GameModel {
-  DateTime? currentRoundStartTime;
-  DateTime? messagesVisibleFrom;
-  String? currentCharacter;
-  DateTime? messageVisibleTo;
-  Map<String, int>? score;
-  int nextRoundDelay;
-  StoryGamePhase? phase;
+  // Round States
+  final String? currentCharacter;
+  final String? currentCharacterText;
+  final DateTime? startTime;
+  final DateTime? endPreviousRoundTime;
+  final StoryGamePhase? phase;
+  final bool isGameEnd;
+  final Map<String, int> playerScores;
+
+  // Settings States
+  final int delayBeforeNextRoundSeconds;
+  final int roundSeconds;
+  final int? maxRounds;
+
+  // Story States
+  final String? storyDescription;
+  final String? goalState;
+  final String? failState;
+  final String? goalStateCharacterText;
+  final String? failStateCharacterText;
 
   GameModel({
-    this.currentRoundStartTime,
-    this.messagesVisibleFrom,
     this.currentCharacter,
-    this.messageVisibleTo,
-    this.score,
-    this.nextRoundDelay = 10,
+    this.currentCharacterText,
+    this.startTime,
+    this.endPreviousRoundTime,
     this.phase,
+    this.isGameEnd = false,
+    this.delayBeforeNextRoundSeconds = 10,
+    this.roundSeconds = GameConstants.timerMaxSeconds,
+    this.maxRounds,
+    this.storyDescription,
+    this.goalState,
+    this.failState,
+    this.goalStateCharacterText,
+    this.failStateCharacterText,
+    this.playerScores = const {},
   });
 
   factory GameModel.fromJson(json) {
     return GameModel(
-      currentRoundStartTime: json[ModelKey.currentRoundStartTime] != null
-          ? DateTime.parse(json[ModelKey.currentRoundStartTime])
-          : null,
-      messagesVisibleFrom: json[ModelKey.messagesVisibleFrom] != null
-          ? DateTime.parse(json[ModelKey.messagesVisibleFrom])
-          : null,
       currentCharacter: json[ModelKey.currentCharacter],
-      messageVisibleTo: json[ModelKey.messagesVisibleTo] != null
-          ? DateTime.parse(json[ModelKey.messagesVisibleTo])
+      currentCharacterText: json[ModelKey.currentCharacterText],
+      startTime: json[ModelKey.startTime] != null
+          ? DateTime.parse(json[ModelKey.startTime])
           : null,
-      score: json[ModelKey.score] != null
-          ? Map<String, int>.from(json[ModelKey.score])
+      endPreviousRoundTime: json[ModelKey.endPreviousRoundTime] != null
+          ? DateTime.parse(json[ModelKey.endPreviousRoundTime])
           : null,
-      nextRoundDelay: json[ModelKey.nextRoundDelay] ?? 10,
       phase: json[ModelKey.phase] != null
           ? getStoryGamePhase(json[ModelKey.phase])
           : null,
+      isGameEnd: json[ModelKey.isGameEnd] ?? false,
+      delayBeforeNextRoundSeconds: json[ModelKey.delayBeforeNextRoundSeconds],
+      roundSeconds: json[ModelKey.roundSeconds],
+      maxRounds: json[ModelKey.maxRounds],
+      storyDescription: json[ModelKey.storyDescription],
+      goalState: json[ModelKey.goalState],
+      failState: json[ModelKey.failState],
+      goalStateCharacterText: json[ModelKey.goalStateCharacterText],
+      failStateCharacterText: json[ModelKey.failStateCharacterText],
+      playerScores: json[ModelKey.playerScores] != null
+          ? Map<String, int>.from(json[ModelKey.playerScores])
+          : {},
     );
   }
 
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     try {
-      data[ModelKey.currentRoundStartTime] =
-          currentRoundStartTime?.toIso8601String();
-      data[ModelKey.messagesVisibleFrom] =
-          messagesVisibleFrom?.toIso8601String();
       data[ModelKey.currentCharacter] = currentCharacter;
-      data[ModelKey.messagesVisibleTo] = messageVisibleTo?.toIso8601String();
-      data[ModelKey.score] = score;
-      data[ModelKey.nextRoundDelay] = nextRoundDelay;
+      data[ModelKey.currentCharacterText] = currentCharacterText;
+      data[ModelKey.startTime] = startTime?.toIso8601String();
+      data[ModelKey.endPreviousRoundTime] =
+          endPreviousRoundTime?.toIso8601String();
       data[ModelKey.phase] = phase?.key;
+      data[ModelKey.isGameEnd] = isGameEnd;
+      data[ModelKey.delayBeforeNextRoundSeconds] = delayBeforeNextRoundSeconds;
+      data[ModelKey.roundSeconds] = roundSeconds;
+      data[ModelKey.maxRounds] = maxRounds;
+      data[ModelKey.storyDescription] = storyDescription;
+      data[ModelKey.goalState] = goalState;
+      data[ModelKey.failState] = failState;
+      data[ModelKey.goalStateCharacterText] = goalStateCharacterText;
+      data[ModelKey.failStateCharacterText] = failStateCharacterText;
+      data[ModelKey.playerScores] = playerScores;
       return data;
     } catch (e, s) {
       debugger(when: kDebugMode);
