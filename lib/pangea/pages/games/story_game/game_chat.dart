@@ -200,4 +200,12 @@ extension StoryGameEvent on Event {
 
   bool get isCandidateMessage =>
       messageType == MessageTypes.Text && character == null && winner == null;
+
+  bool get isVote =>
+      type == EventTypes.Reaction &&
+      GameConstants.voteEmojis.contains(
+        content
+            .tryGetMap<String, dynamic>('m.relates_to')
+            ?.tryGet<String>('key'),
+      );
 }

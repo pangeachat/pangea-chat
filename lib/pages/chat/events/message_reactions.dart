@@ -93,7 +93,10 @@ class MessageReactions extends StatelessWidget {
                   );
                 }
               } else {
-                event.room.sendReaction(event.eventId, r.key);
+                // #Pangea
+                // event.room.sendReaction(event.eventId, r.key);
+                event.room.sendStoryGameReaction(event.eventId, r.key);
+                // Pangea#
               }
             },
             onLongPress: () async => await _AdaptableReactorsDialog(

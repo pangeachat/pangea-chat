@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:collection/collection.dart';
 import 'package:fluffychat/pangea/constants/class_default_values.dart';
+import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/constants/language_constants.dart';
 import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/constants/pangea_room_types.dart';
@@ -349,25 +350,50 @@ extension PangeaRoom on Room {
       EventTypes.CallInvite,
       PangeaEventTypes.storyGame,
     }.contains(event.type)) return true;
-
-    final startTime = gameState.startTime;
-    final visibleFrom = gameState.startTime;
     if (event.type == PangeaEventTypes.storyGame) {
       final mostRecentUpdate = timeline.events
           .firstWhereOrNull((e) => e.type == PangeaEventTypes.storyGame);
       return event.originServerTs == mostRecentUpdate?.originServerTs;
     }
 
-    final bool sentDuringRound =
-        (startTime == null || event.originServerTs.isAfter(startTime)) &&
-            (visibleFrom == null || event.originServerTs.isAfter(visibleFrom));
-
     if (event.isGMMessage) {
-      return sentDuringRound ||
+      return sentDuringRound(event) ||
           event.content[ModelKey.currentCharacter] != null ||
           event.messageType == MessageTypes.Image;
     }
 
-    return sentDuringRound;
+    return sentDuringRound(event);
+  }
+
+  bool sentDuringRound(Event event) =>
+      gameState.startTime == null ||
+      event.originServerTs.isAfter(gameState.startTime!);
+
+  /// Send a reaction to a story game event. Redacts all
+  /// previous votes by the user during the active round.
+  Future<void> sendStoryGameReaction(String eventID, String emoji) async {
+    if (!GameConstants.voteEmojis.contains(emoji) || timeline == null) {
+      await sendReaction(eventID, emoji);
+      return;
+    }
+
+    final List<Future> redactFutures = [];
+    for (final event in timeline!.events) {
+      if (!sentDuringRound(event)) break;
+      if (event.type != EventTypes.Message) continue;
+
+      final allMyVotes = event
+          .aggregatedEvents(timeline!, RelationshipTypes.reaction)
+          .where((event) => event.senderId == client.userID && event.isVote)
+          .toList();
+
+      if (allMyVotes.isEmpty) continue;
+      redactFutures.addAll(
+        allMyVotes.map((voteEvent) => voteEvent.redactEvent()),
+      );
+    }
+
+    await Future.wait(redactFutures);
+    await sendReaction(eventID, emoji);
   }
 }

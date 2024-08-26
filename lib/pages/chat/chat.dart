@@ -1244,10 +1244,13 @@ class ChatController extends State<ChatPageWithRoom>
     final events = List<Event>.from(selectedEvents);
     setState(() => selectedEvents.clear());
     for (final event in events) {
-      await room.sendReaction(
-        event.eventId,
-        emoji!,
-      );
+      // #Pangea
+      // await room.sendReaction(
+      //   event.eventId,
+      //   emoji!,
+      // );
+      await room.sendStoryGameReaction(event.eventId, emoji!);
+      // Pangea#
     }
   }
 
