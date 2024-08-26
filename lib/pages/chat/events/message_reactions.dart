@@ -1,13 +1,12 @@
-import 'package:flutter/material.dart';
-
 import 'package:collection/collection.dart' show IterableExtension;
-import 'package:future_loading_dialog/future_loading_dialog.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:fluffychat/config/app_config.dart';
+import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:fluffychat/widgets/mxc_image.dart';
+import 'package:flutter/material.dart';
+import 'package:future_loading_dialog/future_loading_dialog.dart';
+import 'package:matrix/matrix.dart';
 
 class MessageReactions extends StatelessWidget {
   final Event event;
@@ -41,9 +40,35 @@ class MessageReactions extends StatelessWidget {
       }
     }
 
+    // #Pangea
+    final shouldFilterVotes = event.room.isActiveRound &&
+        reactionMap.containsKey('👍') &&
+        reactionMap['👍']!.count > 0;
+
+    if (shouldFilterVotes) {
+      final userReactors = reactionMap['👍']
+          ?.reactors
+          ?.where((user) => user.id == event.room.client.userID)
+          .toList();
+
+      final bool userVoted = userReactors != null && userReactors.isNotEmpty;
+      if (userVoted) {
+        reactionMap['👍'] = _ReactionEntry(
+          key: '👍',
+          count: 1,
+          reacted: true,
+          reactors: userReactors,
+        );
+      } else {
+        reactionMap.remove('👍');
+      }
+    }
+    // Pangea#
+
     final reactionList = reactionMap.values.toList();
     reactionList.sort((a, b) => b.count - a.count > 0 ? 1 : -1);
     final ownMessage = event.senderId == event.room.client.userID;
+
     return Wrap(
       spacing: 4.0,
       runSpacing: 4.0,
