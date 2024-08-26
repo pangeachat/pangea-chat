@@ -37,6 +37,9 @@ enum ConstructUseTypeEnum {
 
   /// was target construct in practice activity but user did not select correctly
   incPA,
+
+  /// was from selected winning message in story game
+  ss,
 }
 
 extension ConstructUseTypeExtension on ConstructUseTypeEnum {
@@ -66,6 +69,8 @@ extension ConstructUseTypeExtension on ConstructUseTypeEnum {
         return 'incPA';
       case ConstructUseTypeEnum.ignPA:
         return 'ignPA';
+      case ConstructUseTypeEnum.ss:
+        return 'ss';
     }
   }
 
@@ -95,6 +100,8 @@ extension ConstructUseTypeExtension on ConstructUseTypeEnum {
         return Icons.close;
       case ConstructUseTypeEnum.unk:
         return Icons.help;
+      case ConstructUseTypeEnum.ss:
+        return Icons.star;
     }
   }
 
@@ -106,30 +113,24 @@ extension ConstructUseTypeExtension on ConstructUseTypeEnum {
   /// Practice activities get a moderate amount of points.
   int get pointValue {
     switch (this) {
-      case ConstructUseTypeEnum.ga:
-        return 2;
       case ConstructUseTypeEnum.wa:
         return 3;
-      case ConstructUseTypeEnum.corIt:
-        return 1;
-      case ConstructUseTypeEnum.incIt:
-        return -1;
-      case ConstructUseTypeEnum.ignIt:
-        return 1;
-      case ConstructUseTypeEnum.ignIGC:
-        return 1;
       case ConstructUseTypeEnum.corIGC:
+      case ConstructUseTypeEnum.corPA:
+      case ConstructUseTypeEnum.ga:
         return 2;
-      case ConstructUseTypeEnum.incIGC:
-        return -1;
+      case ConstructUseTypeEnum.ignPA:
+      case ConstructUseTypeEnum.ignIt:
+      case ConstructUseTypeEnum.corIt:
+      case ConstructUseTypeEnum.ignIGC:
+      case ConstructUseTypeEnum.ss:
+        return 1;
       case ConstructUseTypeEnum.unk:
         return 0;
-      case ConstructUseTypeEnum.corPA:
-        return 2;
+      case ConstructUseTypeEnum.incIt:
       case ConstructUseTypeEnum.incPA:
+      case ConstructUseTypeEnum.incIGC:
         return -1;
-      case ConstructUseTypeEnum.ignPA:
-        return 1;
     }
   }
 }

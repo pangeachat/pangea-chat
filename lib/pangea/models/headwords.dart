@@ -182,12 +182,10 @@ class VocabTotals {
           break;
         //TODO if we bring back Headwords then we need to add these
         case ConstructUseTypeEnum.corPA:
-          break;
         case ConstructUseTypeEnum.incPA:
-          break;
         case ConstructUseTypeEnum.unk:
-          break;
         case ConstructUseTypeEnum.ignPA:
+        case ConstructUseTypeEnum.ss:
           break;
       }
     }
