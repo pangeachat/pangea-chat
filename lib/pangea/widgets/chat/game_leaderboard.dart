@@ -1,8 +1,7 @@
 import 'package:fluffychat/config/themes.dart';
+import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/utils/bot_name.dart';
-import 'package:fluffychat/pangea/widgets/animations/progress_bar/progress_bar.dart';
-import 'package:fluffychat/pangea/widgets/animations/progress_bar/progress_bar_details.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +49,6 @@ class GameLeaderBoardState extends State<GameLeaderBoard> {
             room: widget.room,
             points: currentScore?[user.id] ?? 0,
             user: user,
-            width: widget.width,
           ),
         )
         .cast<Widget>()
@@ -79,14 +77,12 @@ class UserProgressBar extends StatelessWidget {
   final Room room;
   final User user;
   final int points;
-  final double width;
 
   const UserProgressBar({
     super.key,
     required this.user,
     required this.points,
     required this.room,
-    this.width = FluffyThemes.columnWidth,
   });
 
   @override
@@ -95,20 +91,10 @@ class UserProgressBar extends StatelessWidget {
 
     return ListTile(
       onTap: () {},
-      leading: Stack(
-        alignment: Alignment.center,
-        children: [
-          CircleAvatar(
-            radius: 22,
-            backgroundColor:
-                Theme.of(context).colorScheme.onPrimary.withOpacity(0.5),
-          ),
-          Avatar(
-            name: displayName,
-            mxContent: user.avatarUrl,
-            size: 40,
-          ),
-        ],
+      leading: Avatar(
+        name: displayName,
+        mxContent: user.avatarUrl,
+        size: 40,
       ),
       title: Text(
         user.calcDisplayname(),
@@ -117,17 +103,14 @@ class UserProgressBar extends StatelessWidget {
           fontSize: 14,
         ),
       ),
-      subtitle: ProgressBar(
-        levelBars: [
-          LevelBarDetails(
-            fillColor: Theme.of(context).colorScheme.primary,
-            currentPoints: points,
+      subtitle: Row(
+        children: List.generate(
+          GameConstants.pointsToWin,
+          (i) => Icon(
+            points > i ? Icons.star : Icons.star_border,
+            size: 22,
+            color: const Color.fromARGB(200, 229, 184, 11),
           ),
-        ],
-        progressBarDetails: ProgressBarDetails(
-          pointsPerLevel: 20,
-          totalWidth: width * 0.75,
-          borderColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
         ),
       ),
     );
@@ -146,7 +129,7 @@ class GameLeaderboardPopup extends StatelessWidget {
         border: Border.all(color: Theme.of(context).colorScheme.primary),
         color: Theme.of(context).scaffoldBackgroundColor,
       ),
-      width: 300,
+      width: 325,
       child: Stack(
         children: [
           GameLeaderBoard(room: room, width: 300),
