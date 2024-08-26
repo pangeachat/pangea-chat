@@ -177,7 +177,7 @@ class MessageContent extends StatelessWidget {
               // width: width,
               // height: height,
               width: FluffyThemes.columnWidth * 2.5,
-              height: FluffyThemes.columnWidth * 1.5,
+              height: FluffyThemes.columnWidth * 2.5,
               fit: BoxFit.contain,
               // fit: fit,
               // Pangea#

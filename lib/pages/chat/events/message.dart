@@ -272,7 +272,9 @@ class Message extends StatelessWidget {
                         // #Pangea
                         if (controller.isStoryGameMode)
                           SizedBox(
-                            width: Avatar.defaultSize,
+                            width: event.messageType == MessageTypes.Image
+                                ? 0
+                                : Avatar.defaultSize,
                             height: Avatar.defaultSize,
                             child: alignment == Alignment.topLeft
                                 ? controller.storyGameAvatar(
@@ -454,8 +456,7 @@ class Message extends StatelessWidget {
                                                 // FluffyThemes.columnWidth * 1.5,
                                                 event.messageType ==
                                                         MessageTypes.Image
-                                                    ? FluffyThemes.columnWidth *
-                                                        2.5
+                                                    ? double.infinity
                                                     : FluffyThemes.columnWidth *
                                                         1.5,
                                             // Pangea#
@@ -618,8 +619,10 @@ class Message extends StatelessWidget {
                             nextEvent,
                           )
                         else
-                          const SizedBox(
-                            width: Avatar.defaultSize,
+                          SizedBox(
+                            width: event.messageType == MessageTypes.Image
+                                ? 0
+                                : Avatar.defaultSize,
                             height: Avatar.defaultSize,
                           ),
                         // Pangea#
