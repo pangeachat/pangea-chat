@@ -150,8 +150,10 @@ class GameModel {
           ? getStoryGamePhase(json[ModelKey.phase])
           : null,
       isGameEnd: json[ModelKey.isGameEnd] ?? false,
-      delayBeforeNextRoundSeconds: json[ModelKey.delayBeforeNextRoundSeconds],
-      roundSeconds: json[ModelKey.roundSeconds],
+      delayBeforeNextRoundSeconds:
+          json[ModelKey.delayBeforeNextRoundSeconds] ?? 10,
+      roundSeconds:
+          json[ModelKey.roundSeconds] ?? GameConstants.timerMaxSeconds,
       maxRounds: json[ModelKey.maxRounds],
       storyDescription: json[ModelKey.storyDescription],
       goalState: json[ModelKey.goalState],
