@@ -30,7 +30,7 @@ class BotOptionsModel {
     this.topic = "General Conversation",
     this.keywords = const [],
     this.safetyModeration = true,
-    this.mode = "discussion",
+    this.mode = "story_game",
 
     ////////////////////////////////////////////////////////////////////////////
     // Discussion Mode Options
@@ -60,7 +60,7 @@ class BotOptionsModel {
       //////////////////////////////////////////////////////////////////////////
       languageLevel: json[ModelKey.languageLevel],
       safetyModeration: json[ModelKey.safetyModeration] ?? true,
-      mode: json[ModelKey.mode] ?? "discussion",
+      mode: json[ModelKey.mode] ?? "story_game",
 
       //////////////////////////////////////////////////////////////////////////
       // Discussion Mode Options

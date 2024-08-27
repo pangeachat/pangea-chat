@@ -113,11 +113,11 @@ class ChatController extends State<ChatPageWithRoom>
     with WidgetsBindingObserver {
   // #Pangea
   final PangeaController pangeaController = MatrixState.pangeaController;
+
   late Choreographer choreographer = Choreographer(pangeaController, this);
   bool isStoryGameMode = true;
   final Map<String, Alignment> characterAlignments = {};
   // Pangea#
-
   Room get room => sendingClient.getRoomById(roomId) ?? widget.room;
 
   late Client sendingClient;
@@ -312,7 +312,6 @@ class ChatController extends State<ChatPageWithRoom>
     sendingClient = Matrix.of(context).client;
     WidgetsBinding.instance.addObserver(this);
     // #Pangea
-
     if (!mounted) return;
     Future.delayed(const Duration(seconds: 1), () async {
       if (!mounted) return;
