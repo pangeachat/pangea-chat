@@ -26,7 +26,6 @@ class ConversationBotModeDynamicZone extends StatelessWidget {
         initialBotOptions: initialBotOptions,
         onChanged: onChanged,
       ),
-      // "conversation": const ConversationBotConversationZone(),
       "text_adventure": ConversationBotTextAdventureZone(
         initialBotOptions: initialBotOptions,
         onChanged: onChanged,
