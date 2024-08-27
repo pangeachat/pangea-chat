@@ -4155,5 +4155,7 @@
   "morphsUsed": "Morphs Used",
   "startingNextRound": "Starting next round...",
   "competing": "Competing...",
-  "gameOver": "Game over"
+  "gameOver": "Game over",
+  "voteInstructionsTitle": "Are you sure?",
+  "voteInstructionsBody": "You can only vote once per round. Your other votes will be removed. Vote again to confirm."
 }

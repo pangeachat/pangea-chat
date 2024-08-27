@@ -11,8 +11,19 @@ import 'package:matrix/matrix.dart';
 class MessageReactions extends StatelessWidget {
   final Event event;
   final Timeline timeline;
+  // #Pangea
+  final Function(String eventID) showVoteWarning;
+  // Pangea#
 
-  const MessageReactions(this.event, this.timeline, {super.key});
+  const MessageReactions(
+    this.event,
+    this.timeline,
+    // #Pangea
+    this.showVoteWarning,
+    // Pangea#
+    {
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +106,11 @@ class MessageReactions extends StatelessWidget {
               } else {
                 // #Pangea
                 // event.room.sendReaction(event.eventId, r.key);
-                event.room.sendStoryGameReaction(event.eventId, r.key);
+                if (event.room.shouldShowVoteWarning(r.key)) {
+                  showVoteWarning(event.eventId);
+                } else {
+                  event.room.sendStoryGameReaction(event.eventId, r.key);
+                }
                 // Pangea#
               }
             },

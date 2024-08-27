@@ -8,6 +8,7 @@ enum InstructionsEnum {
   clickMessage,
   blurMeansTranslate,
   tooltipInstructions,
+  voteInstructions,
 }
 
 extension InstructionsEnumExtension on InstructionsEnum {
@@ -21,6 +22,8 @@ extension InstructionsEnumExtension on InstructionsEnum {
         return L10n.of(context)!.blurMeansTranslateTitle;
       case InstructionsEnum.tooltipInstructions:
         return L10n.of(context)!.tooltipInstructionsTitle;
+      case InstructionsEnum.voteInstructions:
+        return L10n.of(context)!.voteInstructionsTitle;
     }
   }
 
@@ -36,6 +39,8 @@ extension InstructionsEnumExtension on InstructionsEnum {
         return PlatformInfos.isMobile
             ? L10n.of(context)!.tooltipInstructionsMobileBody
             : L10n.of(context)!.tooltipInstructionsBrowserBody;
+      case InstructionsEnum.voteInstructions:
+        return L10n.of(context)!.voteInstructionsBody;
     }
   }
 
@@ -51,6 +56,8 @@ extension InstructionsEnumExtension on InstructionsEnum {
         return instructionSettings.showedBlurMeansTranslate;
       case InstructionsEnum.tooltipInstructions:
         return instructionSettings.showedTooltipInstructions;
+      case InstructionsEnum.voteInstructions:
+        return instructionSettings.showedVoteInstructions;
     }
   }
 }

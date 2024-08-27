@@ -45,6 +45,11 @@ class InstructionsController {
     return toggledOff(key) ?? _instructionsClosed[key] ?? false;
   }
 
+  /// Returns true if the instructions were shown
+  bool wereInstructionsShown(String key) {
+    return wereInstructionsTurnedOff(key) || (_instructionsShown[key] ?? false);
+  }
+
   void turnOffInstruction(String key) => _instructionsClosed[key] = true;
 
   void updateEnableInstructions(
@@ -72,6 +77,9 @@ class InstructionsController {
       }
       if (key == InlineInstructions.translationChoices.toString()) {
         profile.instructionSettings.showedTranslationChoicesTooltip = value;
+      }
+      if (key == InstructionsEnum.voteInstructions.toString()) {
+        profile.instructionSettings.showedVoteInstructions = value;
       }
       return profile;
     });

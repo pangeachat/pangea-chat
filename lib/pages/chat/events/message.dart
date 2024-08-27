@@ -715,7 +715,12 @@ class Message extends StatelessWidget {
                           MessageButtons(
                             toolbarController: toolbarController,
                           ),
-                        MessageReactions(event, timeline),
+                        MessageReactions(
+                          event, timeline,
+                          // #Pangea
+                          controller.showVoteWarning,
+                          // Pangea#
+                        ),
                       ],
                     ),
                     // child: MessageReactions(event, timeline),
