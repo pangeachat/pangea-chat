@@ -4128,5 +4128,41 @@
   "createSpace": "Create space",
   "createChat": "Create chat",
   "error520Title": "Please try again.",
-  "error520Desc": "Sorry, we could not understand your message..."
+  "error520Desc": "Sorry, we could not understand your message...",
+  "translationChoicesBody": "Click and hold an option for a hint.",
+  "wordsUsed": "Words Used",
+  "errorTypes": "Error Types",
+  "level": "Level",
+  "canceledSend": "Canceled send",
+  "currentCharDialoguePrompt": "{character} says...",
+  "@currentCharDialoguePrompt": {
+    "type": "text",
+    "placeholders": {
+      "character": {}
+    }
+  },
+  "winnerAnnouncement": "{winner} won!",
+  "@winnerAnnouncement": {
+    "type": "text",
+    "placeholders": {
+      "winner": {}
+    }
+  },
+  "narrationPrompt": "What happens next?",
+  "botWinAnnouncement": "The bot won...",
+  "sentByUser": "Sent by {userID}",
+  "@sentByUser": {
+    "type": "text",
+    "placeholders": {
+      "userID": {}
+    }
+  },
+  "choosingPath": "Choosing path...",
+  "waitingForNextRound": "Waiting for next round...",
+  "morphsUsed": "Morphs Used",
+  "startingNextRound": "Starting next round...",
+  "competing": "Competing...",
+  "gameOver": "Game over",
+  "voteInstructionsTitle": "Are you sure?",
+  "voteInstructionsBody": "You can only vote once per round. Your other votes will be removed. Vote again to confirm."
 }

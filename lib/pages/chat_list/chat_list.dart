@@ -931,6 +931,9 @@ class ChatListController extends State<ChatList>
     }
 
     // #Pangea
+    MatrixState.pangeaController.myAnalytics.initialize();
+    MatrixState.pangeaController.analytics.initialize();
+    MatrixState.pangeaController.storyGameController.initialize();
     await _initPangeaControllers(client);
     // Pangea#
     if (!mounted) return;
@@ -945,7 +948,6 @@ class ChatListController extends State<ChatList>
       GoogleAnalytics.analyticsUserUpdate(client.userID);
       pangeaController.startChatWithBotIfNotPresent();
       await pangeaController.subscriptionController.initialize();
-      await pangeaController.myAnalytics.initialize();
       pangeaController.afterSyncAndFirstLoginInitialization(context);
       await pangeaController.inviteBotToExistingSpaces();
       await pangeaController.setPangeaPushRules();

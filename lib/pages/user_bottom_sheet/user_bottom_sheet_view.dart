@@ -220,27 +220,29 @@ class UserBottomSheetView extends StatelessWidget {
                               //  style: const TextStyle(fontSize: 18),
                             ),
                           ),
-                          TextButton.icon(
-                            onPressed: () => FluffyShare.share(
-                              userId,
-                              context,
-                              copyOnly: true,
-                            ),
-                            icon: const Icon(
-                              Icons.copy_outlined,
-                              size: 14,
-                            ),
-                            style: TextButton.styleFrom(
-                              foregroundColor:
-                                  Theme.of(context).colorScheme.secondary,
-                            ),
-                            label: Text(
-                              userId,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              //    style: const TextStyle(fontSize: 12),
-                            ),
-                          ),
+                          // #Pangea
+                          // TextButton.icon(
+                          //   onPressed: () => FluffyShare.share(
+                          //     userId,
+                          //     context,
+                          //     copyOnly: true,
+                          //   ),
+                          //   icon: const Icon(
+                          //     Icons.copy_outlined,
+                          //     size: 14,
+                          //   ),
+                          //   style: TextButton.styleFrom(
+                          //     foregroundColor:
+                          //         Theme.of(context).colorScheme.secondary,
+                          //   ),
+                          //   label: Text(
+                          //     userId,
+                          //     maxLines: 1,
+                          //     overflow: TextOverflow.ellipsis,
+                          //     //    style: const TextStyle(fontSize: 12),
+                          //   ),
+                          // ),
+                          // Pangea#
                         ],
                       ),
                     ),

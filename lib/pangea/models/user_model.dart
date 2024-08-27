@@ -185,12 +185,21 @@ class UserInstructions {
   bool showedClickMessage;
   bool showedBlurMeansTranslate;
   bool showedTooltipInstructions;
+  bool showedVoteInstructions;
+
+  bool showedSpeechToTextTooltip;
+  bool showedL1TranslationTooltip;
+  bool showedTranslationChoicesTooltip;
 
   UserInstructions({
     this.showedItInstructions = false,
     this.showedClickMessage = false,
     this.showedBlurMeansTranslate = false,
     this.showedTooltipInstructions = false,
+    this.showedSpeechToTextTooltip = false,
+    this.showedL1TranslationTooltip = false,
+    this.showedTranslationChoicesTooltip = false,
+    this.showedVoteInstructions = false,
   });
 
   factory UserInstructions.fromJson(Map<String, dynamic> json) =>
@@ -203,6 +212,14 @@ class UserInstructions {
             json[InstructionsEnum.blurMeansTranslate.toString()] ?? false,
         showedTooltipInstructions:
             json[InstructionsEnum.tooltipInstructions.toString()] ?? false,
+        showedL1TranslationTooltip:
+            json[InlineInstructions.l1Translation.toString()] ?? false,
+        showedTranslationChoicesTooltip:
+            json[InlineInstructions.translationChoices.toString()] ?? false,
+        showedSpeechToTextTooltip:
+            json[InlineInstructions.speechToText.toString()] ?? false,
+        showedVoteInstructions:
+            json[InstructionsEnum.voteInstructions.toString()] ?? false,
       );
 
   Map<String, dynamic> toJson() {
@@ -213,6 +230,13 @@ class UserInstructions {
         showedBlurMeansTranslate;
     data[InstructionsEnum.tooltipInstructions.toString()] =
         showedTooltipInstructions;
+    data[InlineInstructions.l1Translation.toString()] =
+        showedL1TranslationTooltip;
+    data[InlineInstructions.translationChoices.toString()] =
+        showedTranslationChoicesTooltip;
+    data[InlineInstructions.speechToText.toString()] =
+        showedSpeechToTextTooltip;
+    data[InstructionsEnum.voteInstructions.toString()] = showedVoteInstructions;
     return data;
   }
 
@@ -236,6 +260,21 @@ class UserInstructions {
       showedTooltipInstructions:
           (accountData[InstructionsEnum.tooltipInstructions.toString()]
                       ?.content[InstructionsEnum.tooltipInstructions.toString()]
+                  as bool?) ??
+              false,
+      showedL1TranslationTooltip:
+          (accountData[InlineInstructions.l1Translation.toString()]
+                      ?.content[InlineInstructions.l1Translation.toString()]
+                  as bool?) ??
+              false,
+      showedTranslationChoicesTooltip: (accountData[
+                      InlineInstructions.translationChoices.toString()]
+                  ?.content[InlineInstructions.translationChoices.toString()]
+              as bool?) ??
+          false,
+      showedSpeechToTextTooltip:
+          (accountData[InlineInstructions.speechToText.toString()]
+                      ?.content[InlineInstructions.speechToText.toString()]
                   as bool?) ??
               false,
     );

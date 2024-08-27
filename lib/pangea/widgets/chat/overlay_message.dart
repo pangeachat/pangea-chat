@@ -1,6 +1,5 @@
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/events/message_content.dart';
-import 'package:fluffychat/pangea/enum/use_type.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
 import 'package:fluffychat/utils/date_time_extension.dart';
@@ -168,13 +167,13 @@ class OverlayMessage extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (pangeaMessageEvent.showUseType) ...[
-                        pangeaMessageEvent.msgUseType.iconView(
-                          context,
-                          textColor.withAlpha(164),
-                        ),
-                        const SizedBox(width: 4),
-                      ],
+                      // if (pangeaMessageEvent.showUseType) ...[
+                      //   pangeaMessageEvent.msgUseType.iconView(
+                      //     context,
+                      //     textColor.withAlpha(164),
+                      //   ),
+                      //   const SizedBox(width: 4),
+                      // ],
                       if (event.hasAggregatedEvents(
                         timeline,
                         RelationshipTypes.edit,

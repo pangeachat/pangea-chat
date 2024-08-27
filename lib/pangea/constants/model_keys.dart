@@ -69,6 +69,10 @@ class ModelKey {
   static const String permissions = "permissions";
   static const String enableIGC = "enable_igc";
   static const String enableIT = "enable_it";
+  static const String prevMessages = "prev_messages";
+  static const String prevContent = "prev_content";
+  static const String prevSender = "prev_sender";
+  static const String prevTimestamp = "prev_timestamp";
 
   static const String originalSent = "original_sent";
   static const String originalWritten = "original_written";
@@ -119,4 +123,32 @@ class ModelKey {
 
   static const String prevEventId = "prev_event_id";
   static const String prevLastUpdated = "prev_last_updated";
+
+  static const String gameState = "game_state";
+
+  // Round States
+  static const String currentCharacter = "current_character";
+  static const String currentCharacterText = "current_character_text";
+  static const String startTime = "start_time";
+  static const String endPreviousRoundTime = "end_previous_round_time";
+  static const String phase = "phase";
+  static const String isGameEnd = "is_game_end";
+  static const String playerScores = "player_scores";
+  static const String winner = "winner";
+  static const String narrator = "narrator";
+
+  // Settings States
+  static const String delayBeforeNextRoundSeconds =
+      "delay_before_next_round_seconds";
+  static const String roundSeconds = "round_seconds";
+  static const String delayRangeBeforeSendingMimicPlayerMessageSeconds =
+      "delay_range_before_sending_mimic_player_message_seconds";
+  static const String maxRounds = "max_rounds";
+
+  // Story States
+  static const String storyDescription = "story_description";
+  static const String goalState = "goal_state";
+  static const String failState = "fail_state";
+  static const String goalStateCharacterText = "goal_state_character_text";
+  static const String failStateCharacterText = "fail_state_character_text";
 }

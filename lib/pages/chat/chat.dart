@@ -13,7 +13,6 @@ import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat_view.dart';
 import 'package:fluffychat/pages/chat/event_info_dialog.dart';
 import 'package:fluffychat/pages/chat/recording_dialog.dart';
-import 'package:fluffychat/pages/chat_details/chat_details.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/choreographer.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
@@ -21,6 +20,8 @@ import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dar
 import 'package:fluffychat/pangea/models/choreo_record.dart';
 import 'package:fluffychat/pangea/models/representation_content_model.dart';
 import 'package:fluffychat/pangea/models/tokens_event_content_model.dart';
+import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
+import 'package:fluffychat/pangea/pages/games/story_game/game_chat_details.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/utils/firebase_analytics.dart';
 import 'package:fluffychat/pangea/utils/report_message.dart';
@@ -114,6 +115,8 @@ class ChatController extends State<ChatPageWithRoom>
   final PangeaController pangeaController = MatrixState.pangeaController;
 
   late Choreographer choreographer = Choreographer(pangeaController, this);
+  bool isStoryGameMode = true;
+  final Map<String, Alignment> characterAlignments = {};
   // Pangea#
   Room get room => sendingClient.getRoomById(roomId) ?? widget.room;
 
@@ -395,7 +398,7 @@ class ChatController extends State<ChatPageWithRoom>
   List<Event> get visibleEvents =>
       timeline?.events
           .where(
-            (x) => x.isVisibleInGui,
+            (x) => x.isVisibleInGui && room.isEventVisibleInGame(x, timeline!),
           )
           .toList() ??
       <Event>[];
@@ -474,7 +477,7 @@ class ChatController extends State<ChatPageWithRoom>
       // Pangea#
       if (kIsWeb && !Matrix.of(context).webHasFocus) return;
       // #Pangea
-    } catch (err, s) {
+    } catch (err) {
       return;
     }
     // Pangea#
@@ -631,6 +634,22 @@ class ChatController extends State<ChatPageWithRoom>
         .then(
       (String? msgEventId) async {
         // #Pangea
+        // There's a listen in my_analytics_controller that decides when to auto-update
+        // analytics based on when / how many messages the logged in user send. This
+        // stream sends the data for newly sent messages.
+        if (msgEventId != null) {
+          pangeaController.myAnalytics.setState(
+            data: {
+              'eventID': msgEventId,
+              'eventType': EventTypes.Message,
+              'roomID': room.id,
+              'originalSent': originalSent,
+              'tokensSent': tokensSent,
+              'choreo': choreo,
+            },
+          );
+        }
+
         if (previousEdit != null) {
           pangeaEditingEvent = previousEdit;
         }
@@ -1222,13 +1241,22 @@ class ChatController extends State<ChatPageWithRoom>
   }
 
   void sendEmojiAction(String? emoji) async {
+    // #Pangea
+    if (room.shouldShowVoteWarning(emoji!)) {
+      showVoteWarning(selectedEvents.first.eventId);
+      return;
+    }
+    // Pangea#
     final events = List<Event>.from(selectedEvents);
     setState(() => selectedEvents.clear());
     for (final event in events) {
-      await room.sendReaction(
-        event.eventId,
-        emoji!,
-      );
+      // #Pangea
+      // await room.sendReaction(
+      //   event.eventId,
+      //   emoji!,
+      // );
+      room.sendStoryGameReaction(event.eventId, emoji);
+      // Pangea#
     }
   }
 
@@ -1633,25 +1661,28 @@ class ChatController extends State<ChatPageWithRoom>
                     width: 0,
                   );
                 }
-                return Container(
-                  width: FluffyThemes.columnWidth,
-                  clipBehavior: Clip.hardEdge,
-                  decoration: BoxDecoration(
-                    border: Border(
-                      left: BorderSide(
-                        width: 1,
-                        color: Theme.of(context).dividerColor,
-                      ),
-                    ),
-                  ),
-                  child: ChatDetails(
-                    roomId: roomId,
-                    embeddedCloseButton: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: toggleDisplayChatDetailsColumn,
-                    ),
-                  ),
-                );
+                // #Pangea
+                return GameChatDetailsView(controller: this);
+                // return Container(
+                //   width: FluffyThemes.columnWidth,
+                //   clipBehavior: Clip.hardEdge,
+                //   decoration: BoxDecoration(
+                //     border: Border(
+                //       left: BorderSide(
+                //         width: 1,
+                //         color: Theme.of(context).dividerColor,
+                //       ),
+                //     ),
+                //   ),
+                //   child: ChatDetails(
+                //     roomId: roomId,
+                //     embeddedCloseButton: IconButton(
+                //       icon: const Icon(Icons.close),
+                //       onPressed: toggleDisplayChatDetailsColumn,
+                //     ),
+                //   ),
+                // );
+                // Pangea#
               },
             ),
           ),

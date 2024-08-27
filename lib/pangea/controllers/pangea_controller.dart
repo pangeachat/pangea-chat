@@ -6,6 +6,7 @@ import 'package:fluffychat/pangea/constants/class_default_values.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/controllers/class_controller.dart';
 import 'package:fluffychat/pangea/controllers/contextual_definition_controller.dart';
+import 'package:fluffychat/pangea/controllers/get_analytics_controller.dart';
 import 'package:fluffychat/pangea/controllers/language_controller.dart';
 import 'package:fluffychat/pangea/controllers/language_detection_controller.dart';
 import 'package:fluffychat/pangea/controllers/language_list_controller.dart';
@@ -15,6 +16,7 @@ import 'package:fluffychat/pangea/controllers/permissions_controller.dart';
 import 'package:fluffychat/pangea/controllers/practice_activity_generation_controller.dart';
 import 'package:fluffychat/pangea/controllers/practice_activity_record_controller.dart';
 import 'package:fluffychat/pangea/controllers/speech_to_text_controller.dart';
+import 'package:fluffychat/pangea/controllers/story_game_controller.dart';
 import 'package:fluffychat/pangea/controllers/subscription_controller.dart';
 import 'package:fluffychat/pangea/controllers/text_to_speech_controller.dart';
 import 'package:fluffychat/pangea/controllers/user_controller.dart';
@@ -35,7 +37,6 @@ import '../../config/app_config.dart';
 import '../utils/firebase_analytics.dart';
 import '../utils/p_store.dart';
 import 'it_feedback_controller.dart';
-import 'message_analytics_controller.dart';
 
 class PangeaController {
   ///pangeaControllers
@@ -43,7 +44,8 @@ class PangeaController {
   late LanguageController languageController;
   late ClassController classController;
   late PermissionsController permissionsController;
-  late AnalyticsController analytics;
+  // late AnalyticsController analytics;
+  late GetAnalyticsController analytics;
   late MyAnalyticsController myAnalytics;
   late WordController wordNet;
   late MessageDataController messageData;
@@ -56,6 +58,7 @@ class PangeaController {
   late LanguageDetectionController languageDetection;
   late PracticeActivityRecordController activityRecordController;
   late PracticeGenerationController practiceGenerationController;
+  late StoryGameController storyGameController;
 
   ///store Services
   late PStore pStoreService;
@@ -91,7 +94,8 @@ class PangeaController {
     languageController = LanguageController(this);
     classController = ClassController(this);
     permissionsController = PermissionsController(this);
-    analytics = AnalyticsController(this);
+    // analytics = AnalyticsController(this);
+    analytics = GetAnalyticsController(this);
     myAnalytics = MyAnalyticsController(this);
     messageData = MessageDataController(this);
     wordNet = WordController(this);
@@ -104,6 +108,7 @@ class PangeaController {
     languageDetection = LanguageDetectionController(this);
     activityRecordController = PracticeActivityRecordController(this);
     practiceGenerationController = PracticeGenerationController();
+    storyGameController = StoryGameController(this);
     PAuthGaurd.pController = this;
   }
 
@@ -139,6 +144,21 @@ class PangeaController {
 
   /// check user information if not found then redirect to Date of birth page
   _handleLoginStateChange(LoginState state) {
+    switch (state) {
+      case LoginState.loggedOut:
+      case LoginState.softLoggedOut:
+        // Reset cached analytics data
+        myAnalytics.dispose();
+        analytics.dispose();
+        storyGameController.dispose();
+        break;
+      case LoginState.loggedIn:
+        // Initialize analytics data
+        myAnalytics.initialize();
+        analytics.initialize();
+        storyGameController.initialize();
+        break;
+    }
     if (state != LoginState.loggedIn) {
       _logOutfromPangea();
     }
