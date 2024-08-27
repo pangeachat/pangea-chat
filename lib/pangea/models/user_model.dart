@@ -185,6 +185,7 @@ class UserInstructions {
   bool showedClickMessage;
   bool showedBlurMeansTranslate;
   bool showedTooltipInstructions;
+  bool showedVoteInstructions;
 
   bool showedSpeechToTextTooltip;
   bool showedL1TranslationTooltip;
@@ -198,6 +199,7 @@ class UserInstructions {
     this.showedSpeechToTextTooltip = false,
     this.showedL1TranslationTooltip = false,
     this.showedTranslationChoicesTooltip = false,
+    this.showedVoteInstructions = false,
   });
 
   factory UserInstructions.fromJson(Map<String, dynamic> json) =>
@@ -216,6 +218,8 @@ class UserInstructions {
             json[InlineInstructions.translationChoices.toString()] ?? false,
         showedSpeechToTextTooltip:
             json[InlineInstructions.speechToText.toString()] ?? false,
+        showedVoteInstructions:
+            json[InstructionsEnum.voteInstructions.toString()] ?? false,
       );
 
   Map<String, dynamic> toJson() {
@@ -232,6 +236,7 @@ class UserInstructions {
         showedTranslationChoicesTooltip;
     data[InlineInstructions.speechToText.toString()] =
         showedSpeechToTextTooltip;
+    data[InstructionsEnum.voteInstructions.toString()] = showedVoteInstructions;
     return data;
   }
 

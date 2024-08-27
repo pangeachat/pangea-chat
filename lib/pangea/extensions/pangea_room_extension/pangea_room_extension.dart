@@ -10,6 +10,7 @@ import 'package:fluffychat/pangea/constants/language_constants.dart';
 import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/constants/pangea_room_types.dart';
 import 'package:fluffychat/pangea/controllers/language_list_controller.dart';
+import 'package:fluffychat/pangea/enum/instructions_enum.dart';
 import 'package:fluffychat/pangea/models/analytics/constructs_event.dart';
 import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
 import 'package:fluffychat/pangea/models/bot_options_model.dart';
@@ -369,14 +370,50 @@ extension PangeaRoom on Room {
       gameState.startTime == null ||
       event.originServerTs.isAfter(gameState.startTime!);
 
+  /// Boolean indicating whether the user has voted during the current round.
+  bool get hasVotedThisRound {
+    if (timeline == null) return false;
+    for (final event in timeline!.events) {
+      if (!sentDuringRound(event)) break;
+      if (event.type != EventTypes.Message) continue;
+
+      final allMyVotes = event
+          .aggregatedEvents(timeline!, RelationshipTypes.reaction)
+          .where((event) => event.senderId == client.userID && event.isVote)
+          .toList();
+
+      if (allMyVotes.isNotEmpty) return true;
+    }
+    return false;
+  }
+
+  /// Determines whether to show a vote warning based on a given [emoji].
+  ///
+  /// Returns `true` if the [emoji] is a valid vote emoji and the vote instructions have not been toggled off,
+  /// and the user has already voted during the current round.
+  bool shouldShowVoteWarning(String emoji) {
+    if (!GameConstants.voteEmojis.contains(emoji)) return false;
+    final instructionsController = MatrixState.pangeaController.instructions;
+    final bool showedWarning = instructionsController.wereInstructionsShown(
+      InstructionsEnum.voteInstructions.toString(),
+    );
+    if (showedWarning) return false;
+    return hasVotedThisRound;
+  }
+
   /// Send a reaction to a story game event. Redacts all
   /// previous votes by the user during the active round.
   Future<void> sendStoryGameReaction(String eventID, String emoji) async {
+    // if it's not a vote reaction, just send it
     if (!GameConstants.voteEmojis.contains(emoji) || timeline == null) {
       await sendReaction(eventID, emoji);
       return;
     }
 
+    // If the vote warning popup was showing, close it
+    MatrixState.pAnyState.closeOverlay();
+
+    // Redact all previous votes by the user during the active round
     final List<Future> redactFutures = [];
     for (final event in timeline!.events) {
       if (!sentDuringRound(event)) break;
