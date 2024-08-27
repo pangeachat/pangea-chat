@@ -83,7 +83,6 @@ class ConversationBotSettingsState extends State<ConversationBotSettings> {
           debugger(when: kDebugMode);
           ErrorHandler.logError(e: err, s: stack);
         }
-        setState(() {});
       },
     );
   }
@@ -159,10 +158,13 @@ class ConversationBotSettingsState extends State<ConversationBotSettings> {
                         },
                       );
 
-                      if (confirm == true) {
+                      final bool isBotRoomMember =
+                          await widget.room?.isBotRoom ?? false;
+
+                      if (confirm == true && !isBotRoomMember) {
                         setState(() => addBot = true);
                         widget.room?.invite(BotName.byEnvironment);
-                      } else {
+                      } else if (confirm == true && isBotRoomMember) {
                         setState(() => addBot = false);
                         widget.room?.kick(BotName.byEnvironment);
                       }
@@ -256,9 +258,12 @@ class ConversationBotSettingsState extends State<ConversationBotSettings> {
                       },
                     );
                     if (confirm == true) {
-                      if (addBot) {
+                      final bool isBotRoomMember =
+                          await widget.room?.isBotRoom ?? false;
+
+                      if (addBot && !isBotRoomMember) {
                         await widget.room?.invite(BotName.byEnvironment);
-                      } else {
+                      } else if (!addBot && isBotRoomMember) {
                         await widget.room?.kick(BotName.byEnvironment);
                       }
                       updateBotOption(() {
