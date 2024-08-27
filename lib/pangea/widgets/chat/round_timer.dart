@@ -26,6 +26,7 @@ class RoundTimer extends StatelessWidget {
     final color = this.color ?? Theme.of(context).colorScheme.primary;
     double percent = currentSeconds / maxSeconds;
     if (percent > 1) percent = 1;
+    if (percent < 0) percent = 0;
     return CircularPercentIndicator(
       radius: 40.0,
       percent: percent,
