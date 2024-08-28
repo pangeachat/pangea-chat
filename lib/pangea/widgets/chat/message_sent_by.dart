@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
+import 'package:fluffychat/pangea/utils/bot_name.dart';
 import 'package:fluffychat/utils/string_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
@@ -12,7 +13,9 @@ class MessageSentBy extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (event.winner == null || event.isGMMessage || event.character == null) {
+    if (event.winner == null ||
+        event.winner == BotName.byEnvironment ||
+        event.character == null) {
       return const SizedBox.shrink();
     }
 

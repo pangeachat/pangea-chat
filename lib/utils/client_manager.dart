@@ -116,6 +116,7 @@ abstract class ClientManager {
         PangeaEventTypes.rules,
         PangeaEventTypes.botOptions,
         PangeaEventTypes.capacity,
+        PangeaEventTypes.storyGame,
         EventTypes.RoomPowerLevels,
         // Pangea#
       },
