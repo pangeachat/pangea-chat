@@ -137,6 +137,7 @@ class ModelKey {
   static const String winner = "winner";
   static const String narrator = "narrator";
   static const String character = "character";
+  static const String votes = "voters";
 
   // Settings States
   static const String delayBeforeNextRoundSeconds =
