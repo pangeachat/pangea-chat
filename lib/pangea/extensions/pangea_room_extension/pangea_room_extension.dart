@@ -375,21 +375,26 @@ extension PangeaRoom on Room {
       gameState.startTime == null ||
       event.originServerTs.isAfter(gameState.startTime!);
 
-  /// Boolean indicating whether the user has voted during the current round.
-  bool get hasVotedThisRound {
+  bool userHasVotedThisRound(String userID) {
     if (timeline == null) return false;
     for (final event in timeline!.events) {
       if (!sentDuringRound(event)) break;
       if (event.type != EventTypes.Message) continue;
 
-      final allMyVotes = event
+      final allUserVotes = event
           .aggregatedEvents(timeline!, RelationshipTypes.reaction)
-          .where((event) => event.senderId == client.userID && event.isVote)
+          .where((event) => event.senderId == userID && event.isVote)
           .toList();
 
-      if (allMyVotes.isNotEmpty) return true;
+      if (allUserVotes.isNotEmpty) return true;
     }
     return false;
+  }
+
+  /// Boolean indicating whether the user has voted during the current round.
+  bool get hasVotedThisRound {
+    if (client.userID == null) return false;
+    return userHasVotedThisRound(client.userID!);
   }
 
   /// Determines whether to show a vote warning based on a given [emoji].
