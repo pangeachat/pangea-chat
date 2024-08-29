@@ -6,6 +6,7 @@ import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/models/games/game_state_model.dart';
+import 'package:fluffychat/pangea/utils/bot_name.dart';
 import 'package:fluffychat/pangea/utils/bot_style.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/widgets/chat/round_timer.dart';
@@ -124,37 +125,69 @@ class GameStateViewState extends State<GameStateView> {
         borderRadius: const BorderRadius.all(Radius.circular(4)),
       ),
       padding: const EdgeInsets.all(16),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AnimatedSize(
-                  duration: FluffyThemes.animationDuration,
-                  child: avatarName == null
-                      ? const SizedBox.shrink()
-                      : Avatar(name: avatarName),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    AnimatedSize(
+                      duration: FluffyThemes.animationDuration,
+                      child: avatarName == null
+                          ? const SizedBox.shrink()
+                          : Avatar(name: avatarName),
+                    ),
+                    const SizedBox(height: 8),
+                    blockText != null
+                        ? Text(
+                            blockText!,
+                            textAlign: TextAlign.center,
+                            style: BotStyle.text(context, big: true),
+                          )
+                        : const Center(
+                            child: CircularProgressIndicator.adaptive(),
+                          ),
+                  ],
                 ),
-                const SizedBox(height: 8),
-                blockText != null
-                    ? Text(
-                        blockText!,
-                        textAlign: TextAlign.center,
-                        style: BotStyle.text(context, big: true),
-                      )
-                    : const Center(child: CircularProgressIndicator.adaptive()),
-              ],
+              ),
+              RoundTimer(
+                currentSeconds ?? 0,
+                maxSeconds: room.isBetweenRounds
+                    ? gameState.delayBeforeNextRoundSeconds
+                    : GameConstants.timerMaxSeconds,
+                color: room.isBetweenRounds ? Colors.green : null,
+              ),
+            ],
+          ),
+          if (room.isActiveRound)
+            Row(
+              children: room
+                  .getParticipants()
+                  .where((user) => user.id != BotName.byEnvironment)
+                  .map(
+                    (user) => Padding(
+                      padding: const EdgeInsets.fromLTRB(4, 10, 4, 4),
+                      child: Tooltip(
+                        message: user.calcDisplayname(),
+                        child: AnimatedOpacity(
+                          duration: FluffyThemes.animationDuration,
+                          opacity:
+                              room.userHasVotedThisRound(user.id) ? 1 : 0.25,
+                          child: Avatar(
+                            mxContent: user.avatarUrl,
+                            name: user.calcDisplayname(),
+                            size: 24,
+                            onTap: () {},
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
             ),
-          ),
-          RoundTimer(
-            currentSeconds ?? 0,
-            maxSeconds: room.isBetweenRounds
-                ? gameState.delayBeforeNextRoundSeconds
-                : GameConstants.timerMaxSeconds,
-            color: room.isBetweenRounds ? Colors.green : null,
-          ),
         ],
       ),
     );
