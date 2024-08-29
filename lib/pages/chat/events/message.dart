@@ -122,8 +122,9 @@ class Message extends StatelessWidget {
 
     // #Pangea
     // final alignment = ownMessage ? Alignment.topRight : Alignment.topLeft;
-    final alignment = controller.characterAlignment(event);
+    final alignment = controller.storyGameAlignment(event);
     // Pangea#
+
     // ignore: deprecated_member_use
     var color = Theme.of(context).colorScheme.surfaceVariant;
     final displayTime = event.type == EventTypes.RoomCreate ||
@@ -144,14 +145,21 @@ class Message extends StatelessWidget {
                 nextEvent!.senderId == event.senderId &&
                 !displayTime;
 
-    final previousEventSameSender = previousEvent != null &&
-        {
-          EventTypes.Message,
-          EventTypes.Sticker,
-          EventTypes.Encrypted,
-        }.contains(previousEvent!.type) &&
-        previousEvent!.senderId == event.senderId &&
-        previousEvent!.originServerTs.sameEnvironment(event.originServerTs);
+    final previousEventSameSender =
+        // #Pangea
+        controller.isStoryGameMode
+            ? controller.storyGamePreviousEventSameSender(event, previousEvent)
+            :
+            // Pangea#
+            previousEvent != null &&
+                {
+                  EventTypes.Message,
+                  EventTypes.Sticker,
+                  EventTypes.Encrypted,
+                }.contains(previousEvent!.type) &&
+                previousEvent!.senderId == event.senderId &&
+                previousEvent!.originServerTs
+                    .sameEnvironment(event.originServerTs);
 
     final textColor = ownMessage
         ? Theme.of(context).colorScheme.onPrimary
@@ -271,19 +279,12 @@ class Message extends StatelessWidget {
                       children: [
                         // #Pangea
                         if (controller.isStoryGameMode)
-                          SizedBox(
-                            width: event.messageType == MessageTypes.Image
-                                ? 0
-                                : Avatar.defaultSize,
-                            height: Avatar.defaultSize,
-                            child: alignment == Alignment.topLeft
-                                ? controller.storyGameAvatar(
-                                    event,
-                                    nextEvent,
-                                  )
-                                : const SizedBox.shrink(),
-                          )
-
+                          alignment == Alignment.topLeft
+                              ? controller.storyGameAvatar(
+                                  event,
+                                  nextEvent,
+                                )
+                              : const SizedBox.shrink()
                         // if (longPressSelect)
                         else if (longPressSelect)
                           // Pangea#
@@ -327,18 +328,19 @@ class Message extends StatelessWidget {
                                 mxContent: user.avatarUrl,
                                 name: user.calcDisplayname(),
                                 presenceUserId: user.stateKey,
+                                presenceBackgroundColor:
+                                    avatarPresenceBackgroundColor,
                                 onTap: () => onAvatarTab(event),
                               );
                             },
                           ),
                         Expanded(
                           child: Column(
+                            // #Pangea
                             // crossAxisAlignment: CrossAxisAlignment.start,
-                            crossAxisAlignment: alignment == Alignment.topRight
-                                ? CrossAxisAlignment.end
-                                : alignment == Alignment.topLeft
-                                    ? CrossAxisAlignment.start
-                                    : CrossAxisAlignment.center,
+                            crossAxisAlignment:
+                                controller.storyGameCrossAxisAlignment(event),
+                            // Pangea#
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               if (!nextEventSameSender)
@@ -557,20 +559,6 @@ class Message extends StatelessWidget {
                                                         MainAxisSize.min,
                                                     children: [
                                                       // #Pangea
-                                                      // if (pangeaMessageEvent
-                                                      //         ?.showUseType ??
-                                                      //     false) ...[
-                                                      //   pangeaMessageEvent!
-                                                      //       .msgUseType
-                                                      //       .iconView(
-                                                      //     context,
-                                                      //     textColor
-                                                      //         .withAlpha(164),
-                                                      //   ),
-                                                      //   const SizedBox(
-                                                      //     width: 4,
-                                                      //   ),
-                                                      // ],
                                                       if (event
                                                           .hasAggregatedEvents(
                                                         timeline,
@@ -617,13 +605,6 @@ class Message extends StatelessWidget {
                           controller.storyGameAvatar(
                             event,
                             nextEvent,
-                          )
-                        else
-                          SizedBox(
-                            width: event.messageType == MessageTypes.Image
-                                ? 0
-                                : Avatar.defaultSize,
-                            height: Avatar.defaultSize,
                           ),
                         // Pangea#
                       ],
