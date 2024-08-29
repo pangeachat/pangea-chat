@@ -15,14 +15,18 @@ extension GameChatController on ChatController {
   String? get userID => room.client.userID;
 
   bool storyGameNextEventSameSender(Event event, Event? nextEvent) {
-    final displayTime = event.type == EventTypes.RoomCreate ||
-        nextEvent == null ||
-        !event.originServerTs.sameEnvironment(nextEvent.originServerTs);
+    if (event.isCandidateMessage && (nextEvent?.isCandidateMessage ?? false)) {
+      return true;
+    }
 
     final eventRevealed = timeline != null && event.isRevealed(timeline!);
     final nextEventRevealed = timeline != null &&
         nextEvent != null &&
         nextEvent.isRevealed(timeline!);
+
+    final displayTime = event.type == EventTypes.RoomCreate ||
+        nextEvent == null ||
+        !event.originServerTs.sameEnvironment(nextEvent.originServerTs);
 
     if (nextEvent == null ||
         !{
@@ -34,12 +38,6 @@ extension GameChatController on ChatController {
         eventRevealed ||
         nextEventRevealed) return false;
 
-    // if the senders are both not the game master, return whether or not they're the same
-    // if sender of one event is the game master, return false
-    // if they're both sent by the game master
-    //     get the character for both.
-    //     if they're the same, return true
-    //     if they're different, return false
     if (!event.isGMMessage && !nextEvent.isGMMessage) {
       return event.senderId == nextEvent.senderId;
     }
@@ -49,15 +47,34 @@ extension GameChatController on ChatController {
     return false;
   }
 
+  bool storyGamePreviousEventSameSender(Event event, Event? previousEvent) {
+    if (event.isCandidateMessage &&
+        (previousEvent?.isCandidateMessage ?? false)) {
+      return true;
+    }
+
+    return previousEvent != null &&
+        {
+          EventTypes.Message,
+          EventTypes.Sticker,
+          EventTypes.Encrypted,
+        }.contains(previousEvent.type) &&
+        previousEvent.senderId == event.senderId &&
+        previousEvent.originServerTs.sameEnvironment(event.originServerTs);
+  }
+
   Widget storyGameAvatar(
     Event event,
     Event? nextEvent,
   ) {
+    Widget avatarBody = const SizedBox.shrink();
+
+    // a revealed avatar
     if (event.senderId != room.client.userID &&
         !event.isGMMessage &&
         timeline != null &&
         event.isRevealed(timeline!)) {
-      return FutureBuilder<User?>(
+      avatarBody = FutureBuilder<User?>(
         future: event.fetchSenderUser(),
         builder: (context, snapshot) {
           final user = snapshot.data ?? event.senderFromMemoryOrFallback;
@@ -68,30 +85,21 @@ extension GameChatController on ChatController {
           );
         },
       );
+    } else if (event.character != null &&
+        !event.isNarratorMessage &&
+        !storyGameNextEventSameSender(event, nextEvent)) {
+      avatarBody = Avatar(name: event.character);
     }
 
-    if (event.character == null ||
-        event.isNarratorMessage ||
-        event.senderId == room.client.userID) {
-      return const SizedBox();
-    }
-
-    if (storyGameNextEventSameSender(event, nextEvent)) {
-      return const SizedBox(
-        width: Avatar.defaultSize,
-        child: Center(
-          child: SizedBox(
-            width: 16,
-            height: 16,
-          ),
-        ),
-      );
-    }
-    return Avatar(name: event.character);
+    return SizedBox(
+      width: event.messageType == MessageTypes.Image ? 0 : Avatar.defaultSize,
+      height: Avatar.defaultSize,
+      child: avatarBody,
+    );
   }
 
   String storyGameDisplayName(Event event) {
-    if (!event.isGMMessage) {
+    if (event.isCandidateMessage) {
       return timeline != null && event.isRevealed(timeline!)
           ? event.senderFromMemoryOrFallback.calcDisplayname()
           : "";
@@ -117,7 +125,7 @@ extension GameChatController on ChatController {
       return const BorderRadius.all(hardCorner);
     }
 
-    final rightAlign = characterAlignment(event) == Alignment.topRight;
+    final rightAlign = storyGameAlignment(event) == Alignment.topRight;
     final nextEventSameSender = storyGameNextEventSameSender(event, nextEvent);
 
     return BorderRadius.only(
@@ -155,7 +163,7 @@ extension GameChatController on ChatController {
     );
   }
 
-  Alignment characterAlignment(Event event) {
+  Alignment storyGameAlignment(Event event) {
     final ownMessage = event.senderId == userID;
     if (!isStoryGameMode) {
       return ownMessage ? Alignment.topRight : Alignment.topLeft;
@@ -174,6 +182,15 @@ extension GameChatController on ChatController {
         ? Alignment.topLeft
         : Alignment.topRight;
     return characterAlignments[event.character]!;
+  }
+
+  CrossAxisAlignment storyGameCrossAxisAlignment(Event event) {
+    final alignment = storyGameAlignment(event);
+    return alignment == Alignment.topRight
+        ? CrossAxisAlignment.end
+        : alignment == Alignment.topLeft
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.center;
   }
 
   void showVoteWarning(String eventID) {
