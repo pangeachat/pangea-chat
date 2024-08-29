@@ -338,9 +338,13 @@ extension PangeaRoom on Room {
         StoryGamePhase.endDecideWinner,
       ].contains(gameState.phase);
 
-  bool get isStartingNextRound => [
-        StoryGamePhase.beginProgressStory,
-        StoryGamePhase.endProgressStory,
+  bool get isAfterPlayerCompete => [
+        StoryGamePhase.beginDecideWinner,
+        StoryGamePhase.endDecideWinner,
+        StoryGamePhase.beginWaitNextRound,
+        StoryGamePhase.endWaitNextRound,
+        StoryGamePhase.beginEndGame,
+        StoryGamePhase.endEndGame,
       ].contains(gameState.phase);
 
   bool isEventVisibleInGame(Event event, Timeline timeline) {
@@ -351,11 +355,11 @@ extension PangeaRoom on Room {
       EventTypes.CallInvite,
       PangeaEventTypes.storyGame,
     }.contains(event.type)) return true;
-    if (event.type == PangeaEventTypes.storyGame) {
-      final mostRecentUpdate = timeline.events
-          .firstWhereOrNull((e) => e.type == PangeaEventTypes.storyGame);
-      return event.originServerTs == mostRecentUpdate?.originServerTs;
-    }
+    // if (event.type == PangeaEventTypes.storyGame) {
+    //   final mostRecentUpdate = timeline.events
+    //       .firstWhereOrNull((e) => e.type == PangeaEventTypes.storyGame);
+    //   return event.originServerTs == mostRecentUpdate?.originServerTs;
+    // }
 
     if (event.isGMMessage) {
       return sentDuringRound(event) ||
