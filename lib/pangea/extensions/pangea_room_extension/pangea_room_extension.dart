@@ -364,7 +364,8 @@ extension PangeaRoom on Room {
     if (event.isGMMessage) {
       return sentDuringRound(event) ||
           event.character != null ||
-          event.messageType == MessageTypes.Image;
+          event.messageType == MessageTypes.Image ||
+          event.isInstructions;
     }
 
     return sentDuringRound(event);
