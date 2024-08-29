@@ -371,9 +371,10 @@ extension PangeaRoom on Room {
     return sentDuringRound(event);
   }
 
-  bool sentDuringRound(Event event) =>
-      gameState.startTime == null ||
-      event.originServerTs.isAfter(gameState.startTime!);
+  bool sentDuringRound(Event event) {
+    if (gameState.startTime == null) return false;
+    return event.originServerTs.isAfter(gameState.startTime!);
+  }
 
   bool userHasVotedThisRound(String userID) {
     if (timeline == null) return false;

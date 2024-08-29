@@ -45,42 +45,37 @@ class ChatEventList extends StatelessWidget {
 
     // #Pangea
     // Insert a game state event into the correct stop in the timeline
-    final GameModel gameState = controller.room.gameState;
-    if (gameState.currentCharacter != null &&
-        gameState.startTime != null &&
-        gameState.phase != null) {
-      // get the last game state event in the timeline
-      final lastGameStateEvent = controller.timeline?.events.firstWhereOrNull(
-        (event) => event.type == PangeaEventTypes.storyGame,
-      );
+    // get the last game state event in the timeline
+    final lastGameStateEvent = controller.timeline?.events.firstWhereOrNull(
+      (event) => event.type == PangeaEventTypes.storyGame,
+    );
 
-      // get the time of the last beginProgressStory event
-      final lastStartTime = controller.timeline?.events
-          .firstWhereOrNull(
-            (event) =>
-                event.type == PangeaEventTypes.storyGame &&
-                GameModel.fromJson(event.content).phase ==
-                    StoryGamePhase.beginProgressStory,
-          )
-          ?.originServerTs;
+    // get the time of the last beginProgressStory event
+    final lastStartTime = controller.timeline?.events
+        .firstWhereOrNull(
+          (event) =>
+              event.type == PangeaEventTypes.storyGame &&
+              GameModel.fromJson(event.content).phase ==
+                  StoryGamePhase.beginProgressStory,
+        )
+        ?.originServerTs;
 
-      // if there's a state event to insert into the timeline
-      if (lastGameStateEvent != null) {
-        // if the 'player compete' part of the round has ended, insert the event at the bottom
-        if (controller.room.isAfterPlayerCompete) {
-          events.insert(0, lastGameStateEvent);
-        } else {
-          // otherwise, try to insert the event after the last event before startTime
-          final index = events.indexWhere(
-            (event) =>
-                (lastStartTime != null &&
-                    event.originServerTs.isBefore(lastStartTime)) ||
-                event.isNarratorMessage,
-          );
-          index != -1
-              ? events.insert(index, lastGameStateEvent)
-              : events.insert(0, lastGameStateEvent);
-        }
+    // if there's a state event to insert into the timeline
+    if (lastGameStateEvent != null) {
+      // if the 'player compete' part of the round has ended, insert the event at the bottom
+      if (controller.room.isAfterPlayerCompete) {
+        events.insert(0, lastGameStateEvent);
+      } else {
+        // otherwise, try to insert the event after the last event before startTime
+        final index = events.indexWhere(
+          (event) =>
+              (lastStartTime != null &&
+                  event.originServerTs.isBefore(lastStartTime)) ||
+              event.isNarratorMessage,
+        );
+        index != -1
+            ? events.insert(index, lastGameStateEvent)
+            : events.insert(0, lastGameStateEvent);
       }
     }
     // Pangea#

@@ -112,13 +112,6 @@ class GameStateViewState extends State<GameStateView> {
 
   @override
   Widget build(BuildContext context) {
-    // Don't show if there is no current character
-    if (gameState.currentCharacter == null ||
-        gameState.startTime == null ||
-        gameState.phase == null) {
-      return const SizedBox.shrink();
-    }
-
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
