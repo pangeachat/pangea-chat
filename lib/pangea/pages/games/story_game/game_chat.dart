@@ -15,10 +15,6 @@ extension GameChatController on ChatController {
   String? get userID => room.client.userID;
 
   bool storyGameNextEventSameSender(Event event, Event? nextEvent) {
-    if (event.isCandidateMessage && (nextEvent?.isCandidateMessage ?? false)) {
-      return true;
-    }
-
     final eventRevealed = timeline != null && event.isRevealed(timeline!);
     final nextEventRevealed = timeline != null &&
         nextEvent != null &&
@@ -37,6 +33,10 @@ extension GameChatController on ChatController {
         displayTime ||
         eventRevealed ||
         nextEventRevealed) return false;
+
+    if (event.isCandidateMessage && nextEvent.isCandidateMessage) {
+      return true;
+    }
 
     if (!event.isGMMessage && !nextEvent.isGMMessage) {
       return event.senderId == nextEvent.senderId;
