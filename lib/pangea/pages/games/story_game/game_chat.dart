@@ -113,7 +113,7 @@ extension GameChatController on ChatController {
       return const BorderRadius.all(roundedCorner);
     }
 
-    if (event.isNarratorMessage) {
+    if (event.isNarratorMessage || event.isInstructions) {
       return const BorderRadius.all(hardCorner);
     }
 
@@ -161,9 +161,11 @@ extension GameChatController on ChatController {
       return ownMessage ? Alignment.topRight : Alignment.topLeft;
     }
 
+    if (event.isNarratorMessage || event.isInstructions) {
+      return Alignment.center;
+    }
     if (event.isCandidateMessage) return Alignment.center;
     if (event.character == null) return Alignment.topLeft;
-    if (event.isNarratorMessage) return Alignment.center;
     if (characterAlignments.containsKey(event.character)) {
       return characterAlignments[event.character]!;
     }
@@ -187,6 +189,7 @@ extension GameChatController on ChatController {
 extension StoryGameEvent on Event {
   String? get character => content[ModelKey.character] as String?;
   String? get winner => content[ModelKey.winner] as String?;
+  bool get isInstructions => content[ModelKey.isInstructions] == true;
 
   bool isRevealed(Timeline timeline) {
     final Set<Event> events = aggregatedEvents(
@@ -210,7 +213,10 @@ extension StoryGameEvent on Event {
   bool get isWinnerMessage => isGMMessage && winner != null;
 
   bool get isCandidateMessage =>
-      messageType == MessageTypes.Text && character == null && winner == null;
+      messageType == MessageTypes.Text &&
+      character == null &&
+      winner == null &&
+      !isInstructions;
 
   bool get isVote =>
       type == EventTypes.Reaction &&

@@ -367,14 +367,18 @@ class MessageContent extends StatelessWidget {
               //   fontSize: bigEmotes ? fontSize * 3 : fontSize,
               //   decoration: event.redacted ? TextDecoration.lineThrough : null,
               // ),
-              style: !event.isNarratorMessage
+              style: !event.isNarratorMessage && !event.isInstructions
                   ? TextStyle(
                       color: textColor,
                       fontSize: bigEmotes ? fontSize * 3 : fontSize,
                       decoration:
                           event.redacted ? TextDecoration.lineThrough : null,
                     )
-                  : BotStyle.text(context, big: true, italics: true),
+                  : BotStyle.text(
+                      context,
+                      big: true,
+                      italics: event.isNarratorMessage,
+                    ),
               // Pangea#
               options: const LinkifyOptions(humanize: false),
               linkStyle: TextStyle(
