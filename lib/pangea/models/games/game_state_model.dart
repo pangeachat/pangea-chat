@@ -105,6 +105,7 @@ class GameModel {
   final StoryGamePhase? phase;
   final bool isGameEnd;
   final Map<String, int> playerScores;
+  final String? judge;
 
   // Settings States
   final int delayBeforeNextRoundSeconds;
@@ -134,6 +135,7 @@ class GameModel {
     this.goalStateCharacterText,
     this.failStateCharacterText,
     this.playerScores = const {},
+    this.judge,
   });
 
   factory GameModel.fromJson(json) {
@@ -163,6 +165,7 @@ class GameModel {
       playerScores: json[ModelKey.playerScores] != null
           ? Map<String, int>.from(json[ModelKey.playerScores])
           : {},
+      judge: json[ModelKey.judge],
     );
   }
 
@@ -185,6 +188,7 @@ class GameModel {
       data[ModelKey.goalStateCharacterText] = goalStateCharacterText;
       data[ModelKey.failStateCharacterText] = failStateCharacterText;
       data[ModelKey.playerScores] = playerScores;
+      data[ModelKey.judge] = judge;
       return data;
     } catch (e, s) {
       debugger(when: kDebugMode);

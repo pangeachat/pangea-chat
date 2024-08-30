@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/constants/model_keys.dart';
@@ -102,13 +103,17 @@ class GameStateViewState extends State<GameStateView> {
             )
           : L10n.of(context)!.narrationPrompt;
     }
-    return room.gameState.phase!.string(context);
+    return room.gameState.phase?.string(context);
   }
 
   String? get avatarName =>
       room.isActiveRound && gameState.currentCharacter != ModelKey.narrator
           ? gameState.currentCharacter
           : null;
+
+  User? get judge => room.getParticipants().firstWhereOrNull(
+        (user) => user.id == gameState.judge,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -123,9 +128,7 @@ class GameStateViewState extends State<GameStateView> {
           Row(
             children: [
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                child: Row(
                   children: [
                     AnimatedSize(
                       duration: FluffyThemes.animationDuration,
@@ -133,7 +136,7 @@ class GameStateViewState extends State<GameStateView> {
                           ? const SizedBox.shrink()
                           : Avatar(name: avatarName),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(width: 8),
                     blockText != null
                         ? Text(
                             blockText!,
@@ -155,31 +158,57 @@ class GameStateViewState extends State<GameStateView> {
               ),
             ],
           ),
-          if (room.isActiveRound)
+          if (room.isActiveRound && gameState.judge != null)
             Row(
-              children: room
-                  .getParticipants()
-                  .where((user) => user.id != BotName.byEnvironment)
-                  .map(
-                    (user) => Padding(
-                      padding: const EdgeInsets.fromLTRB(4, 10, 4, 4),
-                      child: Tooltip(
-                        message: user.calcDisplayname(),
-                        child: AnimatedOpacity(
-                          duration: FluffyThemes.animationDuration,
-                          opacity:
-                              room.userHasVotedThisRound(user.id) ? 1 : 0.25,
-                          child: Avatar(
-                            mxContent: user.avatarUrl,
-                            name: user.calcDisplayname(),
-                            size: 24,
-                            onTap: () {},
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  L10n.of(context)!.judgeThisRound,
+                  style: BotStyle.text(context),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(2),
+                  child: Tooltip(
+                    message: judge?.calcDisplayname() ?? gameState.judge,
+                    child: Avatar(
+                      mxContent: judge?.avatarUrl,
+                      name: judge?.calcDisplayname() ?? gameState.judge,
+                      size: 24,
+                      onTap: () {},
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Text(
+                  L10n.of(context)!.playersThisRound,
+                  style: BotStyle.text(context),
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: room
+                      .getParticipants()
+                      .where(
+                        (user) =>
+                            user.id != BotName.byEnvironment &&
+                            user.id != gameState.judge,
+                      )
+                      .map(
+                        (user) => Padding(
+                          padding: const EdgeInsets.all(2),
+                          child: Tooltip(
+                            message: user.calcDisplayname(),
+                            child: Avatar(
+                              mxContent: user.avatarUrl,
+                              name: user.calcDisplayname(),
+                              size: 24,
+                              onTap: () {},
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  )
-                  .toList(),
+                      )
+                      .toList(),
+                ),
+              ],
             ),
         ],
       ),
