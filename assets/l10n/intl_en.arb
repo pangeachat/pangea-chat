@@ -4128,8 +4128,6 @@
   "createSpace": "Create space",
   "createChat": "Create chat",
   "error520Title": "Please try again.",
-  "error520Desc": "Sorry, we could not understand your message...",
-  "translationChoicesBody": "Click and hold an option for a hint.",
   "wordsUsed": "Words Used",
   "errorTypes": "Error Types",
   "level": "Level",
@@ -4167,5 +4165,7 @@
   "voteInstructionsBody": "You can only vote once per round. Your other votes will be removed. Vote again to confirm.",
   "judgeThisRound": "Judge: ",
   "playersThisRound": "Players: ",
-  "judgingHintText": "You're judging this round! Vote on the best answer from other players."
+  "judgingHintText": "You're judging this round! Vote on the best answer from other players.",
+  "error520Desc": "Sorry, we could not understand your message...",
+  "translationChoicesBody": "Click and hold an option for a hint."
 }
