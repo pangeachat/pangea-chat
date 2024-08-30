@@ -115,6 +115,14 @@ class GameStateViewState extends State<GameStateView> {
         (user) => user.id == gameState.judge,
       );
 
+  List<User> get players => room
+      .getParticipants()
+      .where(
+        (user) =>
+            user.id != BotName.byEnvironment && user.id != gameState.judge,
+      )
+      .toList();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -158,7 +166,9 @@ class GameStateViewState extends State<GameStateView> {
               ),
             ],
           ),
-          if (room.isActiveRound && gameState.judge != null)
+          if (room.isActiveRound &&
+              gameState.judge != null &&
+              players.isNotEmpty)
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -185,13 +195,7 @@ class GameStateViewState extends State<GameStateView> {
                 ),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: room
-                      .getParticipants()
-                      .where(
-                        (user) =>
-                            user.id != BotName.byEnvironment &&
-                            user.id != gameState.judge,
-                      )
+                  children: players
                       .map(
                         (user) => Padding(
                           padding: const EdgeInsets.all(2),
