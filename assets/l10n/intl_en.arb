@@ -4164,5 +4164,8 @@
   "competing": "Competing...",
   "gameOver": "Game over",
   "voteInstructionsTitle": "Are you sure?",
-  "voteInstructionsBody": "You can only vote once per round. Your other votes will be removed. Vote again to confirm."
+  "voteInstructionsBody": "You can only vote once per round. Your other votes will be removed. Vote again to confirm.",
+  "judgeThisRound": "Judge: ",
+  "playersThisRound": "Players: ",
+  "judgingHintText": "You're judging this round! Vote on the best answer from other players."
 }
