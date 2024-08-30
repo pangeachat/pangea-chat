@@ -27,16 +27,7 @@ class ChatEventList extends StatelessWidget {
     final horizontalPadding = FluffyThemes.isColumnMode(context) ? 8.0 : 0.0;
 
     final events = controller.timeline!.events
-        .where(
-          (event) =>
-              event.isVisibleInGui
-              // #Pangea
-              &&
-              // In story game, hide messages sent by non-bot users in previous round
-              (controller.currentRound?.gameEventIsVisibleInGui(event) ?? true)
-          // Pangea#
-          ,
-        )
+        .where((event) => event.isVisibleInGui)
         .toList();
     final animateInEventIndex = controller.animateInEventIndex;
 

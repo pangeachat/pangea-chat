@@ -1,6 +1,5 @@
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
-import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/enum/use_type.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_buttons.dart';
@@ -176,8 +175,6 @@ class Message extends StatelessWidget {
         previousEvent: previousEvent,
       );
     }
-
-    final bool sentByGM = GameConstants.gameMaster == event.senderId;
     // Pangea#
 
     final resetAnimateIn = this.resetAnimateIn;
@@ -266,18 +263,12 @@ class Message extends StatelessWidget {
                               final user = snapshot.data ??
                                   event.senderFromMemoryOrFallback;
                               return Avatar(
-                                // #Pangea
-                                // mxContent: user.avatarUrl,
-                                // name: user.calcDisplayname(),
-                                // presenceUserId: user.stateKey,
-                                name: sentByGM ? user.calcDisplayname() : "?",
-                                mxContent: sentByGM ? user.avatarUrl : null,
-                                presenceUserId: sentByGM ? user.stateKey : null,
-                                presenceBackgroundColor: sentByGM
-                                    ? null
-                                    : avatarPresenceBackgroundColor,
-                                // onTap: () => onAvatarTab(event),
-                                // Pangea#
+                                mxContent: user.avatarUrl,
+                                name: user.calcDisplayname(),
+                                presenceUserId: user.stateKey,
+                                presenceBackgroundColor:
+                                    avatarPresenceBackgroundColor,
+                                onTap: () => onAvatarTab(event),
                               );
                             },
                           ),
@@ -297,19 +288,10 @@ class Message extends StatelessWidget {
                                       : FutureBuilder<User?>(
                                           future: event.fetchSenderUser(),
                                           builder: (context, snapshot) {
-                                            // #Pangea
-                                            // final displayname = snapshot.data
-                                            //         ?.calcDisplayname() ??
-                                            //     event.senderFromMemoryOrFallback
-                                            //         .calcDisplayname();
-                                            final displayname = sentByGM
-                                                ? snapshot.data
-                                                        ?.calcDisplayname() ??
-                                                    event
-                                                        .senderFromMemoryOrFallback
-                                                        .calcDisplayname()
-                                                : "?";
-                                            // Pangea#
+                                            final displayname = snapshot.data
+                                                    ?.calcDisplayname() ??
+                                                event.senderFromMemoryOrFallback
+                                                    .calcDisplayname();
                                             return Text(
                                               displayname,
                                               style: TextStyle(
