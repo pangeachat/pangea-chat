@@ -7,7 +7,6 @@ import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
 import 'package:fluffychat/pangea/enum/progress_indicators_enum.dart';
 import 'package:fluffychat/pangea/models/analytics/construct_list_model.dart';
 import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
-import 'package:fluffychat/pangea/widgets/animations/gain_points.dart';
 import 'package:fluffychat/pangea/widgets/animations/progress_bar/progress_bar.dart';
 import 'package:fluffychat/pangea/widgets/animations/progress_bar/progress_bar_details.dart';
 import 'package:fluffychat/pangea/widgets/chat_list/analytics_summary/progress_indicator.dart';
@@ -50,7 +49,7 @@ class LearningProgressIndicatorsState
 
   bool loading = true;
 
-  // Spme buggy stuff is happening with this data not being updated at login, so switching
+  // Some buggy stuff is happening with this data not being updated at login, so switching
   // to stateful variables for now. Will switch this back later when I have more time to
   // figure out why it's now working.
   // int get serverXP => _pangeaController.analytics.serverXP;
@@ -179,9 +178,9 @@ class LearningProgressIndicatorsState
     return Stack(
       alignment: Alignment.topCenter,
       children: [
-        const Positioned(
-          child: PointsGainedAnimation(),
-        ),
+        // const Positioned(
+        //   child: PointsGainedAnimation(),
+        // ),
         Column(
           mainAxisSize: MainAxisSize.min,
           children: [

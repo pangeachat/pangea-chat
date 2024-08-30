@@ -4128,6 +4128,7 @@
   "createSpace": "Create space",
   "createChat": "Create chat",
   "error520Title": "Please try again.",
+  "error520Desc": "Sorry, we could not understand your message...",
   "wordsUsed": "Words Used",
   "errorTypes": "Error Types",
   "level": "Level",
@@ -4166,6 +4167,5 @@
   "judgeThisRound": "Judge: ",
   "playersThisRound": "Players: ",
   "judgingHintText": "You're judging this round! Vote on the best answer from other players.",
-  "error520Desc": "Sorry, we could not understand your message...",
   "translationChoicesBody": "Click and hold an option for a hint."
 }

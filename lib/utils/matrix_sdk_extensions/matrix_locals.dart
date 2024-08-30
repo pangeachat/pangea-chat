@@ -347,8 +347,5 @@ class MatrixLocals extends MatrixLocalizations {
       l10n.startedKeyVerification(senderName);
 
   @override
-  String invitedBy(String senderName) => l10n.youInvitedBy(senderName);
-
-  @override
-  String get cancelledSend => l10n.canceledSend;
+  String invitedBy(String senderName) => l10n.invitedBy(senderName);
 }
