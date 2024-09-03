@@ -7,15 +7,13 @@ class ToolbarContentLoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SizedBox(
+    return SizedBox(
         height: 14,
         width: 14,
         child: CircularProgressIndicator(
           strokeWidth: 2.0,
           color: Theme.of(context).colorScheme.primary,
         ),
-      ),
-    );
+      );
   }
 }

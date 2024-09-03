@@ -193,23 +193,6 @@ extension GameChatController on ChatController {
             : CrossAxisAlignment.center;
   }
 
-  MainAxisAlignment storyGameMainAxisAlignment(Event event) {
-    if (!isStoryGameMode) {
-      return event.senderId == userID
-          ? MainAxisAlignment.end
-          : MainAxisAlignment.start;
-    }
-
-    if (event.isNarratorMessage ||
-        event.isCandidateMessage ||
-        event.isInstructions) {
-      return MainAxisAlignment.center;
-    }
-    return storyGameAlignment(event) == Alignment.topRight
-        ? MainAxisAlignment.end
-        : MainAxisAlignment.start;
-  }
-
   void showVoteWarning(String eventID) {
     final instructionsController = MatrixState.pangeaController.instructions;
     instructionsController.showInstructionsPopup(

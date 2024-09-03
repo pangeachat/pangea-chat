@@ -1,27 +1,27 @@
-import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
-import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
+import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
 import 'package:flutter/material.dart';
 
 class MessageButtons extends StatelessWidget {
-  final ChatController controller;
-  final PangeaMessageEvent pangeaMessageEvent;
+  final ToolbarDisplayController? toolbarController;
 
   const MessageButtons({
     super.key,
-    required this.controller,
-    required this.pangeaMessageEvent,
+    this.toolbarController,
   });
 
   void showActivity(BuildContext context) {
-    controller.showToolbar(
-      pangeaMessageEvent,
+    toolbarController?.showToolbar(
+      context,
       mode: MessageMode.practiceActivity,
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    if (toolbarController == null) {
+      return const SizedBox.shrink();
+    }
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
       child: Row(
