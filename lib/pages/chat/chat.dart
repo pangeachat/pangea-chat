@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:collection/collection.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:file_picker/file_picker.dart';
@@ -15,7 +16,6 @@ import 'package:fluffychat/pages/chat/recording_dialog.dart';
 import 'package:fluffychat/pages/chat_details/chat_details.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/choreographer.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
-import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/choreo_record.dart';
@@ -24,12 +24,9 @@ import 'package:fluffychat/pangea/models/tokens_event_content_model.dart';
 import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/utils/firebase_analytics.dart';
-import 'package:fluffychat/pangea/utils/overlay.dart';
 import 'package:fluffychat/pangea/utils/report_message.dart';
-import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
-import 'package:fluffychat/pangea/widgets/chat/message_text_selection.dart';
+import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
 import 'package:fluffychat/pangea/widgets/igc/pangea_text_controller.dart';
-import 'package:fluffychat/pangea/widgets/user_settings/p_language_dialog.dart';
 import 'package:fluffychat/utils/error_reporter.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/event_extension.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/filtered_timeline_extension.dart';
@@ -860,22 +857,9 @@ class ChatController extends State<ChatPageWithRoom>
     });
   }
 
-  // #Pangea
-  // void hideEmojiPicker() {
-  void hideEmojiPicker({bool closeOverlay = false}) {
-    if (closeOverlay) {
-      MatrixState.pAnyState.closeOverlay();
-    }
-    // Pangea#
+  void hideEmojiPicker() {
     setState(() => showEmojiPicker = false);
   }
-
-  // #Pangea
-  void hideOverlayEmojiPicker() {
-    MatrixState.pAnyState.closeOverlay();
-    setState(() => showEmojiPicker = false);
-  }
-  // Pangea
 
   void emojiPickerAction() {
     if (showEmojiPicker) {
@@ -922,18 +906,12 @@ class ChatController extends State<ChatPageWithRoom>
     Clipboard.setData(ClipboardData(text: _getSelectedEventString()));
     setState(() {
       showEmojiPicker = false;
-      // #Pangea
-      // selectedEvents.clear();
-      clearSelectedEvents();
-      // Pangea#
+      selectedEvents.clear();
     });
   }
 
   void reportEventAction() async {
     final event = selectedEvents.single;
-    // #Pangea
-    clearSelectedEvents();
-    // Pangea#
     final score = await showConfirmationDialog<int>(
       context: context,
       title: L10n.of(context)!.reportMessage,
@@ -1038,12 +1016,7 @@ class ChatController extends State<ChatPageWithRoom>
             cancelLabel: L10n.of(context)!.cancel,
           )
         : <String>[];
-    if (reasonInput == null) {
-      // #Pangea
-      clearSelectedEvents();
-      // Pangea#
-      return;
-    }
+    if (reasonInput == null) return;
     final reason = reasonInput.single.isEmpty ? null : reasonInput.single;
     for (final event in selectedEvents) {
       await showFutureLoadingDialog(
@@ -1071,9 +1044,6 @@ class ChatController extends State<ChatPageWithRoom>
         },
       );
     }
-    // #Pangea
-    clearSelectedEvents();
-    // Pangea#
     setState(() {
       showEmojiPicker = false;
       selectedEvents.clear();
@@ -1153,9 +1123,6 @@ class ChatController extends State<ChatPageWithRoom>
       replyEvent = replyTo ?? selectedEvents.first;
       selectedEvents.clear();
     });
-    // #Pangea
-    clearSelectedEvents();
-    // Pangea
     inputFocus.requestFocus();
   }
 
@@ -1268,9 +1235,6 @@ class ChatController extends State<ChatPageWithRoom>
   }
 
   void pickEmojiReactionAction(Iterable<Event> allReactionEvents) async {
-    // #Pangea
-    MatrixState.pAnyState.closeAllOverlays();
-    // Pangea#
     _allReactionEvents = allReactionEvents;
     emojiPickerType = EmojiPickerType.reaction;
     setState(() => showEmojiPicker = true);
@@ -1294,15 +1258,9 @@ class ChatController extends State<ChatPageWithRoom>
       room.sendStoryGameReaction(event.eventId, emoji);
       // Pangea#
     }
-    // #Pangea
-    clearSelectedEvents();
-    // Pangea#
   }
 
   void clearSelectedEvents() => setState(() {
-        // #Pangea
-        MatrixState.pAnyState.closeAllOverlays();
-        // Pangea#
         selectedEvents.clear();
         showEmojiPicker = false;
       });
@@ -1539,12 +1497,8 @@ class ChatController extends State<ChatPageWithRoom>
   bool get isArchived =>
       {Membership.leave, Membership.ban}.contains(room.membership);
 
-  void showEventInfo([Event? event]) {
-    (event ?? selectedEvents.single).showInfoDialog(context);
-    // #Pangea
-    clearSelectedEvents();
-    // Pangea#
-  }
+  void showEventInfo([Event? event]) =>
+      (event ?? selectedEvents.single).showInfoDialog(context);
 
   void onPhoneButtonTap() async {
     // VoIP required Android SDK 21
@@ -1600,55 +1554,80 @@ class ChatController extends State<ChatPageWithRoom>
         editEvent = null;
       });
 
-// #Pangea
-  MessageTextSelection textSelection = MessageTextSelection();
+  // #Pangea
+  final Map<String, PangeaMessageEvent> _pangeaMessageEvents = {};
+  final Map<String, ToolbarDisplayController> _toolbarDisplayControllers = {};
 
-  void showToolbar(
-    PangeaMessageEvent pangeaMessageEvent, {
-    MessageMode? mode,
-  }) {
-    // select the message
-    onSelectMessage(pangeaMessageEvent.event);
-    HapticFeedback.mediumImpact();
-
-    // Close keyboard, if open
-    if (inputFocus.hasFocus && PlatformInfos.isMobile) {
-      inputFocus.unfocus();
-      return;
-    }
-    // Close emoji picker, if open
-    showEmojiPicker = false;
-
-    // Check if the user has set their languages. If not, prompt them to do so.
-    if (!MatrixState.pangeaController.languageController.languagesSet) {
-      pLanguageDialog(context, () {});
-      return;
-    }
-
-    Widget? overlayEntry;
-    try {
-      overlayEntry = MessageSelectionOverlay(
-        controller: this,
-        event: pangeaMessageEvent.event,
-        pangeaMessageEvent: pangeaMessageEvent,
-        textSelection: textSelection,
-      );
-    } catch (err) {
-      debugger(when: kDebugMode);
-      ErrorHandler.logError(e: err, s: StackTrace.current);
-      return;
-    }
-
-    OverlayUtil.showOverlay(
-      context: context,
-      child: overlayEntry,
-      transformTargetId: "",
-      backgroundColor: const Color.fromRGBO(0, 0, 0, 1).withAlpha(200),
-      closePrevOverlay:
-          MatrixState.pangeaController.subscriptionController.isSubscribed,
-      position: OverlayPositionEnum.centered,
-      onDismiss: clearSelectedEvents,
+  void setPangeaMessageEvent(String eventId) {
+    final Event? event = timeline!.events.firstWhereOrNull(
+      (e) => e.eventId == eventId,
     );
+    if (event == null || timeline == null) return;
+    _pangeaMessageEvents[eventId] = PangeaMessageEvent(
+      event: event,
+      timeline: timeline!,
+      ownMessage: event.senderId == room.client.userID,
+    );
+  }
+
+  void setToolbarDisplayController(
+    String eventId, {
+    Event? nextEvent,
+    Event? previousEvent,
+  }) {
+    final Event? event = timeline!.events.firstWhereOrNull(
+      (e) => e.eventId == eventId,
+    );
+    if (event == null || timeline == null) return;
+    if (_pangeaMessageEvents[eventId] == null) {
+      setPangeaMessageEvent(eventId);
+      if (_pangeaMessageEvents[eventId] == null) return;
+    }
+
+    try {
+      _toolbarDisplayControllers[eventId] = ToolbarDisplayController(
+        targetId: event.eventId,
+        pangeaMessageEvent: _pangeaMessageEvents[eventId]!,
+        immersionMode: choreographer.immersionMode,
+        controller: this,
+        nextEvent: nextEvent,
+        previousEvent: previousEvent,
+      );
+      _toolbarDisplayControllers[eventId]!.setToolbar();
+    } catch (e, s) {
+      ErrorHandler.logError(
+        e: e,
+        s: s,
+        m: "Failed to set toolbar display controller",
+        data: {
+          "eventId": eventId,
+          "event": event.toJson(),
+          "pangeaMessageEvent": _pangeaMessageEvents[eventId]?.toString(),
+        },
+      );
+    }
+  }
+
+  PangeaMessageEvent? getPangeaMessageEvent(String eventId) {
+    if (_pangeaMessageEvents[eventId] == null) {
+      setPangeaMessageEvent(eventId);
+    }
+    return _pangeaMessageEvents[eventId];
+  }
+
+  ToolbarDisplayController? getToolbarDisplayController(
+    String eventId, {
+    Event? nextEvent,
+    Event? previousEvent,
+  }) {
+    if (_toolbarDisplayControllers[eventId] == null) {
+      setToolbarDisplayController(
+        eventId,
+        nextEvent: nextEvent,
+        previousEvent: previousEvent,
+      );
+    }
+    return _toolbarDisplayControllers[eventId];
   }
   // Pangea#
 
