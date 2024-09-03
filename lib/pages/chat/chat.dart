@@ -22,6 +22,7 @@ import 'package:fluffychat/pangea/models/choreo_record.dart';
 import 'package:fluffychat/pangea/models/representation_content_model.dart';
 import 'package:fluffychat/pangea/models/tokens_event_content_model.dart';
 import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
+import 'package:fluffychat/pangea/pages/games/story_game/game_chat_details.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/utils/firebase_analytics.dart';
 import 'package:fluffychat/pangea/utils/overlay.dart';
@@ -1693,13 +1694,19 @@ class ChatController extends State<ChatPageWithRoom>
                       ),
                     ),
                   ),
-                  child: ChatDetails(
-                    roomId: roomId,
-                    embeddedCloseButton: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: toggleDisplayChatDetailsColumn,
-                    ),
-                  ),
+                  child:
+                      // #Pangea
+                      isStoryGameMode
+                          ? GameChatDetailsView(controller: this)
+                          :
+                          // Pangea#
+                          ChatDetails(
+                              roomId: roomId,
+                              embeddedCloseButton: IconButton(
+                                icon: const Icon(Icons.close),
+                                onPressed: toggleDisplayChatDetailsColumn,
+                              ),
+                            ),
                 );
               },
             ),
