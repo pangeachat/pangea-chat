@@ -3,15 +3,14 @@ import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
+import 'package:fluffychat/pangea/utils/any_state_holder.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_buttons.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_sent_by.dart';
-import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
 import 'package:fluffychat/utils/date_time_extension.dart';
 import 'package:fluffychat/utils/string_color.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
 import 'package:swipe_to_action/swipe_to_action.dart';
@@ -42,8 +41,8 @@ class Message extends StatelessWidget {
   final void Function()? resetAnimateIn;
   // #Pangea
   final bool immersionMode;
-  final bool definitions;
   final ChatController controller;
+  final bool isOverlay;
   // Pangea#
   final Color? avatarPresenceBackgroundColor;
 
@@ -66,21 +65,32 @@ class Message extends StatelessWidget {
     this.avatarPresenceBackgroundColor,
     // #Pangea
     required this.immersionMode,
-    required this.definitions,
     required this.controller,
+    this.isOverlay = false,
     // Pangea#
     super.key,
   });
 
   // #Pangea
-  PangeaMessageEvent? get pangeaMessageEvent =>
-      controller.getPangeaMessageEvent(event.eventId);
+  void showToolbar(PangeaMessageEvent? pangeaMessageEvent) {
+    if (pangeaMessageEvent != null && !isOverlay) {
+      controller.showToolbar(pangeaMessageEvent);
+    }
+  }
   // Pangea#
 
   @override
   Widget build(BuildContext context) {
     // #Pangea
     debugPrint('Message.build()');
+    PangeaMessageEvent? pangeaMessageEvent;
+    if (event.type == EventTypes.Message) {
+      pangeaMessageEvent = PangeaMessageEvent(
+        event: event,
+        timeline: timeline,
+        ownMessage: event.senderId == Matrix.of(context).client.userID,
+      );
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (controller.pangeaEditingEvent?.eventId == event.eventId) {
         pangeaMessageEvent?.updateLatestEdit();
@@ -118,7 +128,12 @@ class Message extends StatelessWidget {
     }
 
     final client = Matrix.of(context).client;
-    final ownMessage = event.senderId == client.userID;
+    // #Pangea
+    // final ownMessage = event.senderId == client.userID;
+    final ownMessage = controller.isStoryGameMode
+        ? controller.storyGameAlignment(event) == Alignment.topRight
+        : event.senderId == client.userID;
+    // Pangea#
 
     // #Pangea
     // final alignment = ownMessage ? Alignment.topRight : Alignment.topLeft;
@@ -211,21 +226,6 @@ class Message extends StatelessWidget {
           : Theme.of(context).colorScheme.primary;
     }
 
-    // #Pangea
-    ToolbarDisplayController? toolbarController;
-    if (event.type == EventTypes.Message &&
-        !event.redacted &&
-        (event.messageType == MessageTypes.Text ||
-            event.messageType == MessageTypes.Notice ||
-            event.messageType == MessageTypes.Audio)) {
-      toolbarController = controller.getToolbarDisplayController(
-        event.eventId,
-        nextEvent: nextEvent,
-        previousEvent: previousEvent,
-      );
-    }
-    // Pangea#
-
     final resetAnimateIn = this.resetAnimateIn;
     var animateIn = this.animateIn;
 
@@ -252,8 +252,11 @@ class Message extends StatelessWidget {
                       left: 0,
                       right: 0,
                       child: InkWell(
-                        onTap: () => onSelect(event),
-                        onLongPress: () => onSelect(event),
+                        // #Pangea
+                        onTap: controller.clearSelectedEvents,
+                        // onTap: () => onSelect(event),
+                        // onLongPress: () => onSelect(event),
+                        // Pangea#
                         borderRadius:
                             BorderRadius.circular(AppConfig.borderRadius / 2),
                         child: Material(
@@ -279,12 +282,17 @@ class Message extends StatelessWidget {
                       children: [
                         // #Pangea
                         if (controller.isStoryGameMode)
-                          alignment == Alignment.topLeft
+                          alignment == Alignment.topLeft && !isOverlay
                               ? controller.storyGameAvatar(
                                   event,
                                   nextEvent,
                                 )
-                              : const SizedBox.shrink()
+                              : isOverlay
+                                  ? const SizedBox(
+                                      height: Avatar.defaultSize,
+                                      width: Avatar.defaultSize,
+                                    )
+                                  : const SizedBox.shrink()
                         // if (longPressSelect)
                         else if (longPressSelect)
                           // Pangea#
@@ -343,7 +351,10 @@ class Message extends StatelessWidget {
                             // Pangea#
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              if (!nextEventSameSender)
+                              // #Pangea
+                              // if (!nextEventSameSender)
+                              if (!nextEventSameSender && !isOverlay)
+                                // Pangea#
                                 Padding(
                                   padding: const EdgeInsets.only(
                                     // #Pangea
@@ -352,7 +363,12 @@ class Message extends StatelessWidget {
                                     left: 8.0,
                                     bottom: 4,
                                   ),
-                                  child: ownMessage || event.room.isDirectChat
+                                  // #Pangea
+                                  // child: ownMessage || event.room.isDirectChat
+                                  child: (ownMessage ||
+                                              event.room.isDirectChat) &&
+                                          !controller.isStoryGameMode
+                                      // Pangea#
                                       ? const SizedBox(height: 12)
                                       : FutureBuilder<User?>(
                                           future: event.fetchSenderUser(),
@@ -401,18 +417,18 @@ class Message extends StatelessWidget {
                                 ),
                                 child: GestureDetector(
                                   // #Pangea
-                                  onTap: () => toolbarController?.showToolbar(
-                                    context,
-                                  ),
+                                  onTap: () => showToolbar(pangeaMessageEvent),
                                   onDoubleTap: () =>
-                                      toolbarController?.showToolbar(context),
+                                      showToolbar(pangeaMessageEvent),
+                                  onLongPress: () =>
+                                      showToolbar(pangeaMessageEvent),
+                                  // onLongPress: longPressSelect
+                                  //     ? null
+                                  //     : () {
+                                  //         HapticFeedback.heavyImpact();
+                                  //         onSelect(event);
+                                  //       },
                                   // Pangea#
-                                  onLongPress: longPressSelect
-                                      ? null
-                                      : () {
-                                          HapticFeedback.heavyImpact();
-                                          onSelect(event);
-                                        },
                                   child: AnimatedOpacity(
                                     opacity: animateIn
                                         ? 0
@@ -433,13 +449,21 @@ class Message extends StatelessWidget {
                                       ),
                                       // #Pangea
                                       child: CompositedTransformTarget(
-                                        link: MatrixState.pAnyState
-                                            .layerLinkAndKey(event.eventId)
-                                            .link,
+                                        link: isOverlay
+                                            ? LayerLinkAndKey('overlay_msg')
+                                                .link
+                                            : MatrixState.pAnyState
+                                                .layerLinkAndKey(event.eventId)
+                                                .link,
                                         child: Container(
-                                          key: MatrixState.pAnyState
-                                              .layerLinkAndKey(event.eventId)
-                                              .key,
+                                          key: isOverlay
+                                              ? LayerLinkAndKey('overlay_msg')
+                                                  .key
+                                              : MatrixState.pAnyState
+                                                  .layerLinkAndKey(
+                                                    event.eventId,
+                                                  )
+                                                  .key,
                                           // Pangea#
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.circular(
@@ -534,8 +558,8 @@ class Message extends StatelessWidget {
                                                 pangeaMessageEvent:
                                                     pangeaMessageEvent,
                                                 immersionMode: immersionMode,
-                                                toolbarController:
-                                                    toolbarController,
+                                                isOverlay: isOverlay,
+                                                controller: controller,
                                                 // Pangea#
                                               ),
                                               if (event.hasAggregatedEvents(
@@ -594,17 +618,23 @@ class Message extends StatelessWidget {
                                 ),
                               ),
                               // #Pangea
-                              MessageSentBy(event: event),
+                              if (!isOverlay) MessageSentBy(event: event),
                               // Pangea#
                             ],
                           ),
                         ),
                         // #Pangea
                         if (controller.isStoryGameMode &&
-                            alignment == Alignment.topRight)
+                            alignment == Alignment.topRight &&
+                            !isOverlay)
                           controller.storyGameAvatar(
                             event,
                             nextEvent,
+                          )
+                        else if (controller.isStoryGameMode && isOverlay)
+                          const SizedBox(
+                            height: Avatar.defaultSize,
+                            width: Avatar.defaultSize,
                           ),
                         // Pangea#
                       ],
@@ -630,7 +660,10 @@ class Message extends StatelessWidget {
         crossAxisAlignment:
             ownMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: <Widget>[
-          if (displayTime || selected)
+          // #Pangea
+          // if (displayTime || selected)
+          if ((displayTime || selected) && !isOverlay)
+            // Pangea#
             Padding(
               padding: displayTime
                   ? const EdgeInsets.symmetric(vertical: 8.0)
@@ -680,21 +713,18 @@ class Message extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment:
                           // #Pangea
-                          event.isNarratorMessage || event.isCandidateMessage
-                              ? MainAxisAlignment.center
-                              : controller.isStoryGameMode
-                                  ? alignment == Alignment.topRight
-                                      ? MainAxisAlignment.end
-                                      : MainAxisAlignment.start
-                                  :
-                                  // Pangea#
-                                  ownMessage
-                                      ? MainAxisAlignment.end
-                                      : MainAxisAlignment.start,
+                          controller.isStoryGameMode
+                              ? controller.storyGameMainAxisAlignment(event)
+                              :
+                              // Pangea#
+                              ownMessage
+                                  ? MainAxisAlignment.end
+                                  : MainAxisAlignment.start,
                       children: [
                         if (pangeaMessageEvent?.showMessageButtons ?? false)
                           MessageButtons(
-                            toolbarController: toolbarController,
+                            controller: controller,
+                            pangeaMessageEvent: pangeaMessageEvent!,
                           ),
                         MessageReactions(
                           event, timeline,
@@ -742,6 +772,10 @@ class Message extends StatelessWidget {
     } else {
       container = row;
     }
+
+    // #Pangea
+    container = Material(type: MaterialType.transparency, child: container);
+    // Pangea#
 
     return Center(
       child: Swipeable(
