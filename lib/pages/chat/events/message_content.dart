@@ -6,13 +6,13 @@ import 'package:fluffychat/pages/chat/events/video_player.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
 import 'package:fluffychat/pangea/utils/bot_style.dart';
+import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
 import 'package:fluffychat/pangea/widgets/igc/pangea_rich_text.dart';
 import 'package:fluffychat/utils/adaptive_bottom_sheet.dart';
 import 'package:fluffychat/utils/date_time_extension.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:matrix/matrix.dart';
@@ -217,6 +217,11 @@ class MessageContent extends StatelessWidget {
                 html: html,
                 textColor: textColor,
                 room: event.room,
+                // #Pangea
+                isOverlay: isOverlay,
+                controller: controller,
+                pangeaMessageEvent: pangeaMessageEvent,
+                // Pangea#
               );
             }
             // else we fall through to the normal message rendering
@@ -298,8 +303,8 @@ class MessageContent extends StatelessWidget {
             final bigEmotes = event.onlyEmotes &&
                 event.numberEmotes > 0 &&
                 event.numberEmotes <= 10;
+
             // #Pangea
-            // return Linkify(
             final messageTextStyle = TextStyle(
               overflow: TextOverflow.ellipsis,
               color: textColor,
@@ -327,52 +332,49 @@ class MessageContent extends StatelessWidget {
                 ),
               );
             }
+            // Pangea#
 
-            return SelectableLinkify(
-              onSelectionChanged: (selection, cause) {
-                if (isOverlay) {
-                  controller.textSelection.onTextSelection(selection);
-                }
-              },
-              onTap: () {
-                if (pangeaMessageEvent != null && !isOverlay) {
-                  HapticFeedback.mediumImpact();
-                  controller.showToolbar(pangeaMessageEvent!);
-                }
-              },
-              enableInteractiveSelection: isOverlay,
-              // Pangea#
-              text: event.calcLocalizedBodyFallback(
-                MatrixLocals(L10n.of(context)!),
-                hideReply: true,
+            return
+                // #Pangea
+                ToolbarSelectionArea(
+              controller: controller,
+              pangeaMessageEvent: pangeaMessageEvent,
+              isOverlay: isOverlay,
+              child:
+                  // Pangea#
+                  Linkify(
+                text: event.calcLocalizedBodyFallback(
+                  MatrixLocals(L10n.of(context)!),
+                  hideReply: true,
+                ),
+                // #Pangea
+                // style: TextStyle(
+                //   color: textColor,
+                //   fontSize: bigEmotes ? fontSize * 3 : fontSize,
+                //   decoration: event.redacted ? TextDecoration.lineThrough : null,
+                // ),
+                style: !event.isNarratorMessage && !event.isInstructions
+                    ? TextStyle(
+                        color: textColor,
+                        fontSize: bigEmotes ? fontSize * 3 : fontSize,
+                        decoration:
+                            event.redacted ? TextDecoration.lineThrough : null,
+                      )
+                    : BotStyle.text(
+                        context,
+                        big: true,
+                        italics: event.isNarratorMessage,
+                      ),
+                // Pangea#
+                options: const LinkifyOptions(humanize: false),
+                linkStyle: TextStyle(
+                  color: textColor.withAlpha(150),
+                  fontSize: bigEmotes ? fontSize * 3 : fontSize,
+                  decoration: TextDecoration.underline,
+                  decorationColor: textColor.withAlpha(150),
+                ),
+                onOpen: (url) => UrlLauncher(context, url.url).launchUrl(),
               ),
-              // #Pangea
-              // style: TextStyle(
-              //   color: textColor,
-              //   fontSize: bigEmotes ? fontSize * 3 : fontSize,
-              //   decoration: event.redacted ? TextDecoration.lineThrough : null,
-              // ),
-              style: !event.isNarratorMessage && !event.isInstructions
-                  ? TextStyle(
-                      color: textColor,
-                      fontSize: bigEmotes ? fontSize * 3 : fontSize,
-                      decoration:
-                          event.redacted ? TextDecoration.lineThrough : null,
-                    )
-                  : BotStyle.text(
-                      context,
-                      big: true,
-                      italics: event.isNarratorMessage,
-                    ),
-              // Pangea#
-              options: const LinkifyOptions(humanize: false),
-              linkStyle: TextStyle(
-                color: textColor.withAlpha(150),
-                fontSize: bigEmotes ? fontSize * 3 : fontSize,
-                decoration: TextDecoration.underline,
-                decorationColor: textColor.withAlpha(150),
-              ),
-              onOpen: (url) => UrlLauncher(context, url.url).launchUrl(),
             );
         }
       case EventTypes.CallInvite:
