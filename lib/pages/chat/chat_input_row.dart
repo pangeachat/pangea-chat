@@ -3,6 +3,7 @@ import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pages/chat/input_bar.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/send_button.dart';
 import 'package:fluffychat/pangea/constants/language_constants.dart';
+import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/matrix.dart';
@@ -33,9 +34,9 @@ class ChatInputRow extends StatelessWidget {
         controller.pangeaController.languageController.activeL2Model();
 
     String hintText() {
-      // if (controller.room.isJudging) {
-      //   return L10n.of(context)!.judgingHintText;
-      // }
+      if (controller.room.isJudging) {
+        return L10n.of(context)!.judgingHintText;
+      }
       if (controller.choreographer.itController.willOpen) {
         return L10n.of(context)!.buildTranslation;
       }
