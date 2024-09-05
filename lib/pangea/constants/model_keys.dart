@@ -139,7 +139,7 @@ class ModelKey {
   static const String character = "character";
   static const String votes = "voters";
   static const String isInstructions = "is_instructions";
-  // static const String judge = "judge";
+  static const String judge = "judge";
 
   // Settings States
   static const String delayBeforeNextRoundSeconds =
