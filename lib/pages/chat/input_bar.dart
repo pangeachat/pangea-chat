@@ -1,7 +1,6 @@
 import 'package:emojis/emoji.dart';
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pages/chat/command_hints.dart';
-import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/widgets/igc/pangea_text_controller.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/widgets/avatar.dart';
@@ -482,7 +481,7 @@ class InputBar extends StatelessWidget {
             key: controller?.choreographer.inputLayerLinkAndKey.key,
             // builder: (context, controller, focusNode) => TextField(
             builder: (context, _, focusNode) => TextField(
-              readOnly: room.isJudging,
+              // readOnly: room.isJudging,
               // Pangea#
               controller: controller,
               focusNode: focusNode,
