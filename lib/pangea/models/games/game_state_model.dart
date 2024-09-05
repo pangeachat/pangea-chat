@@ -106,6 +106,9 @@ class GameModel {
   final bool isGameEnd;
   final Map<String, int> playerScores;
   // final String? judge;
+  final DateTime? timerEnds;
+  final String? timerText;
+  final DateTime? timerStarts;
 
   // Settings States
   final int delayBeforeNextRoundSeconds;
@@ -136,6 +139,9 @@ class GameModel {
     this.failStateCharacterText,
     this.playerScores = const {},
     // this.judge,
+    this.timerEnds,
+    this.timerText,
+    this.timerStarts,
   });
 
   factory GameModel.fromJson(json) {
@@ -166,6 +172,13 @@ class GameModel {
           ? Map<String, int>.from(json[ModelKey.playerScores])
           : {},
       // judge: json[ModelKey.judge],
+      timerStarts: json[ModelKey.timerStarts] != null
+          ? DateTime.parse(json[ModelKey.timerStarts])
+          : null,
+      timerEnds: json[ModelKey.timerEnds] != null
+          ? DateTime.parse(json[ModelKey.timerEnds])
+          : null,
+      timerText: json[ModelKey.timerText],
     );
   }
 
@@ -189,6 +202,9 @@ class GameModel {
       data[ModelKey.failStateCharacterText] = failStateCharacterText;
       data[ModelKey.playerScores] = playerScores;
       // data[ModelKey.judge] = judge;
+      data[ModelKey.timerEnds] = timerEnds?.toIso8601String();
+      data[ModelKey.timerStarts] = timerStarts?.toIso8601String();
+      data[ModelKey.timerText] = timerText;
       return data;
     } catch (e, s) {
       debugger(when: kDebugMode);

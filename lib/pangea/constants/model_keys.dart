@@ -140,6 +140,9 @@ class ModelKey {
   static const String votes = "voters";
   static const String isInstructions = "is_instructions";
   // static const String judge = "judge";
+  static const String timerEnds = "timer_ends";
+  static const String timerText = "timer_text";
+  static const String timerStarts = "timer_starts";
 
   // Settings States
   static const String delayBeforeNextRoundSeconds =
