@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:collection/collection.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/constants/model_keys.dart';
@@ -111,15 +110,15 @@ class GameStateViewState extends State<GameStateView> {
           ? gameState.currentCharacter
           : null;
 
-  User? get judge => room.getParticipants().firstWhereOrNull(
-        (user) => user.id == gameState.judge,
-      );
+  // User? get judge => room.getParticipants().firstWhereOrNull(
+  //       (user) => user.id == gameState.judge,
+  //     );
 
   List<User> get players => room
       .getParticipants()
       .where(
-        (user) =>
-            user.id != BotName.byEnvironment && user.id != gameState.judge,
+        (user) => user.id != BotName.byEnvironment,
+        // && user.id != gameState.judge,
       )
       .toList();
 
@@ -167,53 +166,59 @@ class GameStateViewState extends State<GameStateView> {
             ],
           ),
           if (room.isActiveRound &&
-              gameState.judge != null &&
+              // gameState.judge != null &&
               players.isNotEmpty)
+            // Row(
+            //   crossAxisAlignment: CrossAxisAlignment.center,
+            //   children: [
+            //     Text(
+            //       L10n.of(context)!.judgeThisRound,
+            //       style: BotStyle.text(context),
+            //     ),
+            //     Padding(
+            //       padding: const EdgeInsets.all(2),
+            //       child: Tooltip(
+            //         message: judge?.calcDisplayname() ?? gameState.judge,
+            //         child: Avatar(
+            //           mxContent: judge?.avatarUrl,
+            //           name: judge?.calcDisplayname() ?? gameState.judge,
+            //           size: 24,
+            //           onTap: () {},
+            //         ),
+            //       ),
+            //     ),
+            //     const SizedBox(width: 16),
+            //     Text(
+            //       L10n.of(context)!.playersThisRound,
+            //       style: BotStyle.text(context),
+            //     ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  L10n.of(context)!.judgeThisRound,
-                  style: BotStyle.text(context),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(2),
-                  child: Tooltip(
-                    message: judge?.calcDisplayname() ?? gameState.judge,
-                    child: Avatar(
-                      mxContent: judge?.avatarUrl,
-                      name: judge?.calcDisplayname() ?? gameState.judge,
-                      size: 24,
-                      onTap: () {},
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Text(
-                  L10n.of(context)!.playersThisRound,
-                  style: BotStyle.text(context),
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: players
-                      .map(
-                        (user) => Padding(
-                          padding: const EdgeInsets.all(2),
-                          child: Tooltip(
-                            message: user.calcDisplayname(),
-                            child: Avatar(
-                              mxContent: user.avatarUrl,
-                              name: user.calcDisplayname(),
-                              size: 24,
-                              onTap: () {},
-                            ),
+              children: players
+                  .map(
+                    (user) => Padding(
+                      padding: const EdgeInsets.all(2),
+                      child: Tooltip(
+                        message: user.calcDisplayname(),
+                        child: AnimatedOpacity(
+                          duration: FluffyThemes.animationDuration,
+                          opacity:
+                              room.userHasVotedThisRound(user.id) ? 1 : 0.25,
+                          child: Avatar(
+                            mxContent: user.avatarUrl,
+                            name: user.calcDisplayname(),
+                            size: 24,
+                            onTap: () {},
                           ),
                         ),
-                      )
-                      .toList(),
-                ),
-              ],
+                      ),
+                    ),
+                  )
+                  .toList(),
             ),
+          //       ],
+          //     ),
+          // ],
         ],
       ),
     );

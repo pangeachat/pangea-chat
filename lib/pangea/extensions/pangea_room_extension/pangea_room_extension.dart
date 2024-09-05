@@ -347,8 +347,8 @@ extension PangeaRoom on Room {
         StoryGamePhase.endEndGame,
       ].contains(gameState.phase);
 
-  bool get isJudging =>
-      gameState.judge != null && gameState.judge == client.userID;
+  // bool get isJudging =>
+  //     gameState.judge != null && gameState.judge == client.userID;
 
   bool isEventVisibleInGame(Event event, Timeline timeline) {
     if (!{
