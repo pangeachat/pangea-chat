@@ -4168,5 +4168,6 @@
   "playersThisRound": "Players: ",
   "judgingHintText": "You're judging this round! Vote on the best answer from other players.",
   "translationChoicesBody": "Click and hold an option for a hint.",
-  "sendCanceled": "Sending canceled"
+  "sendCanceled": "Sending canceled",
+  "grammar": "Grammar"
 }

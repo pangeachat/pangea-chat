@@ -1,3 +1,5 @@
+import 'package:fluffychat/pangea/constants/analytics_constants.dart';
+
 enum ConstructTypeEnum {
   grammar,
   vocab,
@@ -16,6 +18,17 @@ extension ConstructExtension on ConstructTypeEnum {
         return 'morph';
       case ConstructTypeEnum.storySelection:
         return 'storySelection';
+    }
+  }
+
+  int get maxXPPerLemma {
+    switch (this) {
+      case ConstructTypeEnum.vocab:
+        return AnalyticsConstants.vocabUseMaxXP;
+      case ConstructTypeEnum.morph:
+        return AnalyticsConstants.morphUseMaxXP;
+      default:
+        return 0;
     }
   }
 }
