@@ -16,7 +16,6 @@ import 'package:fluffychat/pangea/controllers/permissions_controller.dart';
 import 'package:fluffychat/pangea/controllers/practice_activity_generation_controller.dart';
 import 'package:fluffychat/pangea/controllers/practice_activity_record_controller.dart';
 import 'package:fluffychat/pangea/controllers/speech_to_text_controller.dart';
-import 'package:fluffychat/pangea/controllers/story_game_controller.dart';
 import 'package:fluffychat/pangea/controllers/subscription_controller.dart';
 import 'package:fluffychat/pangea/controllers/text_to_speech_controller.dart';
 import 'package:fluffychat/pangea/controllers/user_controller.dart';
@@ -58,7 +57,7 @@ class PangeaController {
   late LanguageDetectionController languageDetection;
   late PracticeActivityRecordController activityRecordController;
   late PracticeGenerationController practiceGenerationController;
-  late StoryGameController storyGameController;
+  // late StoryGameController storyGameController;
 
   ///store Services
   late PStore pStoreService;
@@ -108,7 +107,7 @@ class PangeaController {
     languageDetection = LanguageDetectionController(this);
     activityRecordController = PracticeActivityRecordController(this);
     practiceGenerationController = PracticeGenerationController();
-    storyGameController = StoryGameController(this);
+    // storyGameController = StoryGameController(this);
     PAuthGaurd.pController = this;
   }
 
@@ -150,13 +149,13 @@ class PangeaController {
         // Reset cached analytics data
         myAnalytics.dispose();
         analytics.dispose();
-        storyGameController.dispose();
+        // storyGameController.dispose();
         break;
       case LoginState.loggedIn:
         // Initialize analytics data
         myAnalytics.initialize();
         analytics.initialize();
-        storyGameController.initialize();
+        // storyGameController.initialize();
         break;
     }
     if (state != LoginState.loggedIn) {
