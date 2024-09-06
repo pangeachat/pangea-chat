@@ -51,7 +51,7 @@ class GameStateViewState extends State<GameStateView> {
 
   void onGameStateUpdate({bool animate = true}) {
     setState(() {});
-    if (gameState.startTime != null && gameState.timerEnds != null) {
+    if (gameState.timerEnds != null) {
       timer?.cancel();
       timer = Timer.periodic(const Duration(seconds: 1), (Timer t) {
         if (gameState.timerEnds == null ||
@@ -75,8 +75,8 @@ class GameStateViewState extends State<GameStateView> {
   }
 
   String? get avatarName =>
-      room.isActiveRound && gameState.currentCharacter != ModelKey.narrator
-          ? gameState.currentCharacter
+      room.isActiveRound && gameState.playerCharacter != ModelKey.narrator
+          ? gameState.playerCharacter
           : null;
 
   // User? get judge => room.getParticipants().firstWhereOrNull(
@@ -138,7 +138,7 @@ class GameStateViewState extends State<GameStateView> {
                       //     : GameConstants.timerMaxSeconds,
                       timerStarts: gameState.timerStarts!,
                       timerEnds: gameState.timerEnds!,
-                      color: room.isBetweenRounds ? Colors.green : null,
+                      // color: room.isBetweenRounds ? Colors.green : null,
                     ),
             ],
           ),
@@ -171,27 +171,24 @@ class GameStateViewState extends State<GameStateView> {
             //     ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: players
-                  .map(
-                    (user) => Padding(
-                      padding: const EdgeInsets.all(2),
-                      child: Tooltip(
-                        message: user.calcDisplayname(),
-                        child: AnimatedOpacity(
-                          duration: FluffyThemes.animationDuration,
-                          opacity:
-                              room.userHasVotedThisRound(user.id) ? 1 : 0.25,
-                          child: Avatar(
-                            mxContent: user.avatarUrl,
-                            name: user.calcDisplayname(),
-                            size: 24,
-                            onTap: () {},
-                          ),
-                        ),
+              children: players.map((user) {
+                return Padding(
+                  padding: const EdgeInsets.all(2),
+                  child: Tooltip(
+                    message: user.calcDisplayname(),
+                    child: AnimatedOpacity(
+                      duration: FluffyThemes.animationDuration,
+                      opacity: room.userHasVotedThisRound(user.id) ? 1 : 0.25,
+                      child: Avatar(
+                        mxContent: user.avatarUrl,
+                        name: user.calcDisplayname(),
+                        size: 24,
+                        onTap: () {},
                       ),
                     ),
-                  )
-                  .toList(),
+                  ),
+                );
+              }).toList(),
             ),
           //       ],
           //     ),
