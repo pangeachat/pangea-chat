@@ -8,8 +8,6 @@ import 'package:fluffychat/pages/user_bottom_sheet/user_bottom_sheet.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/enum/instructions_enum.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
-import 'package:fluffychat/pangea/models/games/game_state_model.dart';
-import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
 import 'package:fluffychat/pangea/widgets/chat/locked_chat_message.dart';
 import 'package:fluffychat/utils/account_config.dart';
 import 'package:fluffychat/utils/adaptive_bottom_sheet.dart';
@@ -50,32 +48,18 @@ class ChatEventList extends StatelessWidget {
       (event) => event.type == PangeaEventTypes.storyGame,
     );
 
-    // get the time of the last beginProgressStory event
-    final lastStartTime = controller.timeline?.events
-        .firstWhereOrNull(
-          (event) =>
-              event.type == PangeaEventTypes.storyGame &&
-              GameModel.fromJson(event.content).phase ==
-                  StoryGamePhase.beginProgressStory,
-        )
-        ?.originServerTs;
-
-    // if there's a state event to insert into the timeline
     if (lastGameStateEvent != null) {
-      // if the 'player compete' part of the round has ended, insert the event at the bottom
-      if (controller.room.isAfterPlayerCompete) {
-        events.insert(0, lastGameStateEvent);
-      } else {
-        // otherwise, try to insert the event after the last event before startTime
+      final String? afterEventID =
+          controller.room.gameState.timerPositionAfterEventID;
+      if (afterEventID != null) {
         final index = events.indexWhere(
-          (event) =>
-              (lastStartTime != null &&
-                  event.originServerTs.isBefore(lastStartTime)) ||
-              event.isNarratorMessage,
+          (event) => event.eventId == afterEventID,
         );
         index != -1
             ? events.insert(index, lastGameStateEvent)
             : events.insert(0, lastGameStateEvent);
+      } else {
+        events.insert(0, lastGameStateEvent);
       }
     }
     // Pangea#
