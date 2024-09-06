@@ -3,7 +3,6 @@ import 'package:emojis/src/emoji.dart';
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/app_emojis.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
-import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
@@ -112,34 +111,33 @@ class ReactionsPicker extends StatelessWidget {
                             // #Pangea
                             // warning icon if the user has already voted this round
                             // and hasn't seen the voting warning yet
-                            Badge(
-                          offset: const Offset(-5, 5),
-                          backgroundColor: Colors.transparent,
-                          label:
-                              controller.room.shouldShowVoteWarning(emojis[i])
-                                  ? CircleAvatar(
-                                      radius: 10,
-                                      backgroundColor: Colors.red,
-                                      child: IconButton(
-                                        padding: EdgeInsets.zero,
-                                        icon: const Icon(
-                                          Icons.error_outline,
-                                          size: 15,
-                                        ),
-                                        onPressed: () {},
-                                      ),
-                                    )
-                                  : null,
-                          child:
-                              // Pangea#
-                              Container(
-                            width: 56,
-                            height: 56,
-                            alignment: Alignment.center,
-                            child: Text(
-                              emojis[i],
-                              style: const TextStyle(fontSize: 30),
-                            ),
+                            //   Badge(
+                            // offset: const Offset(-5, 5),
+                            // backgroundColor: Colors.transparent,
+                            // label:
+                            //     controller.room.shouldShowVoteWarning(emojis[i])
+                            //         ? CircleAvatar(
+                            //             radius: 10,
+                            //             backgroundColor: Colors.red,
+                            //             child: IconButton(
+                            //               padding: EdgeInsets.zero,
+                            //               icon: const Icon(
+                            //                 Icons.error_outline,
+                            //                 size: 15,
+                            //               ),
+                            //               onPressed: () {},
+                            //             ),
+                            //           )
+                            //         : null,
+                            // child:
+                            // Pangea#
+                            Container(
+                          width: 56,
+                          height: 56,
+                          alignment: Alignment.center,
+                          child: Text(
+                            emojis[i],
+                            style: const TextStyle(fontSize: 30),
                           ),
                         ),
                       ),
