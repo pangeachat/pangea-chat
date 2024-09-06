@@ -1,6 +1,5 @@
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:fluffychat/widgets/mxc_image.dart';
@@ -12,14 +11,14 @@ class MessageReactions extends StatelessWidget {
   final Event event;
   final Timeline timeline;
   // #Pangea
-  final Function(String eventID) showVoteWarning;
+  // final Function(String eventID) showVoteWarning;
   // Pangea#
 
   const MessageReactions(
     this.event,
     this.timeline,
     // #Pangea
-    this.showVoteWarning,
+    // this.showVoteWarning,
     // Pangea#
     {
     super.key,
@@ -52,28 +51,28 @@ class MessageReactions extends StatelessWidget {
     }
 
     // #Pangea
-    final shouldFilterVotes = event.room.isActiveRound &&
-        reactionMap.containsKey('👍') &&
-        reactionMap['👍']!.count > 0;
+    // final shouldFilterVotes = event.room.isActiveRound &&
+    //     reactionMap.containsKey('👍') &&
+    //     reactionMap['👍']!.count > 0;
 
-    if (shouldFilterVotes) {
-      final userReactors = reactionMap['👍']
-          ?.reactors
-          ?.where((user) => user.id == event.room.client.userID)
-          .toList();
+    // if (shouldFilterVotes) {
+    //   final userReactors = reactionMap['👍']
+    //       ?.reactors
+    //       ?.where((user) => user.id == event.room.client.userID)
+    //       .toList();
 
-      final bool userVoted = userReactors != null && userReactors.isNotEmpty;
-      if (userVoted) {
-        reactionMap['👍'] = _ReactionEntry(
-          key: '👍',
-          count: 1,
-          reacted: true,
-          reactors: userReactors,
-        );
-      } else {
-        reactionMap.remove('👍');
-      }
-    }
+    //   final bool userVoted = userReactors != null && userReactors.isNotEmpty;
+    //   if (userVoted) {
+    //     reactionMap['👍'] = _ReactionEntry(
+    //       key: '👍',
+    //       count: 1,
+    //       reacted: true,
+    //       reactors: userReactors,
+    //     );
+    //   } else {
+    //     reactionMap.remove('👍');
+    //   }
+    // }
     // Pangea#
 
     final reactionList = reactionMap.values.toList();
@@ -105,12 +104,12 @@ class MessageReactions extends StatelessWidget {
                 }
               } else {
                 // #Pangea
-                // event.room.sendReaction(event.eventId, r.key);
-                if (event.room.shouldShowVoteWarning(r.key)) {
-                  showVoteWarning(event.eventId);
-                } else {
-                  event.room.sendStoryGameReaction(event.eventId, r.key);
-                }
+                event.room.sendReaction(event.eventId, r.key);
+                // if (event.room.shouldShowVoteWarning(r.key)) {
+                //   showVoteWarning(event.eventId);
+                // } else {
+                //   event.room.sendStoryGameReaction(event.eventId, r.key);
+                // }
                 // Pangea#
               }
             },

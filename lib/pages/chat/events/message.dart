@@ -729,7 +729,7 @@ class Message extends StatelessWidget {
                         MessageReactions(
                           event, timeline,
                           // #Pangea
-                          controller.showVoteWarning,
+                          // controller.showVoteWarning,
                           // Pangea#
                         ),
                       ],

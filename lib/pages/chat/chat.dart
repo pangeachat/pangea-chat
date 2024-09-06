@@ -21,7 +21,6 @@ import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dar
 import 'package:fluffychat/pangea/models/choreo_record.dart';
 import 'package:fluffychat/pangea/models/representation_content_model.dart';
 import 'package:fluffychat/pangea/models/tokens_event_content_model.dart';
-import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/utils/firebase_analytics.dart';
 import 'package:fluffychat/pangea/utils/overlay.dart';
@@ -1278,20 +1277,20 @@ class ChatController extends State<ChatPageWithRoom>
 
   void sendEmojiAction(String? emoji) async {
     // #Pangea
-    if (room.shouldShowVoteWarning(emoji!)) {
-      showVoteWarning(selectedEvents.first.eventId);
-      return;
-    }
+    // if (room.shouldShowVoteWarning(emoji!)) {
+    //   showVoteWarning(selectedEvents.first.eventId);
+    //   return;
+    // }
     // Pangea#
     final events = List<Event>.from(selectedEvents);
     setState(() => selectedEvents.clear());
     for (final event in events) {
       // #Pangea
-      // await room.sendReaction(
-      //   event.eventId,
-      //   emoji!,
-      // );
-      room.sendStoryGameReaction(event.eventId, emoji);
+      await room.sendReaction(
+        event.eventId,
+        emoji!,
+      );
+      // room.sendStoryGameReaction(event.eventId, emoji);
       // Pangea#
     }
     // #Pangea
