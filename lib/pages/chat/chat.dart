@@ -1607,6 +1607,13 @@ class ChatController extends State<ChatPageWithRoom>
     Event? nextEvent,
     Event? prevEvent,
   }) {
+    if (![
+      MessageTypes.Text,
+      MessageTypes.Audio,
+    ].contains(pangeaMessageEvent.event.messageType)) {
+      return;
+    }
+
     // Close keyboard, if open
     if (inputFocus.hasFocus && PlatformInfos.isMobile) {
       inputFocus.unfocus();
