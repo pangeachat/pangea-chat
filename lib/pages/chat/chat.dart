@@ -1604,6 +1604,8 @@ class ChatController extends State<ChatPageWithRoom>
   void showToolbar(
     PangeaMessageEvent pangeaMessageEvent, {
     MessageMode? mode,
+    Event? nextEvent,
+    Event? prevEvent,
   }) {
     // Close keyboard, if open
     if (inputFocus.hasFocus && PlatformInfos.isMobile) {
@@ -1626,6 +1628,8 @@ class ChatController extends State<ChatPageWithRoom>
         event: pangeaMessageEvent.event,
         pangeaMessageEvent: pangeaMessageEvent,
         textSelection: textSelection,
+        nextEvent: nextEvent,
+        prevEvent: prevEvent,
       );
     } catch (err) {
       debugger(when: kDebugMode);
