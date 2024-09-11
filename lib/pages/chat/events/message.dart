@@ -4,6 +4,7 @@ import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
 import 'package:fluffychat/pangea/utils/any_state_holder.dart';
+import 'package:fluffychat/pangea/widgets/chat/game_state_view.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_buttons.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_sent_by.dart';
 import 'package:fluffychat/utils/date_time_extension.dart';
@@ -16,7 +17,6 @@ import 'package:matrix/matrix.dart';
 import 'package:swipe_to_action/swipe_to_action.dart';
 
 import '../../../config/app_config.dart';
-import '../../../pangea/widgets/chat/game_state_view.dart';
 import 'message_content.dart';
 import 'message_reactions.dart';
 import 'reply_content.dart';
@@ -285,31 +285,30 @@ class Message extends StatelessWidget {
                       mainAxisAlignment: rowMainAxisAlignment,
                       children: [
                         // #Pangea
-                        if (controller.isStoryGameMode)
+                        if (controller.isStoryGameMode && !isOverlay)
                           alignment == Alignment.topLeft && !isOverlay
                               ? controller.storyGameAvatar(
                                   event,
                                   nextEvent,
                                 )
-                              : isOverlay
-                                  ? const SizedBox(
-                                      height: Avatar.defaultSize,
-                                      width: Avatar.defaultSize,
-                                    )
-                                  : const SizedBox.shrink()
+                              : const SizedBox(
+                                  height: Avatar.defaultSize,
+                                  width: Avatar.defaultSize,
+                                )
+
                         // if (longPressSelect)
-                        else if (longPressSelect)
+                        //   SizedBox(
+                        //     height: 32,
+                        //     width: Avatar.defaultSize,
+                        //     child: Checkbox.adaptive(
+                        //       value: selected,
+                        //       shape: const CircleBorder(),
+                        //       onChanged: (_) => onSelect(event),
+                        //     ),
+                        //   )
+                        // else if (nextEventSameSender || ownMessage)
+                        else if (nextEventSameSender || ownMessage || isOverlay)
                           // Pangea#
-                          SizedBox(
-                            height: 32,
-                            width: Avatar.defaultSize,
-                            child: Checkbox.adaptive(
-                              value: selected,
-                              shape: const CircleBorder(),
-                              onChanged: (_) => onSelect(event),
-                            ),
-                          )
-                        else if (nextEventSameSender || ownMessage)
                           SizedBox(
                             width: Avatar.defaultSize,
                             child: Center(
@@ -634,7 +633,9 @@ class Message extends StatelessWidget {
                             event,
                             nextEvent,
                           )
-                        else if (controller.isStoryGameMode && isOverlay)
+                        else if (controller.isStoryGameMode &&
+                            alignment == Alignment.topRight &&
+                            isOverlay)
                           const SizedBox(
                             height: Avatar.defaultSize,
                             width: Avatar.defaultSize,
