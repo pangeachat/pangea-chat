@@ -23,7 +23,6 @@ class MessageSelectionOverlay extends StatefulWidget {
   final PangeaMessageEvent pangeaMessageEvent;
   final MessageMode? initialMode;
   final MessageTextSelection textSelection;
-  late MessageActivityController activityController;
 
   const MessageSelectionOverlay({
     required this.controller,
@@ -34,14 +33,7 @@ class MessageSelectionOverlay extends StatefulWidget {
     this.nextEvent,
     this.prevEvent,
     super.key,
-  }){
-    activityController = MessageActivityController(
-      controller: this,
-      pangeaController: Matrix.of(controller.context).pangeaController,
-      pangeaMessageEvent: pangeaMessageEvent,
-    );
-    // call fetch constructs here?
-  }
+  });
 
   @override
   MessageSelectionOverlayState createState() => MessageSelectionOverlayState();
@@ -51,6 +43,7 @@ class MessageSelectionOverlayState extends State<MessageSelectionOverlay>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   Animation<double>? _overlayPositionAnimation;
+  late MessageActivityController activityController;
 
   @override
   void initState() {
@@ -58,6 +51,11 @@ class MessageSelectionOverlayState extends State<MessageSelectionOverlay>
     _animationController = AnimationController(
       vsync: this,
       duration: FluffyThemes.animationDuration,
+    );
+
+    activityController = MessageActivityController(
+      controller: this,
+      pangeaMessageEvent: widget.pangeaMessageEvent,
     );
   }
 
