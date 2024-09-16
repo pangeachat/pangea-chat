@@ -27,7 +27,6 @@ import 'package:fluffychat/pangea/utils/firebase_analytics.dart';
 import 'package:fluffychat/pangea/utils/overlay.dart';
 import 'package:fluffychat/pangea/utils/report_message.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
-import 'package:fluffychat/pangea/widgets/chat/message_text_selection.dart';
 import 'package:fluffychat/pangea/widgets/igc/pangea_text_controller.dart';
 import 'package:fluffychat/pangea/widgets/user_settings/p_language_dialog.dart';
 import 'package:fluffychat/utils/error_reporter.dart';
@@ -1303,8 +1302,7 @@ class ChatController extends State<ChatPageWithRoom>
   /// text and selection stored for the text in that overlay
   void closeSelectionOverlay() {
     MatrixState.pAnyState.closeAllOverlays();
-    textSelection.clearMessageText();
-    textSelection.onSelection(null);
+    selectedTokenIndicies.clear();
   }
   // Pangea#
 
@@ -1610,8 +1608,6 @@ class ChatController extends State<ChatPageWithRoom>
       });
 
 // #Pangea
-  final textSelection = MessageTextSelection();
-
   void showToolbar(
     PangeaMessageEvent pangeaMessageEvent, {
     MessageMode? mode,
@@ -1646,7 +1642,6 @@ class ChatController extends State<ChatPageWithRoom>
         controller: this,
         event: pangeaMessageEvent.event,
         pangeaMessageEvent: pangeaMessageEvent,
-        textSelection: textSelection,
         nextEvent: nextEvent,
         prevEvent: prevEvent,
       );
@@ -1670,6 +1665,38 @@ class ChatController extends State<ChatPageWithRoom>
     // select the message
     onSelectMessage(pangeaMessageEvent.event);
     HapticFeedback.mediumImpact();
+  }
+
+  final List<int> selectedTokenIndicies = [];
+  void onClickOverlayMessageToken(
+    PangeaMessageEvent pangeaMessageEvent,
+    int tokenIndex,
+  ) {
+    if (pangeaMessageEvent.originalSent?.tokens == null ||
+        tokenIndex < 0 ||
+        tokenIndex >= pangeaMessageEvent.originalSent!.tokens!.length) {
+      selectedTokenIndicies.clear();
+      return;
+    }
+
+    // if there's stuff that's already selected, then we already ahve a sentence deselect
+    if (selectedTokenIndicies.isNotEmpty) {
+      final bool listContainedIndex =
+          selectedTokenIndicies.contains(tokenIndex);
+
+      selectedTokenIndicies.clear();
+      if (!listContainedIndex) {
+        selectedTokenIndicies.add(tokenIndex);
+      }
+    }
+
+    // TODO
+    // if this is already selected, see if there's sentnence and selelct that
+
+    // if nothing is select, select one token
+    else {
+      selectedTokenIndicies.add(tokenIndex);
+    }
   }
   // Pangea#
 

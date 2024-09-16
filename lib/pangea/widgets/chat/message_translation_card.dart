@@ -1,11 +1,9 @@
 import 'package:fluffychat/pangea/enum/instructions_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/representation_content_model.dart';
-import 'package:fluffychat/pangea/repo/full_text_translation_repo.dart';
 import 'package:fluffychat/pangea/utils/bot_style.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/utils/inline_tooltip.dart';
-import 'package:fluffychat/pangea/widgets/chat/message_text_selection.dart';
 import 'package:fluffychat/pangea/widgets/chat/toolbar_content_loading_indicator.dart';
 import 'package:fluffychat/pangea/widgets/igc/card_error_widget.dart';
 import 'package:fluffychat/widgets/matrix.dart';
@@ -14,13 +12,11 @@ import 'package:flutter/material.dart';
 class MessageTranslationCard extends StatefulWidget {
   final PangeaMessageEvent messageEvent;
   final bool immersionMode;
-  final MessageTextSelection selection;
 
   const MessageTranslationCard({
     super.key,
     required this.messageEvent,
     required this.immersionMode,
-    required this.selection,
   });
 
   @override
@@ -49,37 +45,6 @@ class MessageTranslationCardState extends State<MessageTranslationCard> {
     }
   }
 
-  Future<void> translateSelection() async {
-    if (widget.selection.selectedText == null ||
-        l1Code == null ||
-        l2Code == null ||
-        widget.selection.messageText == null) {
-      selectionTranslation = null;
-      return;
-    }
-
-    oldSelectedText = widget.selection.selectedText;
-    final String accessToken =
-        MatrixState.pangeaController.userController.accessToken;
-
-    final resp = await FullTextTranslationRepo.translate(
-      accessToken: accessToken,
-      request: FullTextTranslationRequestModel(
-        text: widget.selection.messageText!,
-        tgtLang: l1Code!,
-        userL1: l1Code!,
-        userL2: l2Code!,
-        srcLang: widget.messageEvent.messageDisplayLangCode,
-        length: widget.selection.selectedText!.length,
-        offset: widget.selection.offset,
-      ),
-    );
-
-    if (mounted) {
-      selectionTranslation = resp.bestTranslation;
-    }
-  }
-
   Future<void> loadTranslation(Future<void> Function() future) async {
     if (!mounted) return;
     setState(() => _fetchingRepresentation = true);
@@ -103,21 +68,8 @@ class MessageTranslationCardState extends State<MessageTranslationCard> {
   void initState() {
     super.initState();
     loadTranslation(() async {
-      final List<Future> futures = [];
-      futures.add(fetchRepresentation());
-      if (widget.selection.selectedText != null) {
-        futures.add(translateSelection());
-      }
-      await Future.wait(futures);
+      await fetchRepresentation();
     });
-  }
-
-  @override
-  void didUpdateWidget(covariant MessageTranslationCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldSelectedText != widget.selection.selectedText) {
-      loadTranslation(translateSelection);
-    }
   }
 
   void closeHint() {

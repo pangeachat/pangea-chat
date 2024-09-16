@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
@@ -8,25 +10,21 @@ import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dar
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_audio_card.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_speech_to_text_card.dart';
-import 'package:fluffychat/pangea/widgets/chat/message_text_selection.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_translation_card.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_unsubscribed_card.dart';
 import 'package:fluffychat/pangea/widgets/igc/word_data_card.dart';
 import 'package:fluffychat/pangea/widgets/practice_activity/practice_activity_card.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:matrix/matrix.dart';
 
 class MessageToolbar extends StatefulWidget {
-  final MessageTextSelection textSelection;
   final PangeaMessageEvent pangeaMessageEvent;
   final ChatController controller;
   final MessageMode? initialMode;
 
   const MessageToolbar({
     super.key,
-    required this.textSelection,
     required this.pangeaMessageEvent,
     required this.controller,
     this.initialMode,
@@ -40,7 +38,6 @@ class MessageToolbarState extends State<MessageToolbar> {
   Widget? toolbarContent;
   MessageMode? currentMode;
   bool updatingMode = false;
-  late StreamSubscription<String?> selectionStream;
 
   void updateMode(MessageMode newMode) {
     //Early exit from the function if the widget has been unmounted to prevent updates on an inactive widget.
@@ -119,7 +116,6 @@ class MessageToolbarState extends State<MessageToolbar> {
     toolbarContent = MessageTranslationCard(
       messageEvent: widget.pangeaMessageEvent,
       immersionMode: widget.controller.choreographer.immersionMode,
-      selection: widget.textSelection,
     );
   }
 
@@ -139,21 +135,7 @@ class MessageToolbarState extends State<MessageToolbar> {
 
   void showDefinition() {
     debugPrint("show definition");
-    if (widget.textSelection.selectedText == null ||
-        widget.textSelection.messageText == null ||
-        widget.textSelection.selectedText!.isEmpty) {
-      toolbarContent = const SelectToDefine();
-      return;
-    }
-
-    toolbarContent = WordDataCard(
-      word: widget.textSelection.selectedText!,
-      wordLang: widget.pangeaMessageEvent.messageDisplayLangCode,
-      fullText: widget.textSelection.messageText!,
-      fullTextLang: widget.pangeaMessageEvent.messageDisplayLangCode,
-      hasInfo: true,
-      room: widget.controller.room,
-    );
+    toolbarContent = const SelectToDefine();
   }
 
   void showPracticeActivity() {
@@ -169,7 +151,6 @@ class MessageToolbarState extends State<MessageToolbar> {
   @override
   void initState() {
     super.initState();
-    widget.textSelection.selectedText = null;
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (widget.pangeaMessageEvent.isAudioMessage) {
@@ -186,54 +167,15 @@ class MessageToolbarState extends State<MessageToolbar> {
             : updateMode(MessageMode.translation);
       }
     });
-
-    Timer? timer;
-    selectionStream =
-        widget.textSelection.selectionStream.stream.listen((value) {
-      timer?.cancel();
-      timer = Timer(const Duration(milliseconds: 500), () {
-        if (value != null && value.isNotEmpty) {
-          final MessageMode newMode = currentMode == MessageMode.definition
-              ? MessageMode.definition
-              : MessageMode.translation;
-          updateMode(newMode);
-        } else if (currentMode != null) {
-          updateMode(currentMode!);
-        }
-      });
-    });
   }
 
   @override
   void dispose() {
-    selectionStream.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final buttonRow = Row(
-      mainAxisSize: MainAxisSize.min,
-      children: MessageMode.values
-          .map(
-            (mode) => mode.isValidMode(widget.pangeaMessageEvent.event)
-                ? Tooltip(
-                    message: mode.tooltip(context),
-                    child: IconButton(
-                      icon: Icon(mode.icon),
-                      color: mode.iconColor(
-                        widget.pangeaMessageEvent,
-                        currentMode,
-                        context,
-                      ),
-                      onPressed: () => updateMode(mode),
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          )
-          .toList(),
-    );
-
     return Material(
       key: MatrixState.pAnyState
           .layerLinkAndKey('${widget.pangeaMessageEvent.eventId}-toolbar')
@@ -245,7 +187,7 @@ class MessageToolbarState extends State<MessageToolbar> {
           maxWidth: 275,
           minWidth: 275,
         ),
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           border: Border.all(
@@ -268,7 +210,7 @@ class MessageToolbarState extends State<MessageToolbar> {
                   ),
                 ),
               ),
-            buttonRow,
+            ToolbarButtons(controller: this, width: 250),
           ],
         ),
       ),
@@ -296,30 +238,127 @@ class ToolbarSelectionArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SelectionArea(
-      onSelectionChanged: (SelectedContent? selection) {
-        controller.textSelection.onSelection(selection?.plainText);
+    return GestureDetector(
+      onTap: () {
+        if (pangeaMessageEvent != null && !isOverlay) {
+          controller.showToolbar(
+            pangeaMessageEvent!,
+            nextEvent: nextEvent,
+            prevEvent: prevEvent,
+          );
+        }
       },
-      child: GestureDetector(
-        onTap: () {
-          if (pangeaMessageEvent != null && !isOverlay) {
-            controller.showToolbar(
-              pangeaMessageEvent!,
-              nextEvent: nextEvent,
-              prevEvent: prevEvent,
-            );
-          }
-        },
-        onLongPress: () {
-          if (pangeaMessageEvent != null && !isOverlay) {
-            controller.showToolbar(
-              pangeaMessageEvent!,
-              nextEvent: nextEvent,
-              prevEvent: prevEvent,
-            );
-          }
-        },
-        child: child,
+      onLongPress: () {
+        if (pangeaMessageEvent != null && !isOverlay) {
+          controller.showToolbar(
+            pangeaMessageEvent!,
+            nextEvent: nextEvent,
+            prevEvent: prevEvent,
+          );
+        }
+      },
+      child: child,
+    );
+  }
+}
+
+class ToolbarButtons extends StatefulWidget {
+  final MessageToolbarState controller;
+  final double width;
+
+  const ToolbarButtons({
+    required this.controller,
+    required this.width,
+    super.key,
+  });
+
+  @override
+  ToolbarButtonsState createState() => ToolbarButtonsState();
+}
+
+class ToolbarButtonsState extends State<ToolbarButtons> {
+  PangeaMessageEvent get pangeaMessageEvent =>
+      widget.controller.widget.pangeaMessageEvent;
+
+  List<MessageMode> get modes => MessageMode.values
+      .where((mode) => mode.isValidMode(pangeaMessageEvent.event))
+      .toList();
+
+  final iconWidth = 36.0;
+  int numActivitiesCompleted = 0;
+  double get progressWidth => widget.width / modes.length;
+
+  @override
+  void initState() {
+    // TODO replace with real data. This is just to demonstrate the animation
+    Timer.periodic(const Duration(seconds: 5), (Timer t) {
+      if (mounted) {
+        setState(() => numActivitiesCompleted++);
+      } else {
+        t.cancel();
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: widget.width,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Stack(
+            children: [
+              Container(
+                width: widget.width,
+                height: 12,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+                margin: EdgeInsets.symmetric(horizontal: iconWidth / 2),
+              ),
+              AnimatedContainer(
+                duration: FluffyThemes.animationDuration,
+                height: 12,
+                width: min(
+                  widget.width,
+                  progressWidth * numActivitiesCompleted,
+                ),
+                color: const Color.fromARGB(255, 0, 190, 83),
+                margin: EdgeInsets.symmetric(horizontal: iconWidth / 2),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: modes
+                .mapIndexed(
+                  (index, mode) => Tooltip(
+                    message: mode.tooltip(context),
+                    child: CircleAvatar(
+                      radius: iconWidth / 2,
+                      backgroundColor: mode.iconButtonColor(
+                        context,
+                        index,
+                        numActivitiesCompleted,
+                      ),
+                      child: Center(
+                        child: IconButton(
+                          iconSize: 20,
+                          icon: Icon(mode.icon),
+                          onPressed:
+                              mode.isUnlocked(index, numActivitiesCompleted)
+                                  ? () => widget.controller.updateMode(mode)
+                                  : null,
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+        ],
       ),
     );
   }

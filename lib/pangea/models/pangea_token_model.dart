@@ -67,6 +67,8 @@ class PangeaToken {
         'morph': morph,
       };
 
+  int get start => text.offset;
+
   int get end => text.offset + text.length;
 }
 

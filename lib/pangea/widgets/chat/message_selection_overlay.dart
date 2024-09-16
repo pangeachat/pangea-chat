@@ -6,7 +6,6 @@ import 'package:fluffychat/pages/chat/events/message.dart';
 import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_activity_controller.dart';
-import 'package:fluffychat/pangea/widgets/chat/message_text_selection.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
 import 'package:fluffychat/pangea/widgets/chat/overlay_footer.dart';
 import 'package:fluffychat/pangea/widgets/chat/overlay_header.dart';
@@ -22,13 +21,11 @@ class MessageSelectionOverlay extends StatefulWidget {
   final Event? prevEvent;
   final PangeaMessageEvent pangeaMessageEvent;
   final MessageMode? initialMode;
-  final MessageTextSelection textSelection;
 
   const MessageSelectionOverlay({
     required this.controller,
     required this.event,
     required this.pangeaMessageEvent,
-    required this.textSelection,
     this.initialMode,
     this.nextEvent,
     this.prevEvent,
@@ -179,7 +176,6 @@ class MessageSelectionOverlayState extends State<MessageSelectionOverlay>
                   child: MessageToolbar(
                     pangeaMessageEvent: widget.pangeaMessageEvent,
                     controller: widget.controller,
-                    textSelection: widget.textSelection,
                     initialMode: widget.initialMode,
                   ),
                 ),

@@ -4,6 +4,7 @@ import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pages/chat/events/video_player.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
+import 'package:fluffychat/pangea/widgets/chat/overlay_message_text.dart';
 import 'package:fluffychat/pangea/widgets/igc/pangea_rich_text.dart';
 import 'package:fluffychat/utils/adaptive_bottom_sheet.dart';
 import 'package:fluffychat/utils/date_time_extension.dart';
@@ -303,6 +304,14 @@ class MessageContent extends StatelessWidget {
               decoration: event.redacted ? TextDecoration.lineThrough : null,
               height: 1.3,
             );
+
+            if (isOverlay && pangeaMessageEvent != null) {
+              return OverlayMessageText(
+                pangeaMessageEvent: pangeaMessageEvent!,
+                controller: controller,
+              );
+            }
+
             if (immersionMode && pangeaMessageEvent != null) {
               return Flexible(
                 child: PangeaRichText(
@@ -311,15 +320,6 @@ class MessageContent extends StatelessWidget {
                   immersionMode: immersionMode,
                   isOverlay: isOverlay,
                   controller: controller,
-                ),
-              );
-            }
-
-            if (isOverlay) {
-              controller.textSelection.setMessageText(
-                event.calcLocalizedBodyFallback(
-                  MatrixLocals(L10n.of(context)!),
-                  hideReply: true,
                 ),
               );
             }
