@@ -5,6 +5,7 @@ import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pages/chat/events/message.dart';
 import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
+import 'package:fluffychat/pangea/widgets/chat/message_activity_controller.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_text_selection.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
 import 'package:fluffychat/pangea/widgets/chat/overlay_footer.dart';
@@ -22,6 +23,7 @@ class MessageSelectionOverlay extends StatefulWidget {
   final PangeaMessageEvent pangeaMessageEvent;
   final MessageMode? initialMode;
   final MessageTextSelection textSelection;
+  late MessageActivityController activityController;
 
   const MessageSelectionOverlay({
     required this.controller,
@@ -32,7 +34,14 @@ class MessageSelectionOverlay extends StatefulWidget {
     this.nextEvent,
     this.prevEvent,
     super.key,
-  });
+  }){
+    activityController = MessageActivityController(
+      controller: this,
+      pangeaController: Matrix.of(controller.context).pangeaController,
+      pangeaMessageEvent: pangeaMessageEvent,
+    );
+    // call fetch constructs here?
+  }
 
   @override
   MessageSelectionOverlayState createState() => MessageSelectionOverlayState();
