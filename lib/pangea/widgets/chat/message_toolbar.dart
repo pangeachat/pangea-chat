@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
@@ -7,8 +6,8 @@ import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
-import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_audio_card.dart';
+import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_speech_to_text_card.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_translation_card.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_unsubscribed_card.dart';
@@ -20,14 +19,12 @@ import 'package:matrix/matrix.dart';
 
 class MessageToolbar extends StatefulWidget {
   final PangeaMessageEvent pangeaMessageEvent;
-  final ChatController controller;
-  final MessageMode? initialMode;
+  final MessageOverlayController overLayController;
 
   const MessageToolbar({
     super.key,
     required this.pangeaMessageEvent,
-    required this.controller,
-    this.initialMode,
+    required this.overLayController,
   });
 
   @override
@@ -35,138 +32,104 @@ class MessageToolbar extends StatefulWidget {
 }
 
 class MessageToolbarState extends State<MessageToolbar> {
-  Widget? toolbarContent;
-  MessageMode? currentMode;
+  // Widget? toolbarContent;
   bool updatingMode = false;
-
-  void updateMode(MessageMode newMode) {
-    //Early exit from the function if the widget has been unmounted to prevent updates on an inactive widget.
-    if (!mounted) return;
-    if (updatingMode) return;
-    debugPrint("updating toolbar mode");
-    final bool subscribed =
-        MatrixState.pangeaController.subscriptionController.isSubscribed;
-
-    if (!newMode.isValidMode(widget.pangeaMessageEvent.event)) {
-      ErrorHandler.logError(
-        e: "Invalid mode for event",
-        s: StackTrace.current,
-        data: {
-          "newMode": newMode,
-          "event": widget.pangeaMessageEvent.event,
-        },
-      );
-      return;
-    }
-
-    // if there is an uncompleted activity, then show that
-    // we don't want the user to user the tools to get the answer :P
-    if (widget.pangeaMessageEvent.hasUncompletedActivity) {
-      newMode = MessageMode.practiceActivity;
-    }
-
-    if (mounted) {
-      setState(() {
-        currentMode = newMode;
-        updatingMode = true;
-      });
-    }
-
-    if (!subscribed) {
-      toolbarContent = MessageUnsubscribedCard(
-        languageTool: newMode.title(context),
-        mode: newMode,
-        controller: this,
-      );
-    } else {
-      switch (currentMode) {
-        case MessageMode.translation:
-          showTranslation();
-          break;
-        case MessageMode.textToSpeech:
-          showTextToSpeech();
-          break;
-        case MessageMode.speechToText:
-          showSpeechToText();
-          break;
-        case MessageMode.definition:
-          showDefinition();
-          break;
-        case MessageMode.practiceActivity:
-          showPracticeActivity();
-          break;
-        default:
-          ErrorHandler.logError(
-            e: "Invalid toolbar mode",
-            s: StackTrace.current,
-            data: {"newMode": newMode},
-          );
-          break;
-      }
-    }
-    if (mounted) {
-      setState(() {
-        updatingMode = false;
-      });
-    }
-  }
-
-  void showTranslation() {
-    debugPrint("show translation");
-    toolbarContent = MessageTranslationCard(
-      messageEvent: widget.pangeaMessageEvent,
-      immersionMode: widget.controller.choreographer.immersionMode,
-    );
-  }
-
-  void showTextToSpeech() {
-    debugPrint("show text to speech");
-    toolbarContent = MessageAudioCard(
-      messageEvent: widget.pangeaMessageEvent,
-    );
-  }
-
-  void showSpeechToText() {
-    debugPrint("show speech to text");
-    toolbarContent = MessageSpeechToTextCard(
-      messageEvent: widget.pangeaMessageEvent,
-    );
-  }
-
-  void showDefinition() {
-    debugPrint("show definition");
-    toolbarContent = const SelectToDefine();
-  }
-
-  void showPracticeActivity() {
-    toolbarContent = PracticeActivityCard(
-      pangeaMessageEvent: widget.pangeaMessageEvent,
-    );
-  }
-
-  void showImage() {}
-
-  void spellCheck() {}
 
   @override
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if (widget.pangeaMessageEvent.isAudioMessage) {
-        updateMode(MessageMode.speechToText);
-        return;
-      }
+    // why can't this just be initstate or the build mode?
+    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    //   //determine the starting mode
+    //   //   if (widget.pangeaMessageEvent.isAudioMessage) {
+    //   //     updateMode(MessageMode.speechToText);
+    //   //     return;
+    //   //   }
 
-      if (widget.initialMode != null) {
-        updateMode(widget.initialMode!);
-      } else {
-        MatrixState.pangeaController.userController.profile.userSettings
-                .autoPlayMessages
-            ? updateMode(MessageMode.textToSpeech)
-            : updateMode(MessageMode.translation);
-      }
-    });
+    //   //   if (widget.initialMode != null) {
+    //   //     updateMode(widget.initialMode!);
+    //   //   } else {
+    //   //     MatrixState.pangeaController.userController.profile.userSettings
+    //   //             .autoPlayMessages
+    //   //         ? updateMode(MessageMode.textToSpeech)
+    //   //         : updateMode(MessageMode.translation);
+    //   //   }
+    //   // });
+
+    //   // just set mode based on messageSelectionOverlay mode which is now handling the state
+    //   updateMode(widget.overLayController.toolbarMode);
+    // });
+  }
+
+  Widget get toolbarContent {
+    //Early exit from the function if the widget has been unmounted to prevent updates on an inactive widget.
+
+    // if (!mounted) return;
+    // if (updatingMode) return;
+    // debugPrint("updating toolbar mode");
+    final bool subscribed =
+        MatrixState.pangeaController.subscriptionController.isSubscribed;
+
+    // if there is an uncompleted activity, then show that
+    // we don't want the user to use the tools to get the answer :P
+    // if (widget.pangeaMessageEvent.hasUncompletedActivity) {
+    //   newMode = MessageMode.practiceActivity;
+    // }
+
+    // if (mounted) {
+    //   setState(() {
+    //     updatingMode = true;
+    //   });
+    // }
+
+    if (!subscribed) {
+      return MessageUnsubscribedCard(
+        languageTool: widget.overLayController.toolbarMode.title(context),
+        mode: widget.overLayController.toolbarMode,
+        controller: this,
+      );
+    }
+
+    switch (widget.overLayController.toolbarMode) {
+      case MessageMode.translation:
+        return MessageTranslationCard(
+          messageEvent: widget.pangeaMessageEvent,
+        );
+      // break;
+      case MessageMode.textToSpeech:
+        return MessageAudioCard(
+          messageEvent: widget.pangeaMessageEvent,
+        );
+      // break;
+      case MessageMode.speechToText:
+        return MessageSpeechToTextCard(
+          messageEvent: widget.pangeaMessageEvent,
+        );
+      // break;
+      case MessageMode.definition:
+        return const SelectToDefine();
+      // break;
+      case MessageMode.practiceActivity:
+        return PracticeActivityCard(
+          pangeaMessageEvent: widget.pangeaMessageEvent,
+          overlayController: widget.overLayController,
+        );
+      // break;
+      default:
+        throw Exception("Invalid toolbar mode");
+      // ErrorHandler.logError(
+      //   e: "Invalid toolbar mode",
+      //   s: StackTrace.current,
+      //   data: {"newMode": widget.overLayController.toolbarMode},
+      // );
+      // break;
+    }
+    // if (mounted) {
+    //   setState(() {
+    //     updatingMode = false;
+    //   });
+    // }
   }
 
   @override
@@ -201,16 +164,16 @@ class MessageToolbarState extends State<MessageToolbar> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (toolbarContent != null)
-              Flexible(
-                child: SingleChildScrollView(
-                  child: AnimatedSize(
-                    duration: FluffyThemes.animationDuration,
-                    child: toolbarContent,
-                  ),
+            // if (toolbarContent != null)
+            Flexible(
+              child: SingleChildScrollView(
+                child: AnimatedSize(
+                  duration: FluffyThemes.animationDuration,
+                  child: toolbarContent,
                 ),
               ),
-            ToolbarButtons(controller: this, width: 250),
+            ),
+            ToolbarButtons(messageToolbarController: this, width: 250),
           ],
         ),
       ),
@@ -263,11 +226,11 @@ class ToolbarSelectionArea extends StatelessWidget {
 }
 
 class ToolbarButtons extends StatefulWidget {
-  final MessageToolbarState controller;
+  final MessageToolbarState messageToolbarController;
   final double width;
 
   const ToolbarButtons({
-    required this.controller,
+    required this.messageToolbarController,
     required this.width,
     super.key,
   });
@@ -278,26 +241,25 @@ class ToolbarButtons extends StatefulWidget {
 
 class ToolbarButtonsState extends State<ToolbarButtons> {
   PangeaMessageEvent get pangeaMessageEvent =>
-      widget.controller.widget.pangeaMessageEvent;
+      widget.messageToolbarController.widget.pangeaMessageEvent;
 
   List<MessageMode> get modes => MessageMode.values
       .where((mode) => mode.isValidMode(pangeaMessageEvent.event))
       .toList();
 
-  final iconWidth = 36.0;
-  int numActivitiesCompleted = 0;
+  static const double iconWidth = 36.0;
   double get progressWidth => widget.width / modes.length;
+
+  // int numActivitiesCompleted = 0;
+  // @ggurdin Very confusing path. Seems begging for bugs. Any way to simplify this?
+  // int get numActivitiesCompleted => widget.messageToolbarController.widget.messageActivityController.numberOfActivitiesCompleted;
 
   @override
   void initState() {
-    // TODO replace with real data. This is just to demonstrate the animation
-    Timer.periodic(const Duration(seconds: 5), (Timer t) {
-      if (mounted) {
-        setState(() => numActivitiesCompleted++);
-      } else {
-        t.cancel();
-      }
-    });
+    // setState(() {
+    //   numActivitiesCompleted = widget.messageToolbarController.widget
+    //       .messageActivityController.numberOfActivitiesCompleted;
+    // });
     super.initState();
   }
 
@@ -316,17 +278,18 @@ class ToolbarButtonsState extends State<ToolbarButtons> {
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.secondary,
                 ),
-                margin: EdgeInsets.symmetric(horizontal: iconWidth / 2),
+                margin: const EdgeInsets.symmetric(horizontal: iconWidth / 2),
               ),
               AnimatedContainer(
                 duration: FluffyThemes.animationDuration,
                 height: 12,
                 width: min(
                   widget.width,
-                  progressWidth * numActivitiesCompleted,
+                  progressWidth *
+                      pangeaMessageEvent.numberOfActivitiesCompleted,
                 ),
                 color: const Color.fromARGB(255, 0, 190, 83),
-                margin: EdgeInsets.symmetric(horizontal: iconWidth / 2),
+                margin: const EdgeInsets.symmetric(horizontal: iconWidth / 2),
               ),
             ],
           ),
@@ -341,16 +304,22 @@ class ToolbarButtonsState extends State<ToolbarButtons> {
                       backgroundColor: mode.iconButtonColor(
                         context,
                         index,
-                        numActivitiesCompleted,
+                        widget.messageToolbarController.widget.overLayController
+                            .toolbarMode,
+                        pangeaMessageEvent.numberOfActivitiesCompleted,
                       ),
                       child: Center(
                         child: IconButton(
                           iconSize: 20,
                           icon: Icon(mode.icon),
-                          onPressed:
-                              mode.isUnlocked(index, numActivitiesCompleted)
-                                  ? () => widget.controller.updateMode(mode)
-                                  : null,
+                          onPressed: mode.isUnlocked(
+                            index,
+                            pangeaMessageEvent.numberOfActivitiesCompleted,
+                          )
+                              ? () => widget.messageToolbarController.widget
+                                  .overLayController
+                                  .updateToolbarMode(mode)
+                              : null,
                         ),
                       ),
                     ),

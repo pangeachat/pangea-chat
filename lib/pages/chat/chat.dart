@@ -1302,7 +1302,7 @@ class ChatController extends State<ChatPageWithRoom>
   /// text and selection stored for the text in that overlay
   void closeSelectionOverlay() {
     MatrixState.pAnyState.closeAllOverlays();
-    selectedTokenIndicies.clear();
+    // selectedTokenIndicies.clear();
   }
   // Pangea#
 
@@ -1667,38 +1667,38 @@ class ChatController extends State<ChatPageWithRoom>
     HapticFeedback.mediumImpact();
   }
 
-  final List<int> selectedTokenIndicies = [];
-  void onClickOverlayMessageToken(
-    PangeaMessageEvent pangeaMessageEvent,
-    int tokenIndex,
-  ) {
-    if (pangeaMessageEvent.originalSent?.tokens == null ||
-        tokenIndex < 0 ||
-        tokenIndex >= pangeaMessageEvent.originalSent!.tokens!.length) {
-      selectedTokenIndicies.clear();
-      return;
-    }
+  // final List<int> selectedTokenIndicies = [];
+  // void onClickOverlayMessageToken(
+  //   PangeaMessageEvent pangeaMessageEvent,
+  //   int tokenIndex,
+  // ) {
+  //   if (pangeaMessageEvent.originalSent?.tokens == null ||
+  //       tokenIndex < 0 ||
+  //       tokenIndex >= pangeaMessageEvent.originalSent!.tokens!.length) {
+  //     selectedTokenIndicies.clear();
+  //     return;
+  //   }
 
-    // if there's stuff that's already selected, then we already ahve a sentence deselect
-    if (selectedTokenIndicies.isNotEmpty) {
-      final bool listContainedIndex =
-          selectedTokenIndicies.contains(tokenIndex);
+  //   // if there's stuff that's already selected, then we already ahve a sentence deselect
+  //   if (selectedTokenIndicies.isNotEmpty) {
+  //     final bool listContainedIndex =
+  //         selectedTokenIndicies.contains(tokenIndex);
 
-      selectedTokenIndicies.clear();
-      if (!listContainedIndex) {
-        selectedTokenIndicies.add(tokenIndex);
-      }
-    }
+  //     selectedTokenIndicies.clear();
+  //     if (!listContainedIndex) {
+  //       selectedTokenIndicies.add(tokenIndex);
+  //     }
+  //   }
 
-    // TODO
-    // if this is already selected, see if there's sentnence and selelct that
+  //   // TODO
+  //   // if this is already selected, see if there's sentnence and selelct that
 
-    // if nothing is select, select one token
-    else {
-      selectedTokenIndicies.add(tokenIndex);
-    }
-  }
-  // Pangea#
+  //   // if nothing is select, select one token
+  //   else {
+  //     selectedTokenIndicies.add(tokenIndex);
+  //   }
+  // }
+  // // Pangea#
 
   late final ValueNotifier<bool> displayChatDetailsColumn;
 

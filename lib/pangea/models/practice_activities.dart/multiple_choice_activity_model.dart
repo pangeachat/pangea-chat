@@ -12,7 +12,7 @@ class MultipleChoice {
     required this.question,
     required this.choices,
     required this.answer,
-    this.spanDisplayDetails,
+    required this.spanDisplayDetails,
   });
 
   bool isCorrect(int index) => index == correctAnswerIndex;
@@ -27,13 +27,15 @@ class MultipleChoice {
       index == correctAnswerIndex ? AppConfig.success : AppConfig.warning;
 
   factory MultipleChoice.fromJson(Map<String, dynamic> json) {
+    final spanDisplay = json['span_display_details'] != null &&
+            json['span_display_details'] is Map
+        ? RelevantSpanDisplayDetails.fromJson(json['span_display_details'])
+        : null;
     return MultipleChoice(
       question: json['question'] as String,
       choices: (json['choices'] as List).map((e) => e as String).toList(),
       answer: json['answer'] ?? json['correct_answer'] as String,
-      spanDisplayDetails: json['span_display_details'] != null
-          ? RelevantSpanDisplayDetails.fromJson(json['span_display_details'])
-          : null,
+      spanDisplayDetails: spanDisplay,
     );
   }
 
@@ -42,7 +44,7 @@ class MultipleChoice {
       'question': question,
       'choices': choices,
       'answer': answer,
-      'span_display_details': spanDisplayDetails,
+      'span_display_details': spanDisplayDetails?.toJson(),
     };
   }
 }

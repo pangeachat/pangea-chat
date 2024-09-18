@@ -6,13 +6,13 @@ import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
 /// the process of filtering / sorting / displaying the events.
 /// Takes a construct type and a list of events
 class ConstructListModel {
-  final ConstructTypeEnum type;
+  final ConstructTypeEnum? type;
   final List<OneConstructUse> _uses;
 
   ConstructListModel({
     required this.type,
-    uses,
-  }) : _uses = uses ?? [];
+    required List<OneConstructUse> uses,
+  }) : _uses = uses;
 
   List<ConstructUses>? _constructs;
   List<ConstructUseTypeUses>? _typedConstructs;
@@ -40,7 +40,7 @@ class ConstructListModel {
           (entry) => ConstructUses(
             lemma: entry.key,
             uses: entry.value,
-            constructType: type,
+            constructType: entry.value.first.constructType,
           ),
         )
         .toList();
@@ -53,6 +53,12 @@ class ConstructListModel {
 
     _constructs = constructUses;
     return constructUses;
+  }
+
+  get maxXPPerLemma {
+    return type != null
+        ? type!.maxXPPerLemma
+        : ConstructTypeEnum.vocab.maxXPPerLemma;
   }
 
   /// A list of ConstructUseTypeUses, each of which
@@ -70,7 +76,7 @@ class ConstructListModel {
         typedConstructs.add(
           ConstructUseTypeUses(
             lemma: construct.lemma,
-            constructType: type,
+            constructType: typeEntry.value.first.constructType,
             useType: typeEntry.key,
             uses: typeEntry.value,
           ),
@@ -124,6 +130,16 @@ class ConstructUses {
       0,
       (total, use) => total + use.useType.pointValue,
     );
+  }
+
+  DateTime? _lastUsed;
+  DateTime? get lastUsed {
+    if (_lastUsed != null) return _lastUsed;
+    final lastUse = uses.fold<DateTime?>(null, (DateTime? last, use) {
+      if (last == null) return use.timeStamp;
+      return use.timeStamp.isAfter(last) ? use.timeStamp : last;
+    });
+    return _lastUsed = lastUse;
   }
 }
 

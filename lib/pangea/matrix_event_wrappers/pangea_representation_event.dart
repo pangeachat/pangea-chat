@@ -107,16 +107,23 @@ class RepresentationEvent {
 
     if (_event == null) {
       // debugger(when: kDebugMode);
-      // ErrorHandler.logError(
-      //   m: '_event and _tokens both null',
-      //   s: StackTrace.current,
-      // );
+      ErrorHandler.logError(
+        m: 'representation with no _event and no tokens got tokens directly. Bad.',
+        s: StackTrace.current,
+        data: {
+          'content': content.toJson(),
+          'event': _event?.toJson(),
+        },
+      );
       return null;
+      // return TokensRepo().getTokens(
+      //   text: text,
+      //   langCode: langCode,
+      // );
     }
 
     final Event? tokensEvent =
         await MatrixState.pangeaController.messageData.getTokenEvent(
-      context: context,
       repEventId: _event!.eventId,
       room: _event!.room,
       // Jordan - for just tokens, it's not clear which languages to pass

@@ -5,10 +5,10 @@ import 'package:matrix/matrix.dart';
 
 enum MessageMode {
   practiceActivity,
-  translation,
-  definition,
-  speechToText,
   textToSpeech,
+  definition,
+  translation,
+  speechToText,
 }
 
 extension MessageModeExtension on MessageMode {
@@ -88,14 +88,20 @@ extension MessageModeExtension on MessageMode {
   Color iconButtonColor(
     BuildContext context,
     int index,
+    MessageMode currentMode,
     int numActivitiesCompleted,
   ) {
-    if (this == MessageMode.practiceActivity) {
+    //locked
+    if (!isUnlocked(index, numActivitiesCompleted)) {
+      return Theme.of(context).colorScheme.secondary;
+    }
+
+    //unlocked and active
+    if (this == currentMode) {
       return Theme.of(context).colorScheme.onPrimary;
     }
 
-    return isUnlocked(index, numActivitiesCompleted)
-        ? Theme.of(context).colorScheme.primary
-        : Theme.of(context).colorScheme.secondary;
+    //unlocked and inactive
+    return Theme.of(context).colorScheme.primary;
   }
 }

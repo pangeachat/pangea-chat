@@ -11,12 +11,10 @@ import 'package:flutter/material.dart';
 
 class MessageTranslationCard extends StatefulWidget {
   final PangeaMessageEvent messageEvent;
-  final bool immersionMode;
 
   const MessageTranslationCard({
     super.key,
     required this.messageEvent,
-    required this.immersionMode,
   });
 
   @override

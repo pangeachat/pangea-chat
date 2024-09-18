@@ -573,6 +573,10 @@ class PangeaMessageEvent {
     return practiceActivities.any((activity) => !(activity.isComplete));
   }
 
+  int get numberOfActivitiesCompleted {
+    return practiceActivities.where((activity) => activity.isComplete).length;
+  }
+
   String? get l2Code =>
       MatrixState.pangeaController.languageController.activeL2Code();
 
@@ -637,6 +641,7 @@ class PangeaMessageEvent {
     String langCode, {
     bool debug = false,
   }) {
+    // @wcjord - disabled try catch for testing
     try {
       debugger(when: debug);
       final List<PracticeActivityEvent> activities = [];

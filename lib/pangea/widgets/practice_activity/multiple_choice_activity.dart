@@ -78,6 +78,10 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
           ? 1
           : 0,
     );
+    if (widget.controller.currentActivity!.practiceActivity.multipleChoice!
+        .isCorrect(index)) {
+      widget.controller.sendRecord();
+    }
     setState(() => selectedChoiceIndex = index);
   }
 

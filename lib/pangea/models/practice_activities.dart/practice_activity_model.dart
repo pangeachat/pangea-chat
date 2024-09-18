@@ -281,22 +281,6 @@ class PracticeActivityModel {
       'free_response': freeResponse?.toJson(),
     };
   }
-
-  RelevantSpanDisplayDetails? getRelevantSpanDisplayDetails() {
-    switch (activityType) {
-      case ActivityTypeEnum.multipleChoice:
-        return multipleChoice?.spanDisplayDetails;
-      case ActivityTypeEnum.listening:
-        return null;
-      case ActivityTypeEnum.speaking:
-        return null;
-      case ActivityTypeEnum.freeResponse:
-        return null;
-      default:
-        debugger(when: kDebugMode);
-        return null;
-    }
-  }
 }
 
 /// For those activities with a relevant span, this class will hold the details
@@ -332,7 +316,7 @@ class RelevantSpanDisplayDetails {
     return {
       'offset': offset,
       'length': length,
-      'display_instructions': displayInstructions,
+      'display_instructions': displayInstructions.string,
     };
   }
 }

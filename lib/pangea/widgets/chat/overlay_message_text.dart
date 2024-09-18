@@ -1,8 +1,8 @@
 import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
+import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/gestures.dart';
@@ -11,12 +11,12 @@ import 'package:flutter_gen/gen_l10n/l10n.dart';
 
 class OverlayMessageText extends StatefulWidget {
   final PangeaMessageEvent pangeaMessageEvent;
-  final ChatController controller;
+  final MessageOverlayController overlayController;
 
   const OverlayMessageText({
     super.key,
     required this.pangeaMessageEvent,
-    required this.controller,
+    required this.overlayController,
   });
 
   @override
@@ -43,6 +43,7 @@ class OverlayMessageTextState extends State<OverlayMessageText> {
 
   @override
   Widget build(BuildContext context) {
+    print("building OverlayMessageText");
     final theme = Theme.of(context);
     final ownMessage = widget.pangeaMessageEvent.event.senderId ==
         Matrix.of(context).client.userID;
@@ -93,12 +94,15 @@ class OverlayMessageTextState extends State<OverlayMessageText> {
       text: TextSpan(
         children: tokenPositions.map((tokenPosition) {
           if (tokenPosition.token != null) {
-            final isSelected = widget.controller.selectedTokenIndicies
+            final isSelected = widget.overlayController.selectedTokenIndicies
                 .contains(tokenPosition.tokenIndex);
             return TextSpan(
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
-                  widget.controller.onClickOverlayMessageToken(
+                  print(
+                    'tokenPosition.tokenIndex: ${tokenPosition.tokenIndex}',
+                  );
+                  widget.overlayController.onClickOverlayMessageToken(
                     widget.pangeaMessageEvent,
                     tokenPosition.tokenIndex,
                   );

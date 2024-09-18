@@ -5,7 +5,6 @@ import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pages/chat/events/message.dart';
 import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
-import 'package:fluffychat/pangea/widgets/chat/message_activity_controller.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
 import 'package:fluffychat/pangea/widgets/chat/overlay_footer.dart';
 import 'package:fluffychat/pangea/widgets/chat/overlay_header.dart';
@@ -20,27 +19,29 @@ class MessageSelectionOverlay extends StatefulWidget {
   final Event? nextEvent;
   final Event? prevEvent;
   final PangeaMessageEvent pangeaMessageEvent;
-  final MessageMode? initialMode;
 
   const MessageSelectionOverlay({
     required this.controller,
     required this.event,
     required this.pangeaMessageEvent,
-    this.initialMode,
     this.nextEvent,
     this.prevEvent,
     super.key,
   });
 
   @override
-  MessageSelectionOverlayState createState() => MessageSelectionOverlayState();
+  MessageOverlayController createState() => MessageOverlayController();
 }
 
-class MessageSelectionOverlayState extends State<MessageSelectionOverlay>
+class MessageOverlayController extends State<MessageSelectionOverlay>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   Animation<double>? _overlayPositionAnimation;
-  late MessageActivityController activityController;
+
+  MessageMode toolbarMode = MessageMode.translation;
+  final List<int> selectedTokenIndicies = [];
+
+  static const activitiesToComplete = 3;
 
   @override
   void initState() {
@@ -50,11 +51,67 @@ class MessageSelectionOverlayState extends State<MessageSelectionOverlay>
       duration: FluffyThemes.animationDuration,
     );
 
-    activityController = MessageActivityController(
-      controller: this,
-      pangeaMessageEvent: widget.pangeaMessageEvent,
-    );
+    setInitialToolbarMode();
   }
+
+  Future<void> setInitialToolbarMode() async {
+    if (activitiesLeftToComplete > 0) {
+      toolbarMode = MessageMode.practiceActivity;
+      return;
+    }
+
+    if (widget.pangeaMessageEvent.isAudioMessage) {
+      toolbarMode = MessageMode.speechToText;
+      return;
+    }
+
+    if (MatrixState.pangeaController.userController.profile.userSettings
+        .autoPlayMessages) {
+      toolbarMode = MessageMode.textToSpeech;
+      return;
+    }
+  }
+
+  updateToolbarMode(MessageMode mode) {
+    setState(() {
+      toolbarMode = mode;
+    });
+  }
+
+  void onClickOverlayMessageToken(
+    PangeaMessageEvent pangeaMessageEvent,
+    int tokenIndex,
+  ) {
+    if (pangeaMessageEvent.originalSent?.tokens == null ||
+        tokenIndex < 0 ||
+        tokenIndex >= pangeaMessageEvent.originalSent!.tokens!.length) {
+      selectedTokenIndicies.clear();
+      return;
+    }
+
+    // if there's stuff that's already selected, then we already ahve a sentence deselect
+    if (selectedTokenIndicies.isNotEmpty) {
+      final bool listContainedIndex =
+          selectedTokenIndicies.contains(tokenIndex);
+
+      selectedTokenIndicies.clear();
+      if (!listContainedIndex) {
+        selectedTokenIndicies.add(tokenIndex);
+      }
+    }
+
+    // TODO
+    // if this is already selected, see if there's sentnence and selelct that
+
+    // if nothing is select, select one token
+    else {
+      selectedTokenIndicies.add(tokenIndex);
+    }
+  }
+
+  int get activitiesLeftToComplete =>
+      activitiesToComplete -
+      widget.pangeaMessageEvent.numberOfActivitiesCompleted;
 
   @override
   void didChangeDependencies() {
@@ -175,8 +232,7 @@ class MessageSelectionOverlayState extends State<MessageSelectionOverlay>
                   ),
                   child: MessageToolbar(
                     pangeaMessageEvent: widget.pangeaMessageEvent,
-                    controller: widget.controller,
-                    initialMode: widget.initialMode,
+                    overLayController: this,
                   ),
                 ),
               ],
@@ -191,7 +247,7 @@ class MessageSelectionOverlayState extends State<MessageSelectionOverlay>
               immersionMode: widget.controller.choreographer.immersionMode,
               controller: widget.controller,
               timeline: widget.controller.timeline!,
-              isOverlay: true,
+              overlayController: this,
               animateIn: false,
               nextEvent: widget.nextEvent,
               previousEvent: widget.prevEvent,

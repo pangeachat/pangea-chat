@@ -5,7 +5,6 @@ import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_e
 import 'package:fluffychat/pangea/models/representation_content_model.dart';
 import 'package:fluffychat/pangea/models/tokens_event_content_model.dart';
 import 'package:fluffychat/pangea/repo/tokens_repo.dart';
-import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -51,7 +50,6 @@ class MessageDataController extends BaseController {
   }
 
   Future<Event?> _getTokenEvent({
-    required BuildContext context,
     required String repEventId,
     required TokensRequestModel req,
     required Room room,
@@ -87,7 +85,6 @@ class MessageDataController extends BaseController {
   }
 
   Future<Event?> getTokenEvent({
-    required BuildContext context,
     required String repEventId,
     required TokensRequestModel req,
     required Room room,
@@ -102,7 +99,6 @@ class MessageDataController extends BaseController {
         PangeaEventTypes.tokens,
         req.userL2,
         _getTokenEvent(
-          context: context,
           repEventId: repEventId,
           req: req,
           room: room,
