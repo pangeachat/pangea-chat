@@ -1,5 +1,8 @@
 import 'dart:developer';
 
+import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
+import 'package:fluffychat/pangea/models/practice_activities.dart/message_activity_request.dart';
+import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
 import 'package:flutter/foundation.dart';
 
 import '../constants/model_keys.dart';
@@ -23,6 +26,26 @@ class PangeaToken {
     required this.pos,
     required this.morph,
   });
+
+  static String reconstructText(List<PangeaToken> tokens, int start, int end) {
+    // calculate whitespace between tokens via difference in offsets and lengths
+
+    final List<PangeaToken> subset = tokens.where((PangeaToken token) {
+      return token.start >= start && token.end <= end;
+    }).toList();
+
+    final String reconstruction = subset.fold<String>(
+      subset.first.text.content,
+      (String previous, PangeaToken token) {
+        final int whitespaceLength =
+            token.start - (previous.length + previous.length);
+        final String whitespace = " " * whitespaceLength;
+        return previous + whitespace + token.text.content;
+      },
+    );
+
+    return reconstruction;
+  }
 
   static Lemma _getLemmas(String text, dynamic json) {
     if (json != null) {
@@ -70,6 +93,40 @@ class PangeaToken {
   int get start => text.offset;
 
   int get end => text.offset + text.length;
+
+  /// create an empty tokenWithXP object
+  TokenWithXP get emptyTokenWithXP {
+    final List<ConstructWithXP> constructs = [];
+
+    constructs.add(
+      ConstructWithXP(
+        id: ConstructIdentifier(
+          lemma: lemma.text,
+          type: ConstructTypeEnum.vocab,
+        ),
+        xp: 0,
+        lastUsed: null,
+      ),
+    );
+
+    for (final morph in morph.entries) {
+      constructs.add(
+        ConstructWithXP(
+          id: ConstructIdentifier(
+            lemma: morph.key,
+            type: ConstructTypeEnum.morph,
+          ),
+          xp: 0,
+          lastUsed: null,
+        ),
+      );
+    }
+
+    return TokenWithXP(
+      token: this,
+      constructs: constructs,
+    );
+  }
 }
 
 class PangeaTokenText {

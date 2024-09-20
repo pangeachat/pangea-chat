@@ -3,19 +3,19 @@ import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
 
 class ConstructWithXP {
-  final ConstructIdentifier construct;
-  final int xp;
+  final ConstructIdentifier id;
+  int xp;
   final DateTime? lastUsed;
 
   ConstructWithXP({
-    required this.construct,
+    required this.id,
     required this.xp,
     required this.lastUsed,
   });
 
   factory ConstructWithXP.fromJson(Map<String, dynamic> json) {
     return ConstructWithXP(
-      construct: ConstructIdentifier.fromJson(
+      id: ConstructIdentifier.fromJson(
         json['construct_id'] as Map<String, dynamic>,
       ),
       xp: json['xp'] as int,
@@ -27,7 +27,7 @@ class ConstructWithXP {
 
   Map<String, dynamic> toJson() {
     return {
-      'construct_id': construct.toJson(),
+      'construct_id': id.toJson(),
       'xp': xp,
       'last_used': lastUsed?.toIso8601String(),
     };
@@ -38,16 +38,15 @@ class TokenWithXP {
   final PangeaToken token;
   final List<ConstructWithXP> constructs;
 
-  DateTime get lastUsed {
-    return constructs.fold<DateTime>(
-      DateTime(0),
+  DateTime? get lastUsed {
+    return constructs.fold<DateTime?>(
+      null,
       (previousValue, element) {
-        if (element.lastUsed != null) {
-          return element.lastUsed!.isAfter(previousValue)
-              ? element.lastUsed!
-              : previousValue;
-        }
-        return previousValue;
+        if (previousValue == null) return element.lastUsed;
+        if (element.lastUsed == null) return previousValue;
+        return element.lastUsed!.isAfter(previousValue)
+            ? element.lastUsed
+            : previousValue;
       },
     );
   }

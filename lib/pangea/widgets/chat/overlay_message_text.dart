@@ -43,7 +43,6 @@ class OverlayMessageTextState extends State<OverlayMessageText> {
 
   @override
   Widget build(BuildContext context) {
-    print("building OverlayMessageText");
     final theme = Theme.of(context);
     final ownMessage = widget.pangeaMessageEvent.event.senderId ==
         Matrix.of(context).client.userID;

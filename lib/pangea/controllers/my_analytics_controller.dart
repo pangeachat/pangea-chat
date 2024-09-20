@@ -25,11 +25,11 @@ enum AnalyticsUpdateType { server, local }
 /// handles the processing of analytics for
 /// 1) messages sent by the user and
 /// 2) constructs used by the user, both in sending messages and doing practice activities
-class MyAnalyticsController extends BaseController {
+class MyAnalyticsController extends BaseController<AnalyticsStream> {
   late PangeaController _pangeaController;
   CachedStreamController<AnalyticsUpdateType> analyticsUpdateStream =
       CachedStreamController<AnalyticsUpdateType>();
-  StreamSubscription? _messageSendSubscription;
+  StreamSubscription<AnalyticsStream>? _messageSendSubscription;
   Timer? _updateTimer;
 
   Client get _client => _pangeaController.matrixState.client;
@@ -60,9 +60,8 @@ class MyAnalyticsController extends BaseController {
   void initialize() {
     // Listen to a stream that provides the eventIDs
     // of new messages sent by the logged in user
-    _messageSendSubscription ??= stateStream
-        .where((data) => data is Map)
-        .listen((data) => onMessageSent(data as Map<String, dynamic>));
+    _messageSendSubscription ??=
+        stateStream.listen((data) => onNewAnalyticsData(data));
 
     _refreshAnalyticsIfOutdated();
   }
@@ -103,73 +102,65 @@ class MyAnalyticsController extends BaseController {
     final DateTime yesterday = DateTime.now().subtract(_timeSinceUpdate);
     if (lastUpdated?.isBefore(yesterday) ?? true) {
       debugPrint("analytics out-of-date, updating");
-      await updateAnalytics();
+      await sendLocalAnalyticsToAnalyticsRoom();
     }
   }
 
   /// Given the data from a newly sent message, format and cache
   /// the message's construct data locally and reset the update timer
-  void onMessageSent(Map<String, dynamic> data) {
+  void onNewAnalyticsData(AnalyticsStream data) {
     // cancel the last timer that was set on message event and
     // reset it to fire after _minutesBeforeUpdate minutes
+    // debugger(when: kDebugMode);
+
     _updateTimer?.cancel();
     _updateTimer = Timer(Duration(minutes: _minutesBeforeUpdate), () {
       debugPrint("timer fired, updating analytics");
-      updateAnalytics();
+      sendLocalAnalyticsToAnalyticsRoom();
     });
-
-    // extract the relevant data about this message
-    final String? eventID = data['eventID'];
-    final String? roomID = data['roomID'];
-    final String? eventType = data['eventType'];
-    final PangeaRepresentation? originalSent = data['originalSent'];
-    final PangeaMessageTokens? tokensSent = data['tokensSent'];
-    final ChoreoRecord? choreo = data['choreo'];
-    final PracticeActivityEvent? practiceActivity = data['practiceActivity'];
-    final PracticeActivityRecordModel? recordModel = data['recordModel'];
-
-    if (roomID == null || eventID == null) return;
 
     // convert that data into construct uses and add it to the cache
     final metadata = ConstructUseMetaData(
-      roomId: roomID,
-      eventId: eventID,
+      roomId: data.roomId,
+      eventId: data.eventId,
       timeStamp: DateTime.now(),
     );
 
-    final List<OneConstructUse> constructs = getDraftUses(roomID);
+    final List<OneConstructUse> constructs = getDraftUses(data.roomId);
 
-    if (eventType == EventTypes.Message) {
-      final grammarConstructs =
-          choreo?.grammarConstructUses(metadata: metadata);
-      final vocabUses = tokensSent != null
-          ? originalSent?.vocabUses(
-              choreo: choreo,
-              tokens: tokensSent.tokens,
-              metadata: metadata,
-            )
-          : null;
+    if (data.eventType == EventTypes.Message) {
       constructs.addAll([
-        ...(grammarConstructs ?? []),
-        ...(vocabUses ?? []),
+        ...(data.choreo!.grammarConstructUses(metadata: metadata)),
+        ...(data.originalSent!.vocabUses(
+          choreo: data.choreo,
+          tokens: data.tokensSent!.tokens,
+          metadata: metadata,
+        )),
       ]);
-    }
-
-    if (eventType == PangeaEventTypes.activityRecord &&
-        practiceActivity != null) {
-      final activityConstructs = recordModel?.uses(
-        practiceActivity,
+    } else if (data.eventType == PangeaEventTypes.activityRecord &&
+        data.practiceActivity != null) {
+      final activityConstructs = data.recordModel!.uses(
+        data.practiceActivity!,
         metadata: metadata,
       );
-      constructs.addAll(activityConstructs ?? []);
+      constructs.addAll(activityConstructs);
+    } else {
+      throw PangeaWarningError("Invalid event type for analytics stream");
     }
+
+    final String eventID = data.eventId;
+    final String roomID = data.roomId;
 
     _pangeaController.analytics
         .filterConstructs(unfilteredConstructs: constructs)
         .then((filtered) {
       if (filtered.isEmpty) return;
-      filtered.addAll(getDraftUses(roomID));
+
+      // @ggurdin - are we sure this isn't happening twice? it's also above
+      filtered.addAll(getDraftUses(data.roomId));
+
       final level = _pangeaController.analytics.level;
+
       addLocalMessage(eventID, filtered).then(
         (_) {
           clearDraftUses(roomID);
@@ -262,13 +253,13 @@ class MyAnalyticsController extends BaseController {
     if (_pangeaController.analytics.messagesSinceUpdate.length >
         _maxMessagesCached) {
       debugPrint("reached max messages, updating");
-      updateAnalytics();
+      sendLocalAnalyticsToAnalyticsRoom();
       return;
     }
 
     final int newLevel = _pangeaController.analytics.level;
     newLevel > prevLevel
-        ? updateAnalytics()
+        ? sendLocalAnalyticsToAnalyticsRoom()
         : analyticsUpdateStream.add(AnalyticsUpdateType.local);
   }
 
@@ -302,7 +293,7 @@ class MyAnalyticsController extends BaseController {
   /// for the completion of the previous update and returns. Otherwise, it creates a new [_updateCompleter] and
   /// proceeds with the update process. If the update is successful, it clears any messages that were received
   /// since the last update and notifies the [analyticsUpdateStream].
-  Future<void> updateAnalytics() async {
+  Future<void> sendLocalAnalyticsToAnalyticsRoom() async {
     if (_pangeaController.matrixState.client.userID == null) return;
     if (!(_updateCompleter?.isCompleted ?? true)) {
       await _updateCompleter!.future;
@@ -345,6 +336,49 @@ class MyAnalyticsController extends BaseController {
     // and send cached analytics data to the room
     await analyticsRoom?.sendConstructsEvent(
       _pangeaController.analytics.locallyCachedSentConstructs,
+    );
+  }
+}
+
+class AnalyticsStream {
+  final String eventId;
+  final String eventType;
+  final String roomId;
+
+  /// if the event is a message, the original message sent
+  final PangeaRepresentation? originalSent;
+
+  /// if the event is a message, the tokens sent
+  final PangeaMessageTokens? tokensSent;
+
+  /// if the event is a message, the choreo record
+  final ChoreoRecord? choreo;
+
+  /// if the event is a practice activity, the practice activity event
+  final PracticeActivityEvent? practiceActivity;
+
+  /// if the event is a practice activity, the record model
+  final PracticeActivityRecordModel? recordModel;
+
+  AnalyticsStream({
+    required this.eventId,
+    required this.eventType,
+    required this.roomId,
+    this.originalSent,
+    this.tokensSent,
+    this.choreo,
+    this.practiceActivity,
+    this.recordModel,
+  }) {
+    assert(
+      (originalSent != null && tokensSent != null && choreo != null) ||
+          (practiceActivity != null && recordModel != null),
+      "Either a message or a practice activity must be provided",
+    );
+
+    assert(
+      eventType == EventTypes.Message ||
+          eventType == PangeaEventTypes.activityRecord,
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
@@ -6,6 +7,7 @@ import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
+import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_audio_card.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_speech_to_text_card.dart';
@@ -14,6 +16,7 @@ import 'package:fluffychat/pangea/widgets/chat/message_unsubscribed_card.dart';
 import 'package:fluffychat/pangea/widgets/igc/word_data_card.dart';
 import 'package:fluffychat/pangea/widgets/practice_activity/practice_activity_card.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
@@ -32,7 +35,6 @@ class MessageToolbar extends StatefulWidget {
 }
 
 class MessageToolbarState extends State<MessageToolbar> {
-  // Widget? toolbarContent;
   bool updatingMode = false;
 
   @override
@@ -63,25 +65,8 @@ class MessageToolbarState extends State<MessageToolbar> {
   }
 
   Widget get toolbarContent {
-    //Early exit from the function if the widget has been unmounted to prevent updates on an inactive widget.
-
-    // if (!mounted) return;
-    // if (updatingMode) return;
-    // debugPrint("updating toolbar mode");
     final bool subscribed =
         MatrixState.pangeaController.subscriptionController.isSubscribed;
-
-    // if there is an uncompleted activity, then show that
-    // we don't want the user to use the tools to get the answer :P
-    // if (widget.pangeaMessageEvent.hasUncompletedActivity) {
-    //   newMode = MessageMode.practiceActivity;
-    // }
-
-    // if (mounted) {
-    //   setState(() {
-    //     updatingMode = true;
-    //   });
-    // }
 
     if (!subscribed) {
       return MessageUnsubscribedCard(
@@ -96,40 +81,48 @@ class MessageToolbarState extends State<MessageToolbar> {
         return MessageTranslationCard(
           messageEvent: widget.pangeaMessageEvent,
         );
-      // break;
       case MessageMode.textToSpeech:
         return MessageAudioCard(
           messageEvent: widget.pangeaMessageEvent,
         );
-      // break;
       case MessageMode.speechToText:
         return MessageSpeechToTextCard(
           messageEvent: widget.pangeaMessageEvent,
         );
-      // break;
       case MessageMode.definition:
-        return const SelectToDefine();
-      // break;
+        if (widget.overLayController.selectedTokenIndicies.length != 1) {
+          return const SelectToDefine();
+        } else {
+          WordDataCard(
+            word: widget.overLayController.selectedText,
+            wordLang: widget.pangeaMessageEvent.messageDisplayLangCode,
+            fullText: widget.pangeaMessageEvent.messageDisplayText,
+            fullTextLang: widget.pangeaMessageEvent.messageDisplayLangCode,
+            hasInfo: true,
+            room: widget.overLayController.widget.chatController.room,
+          );
+        }
       case MessageMode.practiceActivity:
         return PracticeActivityCard(
           pangeaMessageEvent: widget.pangeaMessageEvent,
           overlayController: widget.overLayController,
         );
-      // break;
       default:
-        throw Exception("Invalid toolbar mode");
-      // ErrorHandler.logError(
-      //   e: "Invalid toolbar mode",
-      //   s: StackTrace.current,
-      //   data: {"newMode": widget.overLayController.toolbarMode},
-      // );
-      // break;
+        debugger(when: kDebugMode);
+        ErrorHandler.logError(
+          e: "Invalid toolbar mode",
+          s: StackTrace.current,
+          data: {"newMode": widget.overLayController.toolbarMode},
+        );
+        return const SizedBox();
     }
-    // if (mounted) {
-    //   setState(() {
-    //     updatingMode = false;
-    //   });
-    // }
+
+    ErrorHandler.logError(
+      e: "Invalid toolbar mode",
+      s: StackTrace.current,
+      data: {"newMode": widget.overLayController.toolbarMode},
+    );
+    return const SizedBox();
   }
 
   @override
@@ -164,7 +157,6 @@ class MessageToolbarState extends State<MessageToolbar> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // if (toolbarContent != null)
             Flexible(
               child: SingleChildScrollView(
                 child: AnimatedSize(

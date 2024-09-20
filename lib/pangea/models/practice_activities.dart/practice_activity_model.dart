@@ -35,6 +35,21 @@ class ConstructIdentifier {
       'type': type.string,
     };
   }
+
+  // override operator == and hashCode
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is ConstructIdentifier &&
+        other.lemma == lemma &&
+        other.type == type;
+  }
+
+  @override
+  int get hashCode {
+    return lemma.hashCode ^ type.hashCode;
+  }
 }
 
 class CandidateMessage {
@@ -269,6 +284,8 @@ class PracticeActivityModel {
     );
   }
 
+  RelevantSpanDisplayDetails? get relevantSpanDisplayDetails =>
+      multipleChoice?.spanDisplayDetails;
   Map<String, dynamic> toJson() {
     return {
       'tgt_constructs': tgtConstructs.map((e) => e.toJson()).toList(),
@@ -280,6 +297,34 @@ class PracticeActivityModel {
       'speaking': speaking?.toJson(),
       'free_response': freeResponse?.toJson(),
     };
+  }
+
+  // override operator == and hashCode
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is PracticeActivityModel &&
+        const ListEquality().equals(other.tgtConstructs, tgtConstructs) &&
+        other.langCode == langCode &&
+        other.msgId == msgId &&
+        other.activityType == activityType &&
+        other.multipleChoice == multipleChoice &&
+        other.listening == listening &&
+        other.speaking == speaking &&
+        other.freeResponse == freeResponse;
+  }
+
+  @override
+  int get hashCode {
+    return const ListEquality().hash(tgtConstructs) ^
+        langCode.hashCode ^
+        msgId.hashCode ^
+        activityType.hashCode ^
+        multipleChoice.hashCode ^
+        listening.hashCode ^
+        speaking.hashCode ^
+        freeResponse.hashCode;
   }
 }
 
@@ -318,5 +363,21 @@ class RelevantSpanDisplayDetails {
       'length': length,
       'display_instructions': displayInstructions.string,
     };
+  }
+
+  // override operator == and hashCode
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is RelevantSpanDisplayDetails &&
+        other.offset == offset &&
+        other.length == length &&
+        other.displayInstructions == displayInstructions;
+  }
+
+  @override
+  int get hashCode {
+    return offset.hashCode ^ length.hashCode ^ displayInstructions.hashCode;
   }
 }

@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class MultipleChoice {
@@ -15,7 +18,15 @@ class MultipleChoice {
     required this.spanDisplayDetails,
   });
 
-  bool isCorrect(int index) => index == correctAnswerIndex;
+  /// we've had some bugs where the index is not expected
+  /// so we're going to check if the index or the value is correct
+  /// and if not, we'll investigate
+  bool isCorrect(String value, int index) {
+    if (value != choices[index]) {
+      debugger(when: kDebugMode);
+    }
+    return value == answer || index == correctAnswerIndex;
+  }
 
   bool get isValidQuestion => choices.contains(answer);
 

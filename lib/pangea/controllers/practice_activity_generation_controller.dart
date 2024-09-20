@@ -84,7 +84,6 @@ class PracticeGenerationController {
       choreoApiKey: Environment.choreoApiKey,
       accessToken: accessToken,
     );
-
     final Response res = await request.post(
       url: PApiUrls.messageActivityGeneration,
       body: requestModel.toJson(),

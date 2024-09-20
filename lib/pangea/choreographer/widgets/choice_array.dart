@@ -8,11 +8,13 @@ import 'package:flutter_gen/gen_l10n/l10n.dart';
 import '../../utils/bot_style.dart';
 import 'it_shimmer.dart';
 
+typedef ChoiceCallback = void Function(String value, int index);
+
 class ChoicesArray extends StatefulWidget {
   final bool isLoading;
   final List<Choice>? choices;
-  final void Function(int) onPressed;
-  final void Function(int)? onLongPress;
+  final ChoiceCallback onPressed;
+  final ChoiceCallback? onLongPress;
   final int? selectedChoiceIndex;
   final String originalSpan;
   final String Function(int) uniqueKeyForLayerLink;
@@ -71,7 +73,9 @@ class ChoicesArrayState extends State<ChoicesArray> {
                         theme: theme,
                         onLongPress:
                             widget.isActive ? widget.onLongPress : null,
-                        onPressed: widget.isActive ? widget.onPressed : (_) {},
+                        onPressed: widget.isActive
+                            ? widget.onPressed
+                            : (String value, int index) {},
                         entry: entry,
                         interactionDisabled: interactionDisabled,
                         enableInteraction: enableInteractions,
@@ -112,8 +116,8 @@ class ChoiceItem extends StatelessWidget {
 
   final MapEntry<int, Choice> entry;
   final ThemeData theme;
-  final void Function(int p1)? onLongPress;
-  final void Function(int p1) onPressed;
+  final ChoiceCallback? onLongPress;
+  final ChoiceCallback onPressed;
   final bool isSelected;
   final bool interactionDisabled;
   final VoidCallback enableInteraction;
@@ -167,10 +171,11 @@ class ChoiceItem extends StatelessWidget {
                 ),
               ),
               onLongPress: onLongPress != null && !interactionDisabled
-                  ? () => onLongPress!(entry.key)
+                  ? () => onLongPress!(entry.value.text, entry.key)
                   : null,
-              onPressed:
-                  interactionDisabled ? null : () => onPressed(entry.key),
+              onPressed: interactionDisabled
+                  ? null
+                  : () => onPressed(entry.value.text, entry.key),
               child: Text(
                 entry.value.text,
                 style: BotStyle.text(context),

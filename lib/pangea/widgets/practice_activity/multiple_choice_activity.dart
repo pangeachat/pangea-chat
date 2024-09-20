@@ -8,12 +8,12 @@ import 'package:flutter/material.dart';
 
 /// The multiple choice activity view
 class MultipleChoiceActivity extends StatefulWidget {
-  final MessagePracticeActivityCardState controller;
+  final MessagePracticeActivityCardState practiceCardController;
   final PracticeActivityEvent? currentActivity;
 
   const MultipleChoiceActivity({
     super.key,
-    required this.controller,
+    required this.practiceCardController,
     required this.currentActivity,
   });
 
@@ -25,7 +25,7 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
   int? selectedChoiceIndex;
 
   PracticeActivityRecordModel? get currentRecordModel =>
-      widget.controller.currentRecordModel;
+      widget.practiceCardController.currentCompletionRecord;
 
   bool get isSubmitted =>
       widget.currentActivity?.userRecord?.record.latestResponse != null;
@@ -52,7 +52,7 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
   /// determines the selected choice index.
   void setCompletionRecord() {
     if (widget.currentActivity?.userRecord?.record == null) {
-      widget.controller.setCurrentModel(
+      widget.practiceCardController.setCompletionRecord(
         PracticeActivityRecordModel(
           question:
               widget.currentActivity?.practiceActivity.multipleChoice!.question,
@@ -60,8 +60,8 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
       );
       selectedChoiceIndex = null;
     } else {
-      widget.controller
-          .setCurrentModel(widget.currentActivity!.userRecord!.record);
+      widget.practiceCardController
+          .setCompletionRecord(widget.currentActivity!.userRecord!.record);
       selectedChoiceIndex = widget
           .currentActivity?.practiceActivity.multipleChoice!
           .choiceIndex(currentRecordModel!.latestResponse!.text!);
@@ -69,20 +69,27 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
     setState(() {});
   }
 
-  void updateChoice(int index) {
+  void updateChoice(String value, int index) {
     currentRecordModel?.addResponse(
-      text: widget.controller.currentActivity!.practiceActivity.multipleChoice!
-          .choices[index],
-      score: widget.controller.currentActivity!.practiceActivity.multipleChoice!
-              .isCorrect(index)
+      text: value,
+      score: widget.currentActivity!.practiceActivity.multipleChoice!
+              .isCorrect(value, index)
           ? 1
           : 0,
     );
-    if (widget.controller.currentActivity!.practiceActivity.multipleChoice!
-        .isCorrect(index)) {
-      widget.controller.sendRecord();
+
+    // If the selected choice is correct, send the record and get the next activity
+    if (widget.currentActivity!.practiceActivity.multipleChoice!
+        .isCorrect(value, index)) {
+      widget.practiceCardController.processCorrectAnswer();
+
+      widget.practiceCardController.getActivity(true);
     }
-    setState(() => selectedChoiceIndex = index);
+
+    setState(
+      () => widget.currentActivity!.practiceActivity.multipleChoice!
+          .choiceIndex(value),
+    );
   }
 
   @override
@@ -119,7 +126,8 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
                     color: selectedChoiceIndex == index
                         ? practiceActivity.multipleChoice!.choiceColor(index)
                         : null,
-                    isGold: practiceActivity.multipleChoice!.isCorrect(index),
+                    isGold: practiceActivity.multipleChoice!
+                        .isCorrect(value, index),
                   ),
                 )
                 .toList(),

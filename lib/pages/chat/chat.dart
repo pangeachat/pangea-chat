@@ -15,6 +15,7 @@ import 'package:fluffychat/pages/chat/event_info_dialog.dart';
 import 'package:fluffychat/pages/chat/recording_dialog.dart';
 import 'package:fluffychat/pages/chat_details/chat_details.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/choreographer.dart';
+import 'package:fluffychat/pangea/controllers/my_analytics_controller.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
@@ -653,14 +654,14 @@ class ChatController extends State<ChatPageWithRoom>
         // stream sends the data for newly sent messages.
         if (msgEventId != null) {
           pangeaController.myAnalytics.setState(
-            data: {
-              'eventID': msgEventId,
-              'eventType': EventTypes.Message,
-              'roomID': room.id,
-              'originalSent': originalSent,
-              'tokensSent': tokensSent,
-              'choreo': choreo,
-            },
+            AnalyticsStream(
+              eventId: msgEventId,
+              eventType: EventTypes.Message,
+              roomId: room.id,
+              originalSent: originalSent,
+              tokensSent: tokensSent,
+              choreo: choreo,
+            ),
           );
         }
 
@@ -1639,7 +1640,7 @@ class ChatController extends State<ChatPageWithRoom>
     Widget? overlayEntry;
     try {
       overlayEntry = MessageSelectionOverlay(
-        controller: this,
+        chatController: this,
         event: pangeaMessageEvent.event,
         pangeaMessageEvent: pangeaMessageEvent,
         nextEvent: nextEvent,
