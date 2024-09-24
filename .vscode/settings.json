@@ -9,5 +9,6 @@
     "editor.formatOnType": true,
     "[autolisp]": {
         "editor.wordSeparators": "`|;'\",()"
-    }
+    },
+    "java.configuration.updateBuildConfiguration": "automatic"
 }

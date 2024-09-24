@@ -335,18 +335,99 @@ extension PangeaRoom on Room {
       return true;
     }
 
-    if (event.isGMMessage) {
-      return isCandidateMessage(event.eventId) ||
-          event.character != null ||
-          event.messageType == MessageTypes.Image ||
-          event.isInstructions;
+    if (!event.isGMMessage) {
+      if (!isPlayerMessage(event.eventId)) {
+        return false;
+      }
+      if (gameState.playerMessageVisibleFrom != null) {
+        return true;
+      }
+      if (event.originServerTs.isAfter(gameState.playerMessageVisibleFrom!)) {
+        if (gameState.playerMessageVisibleTo == null) {
+          return true;
+        }
+        if (event.originServerTs.isBefore(gameState.playerMessageVisibleTo!)) {
+          return true;
+        }
+        return false;
+      }
+      return false;
     }
 
-    return isCandidateMessage(event.eventId);
+    // from this point on, all event are bot sent messages
+    if (event.isCharacterSuggestionMessage) {
+      if (gameState.playerMessageVisibleFrom != null &&
+          event.originServerTs.isAfter(gameState.playerMessageVisibleFrom!)) {
+        if (gameState.playerMessageVisibleTo == null) {
+          return true;
+        }
+        if (event.originServerTs.isBefore(gameState.playerMessageVisibleTo!)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    if (gameState.characterOptionMessageIds != null &&
+        gameState.characterOptionMessageIds!.contains(event.eventId)) {
+      if (gameState.characterOptionMessageVisibleFrom != null) {
+        if (event.originServerTs
+            .isAfter(gameState.characterOptionMessageVisibleFrom!)) {
+          if (gameState.characterOptionMessageVisibleTo == null) {
+            return true;
+          }
+          if (event.originServerTs
+              .isBefore(gameState.characterOptionMessageVisibleTo!)) {
+            return true;
+          }
+        }
+        return false;
+      }
+      return true;
+    }
+
+    if (gameState.sceneOptionMessageIds != null &&
+        gameState.sceneOptionMessageIds!.contains(event.eventId)) {
+      if (gameState.sceneOptionMessageVisibleFrom != null) {
+        if (event.originServerTs
+            .isAfter(gameState.sceneOptionMessageVisibleFrom!)) {
+          if (gameState.sceneOptionMessageVisibleTo == null) {
+            return true;
+          }
+          if (event.originServerTs
+              .isBefore(gameState.sceneOptionMessageVisibleTo!)) {
+            return true;
+          }
+        }
+        return false;
+      }
+      return true;
+    }
+
+    if (event.messageType == MessageTypes.Image) {
+      return true;
+    }
+    if (event.isInstructions) {
+      if (gameState.instructionMessageVisibleFrom != null) {
+        if (event.originServerTs
+            .isAfter(gameState.instructionMessageVisibleFrom!)) {
+          if (gameState.instructionMessageVisibleTo == null) {
+            return true;
+          }
+          if (event.originServerTs
+              .isBefore(gameState.instructionMessageVisibleTo!)) {
+            return true;
+          }
+        }
+        return false;
+      }
+      return true;
+    }
+
+    return true;
   }
 
-  bool isCandidateMessage(String eventID) =>
-      candidateMessageIDs.contains(eventID);
+  bool isPlayerMessage(String eventID) => candidateMessageIDs.contains(eventID);
 
   List<String> get candidateMessageIDs =>
       gameState.characterMessages.values.expand((e) => e).toList();
