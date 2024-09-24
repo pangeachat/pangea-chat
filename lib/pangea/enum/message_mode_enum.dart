@@ -93,7 +93,7 @@ extension MessageModeExtension on MessageMode {
   ) {
     //locked
     if (!isUnlocked(index, numActivitiesCompleted)) {
-      return Theme.of(context).colorScheme.secondary;
+      return Theme.of(context).colorScheme.onSurface;
     }
 
     //unlocked and active
@@ -102,6 +102,6 @@ extension MessageModeExtension on MessageMode {
     }
 
     //unlocked and inactive
-    return Theme.of(context).colorScheme.primary;
+    return Theme.of(context).colorScheme.primaryContainer;
   }
 }

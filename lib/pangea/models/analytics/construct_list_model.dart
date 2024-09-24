@@ -10,6 +10,9 @@ class ConstructListModel {
   final List<OneConstructUse> _uses;
   List<ConstructUses>? _constructList;
   List<ConstructUseTypeUses>? _typedConstructs;
+
+  /// A map of lemmas to ConstructUses, each of which contains a lemma
+  /// key = lemmma + constructType.string, value = ConstructUses
   Map<String, ConstructUses>? _constructMap;
 
   ConstructListModel({
@@ -39,7 +42,7 @@ class ConstructListModel {
         ConstructUses(
           uses: value,
           constructType: value.first.constructType,
-          lemma: key,
+          lemma: value.first.lemma!,
         ),
       ),
     );

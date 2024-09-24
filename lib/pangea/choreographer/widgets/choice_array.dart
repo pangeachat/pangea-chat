@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
@@ -65,22 +66,22 @@ class ChoicesArrayState extends State<ChoicesArray> {
         ? ItShimmer(originalSpan: widget.originalSpan)
         : Wrap(
             alignment: WrapAlignment.center,
-            children: widget.choices
-                    ?.asMap()
-                    .entries
-                    .map(
-                      (entry) => ChoiceItem(
+            children: widget.choices!
+                    .mapIndexed(
+                      (index, entry) => ChoiceItem(
                         theme: theme,
                         onLongPress:
                             widget.isActive ? widget.onLongPress : null,
                         onPressed: widget.isActive
                             ? widget.onPressed
-                            : (String value, int index) {},
-                        entry: entry,
+                            : (String value, int index) {
+                                debugger(when: kDebugMode);
+                              },
+                        entry: MapEntry(index, entry),
                         interactionDisabled: interactionDisabled,
                         enableInteraction: enableInteractions,
                         disableInteraction: disableInteraction,
-                        isSelected: widget.selectedChoiceIndex == entry.key,
+                        isSelected: widget.selectedChoiceIndex == index,
                       ),
                     )
                     .toList() ??
@@ -140,16 +141,16 @@ class ChoiceItem extends StatelessWidget {
           child: Container(
             margin: const EdgeInsets.all(2),
             padding: EdgeInsets.zero,
-            decoration: isSelected
-                ? BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    border: Border.all(
-                      color: entry.value.color ?? theme.colorScheme.primary,
-                      style: BorderStyle.solid,
-                      width: 2.0,
-                    ),
-                  )
-                : null,
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              border: Border.all(
+                color: isSelected
+                    ? entry.value.color ?? theme.colorScheme.primary
+                    : Colors.transparent,
+                style: BorderStyle.solid,
+                width: 2.0,
+              ),
+            ),
             child: TextButton(
               style: ButtonStyle(
                 padding: WidgetStateProperty.all(

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
@@ -8,12 +9,12 @@ import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dar
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_representation_event.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/practice_activity_event.dart';
 import 'package:fluffychat/pangea/models/analytics/construct_list_model.dart';
-import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/message_activity_request.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_record_model.dart';
 import 'package:fluffychat/pangea/utils/bot_style.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
+import 'package:fluffychat/pangea/widgets/animations/gain_points.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
 import 'package:fluffychat/pangea/widgets/practice_activity/multiple_choice_activity.dart';
 import 'package:fluffychat/widgets/matrix.dart';
@@ -54,6 +55,11 @@ class MessagePracticeActivityCardState extends State<PracticeActivityCard> {
         (activity) => activity.event.eventId == currentActivity?.event.eventId,
       );
 
+  /// TODO - @ggurdin - how can we start our processes (saving results and getting an activity)
+  /// immediately after a correct choice but wait to display until x milliseconds after the choice is made AND
+  /// we've received the new activity?
+  Timer? joyTimer;
+
   @override
   void initState() {
     super.initState();
@@ -65,13 +71,15 @@ class MessagePracticeActivityCardState extends State<PracticeActivityCard> {
     widget.overlayController.setState(() => fetchingActivity = value);
   }
 
-  Future<void> getActivity([bool forceNew = false]) async {
+  Future<void> getActivity([
+    bool justCompletedOneAndGettingAnother = false,
+  ]) async {
     /// Initalizes the current activity.
     /// If the current activity hasn't been set yet, show the first
     /// uncompleted activity if there is one.
     /// If not, show the first activity
 
-    debugger(when: kDebugMode && forceNew);
+    // debugger(when: kDebugMode && forceNew);
 
     updateFetchingActivity(true);
 
@@ -88,13 +96,13 @@ class MessagePracticeActivityCardState extends State<PracticeActivityCard> {
     }
 
     // TODO - make sure activity is targeting the words we want it to target
-    if (currentActivity != null && !forceNew) {
+    if (currentActivity != null && !justCompletedOneAndGettingAnother) {
       debugPrint(
         "Activity already exists for this message",
       );
       // debugger(when: kDebugMode);
 
-      await setSelectedTokenIndicesBasedOnActivity();
+      widget.overlayController.onNewActivity(currentActivity!.practiceActivity);
 
       updateFetchingActivity(false);
       return;
@@ -109,7 +117,7 @@ class MessagePracticeActivityCardState extends State<PracticeActivityCard> {
       return;
     }
 
-    currentActivity =
+    final ourNewActivity =
         await pangeaController.practiceGenerationController.getPracticeActivity(
       MessageActivityRequest(
         userL1: pangeaController.languageController.userL1!.langCode,
@@ -121,9 +129,11 @@ class MessagePracticeActivityCardState extends State<PracticeActivityCard> {
       widget.pangeaMessageEvent,
     );
 
+    currentActivity = ourNewActivity;
+
     // we want to highlight the target tokens in the message
     // so we add these to the overlay controller
-    await setSelectedTokenIndicesBasedOnActivity();
+    widget.overlayController.onNewActivity(currentActivity!.practiceActivity);
 
     /// Removes the target tokens of the new activity from the target tokens list.
     /// This avoids getting activities for the same token again, at least
@@ -142,54 +152,6 @@ class MessagePracticeActivityCardState extends State<PracticeActivityCard> {
     }
 
     updateFetchingActivity(false);
-  }
-
-  Future<void> setSelectedTokenIndicesBasedOnActivity() async {
-    final RelevantSpanDisplayDetails? span =
-        currentActivity?.practiceActivity.multipleChoice?.spanDisplayDetails;
-
-    if (span == null) {
-      debugger(when: kDebugMode);
-      return;
-    }
-
-    final messageTokens = await representation!.tokensGlobal(context);
-
-    if (messageTokens == null) {
-      updateFetchingActivity(false);
-      debugger(when: kDebugMode);
-      return;
-    }
-
-    final List<int> targetTokensIndices =
-        indicesOfTargetTokens(messageTokens, span);
-
-    if (targetTokensIndices.isNotEmpty) {
-      widget.overlayController.selectedTokenIndicies.clear();
-      widget.overlayController.selectedTokenIndicies
-          .addAll(targetTokensIndices);
-    } else {
-      debugger(when: kDebugMode);
-    }
-  }
-
-  List<int> indicesOfTargetTokens(
-    List<PangeaToken>? messageTokens,
-    RelevantSpanDisplayDetails? span,
-  ) {
-    if (messageTokens == null || span == null) {
-      debugger(when: kDebugMode);
-      return [];
-    }
-    final List<int> targetTokensIndices = [];
-    for (int i = 0; i < messageTokens.length; i++) {
-      final token = messageTokens[i];
-      if (token.text.offset >= span.offset &&
-          token.text.offset + token.text.length <= span.offset + span.length) {
-        targetTokensIndices.add(i);
-      }
-    }
-    return targetTokensIndices;
   }
 
   RepresentationEvent? get representation =>
@@ -262,8 +224,13 @@ class MessagePracticeActivityCardState extends State<PracticeActivityCard> {
   /// Logs any errors that occur during the send operation.
   /// Sets the [sending] flag to false when the send operation is complete.
   /// previously was called sendRecord
-  void processCorrectAnswer() async {
+  void onActivityFinish() async {
     try {
+      // if this is the last activity, set the flag to true
+      // so we can give them some kudos
+      if (widget.overlayController.activitiesLeftToComplete == 1) {
+        widget.overlayController.finishedActivitiesThisSession = true;
+      }
       setState(() => fetchingActivity = true);
 
       if (currentCompletionRecord == null || currentActivity == null) {
@@ -297,7 +264,11 @@ class MessagePracticeActivityCardState extends State<PracticeActivityCard> {
         },
       );
     } finally {
-      getActivity(true);
+      if (!widget.overlayController.finishedActivitiesThisSession) {
+        getActivity(true);
+      } else {
+        updateFetchingActivity(false);
+      }
     }
   }
 
@@ -329,16 +300,38 @@ class MessagePracticeActivityCardState extends State<PracticeActivityCard> {
 
   @override
   Widget build(BuildContext context) {
-    if (!fetchingActivity && currentActivity == null) {
-      return Text(
-        L10n.of(context)!.noActivitiesFound,
-        style: BotStyle.text(context),
+    String? userMessage;
+    if (widget.overlayController.finishedActivitiesThisSession) {
+      userMessage = "Boom! Achievement unlocked!";
+    } else if (!fetchingActivity && currentActivity == null) {
+      userMessage = L10n.of(context)!.noActivitiesFound;
+    }
+
+    if (userMessage != null) {
+      return Center(
+        child: Container(
+          constraints: const BoxConstraints(
+            minHeight: 80,
+          ),
+          child: Text(
+            userMessage,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
       );
     }
 
     return Stack(
+      alignment: Alignment.topCenter,
       children: [
         // Main content
+        const Positioned(
+          top: 40,
+          child: PointsGainedAnimation(),
+        ),
         Column(
           children: [
             activityWidget,

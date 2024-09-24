@@ -116,6 +116,7 @@ class IGCTextData {
   ) async {
     //should be already added to choreoRecord
     //TODO - that should be done in the same function to avoid error potential
+    debugger(when: kDebugMode);
     final PangeaMatch pangeaMatch = matches[matchIndex];
 
     if (pangeaMatch.match.choices == null) {
@@ -145,15 +146,14 @@ class IGCTextData {
         match.match.offset += replacement.length - pangeaMatch.match.length;
       }
     }
-    //quiero ver un fix
-    //match offset zero and length of full text or 16
-    //fix is repplaced by arreglo and now the length needs to be 20
-    //if the accepted span is within another span, then the length of that span needs
-    //needs to be increased by the difference between the new and old length
-    //if the two spans are overlapping, what happens?
-    //------
-    //   ----- -> ---
-    //if there is any overlap, maybe igc needs to run again?
+
+    //TODO - update tokens
+
+    for (final token in tokens) {
+      if (token.text.offset > pangeaMatch.match.offset) {
+        token.text.offset += replacement.length - pangeaMatch.match.length;
+      }
+    }
   }
 
   void removeMatchByOffset(int offset) {

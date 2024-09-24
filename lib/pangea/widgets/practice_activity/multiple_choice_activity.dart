@@ -81,14 +81,13 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
     // If the selected choice is correct, send the record and get the next activity
     if (widget.currentActivity!.practiceActivity.multipleChoice!
         .isCorrect(value, index)) {
-      widget.practiceCardController.processCorrectAnswer();
+      widget.practiceCardController.onActivityFinish();
 
       widget.practiceCardController.getActivity(true);
     }
 
     setState(
-      () => widget.currentActivity!.practiceActivity.multipleChoice!
-          .choiceIndex(value),
+      () => selectedChoiceIndex = index,
     );
   }
 

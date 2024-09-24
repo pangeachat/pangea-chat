@@ -48,7 +48,7 @@ class MyAnalyticsController extends BaseController<AnalyticsStream> {
   final int _maxMessagesCached = 10;
 
   /// the number of minutes before an automatic update is triggered
-  final int _minutesBeforeUpdate = 5;
+  final int _minutesBeforeUpdate = 2;
 
   /// the time since the last update that will trigger an automatic update
   final Duration _timeSinceUpdate = const Duration(days: 1);
@@ -61,7 +61,7 @@ class MyAnalyticsController extends BaseController<AnalyticsStream> {
     // Listen to a stream that provides the eventIDs
     // of new messages sent by the logged in user
     _messageSendSubscription ??=
-        stateStream.listen((data) => onNewAnalyticsData(data));
+        stateStream.listen((data) => _onNewAnalyticsData(data));
 
     _refreshAnalyticsIfOutdated();
   }
@@ -108,17 +108,7 @@ class MyAnalyticsController extends BaseController<AnalyticsStream> {
 
   /// Given the data from a newly sent message, format and cache
   /// the message's construct data locally and reset the update timer
-  void onNewAnalyticsData(AnalyticsStream data) {
-    // cancel the last timer that was set on message event and
-    // reset it to fire after _minutesBeforeUpdate minutes
-    // debugger(when: kDebugMode);
-
-    _updateTimer?.cancel();
-    _updateTimer = Timer(Duration(minutes: _minutesBeforeUpdate), () {
-      debugPrint("timer fired, updating analytics");
-      sendLocalAnalyticsToAnalyticsRoom();
-    });
-
+  void _onNewAnalyticsData(AnalyticsStream data) {
     // convert that data into construct uses and add it to the cache
     final metadata = ConstructUseMetaData(
       roomId: data.roomId,
@@ -126,7 +116,7 @@ class MyAnalyticsController extends BaseController<AnalyticsStream> {
       timeStamp: DateTime.now(),
     );
 
-    final List<OneConstructUse> constructs = getDraftUses(data.roomId);
+    final List<OneConstructUse> constructs = _getDraftUses(data.roomId);
 
     if (data.eventType == EventTypes.Message) {
       constructs.addAll([
@@ -157,14 +147,14 @@ class MyAnalyticsController extends BaseController<AnalyticsStream> {
       if (filtered.isEmpty) return;
 
       // @ggurdin - are we sure this isn't happening twice? it's also above
-      filtered.addAll(getDraftUses(data.roomId));
+      filtered.addAll(_getDraftUses(data.roomId));
 
       final level = _pangeaController.analytics.level;
 
-      addLocalMessage(eventID, filtered).then(
+      _addLocalMessage(eventID, filtered).then(
         (_) {
-          clearDraftUses(roomID);
-          afterAddLocalMessages(level);
+          _clearDraftUses(roomID);
+          _decideWhetherToUpdateAnalyticsRoom(level);
         },
       );
     });
@@ -208,25 +198,25 @@ class MyAnalyticsController extends BaseController<AnalyticsStream> {
     }
 
     final level = _pangeaController.analytics.level;
-    addLocalMessage('draft$roomID', uses).then(
-      (_) => afterAddLocalMessages(level),
+    _addLocalMessage('draft$roomID', uses).then(
+      (_) => _decideWhetherToUpdateAnalyticsRoom(level),
     );
   }
 
-  List<OneConstructUse> getDraftUses(String roomID) {
+  List<OneConstructUse> _getDraftUses(String roomID) {
     final currentCache = _pangeaController.analytics.messagesSinceUpdate;
     return currentCache['draft$roomID'] ?? [];
   }
 
-  void clearDraftUses(String roomID) {
+  void _clearDraftUses(String roomID) {
     final currentCache = _pangeaController.analytics.messagesSinceUpdate;
     currentCache.remove('draft$roomID');
-    setMessagesSinceUpdate(currentCache);
+    _setMessagesSinceUpdate(currentCache);
   }
 
   /// Add a list of construct uses for a new message to the local
   /// cache of recently sent messages
-  Future<void> addLocalMessage(
+  Future<void> _addLocalMessage(
     String eventID,
     List<OneConstructUse> constructs,
   ) async {
@@ -235,7 +225,7 @@ class MyAnalyticsController extends BaseController<AnalyticsStream> {
       constructs.addAll(currentCache[eventID] ?? []);
       currentCache[eventID] = constructs;
 
-      await setMessagesSinceUpdate(currentCache);
+      await _setMessagesSinceUpdate(currentCache);
     } catch (e, s) {
       ErrorHandler.logError(
         e: PangeaWarningError("Failed to add message since update: $e"),
@@ -249,7 +239,15 @@ class MyAnalyticsController extends BaseController<AnalyticsStream> {
   /// If the addition brought the total number of messages in the cache
   /// to the max, or if the addition triggered a level-up, update the analytics.
   /// Otherwise, add a local update to the alert stream.
-  void afterAddLocalMessages(int prevLevel) {
+  void _decideWhetherToUpdateAnalyticsRoom(int prevLevel) {
+    // cancel the last timer that was set on message event and
+    // reset it to fire after _minutesBeforeUpdate minutes
+    _updateTimer?.cancel();
+    _updateTimer = Timer(Duration(minutes: _minutesBeforeUpdate), () {
+      debugPrint("timer fired, updating analytics");
+      sendLocalAnalyticsToAnalyticsRoom();
+    });
+
     if (_pangeaController.analytics.messagesSinceUpdate.length >
         _maxMessagesCached) {
       debugPrint("reached max messages, updating");
@@ -269,7 +267,7 @@ class MyAnalyticsController extends BaseController<AnalyticsStream> {
   }
 
   /// Save the local cache of recently sent constructs to the local storage
-  Future<void> setMessagesSinceUpdate(
+  Future<void> _setMessagesSinceUpdate(
     Map<String, List<OneConstructUse>> cache,
   ) async {
     final formattedCache = {};

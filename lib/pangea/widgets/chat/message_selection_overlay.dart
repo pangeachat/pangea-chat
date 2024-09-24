@@ -8,6 +8,7 @@ import 'package:fluffychat/pages/chat/events/message.dart';
 import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
+import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
 import 'package:fluffychat/pangea/widgets/chat/overlay_footer.dart';
 import 'package:fluffychat/pangea/widgets/chat/overlay_header.dart';
@@ -43,9 +44,15 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
   Animation<double>? _overlayPositionAnimation;
 
   MessageMode toolbarMode = MessageMode.translation;
-  final List<int> selectedTokenIndicies = [];
+  PangeaTokenText? _selectedSpan;
 
-  int activitiesToComplete = 3;
+  /// The number of activities that need to be completed before the toolbar is unlocked
+  int needed = 3;
+
+  /// Whether the user has completed the activities needed to unlock the toolbar
+  /// within this overlay 'session'. if they click out and come back in then
+  /// we can give them some more activities to complete
+  bool finishedActivitiesThisSession = false;
 
   @override
   void initState() {
@@ -59,13 +66,12 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
   }
 
   int get activitiesLeftToComplete =>
-      activitiesToComplete -
-      widget.pangeaMessageEvent.numberOfActivitiesCompleted;
+      needed - widget.pangeaMessageEvent.numberOfActivitiesCompleted;
 
   /// In some cases, we need to exit the practice flow and let the user
   /// interact with the toolbar without completing activities
   void exitPracticeFlow() {
-    activitiesToComplete = 0;
+    needed = 0;
     setInitialToolbarMode();
     setState(() {});
   }
@@ -95,51 +101,67 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
     });
   }
 
-  String get selectedText {
-    final tokens = widget.pangeaMessageEvent.originalSent?.tokens;
-
-    if (tokens == null || selectedTokenIndicies.isEmpty) {
-      debugger(when: kDebugMode);
-      return '';
+  /// The text that the toolbar should target
+  /// If there is no selectedSpan, then the whole message is the target
+  /// If there is a selectedSpan, then the target is the selected text
+  String get targetText {
+    if (_selectedSpan == null) {
+      return widget.pangeaMessageEvent.messageDisplayText;
     }
 
-    final startTokenIndex = selectedTokenIndicies[0];
-    final endTokenIndex =
-        selectedTokenIndicies[selectedTokenIndicies.length - 1];
-
-    return PangeaToken.reconstructText(tokens, startTokenIndex, endTokenIndex);
+    return widget.pangeaMessageEvent.messageDisplayText.substring(
+      _selectedSpan!.offset,
+      _selectedSpan!.offset + _selectedSpan!.length,
+    );
   }
 
   void onClickOverlayMessageToken(
-    PangeaMessageEvent pangeaMessageEvent,
-    int tokenIndex,
+    PangeaToken token,
   ) {
-    if (pangeaMessageEvent.originalSent?.tokens == null ||
-        tokenIndex < 0 ||
-        tokenIndex >= pangeaMessageEvent.originalSent!.tokens!.length) {
-      selectedTokenIndicies.clear();
-      return;
-    }
-
-    // if there's stuff that's already selected, then we already ahve a sentence deselect
-    if (selectedTokenIndicies.isNotEmpty) {
-      final bool listContainedIndex =
-          selectedTokenIndicies.contains(tokenIndex);
-
-      selectedTokenIndicies.clear();
-      if (!listContainedIndex) {
-        selectedTokenIndicies.add(tokenIndex);
+    // if there's no selected span, then select the token
+    if (_selectedSpan == null) {
+      _selectedSpan = token.text;
+    } else {
+      // if there is a selected span, then deselect the token if it's the same
+      if (isTokenSelected(token)) {
+        _selectedSpan = null;
+      } else {
+        // if there is a selected span but it is not the same, then select the token
+        _selectedSpan = token.text;
       }
     }
 
-    // TODO
-    // if this is already selected, see if there's a sentence and select that
-
-    // if nothing is selected, select one token
-    else {
-      selectedTokenIndicies.add(tokenIndex);
-    }
+    setState(() {});
   }
+
+  void onNewActivity(PracticeActivityModel activity) {
+    final RelevantSpanDisplayDetails? span =
+        activity.multipleChoice?.spanDisplayDetails;
+
+    if (span == null) {
+      debugger(when: kDebugMode);
+      return;
+    }
+
+    _selectedSpan = PangeaTokenText(
+        offset: span.offset,
+        length: span.length,
+        content: widget.pangeaMessageEvent.messageDisplayText
+            .substring(span.offset, span.offset + span.length));
+
+    setState(() {});
+  }
+
+  /// Whether the given token is currently selected
+  bool isTokenSelected(PangeaToken token) {
+    return _selectedSpan?.offset == token.text.offset &&
+        _selectedSpan?.length == token.text.length;
+  }
+
+  /// Whether the overlay is currently displaying a selection
+  bool get isSelection => _selectedSpan != null;
+
+  PangeaTokenText? get selectedSpan => _selectedSpan;
 
   @override
   void didChangeDependencies() {

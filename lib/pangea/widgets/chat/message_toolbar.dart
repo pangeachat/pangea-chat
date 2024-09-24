@@ -80,6 +80,7 @@ class MessageToolbarState extends State<MessageToolbar> {
       case MessageMode.translation:
         return MessageTranslationCard(
           messageEvent: widget.pangeaMessageEvent,
+          selection: widget.overLayController.selectedSpan,
         );
       case MessageMode.textToSpeech:
         return MessageAudioCard(
@@ -90,17 +91,32 @@ class MessageToolbarState extends State<MessageToolbar> {
           messageEvent: widget.pangeaMessageEvent,
         );
       case MessageMode.definition:
-        if (widget.overLayController.selectedTokenIndicies.length != 1) {
+        if (!widget.overLayController.isSelection) {
           return const SelectToDefine();
         } else {
-          WordDataCard(
-            word: widget.overLayController.selectedText,
-            wordLang: widget.pangeaMessageEvent.messageDisplayLangCode,
-            fullText: widget.pangeaMessageEvent.messageDisplayText,
-            fullTextLang: widget.pangeaMessageEvent.messageDisplayLangCode,
-            hasInfo: true,
-            room: widget.overLayController.widget.chatController.room,
-          );
+          try {
+            final selectedText = widget.overLayController.targetText;
+
+            return WordDataCard(
+              word: selectedText,
+              wordLang: widget.pangeaMessageEvent.messageDisplayLangCode,
+              fullText: widget.pangeaMessageEvent.messageDisplayText,
+              fullTextLang: widget.pangeaMessageEvent.messageDisplayLangCode,
+              hasInfo: true,
+              room: widget.overLayController.widget.chatController.room,
+            );
+          } catch (e, s) {
+            debugger(when: kDebugMode);
+            ErrorHandler.logError(
+              e: "Error in WordDataCard",
+              s: s,
+              data: {
+                "word": widget.overLayController.targetText,
+                "fullText": widget.pangeaMessageEvent.messageDisplayText,
+              },
+            );
+            return const SizedBox();
+          }
         }
       case MessageMode.practiceActivity:
         return PracticeActivityCard(
@@ -116,13 +132,6 @@ class MessageToolbarState extends State<MessageToolbar> {
         );
         return const SizedBox();
     }
-
-    ErrorHandler.logError(
-      e: "Invalid toolbar mode",
-      s: StackTrace.current,
-      data: {"newMode": widget.overLayController.toolbarMode},
-    );
-    return const SizedBox();
   }
 
   @override
@@ -132,6 +141,7 @@ class MessageToolbarState extends State<MessageToolbar> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("building toolbar");
     return Material(
       key: MatrixState.pAnyState
           .layerLinkAndKey('${widget.pangeaMessageEvent.eventId}-toolbar')
@@ -268,7 +278,7 @@ class ToolbarButtonsState extends State<ToolbarButtons> {
                 width: widget.width,
                 height: 12,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 margin: const EdgeInsets.symmetric(horizontal: iconWidth / 2),
               ),
@@ -280,7 +290,7 @@ class ToolbarButtonsState extends State<ToolbarButtons> {
                   progressWidth *
                       pangeaMessageEvent.numberOfActivitiesCompleted,
                 ),
-                color: const Color.fromARGB(255, 0, 190, 83),
+                color: AppConfig.success,
                 margin: const EdgeInsets.symmetric(horizontal: iconWidth / 2),
               ),
             ],
@@ -291,29 +301,31 @@ class ToolbarButtonsState extends State<ToolbarButtons> {
                 .mapIndexed(
                   (index, mode) => Tooltip(
                     message: mode.tooltip(context),
-                    child: CircleAvatar(
-                      radius: iconWidth / 2,
-                      backgroundColor: mode.iconButtonColor(
-                        context,
-                        index,
-                        widget.messageToolbarController.widget.overLayController
-                            .toolbarMode,
-                        pangeaMessageEvent.numberOfActivitiesCompleted,
-                      ),
-                      child: Center(
-                        child: IconButton(
-                          iconSize: 20,
-                          icon: Icon(mode.icon),
-                          onPressed: mode.isUnlocked(
+                    child: IconButton(
+                      iconSize: 20,
+                      icon: Icon(mode.icon),
+                      isSelected: mode ==
+                          widget.messageToolbarController.widget
+                              .overLayController.toolbarMode,
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all(
+                          mode.iconButtonColor(
+                            context,
                             index,
+                            widget.messageToolbarController.widget
+                                .overLayController.toolbarMode,
                             pangeaMessageEvent.numberOfActivitiesCompleted,
-                          )
-                              ? () => widget.messageToolbarController.widget
-                                  .overLayController
-                                  .updateToolbarMode(mode)
-                              : null,
+                          ),
                         ),
                       ),
+                      onPressed: mode.isUnlocked(
+                        index,
+                        pangeaMessageEvent.numberOfActivitiesCompleted,
+                      )
+                          ? () => widget
+                              .messageToolbarController.widget.overLayController
+                              .updateToolbarMode(mode)
+                          : null,
                     ),
                   ),
                 )

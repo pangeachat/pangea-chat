@@ -93,8 +93,8 @@ class OverlayMessageTextState extends State<OverlayMessageText> {
       text: TextSpan(
         children: tokenPositions.map((tokenPosition) {
           if (tokenPosition.token != null) {
-            final isSelected = widget.overlayController.selectedTokenIndicies
-                .contains(tokenPosition.tokenIndex);
+            final isSelected =
+                widget.overlayController.isTokenSelected(tokenPosition.token!);
             return TextSpan(
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
@@ -102,16 +102,18 @@ class OverlayMessageTextState extends State<OverlayMessageText> {
                     'tokenPosition.tokenIndex: ${tokenPosition.tokenIndex}',
                   );
                   widget.overlayController.onClickOverlayMessageToken(
-                    widget.pangeaMessageEvent,
-                    tokenPosition.tokenIndex,
+                    tokenPosition.token!,
                   );
                   setState(() {});
                 },
               text: tokenPosition.token!.text.content,
               style: style.merge(
                 TextStyle(
-                  backgroundColor:
-                      isSelected ? Colors.blue : Colors.transparent,
+                  backgroundColor: isSelected
+                      ? Theme.of(context).brightness == Brightness.light
+                          ? Colors.black.withOpacity(0.4)
+                          : Colors.white.withOpacity(0.4)
+                      : Colors.transparent,
                 ),
               ),
             );

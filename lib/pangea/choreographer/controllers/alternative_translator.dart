@@ -33,45 +33,6 @@ class AlternativeTranslator {
     similarityResponse = null;
   }
 
-  // void onSeeAlternativeTranslationsTap() {
-  //   if (choreographer.itController.sourceText == null) {
-  //     ErrorHandler.logError(
-  //       m: "sourceText null in onSeeAlternativeTranslationsTap",
-  //       s: StackTrace.current,
-  //     );
-  //     choreographer.itController.closeIT();
-  //     return;
-  //   }
-  //   showAlternativeTranslations = true;
-  //   loadingAlternativeTranslations = true;
-  //   translate(choreographer.itController.sourceText!);
-  //   choreographer.setState();
-  // }
-
-  // Future<void> translate(String text) async {
-  //   throw Exception('disabled translaations');
-  //   try {
-  //     final FullTextTranslationResponseModel results =
-  //         await FullTextTranslationRepo.translate(
-  //       accessToken: await choreographer.accessToken,
-  //       request: FullTextTranslationRequestModel(
-  //         text: text,
-  //         tgtLang: choreographer.l2LangCode!,
-  //         userL2: choreographer.l2LangCode!,
-  //         userL1: choreographer.l1LangCode!,
-  //       ),
-  //     );
-  //     // translations = results.translations;
-  //   } catch (err, stack) {
-  //     showAlternativeTranslations = false;
-  //     debugger(when: kDebugMode);
-  //     ErrorHandler.logError(e: err, s: stack);
-  //   } finally {
-  //     loadingAlternativeTranslations = false;
-  //     choreographer.setState();
-  //   }
-  // }
-
   Future<void> setTranslationFeedback() async {
     try {
       choreographer.startLoading();

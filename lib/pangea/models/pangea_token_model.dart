@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:collection/collection.dart';
 import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/message_activity_request.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
@@ -27,22 +28,35 @@ class PangeaToken {
     required this.morph,
   });
 
-  static String reconstructText(List<PangeaToken> tokens, int start, int end) {
-    // calculate whitespace between tokens via difference in offsets and lengths
-
-    final List<PangeaToken> subset = tokens.where((PangeaToken token) {
-      return token.start >= start && token.end <= end;
+  static String reconstructText(
+    List<PangeaToken> tokens,
+    int startTokenIndex,
+    int endTokenIndex,
+  ) {
+    final List<PangeaToken> subset =
+        tokens.whereIndexed((int index, PangeaToken token) {
+      return index >= startTokenIndex && index <= endTokenIndex;
     }).toList();
 
-    final String reconstruction = subset.fold<String>(
-      subset.first.text.content,
-      (String previous, PangeaToken token) {
-        final int whitespaceLength =
-            token.start - (previous.length + previous.length);
-        final String whitespace = " " * whitespaceLength;
-        return previous + whitespace + token.text.content;
-      },
-    );
+    if (subset.isEmpty) {
+      debugger(when: kDebugMode);
+      return '';
+    }
+
+    if (subset.length == 1) {
+      return subset.first.text.content;
+    }
+
+    String reconstruction = subset.first.text.content;
+    for (int i = 1; i < subset.length - 1; i++) {
+      int whitespace = subset[i].text.offset -
+          (subset[i - 1].text.offset + subset[i - 1].text.length);
+      if (whitespace < 0) {
+        debugger(when: kDebugMode);
+        whitespace = 0;
+      }
+      reconstruction += ' ' * whitespace + subset[i].text.content;
+    }
 
     return reconstruction;
   }
@@ -155,4 +169,18 @@ class PangeaTokenText {
 
   Map<String, dynamic> toJson() =>
       {_offsetKey: offset, _contentKey: content, _lengthKey: length};
+
+  //override equals and hashcode
+  @override
+  bool operator ==(Object other) {
+    if (other is PangeaTokenText) {
+      return other.offset == offset &&
+          other.content == content &&
+          other.length == length;
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => offset.hashCode ^ content.hashCode ^ length.hashCode;
 }

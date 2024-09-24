@@ -494,7 +494,6 @@ class PangeaMessageEvent {
       text: basis?.text ?? _latestEdit.body,
       source: basis?.langCode,
       target: langCode,
-      room: _latestEdit.room,
     );
     if (pangeaRep == null) return null;
 
@@ -557,7 +556,9 @@ class PangeaMessageEvent {
 
   // this is just showActivityIcon now but will include
   // logic for showing
-  bool get showMessageButtons => hasUncompletedActivity;
+  // NOTE: turning this off for now
+  bool get showMessageButtons => false;
+  // bool get showMessageButtons => hasUncompletedActivity;
 
   /// Returns a boolean value indicating whether to show an activity icon for this message event.
   ///

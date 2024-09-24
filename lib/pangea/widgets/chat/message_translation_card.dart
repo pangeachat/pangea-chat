@@ -1,6 +1,8 @@
 import 'package:fluffychat/pangea/enum/instructions_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
+import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/models/representation_content_model.dart';
+import 'package:fluffychat/pangea/repo/full_text_translation_repo.dart';
 import 'package:fluffychat/pangea/utils/bot_style.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/utils/inline_tooltip.dart';
@@ -11,10 +13,12 @@ import 'package:flutter/material.dart';
 
 class MessageTranslationCard extends StatefulWidget {
   final PangeaMessageEvent messageEvent;
+  final PangeaTokenText? selection;
 
   const MessageTranslationCard({
     super.key,
     required this.messageEvent,
+    required this.selection,
   });
 
   @override
@@ -24,10 +28,27 @@ class MessageTranslationCard extends StatefulWidget {
 class MessageTranslationCardState extends State<MessageTranslationCard> {
   PangeaRepresentation? repEvent;
   String? selectionTranslation;
-  String? oldSelectedText;
-  bool _fetchingRepresentation = false;
+  bool _fetchingTranslation = false;
 
-  Future<void> fetchRepresentation() async {
+  @override
+  void initState() {
+    print('MessageTranslationCard initState');
+    super.initState();
+    loadTranslation();
+  }
+
+  @override
+  void didUpdateWidget(covariant MessageTranslationCard oldWidget) {
+    // debugger(when: kDebugMode);
+    if (oldWidget.selection != widget.selection) {
+      debugPrint('selection changed');
+      loadTranslation();
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  Future<void> fetchRepresentationText() async {
+    // debugger(when: kDebugMode);
     if (l1Code == null) return;
 
     repEvent = widget.messageEvent
@@ -43,17 +64,48 @@ class MessageTranslationCardState extends State<MessageTranslationCard> {
     }
   }
 
-  Future<void> loadTranslation(Future<void> Function() future) async {
+  Future<void> fetchSelectedTextTranslation() async {
     if (!mounted) return;
-    setState(() => _fetchingRepresentation = true);
+
+    final pangeaController = MatrixState.pangeaController;
+
+    if (!pangeaController.languageController.languagesSet) {
+      selectionTranslation = widget.messageEvent.messageDisplayText;
+      return;
+    }
+
+    final FullTextTranslationResponseModel res =
+        await FullTextTranslationRepo.translate(
+      accessToken: pangeaController.userController.accessToken,
+      request: FullTextTranslationRequestModel(
+        text: widget.messageEvent.messageDisplayText,
+        srcLang: widget.messageEvent.messageDisplayLangCode,
+        tgtLang: l2Code!,
+        offset: widget.selection?.offset,
+        length: widget.selection?.length,
+        userL1: l1Code!,
+        userL2: l2Code!,
+      ),
+    );
+
+    selectionTranslation = res.translations.first;
+  }
+
+  Future<void> loadTranslation() async {
+    if (!mounted) return;
+
+    setState(() => _fetchingTranslation = true);
+
     try {
-      await future();
+      await (widget.selection != null
+          ? fetchSelectedTextTranslation()
+          : fetchRepresentationText());
     } catch (err) {
       ErrorHandler.logError(e: err);
     }
 
     if (mounted) {
-      setState(() => _fetchingRepresentation = false);
+      setState(() => _fetchingTranslation = false);
     }
   }
 
@@ -61,14 +113,6 @@ class MessageTranslationCardState extends State<MessageTranslationCard> {
       MatrixState.pangeaController.languageController.activeL1Code();
   String? get l2Code =>
       MatrixState.pangeaController.languageController.activeL2Code();
-
-  @override
-  void initState() {
-    super.initState();
-    loadTranslation(() async {
-      await fetchRepresentation();
-    });
-  }
 
   void closeHint() {
     MatrixState.pangeaController.instructions.turnOffInstruction(
@@ -94,23 +138,24 @@ class MessageTranslationCardState extends State<MessageTranslationCard> {
     final bool isTextIdentical = selectionTranslation != null &&
         widget.messageEvent.originalSent?.text == selectionTranslation;
 
-    return isWrittenInL1 || isTextIdentical;
+    return (isWrittenInL1 || isTextIdentical) && widget.messageEvent.ownMessage;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!_fetchingRepresentation &&
+    print('MessageTranslationCard build');
+    if (!_fetchingTranslation &&
         repEvent == null &&
         selectionTranslation == null) {
       return const CardErrorWidget();
     }
 
     return Container(
-      child: _fetchingRepresentation
+      child: _fetchingTranslation
           ? const ToolbarContentLoadingIndicator()
           : Column(
               children: [
-                selectionTranslation != null
+                widget.selection != null
                     ? Text(
                         selectionTranslation!,
                         style: BotStyle.text(context),

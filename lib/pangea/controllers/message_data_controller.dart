@@ -144,7 +144,6 @@ class MessageDataController extends BaseController {
     required String text,
     required String? source,
     required String target,
-    required Room room,
   }) async {
     final RepresentationCacheItem? item =
         getRepresentationCacheItem(text, target);
@@ -158,7 +157,6 @@ class MessageDataController extends BaseController {
           text: text,
           source: source,
           target: target,
-          room: room,
         ),
       ),
     );
@@ -170,7 +168,6 @@ class MessageDataController extends BaseController {
     required String text,
     required String? source,
     required String target,
-    required Room room,
   }) async {
     if (_pangeaController.languageController.userL2 == null ||
         _pangeaController.languageController.userL1 == null) {
