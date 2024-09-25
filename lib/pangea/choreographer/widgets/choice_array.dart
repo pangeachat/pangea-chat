@@ -20,7 +20,7 @@ class ChoicesArray extends StatefulWidget {
   final String originalSpan;
   final String Function(int) uniqueKeyForLayerLink;
 
-  /// some uses of this widget want to disable the choices
+  /// some uses of this widget want to disable clicking of the choices
   final bool isActive;
 
   const ChoicesArray({
@@ -157,11 +157,12 @@ class ChoiceItem extends StatelessWidget {
                   const EdgeInsets.symmetric(horizontal: 7),
                 ),
                 //if index is selected, then give the background a slight primary color
-                backgroundColor: WidgetStateProperty.all<Color>(
-                  entry.value.color != null
-                      ? entry.value.color!.withOpacity(0.2)
-                      : theme.colorScheme.primary.withOpacity(0.1),
-                ),
+                backgroundColor: entry.value.color != null
+                    ? WidgetStateProperty.all<Color>(
+                        entry.value.color!.withOpacity(0.2),
+                      )
+                    // : theme.colorScheme.primaryFixed,
+                    : null,
                 textStyle: WidgetStateProperty.all(
                   BotStyle.text(context),
                 ),

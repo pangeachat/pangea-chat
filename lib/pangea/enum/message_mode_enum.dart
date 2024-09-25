@@ -93,15 +93,23 @@ extension MessageModeExtension on MessageMode {
   ) {
     //locked
     if (!isUnlocked(index, numActivitiesCompleted)) {
-      return Theme.of(context).colorScheme.onSurface;
+      return barAndLockedButtonColor(context);
     }
 
     //unlocked and active
     if (this == currentMode) {
-      return Theme.of(context).colorScheme.onPrimary;
+      return Theme.of(context).brightness == Brightness.dark
+          ? Theme.of(context).colorScheme.primary
+          : Theme.of(context).colorScheme.primary;
     }
 
     //unlocked and inactive
     return Theme.of(context).colorScheme.primaryContainer;
+  }
+
+  static Color barAndLockedButtonColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? Colors.grey[800]!
+        : Colors.grey[200]!;
   }
 }

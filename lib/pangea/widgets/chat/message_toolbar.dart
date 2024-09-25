@@ -252,16 +252,9 @@ class ToolbarButtonsState extends State<ToolbarButtons> {
   static const double iconWidth = 36.0;
   double get progressWidth => widget.width / modes.length;
 
-  // int numActivitiesCompleted = 0;
-  // @ggurdin Very confusing path. Seems begging for bugs. Any way to simplify this?
-  // int get numActivitiesCompleted => widget.messageToolbarController.widget.messageActivityController.numberOfActivitiesCompleted;
-
+  // @ggurdin - maybe this can be stateless now?
   @override
   void initState() {
-    // setState(() {
-    //   numActivitiesCompleted = widget.messageToolbarController.widget
-    //       .messageActivityController.numberOfActivitiesCompleted;
-    // });
     super.initState();
   }
 
@@ -278,7 +271,7 @@ class ToolbarButtonsState extends State<ToolbarButtons> {
                 width: widget.width,
                 height: 12,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.onSurface,
+                  color: MessageModeExtension.barAndLockedButtonColor(context),
                 ),
                 margin: const EdgeInsets.symmetric(horizontal: iconWidth / 2),
               ),
@@ -304,6 +297,11 @@ class ToolbarButtonsState extends State<ToolbarButtons> {
                     child: IconButton(
                       iconSize: 20,
                       icon: Icon(mode.icon),
+                      color: mode ==
+                              widget.messageToolbarController.widget
+                                  .overLayController.toolbarMode
+                          ? Colors.white
+                          : null,
                       isSelected: mode ==
                           widget.messageToolbarController.widget
                               .overLayController.toolbarMode,

@@ -197,6 +197,8 @@ class MyAnalyticsController extends BaseController<AnalyticsStream> {
       }
     }
 
+    // @ggurdin - if the point of draft uses is that we don't want to send them twice,
+    // then, if this is triggered here, couldn't that make a problem?
     final level = _pangeaController.analytics.level;
     _addLocalMessage('draft$roomID', uses).then(
       (_) => _decideWhetherToUpdateAnalyticsRoom(level),

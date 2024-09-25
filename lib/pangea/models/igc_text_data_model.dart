@@ -5,6 +5,7 @@ import 'package:fluffychat/pangea/controllers/language_detection_controller.dart
 import 'package:fluffychat/pangea/models/pangea_match_model.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/models/span_card_model.dart';
+import 'package:fluffychat/pangea/models/span_data.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -116,7 +117,6 @@ class IGCTextData {
   ) async {
     //should be already added to choreoRecord
     //TODO - that should be done in the same function to avoid error potential
-    debugger(when: kDebugMode);
     final PangeaMatch pangeaMatch = matches[matchIndex];
 
     if (pangeaMatch.match.choices == null) {
@@ -127,13 +127,31 @@ class IGCTextData {
       return;
     }
 
-    final String replacement = pangeaMatch.match.choices![choiceIndex].value;
+    final SpanChoice replacement = pangeaMatch.match.choices![choiceIndex];
 
     originalInput = originalInput.replaceRange(
       pangeaMatch.match.offset,
       pangeaMatch.match.offset + pangeaMatch.match.length,
-      replacement,
+      replacement.value,
     );
+
+    // replace the tokens that are part of the match
+    // with the tokens in the replacement
+    //    start is inclusive
+    final startIndex = tokenIndexByOffset(pangeaMatch.match.offset);
+    //    end is exclusive, hence the +1
+    final endIndex = tokenIndexByOffset(
+          pangeaMatch.match.offset + pangeaMatch.match.length,
+        ) +
+        1;
+    //    replace the tokens in the list
+    tokens.replaceRange(startIndex, endIndex, replacement.tokens);
+
+    //for all tokens after the replacement, update their offsets
+    for (int i = endIndex; i < tokens.length; i++) {
+      final PangeaToken token = tokens[i];
+      token.text.offset += replacement.value.length - pangeaMatch.match.length;
+    }
 
     //update offsets in existing matches to reflect the change
     //Question - remove matches that overlap with the accepted one?
@@ -143,15 +161,8 @@ class IGCTextData {
     for (final match in matches) {
       match.match.fullText = originalInput;
       if (match.match.offset > pangeaMatch.match.offset) {
-        match.match.offset += replacement.length - pangeaMatch.match.length;
-      }
-    }
-
-    //TODO - update tokens
-
-    for (final token in tokens) {
-      if (token.text.offset > pangeaMatch.match.offset) {
-        token.text.offset += replacement.length - pangeaMatch.match.length;
+        match.match.offset +=
+            replacement.value.length - pangeaMatch.match.length;
       }
     }
   }
@@ -163,9 +174,8 @@ class IGCTextData {
     }
   }
 
-  int tokenIndexByOffset(cursorOffset) => tokens.indexWhere(
-        (token) =>
-            token.text.offset <= cursorOffset && cursorOffset <= token.end,
+  int tokenIndexByOffset(int cursorOffset) => tokens.indexWhere(
+        (token) => token.start <= cursorOffset && cursorOffset <= token.end,
       );
 
   List<int> matchIndicesByOffset(int offset) {

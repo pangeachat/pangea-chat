@@ -80,7 +80,7 @@ class MessageTranslationCardState extends State<MessageTranslationCard> {
       request: FullTextTranslationRequestModel(
         text: widget.messageEvent.messageDisplayText,
         srcLang: widget.messageEvent.messageDisplayLangCode,
-        tgtLang: l2Code!,
+        tgtLang: l1Code!,
         offset: widget.selection?.offset,
         length: widget.selection?.length,
         userL1: l1Code!,

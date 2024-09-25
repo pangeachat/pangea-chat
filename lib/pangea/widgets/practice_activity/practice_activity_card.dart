@@ -44,9 +44,9 @@ class PracticeActivityCard extends StatefulWidget {
 class MessagePracticeActivityCardState extends State<PracticeActivityCard> {
   PracticeActivityEvent? currentActivity;
   PracticeActivityRecordModel? currentCompletionRecord;
-  bool fetchingActivity = true;
+  bool fetchingActivity = false;
 
-  final List<TokenWithXP> targetTokens = [];
+  List<TokenWithXP> targetTokens = [];
 
   List<PracticeActivityEvent> get practiceActivities =>
       widget.pangeaMessageEvent.practiceActivities;
@@ -58,63 +58,59 @@ class MessagePracticeActivityCardState extends State<PracticeActivityCard> {
   /// TODO - @ggurdin - how can we start our processes (saving results and getting an activity)
   /// immediately after a correct choice but wait to display until x milliseconds after the choice is made AND
   /// we've received the new activity?
+  Duration appropriateTimeForJoy = const Duration(milliseconds: 500);
+  bool savoringTheJoy = false;
   Timer? joyTimer;
 
   @override
   void initState() {
     super.initState();
-    getActivity();
+    initialize();
   }
 
   void updateFetchingActivity(bool value) {
     if (fetchingActivity == value) return;
-    widget.overlayController.setState(() => fetchingActivity = value);
+    setState(() => fetchingActivity = value);
   }
 
-  Future<void> getActivity([
-    bool justCompletedOneAndGettingAnother = false,
-  ]) async {
-    /// Initalizes the current activity.
-    /// If the current activity hasn't been set yet, show the first
-    /// uncompleted activity if there is one.
-    /// If not, show the first activity
+  /// Get an activity to display.
+  /// Show an uncompleted activity if there is one.
+  /// If not, get a new activity from the server.
+  Future<void> initialize() async {
+    targetTokens = await getTargetTokens();
 
-    // debugger(when: kDebugMode && forceNew);
+    currentActivity = _fetchExistingActivity() ?? await _fetchNewActivity();
 
-    updateFetchingActivity(true);
+    currentActivity == null
+        ? widget.overlayController.exitPracticeFlow()
+        : widget.overlayController
+            .onNewActivity(currentActivity!.practiceActivity);
+  }
 
+  // TODO - do more of a check for whether we have an appropropriate activity
+  // if the user did the activity before but awhile ago and we don't have any
+  // more target tokens, maybe we should give them the same activity again
+  PracticeActivityEvent? _fetchExistingActivity() {
     final List<PracticeActivityEvent> incompleteActivities =
         practiceActivities.where((element) => !element.isComplete).toList();
 
     final PracticeActivityEvent? existingActivity =
         incompleteActivities.isNotEmpty ? incompleteActivities.first : null;
 
-    if (existingActivity != null &&
-        existingActivity.practiceActivity !=
-            currentActivity?.practiceActivity) {
-      currentActivity = existingActivity;
-    }
+    return existingActivity != null &&
+            existingActivity.practiceActivity !=
+                currentActivity?.practiceActivity
+        ? existingActivity
+        : null;
+  }
 
-    // TODO - make sure activity is targeting the words we want it to target
-    if (currentActivity != null && !justCompletedOneAndGettingAnother) {
-      debugPrint(
-        "Activity already exists for this message",
-      );
-      // debugger(when: kDebugMode);
-
-      widget.overlayController.onNewActivity(currentActivity!.practiceActivity);
-
-      updateFetchingActivity(false);
-      return;
-    }
-
-    await setTargetTokens(context);
+  Future<PracticeActivityEvent?> _fetchNewActivity() async {
+    updateFetchingActivity(true);
 
     if (targetTokens.isEmpty ||
         !pangeaController.languageController.languagesSet) {
       debugger(when: kDebugMode);
-      widget.overlayController.exitPracticeFlow();
-      return;
+      return null;
     }
 
     final ourNewActivity =
@@ -129,22 +125,16 @@ class MessagePracticeActivityCardState extends State<PracticeActivityCard> {
       widget.pangeaMessageEvent,
     );
 
-    currentActivity = ourNewActivity;
-
-    // we want to highlight the target tokens in the message
-    // so we add these to the overlay controller
-    widget.overlayController.onNewActivity(currentActivity!.practiceActivity);
-
     /// Removes the target tokens of the new activity from the target tokens list.
     /// This avoids getting activities for the same token again, at least
     /// until the user exists the toolbar and re-enters it. By then, the
     /// analytics stream will have updated and the user will be able to get
     /// activity data for previously targeted tokens. This should then exclude
     /// the tokens that were targeted in previous activities based on xp and lastUsed.
-    if (currentActivity?.practiceActivity.relevantSpanDisplayDetails != null) {
+    if (ourNewActivity?.practiceActivity.relevantSpanDisplayDetails != null) {
       targetTokens.removeWhere((token) {
         final RelevantSpanDisplayDetails span =
-            currentActivity!.practiceActivity.relevantSpanDisplayDetails!;
+            ourNewActivity!.practiceActivity.relevantSpanDisplayDetails!;
         return token.token.text.offset >= span.offset &&
             token.token.text.offset + token.token.text.length <=
                 span.offset + span.length;
@@ -152,6 +142,8 @@ class MessagePracticeActivityCardState extends State<PracticeActivityCard> {
     }
 
     updateFetchingActivity(false);
+
+    return ourNewActivity;
   }
 
   RepresentationEvent? get representation =>
@@ -161,19 +153,39 @@ class MessagePracticeActivityCardState extends State<PracticeActivityCard> {
 
   PangeaController get pangeaController => MatrixState.pangeaController;
 
-  Future<void> setTargetTokens(BuildContext context) async {
-    final tokens = await representation?.tokensGlobal(context);
-    if (tokens == null || tokens.isEmpty) {
-      debugger(when: kDebugMode);
-      return;
+  /// From the tokens in the message, do a preliminary filtering of which to target
+  /// Then get the construct uses for those tokens
+  Future<List<TokenWithXP>> getTargetTokens() async {
+    if (!mounted) {
+      ErrorHandler.logError(
+        m: 'getTargetTokens called when not mounted',
+        s: StackTrace.current,
+      );
+      return [];
     }
 
-    final constructUses =
+    // we're just going to set this once per session
+    // we remove the target tokens when we get a new activity
+    if (targetTokens.isNotEmpty) return targetTokens;
+
+    if (representation == null) {
+      debugger(when: kDebugMode);
+      return [];
+    }
+    final tokens = await representation?.tokensGlobal(context);
+
+    if (tokens == null || tokens.isEmpty) {
+      debugger(when: kDebugMode);
+      return [];
+    }
+
+    var constructUses =
         MatrixState.pangeaController.analytics.analyticsStream.value;
 
-    if (constructUses == null) {
+    if (constructUses == null || constructUses.isEmpty) {
+      constructUses = [];
+      //@gurdin - this is happening for me with a brand-new user. however, in this case, constructUses should be empty list
       debugger(when: kDebugMode);
-      return;
     }
 
     final ConstructListModel constructList = ConstructListModel(
@@ -203,42 +215,50 @@ class MessagePracticeActivityCardState extends State<PracticeActivityCard> {
       }
     }
 
-    // debugger(when: kDebugMode);
-
     tokenCounts.sort((a, b) => a.xp.compareTo(b.xp));
 
-    debugger(when: kDebugMode && tokenCounts.isEmpty);
-
-    targetTokens.addAll(tokenCounts);
-
-    return;
+    return tokenCounts;
   }
 
   void setCompletionRecord(PracticeActivityRecordModel? recordModel) {
     currentCompletionRecord = recordModel;
   }
 
+  /// future that simply waits for the appropriate time to savor the joy
+  Future<void> savorTheJoy() async {
+    if (savoringTheJoy) return;
+    savoringTheJoy = true;
+    joyTimer = Timer(appropriateTimeForJoy, () {
+      savoringTheJoy = false;
+      joyTimer?.cancel();
+    });
+  }
+
   /// Sends the current record model and activity to the server.
   /// If either the currentRecordModel or currentActivity is null, the method returns early.
-  /// Sets the [sending] flag to true before sending the record and activity.
-  /// Logs any errors that occur during the send operation.
-  /// Sets the [sending] flag to false when the send operation is complete.
-  /// previously was called sendRecord
+  /// If the currentActivity is the last activity, the method sets the appropriate flag to true.
+  /// If the currentActivity is not the last activity, the method fetches a new activity.
   void onActivityFinish() async {
     try {
-      // if this is the last activity, set the flag to true
-      // so we can give them some kudos
-      if (widget.overlayController.activitiesLeftToComplete == 1) {
-        widget.overlayController.finishedActivitiesThisSession = true;
-      }
-      setState(() => fetchingActivity = true);
-
       if (currentCompletionRecord == null || currentActivity == null) {
         debugger(when: kDebugMode);
         return;
       }
 
-      //TODO - @ggurdin figure out how to not await this but still give user their XP immediately
+      joyTimer?.cancel();
+      savoringTheJoy = true;
+      joyTimer = Timer(appropriateTimeForJoy, () {
+        if (!mounted) return;
+        savoringTheJoy = false;
+        joyTimer?.cancel();
+      });
+
+      // if this is the last activity, set the flag to true
+      // so we can give them some kudos
+      if (widget.overlayController.activitiesLeftToComplete == 1) {
+        widget.overlayController.finishedActivitiesThisSession = true;
+      }
+
       final Event? event = await MatrixState
           .pangeaController.activityRecordController
           .send(currentCompletionRecord!, currentActivity!);
@@ -252,6 +272,18 @@ class MessagePracticeActivityCardState extends State<PracticeActivityCard> {
           recordModel: currentCompletionRecord!,
         ),
       );
+
+      if (!widget.overlayController.finishedActivitiesThisSession) {
+        currentActivity = await _fetchNewActivity();
+
+        currentActivity == null
+            ? widget.overlayController.exitPracticeFlow()
+            : widget.overlayController
+                .onNewActivity(currentActivity!.practiceActivity);
+      } else {
+        updateFetchingActivity(false);
+        widget.overlayController.setState(() {});
+      }
     } catch (e, s) {
       debugger(when: kDebugMode);
       ErrorHandler.logError(
@@ -263,12 +295,7 @@ class MessagePracticeActivityCardState extends State<PracticeActivityCard> {
           'record': currentCompletionRecord,
         },
       );
-    } finally {
-      if (!widget.overlayController.finishedActivitiesThisSession) {
-        getActivity(true);
-      } else {
-        updateFetchingActivity(false);
-      }
+      widget.overlayController.exitPracticeFlow();
     }
   }
 
@@ -302,7 +329,7 @@ class MessagePracticeActivityCardState extends State<PracticeActivityCard> {
   Widget build(BuildContext context) {
     String? userMessage;
     if (widget.overlayController.finishedActivitiesThisSession) {
-      userMessage = "Boom! Achievement unlocked!";
+      userMessage = "Boom! Tools unlocked!";
     } else if (!fetchingActivity && currentActivity == null) {
       userMessage = L10n.of(context)!.noActivitiesFound;
     }
@@ -339,7 +366,7 @@ class MessagePracticeActivityCardState extends State<PracticeActivityCard> {
           ],
         ),
         // Conditionally show the darkening and progress indicator based on the loading state
-        if (fetchingActivity) ...[
+        if (!savoringTheJoy && fetchingActivity) ...[
           // Semi-transparent overlay
           Container(
             color: Colors.black.withOpacity(0.5), // Darkening effect

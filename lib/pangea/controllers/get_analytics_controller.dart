@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:fluffychat/pangea/constants/class_default_values.dart';
 import 'package:fluffychat/pangea/constants/local.key.dart';
@@ -43,7 +42,8 @@ class GetAnalyticsController {
 
   /// Get the current level based on the number of xp points
   /// The formula is calculated from XP and modeled on RPG games
-  int get level => 1 + sqrt((1 + 8 * currentXP / 100) / 2).floor();
+  // int get level => 1 + sqrt((1 + 8 * currentXP / 100) / 2).floor();
+  int get level => currentXP ~/ 10;
 
   void initialize() {
     _analyticsUpdateSubscription ??= _pangeaController

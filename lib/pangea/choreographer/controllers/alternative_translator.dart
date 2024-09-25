@@ -116,20 +116,20 @@ class AlternativeTranslator {
     }
     switch (translationFeedbackKey) {
       case FeedbackKey.allCorrect:
-        return "Score: 100%\n${L10n.of(context)!.allCorrect}";
+        return "Match: 100%\n${L10n.of(context)!.allCorrect}";
       case FeedbackKey.newWayAllGood:
-        return "Score: 100%\n${L10n.of(context)!.newWayAllGood}";
+        return "Match: 100%\n${L10n.of(context)!.newWayAllGood}";
       case FeedbackKey.othersAreBetter:
         final num userScore =
             (similarityResponse!.userScore(userTranslation!) * 100).round();
         final String displayScore = userScore.toString();
         if (userScore > 90) {
-          return "Score: $displayScore%\n${L10n.of(context)!.almostPerfect}";
+          return "Match: $displayScore%\n${L10n.of(context)!.almostPerfect}";
         }
         if (userScore > 80) {
-          return "Score: $displayScore%\n${L10n.of(context)!.prettyGood}";
+          return "Match: $displayScore%\n${L10n.of(context)!.prettyGood}";
         }
-        return "Score: $displayScore%\n${L10n.of(context)!.othersAreBetter}";
+        return "Match: $displayScore%\n${L10n.of(context)!.othersAreBetter}";
       // case FeedbackKey.commonalityFeedback:
       //     final int count = controller.completedITSteps
       //   .where((element) => element.isCorrect)

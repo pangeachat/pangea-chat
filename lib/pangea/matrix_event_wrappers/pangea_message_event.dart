@@ -15,6 +15,7 @@ import 'package:fluffychat/pangea/models/representation_content_model.dart';
 import 'package:fluffychat/pangea/models/space_model.dart';
 import 'package:fluffychat/pangea/models/speech_to_text_models.dart';
 import 'package:fluffychat/pangea/models/tokens_event_content_model.dart';
+import 'package:fluffychat/pangea/repo/full_text_translation_repo.dart';
 import 'package:fluffychat/pangea/utils/bot_name.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_audio_card.dart';
 import 'package:flutter/foundation.dart';
@@ -351,6 +352,7 @@ class PangeaMessageEvent {
     _representations?.add(
       RepresentationEvent(
         timeline: timeline,
+        parentMessageEvent: _event,
         content: PangeaRepresentation(
           langCode: response.langCode,
           text: response.transcript.text,
@@ -364,29 +366,54 @@ class PangeaMessageEvent {
     return response;
   }
 
+  PangeaMessageTokens? _tokensSafe(Map<String, dynamic>? content) {
+    try {
+      if (content == null) return null;
+      return PangeaMessageTokens.fromJson(content);
+    } catch (e, s) {
+      debugger(when: kDebugMode);
+      ErrorHandler.logError(
+        e: e,
+        s: s,
+        data: content,
+        m: "error parsing tokensSent",
+      );
+      return null;
+    }
+  }
+
+  ChoreoRecord? get _embeddedChoreo {
+    try {
+      if (_latestEdit.content[ModelKey.choreoRecord] == null) return null;
+      return ChoreoRecord.fromJson(
+        _latestEdit.content[ModelKey.choreoRecord] as Map<String, dynamic>,
+      );
+    } catch (e, s) {
+      ErrorHandler.logError(
+        e: e,
+        s: s,
+        data: _latestEdit.content,
+        m: "error parsing choreoRecord",
+      );
+      return null;
+    }
+  }
+
   List<RepresentationEvent>? _representations;
   List<RepresentationEvent> get representations {
     if (_representations != null) return _representations!;
     _representations = [];
-
     if (_latestEdit.content[ModelKey.originalSent] != null) {
       try {
         final RepresentationEvent sent = RepresentationEvent(
+          parentMessageEvent: _event,
           content: PangeaRepresentation.fromJson(
             _latestEdit.content[ModelKey.originalSent] as Map<String, dynamic>,
           ),
-          tokens: _latestEdit.content[ModelKey.tokensSent] != null
-              ? PangeaMessageTokens.fromJson(
-                  _latestEdit.content[ModelKey.tokensSent]
-                      as Map<String, dynamic>,
-                )
-              : null,
-          choreo: _latestEdit.content[ModelKey.choreoRecord] != null
-              ? ChoreoRecord.fromJson(
-                  _latestEdit.content[ModelKey.choreoRecord]
-                      as Map<String, dynamic>,
-                )
-              : null,
+          tokens: _tokensSafe(
+            _latestEdit.content[ModelKey.tokensSent] as Map<String, dynamic>?,
+          ),
+          choreo: _embeddedChoreo,
           timeline: timeline,
         );
         if (_latestEdit.content[ModelKey.choreoRecord] == null) {
@@ -415,16 +442,15 @@ class PangeaMessageEvent {
       try {
         _representations!.add(
           RepresentationEvent(
+            parentMessageEvent: _event,
             content: PangeaRepresentation.fromJson(
               _latestEdit.content[ModelKey.originalWritten]
                   as Map<String, dynamic>,
             ),
-            tokens: _latestEdit.content[ModelKey.tokensWritten] != null
-                ? PangeaMessageTokens.fromJson(
-                    _latestEdit.content[ModelKey.tokensWritten]
-                        as Map<String, dynamic>,
-                  )
-                : null,
+            tokens: _tokensSafe(
+              _latestEdit.content[ModelKey.tokensWritten]
+                  as Map<String, dynamic>?,
+            ),
             timeline: timeline,
           ),
         );
@@ -444,7 +470,11 @@ class PangeaMessageEvent {
             PangeaEventTypes.representation,
           )
           .map(
-            (e) => RepresentationEvent(event: e, timeline: timeline),
+            (e) => RepresentationEvent(
+              event: e,
+              parentMessageEvent: _event,
+              timeline: timeline,
+            ),
           )
           .sorted(
         (a, b) {
@@ -489,35 +519,20 @@ class PangeaMessageEvent {
     final PangeaRepresentation? basis =
         (originalWritten ?? originalSent)?.content;
 
-    final PangeaRepresentation? pangeaRep =
-        await MatrixState.pangeaController.messageData.getPangeaRepresentation(
-      text: basis?.text ?? _latestEdit.body,
-      source: basis?.langCode,
-      target: langCode,
-    );
-    if (pangeaRep == null) return null;
+    // clear representations cache so the new representation event can be added
+    // when next requested
+    _representations = null;
 
-    MatrixState.pangeaController.messageData
-        .sendRepresentationMatrixEvent(
-      representation: pangeaRep,
-      messageEventId: _latestEdit.eventId,
-      room: _latestEdit.room,
-      target: langCode,
-    )
-        .then(
-      (value) {
-        representations.add(
-          RepresentationEvent(
-            event: value,
-            timeline: timeline,
-          ),
-        );
-      },
-    ).onError(
-      (error, stackTrace) => ErrorHandler.logError(e: error, s: stackTrace),
+    return MatrixState.pangeaController.messageData.getPangeaRepresentation(
+      req: FullTextTranslationRequestModel(
+        text: basis?.text ?? _latestEdit.body,
+        srcLang: basis?.langCode,
+        tgtLang: langCode,
+        userL2: l2Code ?? LanguageKeys.unknownLanguage,
+        userL1: l1Code ?? LanguageKeys.unknownLanguage,
+      ),
+      messageEvent: _event,
     );
-
-    return pangeaRep;
   }
 
   RepresentationEvent? get originalSent => representations
@@ -580,6 +595,9 @@ class PangeaMessageEvent {
 
   String? get l2Code =>
       MatrixState.pangeaController.languageController.activeL2Code();
+
+  String? get l1Code =>
+      MatrixState.pangeaController.languageController.userL1?.langCode;
 
   String get messageDisplayLangCode {
     final bool immersionMode = MatrixState

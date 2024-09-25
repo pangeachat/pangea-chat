@@ -29,10 +29,14 @@ class PangeaToken {
   });
 
   static String reconstructText(
-    List<PangeaToken> tokens,
-    int startTokenIndex,
-    int endTokenIndex,
-  ) {
+    List<PangeaToken> tokens, [
+    int startTokenIndex = 0,
+    int endTokenIndex = -1,
+  ]) {
+    if (endTokenIndex == -1) {
+      endTokenIndex = tokens.length - 1;
+    }
+
     final List<PangeaToken> subset =
         tokens.whereIndexed((int index, PangeaToken token) {
       return index >= startTokenIndex && index <= endTokenIndex;
@@ -104,8 +108,10 @@ class PangeaToken {
         'morph': morph,
       };
 
+  /// alias for the offset
   int get start => text.offset;
 
+  /// alias for the end of the token ie offset + length
   int get end => text.offset + text.length;
 
   /// create an empty tokenWithXP object

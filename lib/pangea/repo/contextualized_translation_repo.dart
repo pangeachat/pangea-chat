@@ -11,7 +11,6 @@ import '../network/requests.dart';
 import '../network/urls.dart';
 
 class ContextualizationTranslationRepo {
-  //Question for Jordan - is this for an individual token or could it be a span?
   static Future<ContextTranslationResponseModel> translate({
     required String accessToken,
     required ContextualTranslationRequestModel request,

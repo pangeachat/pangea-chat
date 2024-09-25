@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/choice_array.dart';
+import 'package:fluffychat/pangea/enum/construct_use_type_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/practice_activity_event.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_record_model.dart';
@@ -70,20 +71,35 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
   }
 
   void updateChoice(String value, int index) {
+    if (currentRecordModel?.hasTextResponse(value) ?? false) {
+      return;
+    }
+
+    final bool isCorrect = widget
+        .currentActivity!.practiceActivity.multipleChoice!
+        .isCorrect(value, index);
+
+    final ConstructUseTypeEnum useType =
+        isCorrect ? ConstructUseTypeEnum.corPA : ConstructUseTypeEnum.incPA;
+
     currentRecordModel?.addResponse(
       text: value,
-      score: widget.currentActivity!.practiceActivity.multipleChoice!
-              .isCorrect(value, index)
-          ? 1
-          : 0,
+      score: isCorrect ? 1 : 0,
     );
+
+    // TODO - add draft uses
+    // activities currently pass around tgtConstructs but not the token
+    // either we change addDraftUses to take constructs or we get and pass the token
+    // MatrixState.pangeaController.myAnalytics.addDraftUses(
+    //     widget.currentActivity.practiceActivity.tg,
+    //     widget.practiceCardController.widget.pangeaMessageEvent.room.id,
+    //     useType,
+    //   );
 
     // If the selected choice is correct, send the record and get the next activity
     if (widget.currentActivity!.practiceActivity.multipleChoice!
         .isCorrect(value, index)) {
       widget.practiceCardController.onActivityFinish();
-
-      widget.practiceCardController.getActivity(true);
     }
 
     setState(
@@ -122,7 +138,7 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
                 .mapIndexed(
                   (index, value) => Choice(
                     text: value,
-                    color: selectedChoiceIndex == index
+                    color: currentRecordModel?.hasTextResponse(value) ?? false
                         ? practiceActivity.multipleChoice!.choiceColor(index)
                         : null,
                     isGold: practiceActivity.multipleChoice!

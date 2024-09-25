@@ -117,6 +117,33 @@ class FullTextTranslationRequestModel {
         ModelKey.offset: offset,
         ModelKey.length: length,
       };
+
+  // override equals and hashcode
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is FullTextTranslationRequestModel &&
+        other.text == text &&
+        other.srcLang == srcLang &&
+        other.tgtLang == tgtLang &&
+        other.userL2 == userL2 &&
+        other.userL1 == userL1 &&
+        other.deepL == deepL &&
+        other.offset == offset &&
+        other.length == length;
+  }
+
+  @override
+  int get hashCode =>
+      text.hashCode ^
+      srcLang.hashCode ^
+      tgtLang.hashCode ^
+      userL2.hashCode ^
+      userL1.hashCode ^
+      deepL.hashCode ^
+      offset.hashCode ^
+      length.hashCode;
 }
 
 class FullTextTranslationResponseModel {
