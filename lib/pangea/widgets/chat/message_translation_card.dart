@@ -158,6 +158,7 @@ class MessageTranslationCardState extends State<MessageTranslationCard> {
                     instructionsEnum: InstructionsEnum.clickAgainToDeselect,
                     onClose: () => setState(() {}),
                   ),
+                // if (widget.selection != null)
               ],
             ),
     );
