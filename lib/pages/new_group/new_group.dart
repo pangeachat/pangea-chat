@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:fluffychat/pages/new_group/new_group_view.dart';
+import 'package:fluffychat/pangea/constants/bot_mode.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/models/chat_topic_model.dart';
@@ -34,8 +35,6 @@ class NewGroup extends StatefulWidget {
 
 class NewGroupController extends State<NewGroup> {
   TextEditingController nameController = TextEditingController();
-
-  TextEditingController topicController = TextEditingController();
 
   bool publicGroup = false;
   bool groupCanBeFound = true;
@@ -110,7 +109,7 @@ class NewGroupController extends State<NewGroup> {
       final addBot = addConversationBotKey.currentState?.addBot ?? false;
       if (addBot) {
         final botOptions = addConversationBotKey.currentState!.botOptions;
-        if (botOptions.mode == "custom") {
+        if (botOptions.mode == BotMode.custom) {
           if (botOptions.customSystemPrompt == null ||
               botOptions.customSystemPrompt!.isEmpty) {
             setState(() {
@@ -120,7 +119,7 @@ class NewGroupController extends State<NewGroup> {
             });
             return;
           }
-        } else if (botOptions.mode == "text_adventure") {
+        } else if (botOptions.mode == BotMode.textAdventure) {
           if (botOptions.textAdventureGameMasterInstructions == null ||
               botOptions.textAdventureGameMasterInstructions!.isEmpty) {
             setState(() {
@@ -132,6 +131,7 @@ class NewGroupController extends State<NewGroup> {
           }
         }
       }
+      // Pangea#
 
       final roomId = await client.createGroupChat(
         // #Pangea
@@ -140,24 +140,6 @@ class NewGroupController extends State<NewGroup> {
         // preset: publicGroup
         //     ? sdk.CreateRoomPreset.publicChat
         //     : sdk.CreateRoomPreset.privateChat,
-        // groupName: nameController.text.isNotEmpty ? nameController.text : null,
-        // initialState: [
-        //   if (topicController.text.isNotEmpty)
-        //     sdk.StateEvent(
-        //       type: sdk.EventTypes.RoomTopic,
-        //       content: {'topic': topicController.text},
-        //     ),
-        //   if (avatar != null)
-        //     sdk.StateEvent(
-        //       type: sdk.EventTypes.RoomAvatar,
-        //       content: {'url': avatarUrl.toString()},
-        //     ),
-        // ],
-        initialState: [
-          if (addConversationBotKey.currentState?.addBot ?? false)
-            addConversationBotKey.currentState!.botOptions.toStateEvent,
-        ],
-        groupName: nameController.text,
         preset: sdk.CreateRoomPreset.publicChat,
         powerLevelContentOverride:
             await ClassChatPowerLevels.powerLevelOverrideForClassChat(
@@ -169,6 +151,18 @@ class NewGroupController extends State<NewGroup> {
             BotName.byEnvironment,
         ],
         // Pangea#
+        groupName: nameController.text.isNotEmpty ? nameController.text : null,
+        initialState: [
+          if (avatar != null)
+            sdk.StateEvent(
+              type: sdk.EventTypes.RoomAvatar,
+              content: {'url': avatarUrl.toString()},
+            ),
+          // #Pangea
+          if (addConversationBotKey.currentState?.addBot ?? false)
+            addConversationBotKey.currentState!.botOptions.toStateEvent,
+          // Pangea#
+        ],
       );
       if (!mounted) return;
       if (publicGroup && groupCanBeFound) {

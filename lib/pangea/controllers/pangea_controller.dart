@@ -106,8 +106,7 @@ class PangeaController {
     speechToText = SpeechToTextController(this);
     languageDetection = LanguageDetectionController(this);
     activityRecordController = PracticeActivityRecordController(this);
-    practiceGenerationController = PracticeGenerationController();
-    // storyGameController = StoryGameController(this);
+    practiceGenerationController = PracticeGenerationController(this);
     PAuthGaurd.pController = this;
   }
 

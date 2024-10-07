@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:collection/collection.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:file_picker/file_picker.dart';
@@ -14,10 +15,12 @@ import 'package:fluffychat/pages/chat/event_info_dialog.dart';
 import 'package:fluffychat/pages/chat/recording_dialog.dart';
 import 'package:fluffychat/pages/chat_details/chat_details.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/choreographer.dart';
+import 'package:fluffychat/pangea/controllers/my_analytics_controller.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
+import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
 import 'package:fluffychat/pangea/models/choreo_record.dart';
 import 'package:fluffychat/pangea/models/representation_content_model.dart';
 import 'package:fluffychat/pangea/models/tokens_event_content_model.dart';
@@ -26,7 +29,6 @@ import 'package:fluffychat/pangea/utils/firebase_analytics.dart';
 import 'package:fluffychat/pangea/utils/overlay.dart';
 import 'package:fluffychat/pangea/utils/report_message.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
-import 'package:fluffychat/pangea/widgets/chat/message_text_selection.dart';
 import 'package:fluffychat/pangea/widgets/igc/pangea_text_controller.dart';
 import 'package:fluffychat/pangea/widgets/user_settings/p_language_dialog.dart';
 import 'package:fluffychat/utils/error_reporter.dart';
@@ -126,7 +128,7 @@ class ChatController extends State<ChatPageWithRoom>
 
   Timeline? timeline;
 
-  String? readMarkerEventId;
+  late final String readMarkerEventId;
 
   String get roomId => widget.room.id;
 
@@ -256,23 +258,22 @@ class ChatController extends State<ChatPageWithRoom>
   // void requestHistory([_]) async {
   Future<void> requestHistory() async {
     if (timeline == null) return;
-    // Pangea#
     if (!timeline!.canRequestHistory) return;
+    // Pangea#
     Logs().v('Requesting history...');
-    await timeline!.requestHistory(historyCount: _loadHistoryCount);
+    await timeline?.requestHistory(historyCount: _loadHistoryCount);
   }
 
   void requestFuture() async {
     final timeline = this.timeline;
     if (timeline == null) return;
-    if (!timeline.canRequestFuture) return;
     Logs().v('Requesting future...');
     final mostRecentEventId = timeline.events.first.eventId;
     await timeline.requestFuture(historyCount: _loadHistoryCount);
     setReadMarker(eventId: mostRecentEventId);
   }
 
-  void _updateScrollController() {
+  void updateScrollController() {
     if (!mounted) {
       return;
     }
@@ -291,7 +292,7 @@ class ChatController extends State<ChatPageWithRoom>
     }
   }
 
-  void _loadDraft() async {
+  void loadDraft() async {
     final prefs = await SharedPreferences.getInstance();
     final draft = widget.shareText ?? prefs.getString('draft_$roomId');
     if (draft != null && draft.isNotEmpty) {
@@ -301,17 +302,18 @@ class ChatController extends State<ChatPageWithRoom>
 
   @override
   void initState() {
-    scrollController.addListener(_updateScrollController);
-    inputFocus.addListener(_inputFocusListener);
+    scrollController.addListener(updateScrollController);
+    inputFocus.addListener(inputFocusListener);
 
-    _loadDraft();
+    loadDraft();
     super.initState();
-    _displayChatDetailsColumn = ValueNotifier(
+    displayChatDetailsColumn = ValueNotifier(
       Matrix.of(context).store.getBool(SettingKeys.displayChatDetailsColumn) ??
           false,
     );
 
     sendingClient = Matrix.of(context).client;
+    readMarkerEventId = room.hasNewMessages ? room.fullyRead : '';
     WidgetsBinding.instance.addObserver(this);
     // #Pangea
     if (!mounted) return;
@@ -335,32 +337,48 @@ class ChatController extends State<ChatPageWithRoom>
       await Matrix.of(context).client.roomsLoading;
     });
     // Pangea#
-    _tryLoadTimeline();
+    tryLoadTimeline();
     if (kIsWeb) {
       onFocusSub = html.window.onFocus.listen((_) => setReadMarker());
     }
   }
 
-  void _tryLoadTimeline() async {
+  void tryLoadTimeline() async {
     final initialEventId = widget.eventId;
     loadTimelineFuture = _getTimeline();
     try {
       await loadTimelineFuture;
       if (initialEventId != null) scrollToEventId(initialEventId);
 
-      final fullyRead = room.fullyRead;
-      if (fullyRead.isEmpty) {
-        setReadMarker();
-        return;
+      var readMarkerEventIndex = readMarkerEventId.isEmpty
+          ? -1
+          : timeline!.events
+              .where((e) => e.isVisibleInGui || e.eventId == readMarkerEventId)
+              .toList()
+              .indexWhere((e) => e.eventId == readMarkerEventId);
+
+      // Read marker is existing but not found in first events. Try a single
+      // requestHistory call before opening timeline on event context:
+      if (readMarkerEventId.isNotEmpty && readMarkerEventIndex == -1) {
+        await timeline?.requestHistory(historyCount: _loadHistoryCount);
+        readMarkerEventIndex = timeline!.events
+            .where((e) => e.isVisibleInGui || e.eventId == readMarkerEventId)
+            .toList()
+            .indexWhere((e) => e.eventId == readMarkerEventId);
       }
-      if (timeline?.events.any((event) => event.eventId == fullyRead) ??
-          false) {
-        Logs().v('Scroll up to visible event', fullyRead);
-        setReadMarker();
+
+      if (readMarkerEventIndex > 1) {
+        Logs().v('Scroll up to visible event', readMarkerEventId);
+        scrollToEventId(readMarkerEventId, highlightEvent: false);
         return;
+      } else if (readMarkerEventId.isNotEmpty && readMarkerEventIndex == -1) {
+        showScrollUpMaterialBanner(readMarkerEventId);
       }
+
+      // Mark room as read on first visit if requirements are fulfilled
+      setReadMarker();
+
       if (!mounted) return;
-      _showScrollUpMaterialBanner(fullyRead);
     } catch (e, s) {
       ErrorReporter(context, 'Unable to load timeline').onErrorCallback(e, s);
       rethrow;
@@ -373,12 +391,13 @@ class ChatController extends State<ChatPageWithRoom>
         scrollUpBannerEventId = null;
       });
 
-  void _showScrollUpMaterialBanner(String eventId) => setState(() {
+  void showScrollUpMaterialBanner(String eventId) => setState(() {
         scrollUpBannerEventId = eventId;
       });
 
   void updateView() {
     if (!mounted) return;
+    setReadMarker();
     setState(() {});
   }
 
@@ -387,11 +406,6 @@ class ChatController extends State<ChatPageWithRoom>
   int? animateInEventIndex;
 
   void onInsert(int i) {
-    if (timeline?.events[i].status == EventStatus.synced) {
-      final index = timeline!.events.firstIndexWhereNotError;
-      if (i == index) setReadMarker(eventId: timeline?.events[i].eventId);
-    }
-
     // setState will be called by updateView() anyway
     animateInEventIndex = i;
   }
@@ -416,6 +430,7 @@ class ChatController extends State<ChatPageWithRoom>
       eventContextId = null;
     }
     try {
+      timeline?.cancelSubscriptions();
       timeline = await room.getTimeline(
         onUpdate: updateView,
         eventContextId: eventContextId,
@@ -423,9 +438,9 @@ class ChatController extends State<ChatPageWithRoom>
       );
       // #Pangea
       if (visibleEvents.length < 10 && timeline != null) {
-        int prevNumEvents = timeline!.events.length;
+        var prevNumEvents = timeline!.events.length;
         await requestHistory();
-        int numRequests = 0;
+        var numRequests = 0;
         while (timeline!.events.length > prevNumEvents &&
             visibleEvents.length < 10 &&
             numRequests <= 5) {
@@ -444,7 +459,7 @@ class ChatController extends State<ChatPageWithRoom>
       );
       if (!mounted) return;
       if (e is TimeoutException || e is IOException) {
-        _showScrollUpMaterialBanner(eventContextId!);
+        showScrollUpMaterialBanner(eventContextId!);
       }
     }
     timeline!.requestKeys(onlineKeyBackupOnly: false);
@@ -461,12 +476,13 @@ class ChatController extends State<ChatPageWithRoom>
     setReadMarker();
   }
 
-  Future<void>? _setReadMarkerFuture;
+  Future<void>? setReadMarkerFuture;
 
   void setReadMarker({String? eventId}) {
-    if (_setReadMarkerFuture != null) return;
+    if (setReadMarkerFuture != null) return;
     if (_scrolledUp) return;
     if (scrollUpBannerEventId != null) return;
+
     if (eventId == null &&
         !room.hasNewMessages &&
         room.notificationCount == 0) {
@@ -495,13 +511,13 @@ class ChatController extends State<ChatPageWithRoom>
 
     Logs().d('Set read marker...', eventId);
     // ignore: unawaited_futures
-    _setReadMarkerFuture = timeline
+    setReadMarkerFuture = timeline
         .setReadMarker(
       eventId: eventId,
       public: AppConfig.sendPublicReadReceipts,
     )
         .then((_) {
-      _setReadMarkerFuture = null;
+      setReadMarkerFuture = null;
     })
         // #Pangea
         .catchError((e, s) {
@@ -533,11 +549,12 @@ class ChatController extends State<ChatPageWithRoom>
   void dispose() {
     timeline?.cancelSubscriptions();
     timeline = null;
-    inputFocus.removeListener(_inputFocusListener);
+    inputFocus.removeListener(inputFocusListener);
     onFocusSub?.cancel();
     //#Pangea
     choreographer.stateListener.close();
     choreographer.dispose();
+    MatrixState.pAnyState.closeOverlay();
     //Pangea#
     super.dispose();
   }
@@ -592,7 +609,7 @@ class ChatController extends State<ChatPageWithRoom>
   }) async {
     // Pangea#
     if (sendController.text.trim().isEmpty) return;
-    _storeInputTimeoutTimer?.cancel();
+    storeInputTimeoutTimer?.cancel();
     final prefs = await SharedPreferences.getInstance();
     prefs.remove('draft_$roomId');
     var parseCommands = true;
@@ -639,16 +656,26 @@ class ChatController extends State<ChatPageWithRoom>
         // There's a listen in my_analytics_controller that decides when to auto-update
         // analytics based on when / how many messages the logged in user send. This
         // stream sends the data for newly sent messages.
+        final metadata = ConstructUseMetaData(
+          roomId: roomId,
+          timeStamp: DateTime.now(),
+          eventId: msgEventId,
+        );
+
         if (msgEventId != null) {
           pangeaController.myAnalytics.setState(
-            data: {
-              'eventID': msgEventId,
-              'eventType': EventTypes.Message,
-              'roomID': room.id,
-              'originalSent': originalSent,
-              'tokensSent': tokensSent,
-              'choreo': choreo,
-            },
+            AnalyticsStream(
+              eventId: msgEventId,
+              roomId: room.id,
+              constructs: [
+                ...(choreo!.grammarConstructUses(metadata: metadata)),
+                ...(originalSent!.vocabUses(
+                  choreo: choreo,
+                  tokens: tokensSent!.tokens,
+                  metadata: metadata,
+                )),
+              ],
+            ),
           );
         }
 
@@ -679,7 +706,7 @@ class ChatController extends State<ChatPageWithRoom>
 
     setState(() {
       sendController.text = pendingText;
-      _inputTextIsEmpty = pendingText.isEmpty;
+      inputTextIsEmpty = pendingText.isEmpty;
       replyEvent = null;
       editEvent = null;
       pendingText = '';
@@ -818,18 +845,11 @@ class ChatController extends State<ChatPageWithRoom>
       builder: (c) => const RecordingDialog(),
     );
     if (result == null) return;
-    // #Pangea
-    // enable web recording
-    // final audioFile = File(result.path);
-    // final file = MatrixAudioFile(
-    //   bytes: audioFile.readAsBytesSync(),
-    //   name: audioFile.path,
-    // );
+    final audioFile = XFile(result.path);
     final file = MatrixAudioFile(
-      bytes: result.bytes,
-      name: result.path,
+      bytes: await audioFile.readAsBytes(),
+      name: result.fileName ?? audioFile.path,
     );
-    // Pangea#
     await room.sendFileEvent(
       file,
       inReplyTo: replyEvent,
@@ -859,12 +879,9 @@ class ChatController extends State<ChatPageWithRoom>
     });
   }
 
-  // #Pangea
-  // void hideEmojiPicker() {
-  void hideEmojiPicker({bool closeOverlay = false}) {
-    if (closeOverlay) {
-      MatrixState.pAnyState.closeOverlay();
-    }
+  void hideEmojiPicker() {
+    // #Pangea
+    clearSelectedEvents();
     // Pangea#
     setState(() => showEmojiPicker = false);
   }
@@ -886,7 +903,7 @@ class ChatController extends State<ChatPageWithRoom>
     setState(() => showEmojiPicker = !showEmojiPicker);
   }
 
-  void _inputFocusListener() {
+  void inputFocusListener() {
     if (showEmojiPicker && inputFocus.hasFocus) {
       emojiPickerType = EmojiPickerType.keyboard;
       setState(() => showEmojiPicker = false);
@@ -900,7 +917,7 @@ class ChatController extends State<ChatPageWithRoom>
     );
   }
 
-  String _getSelectedEventString() {
+  String getSelectedEventString() {
     var copyString = '';
     if (selectedEvents.length == 1) {
       return selectedEvents.first
@@ -918,7 +935,7 @@ class ChatController extends State<ChatPageWithRoom>
   }
 
   void copyEventsAction() {
-    Clipboard.setData(ClipboardData(text: _getSelectedEventString()));
+    Clipboard.setData(ClipboardData(text: getSelectedEventString()));
     setState(() {
       showEmojiPicker = false;
       // #Pangea
@@ -1126,7 +1143,7 @@ class ChatController extends State<ChatPageWithRoom>
     } else {
       Matrix.of(context).shareContent = {
         'msgtype': 'm.text',
-        'body': _getSelectedEventString(),
+        'body': getSelectedEventString(),
       };
     }
     setState(() => selectedEvents.clear());
@@ -1162,10 +1179,16 @@ class ChatController extends State<ChatPageWithRoom>
     String eventId, {
     bool highlightEvent = true,
   }) async {
-    final eventIndex = timeline!.events
-        .where((event) => event.isVisibleInGui)
-        .toList()
-        .indexWhere((e) => e.eventId == eventId);
+    final foundEvent =
+        timeline!.events.firstWhereOrNull((event) => event.eventId == eventId);
+
+    final eventIndex = foundEvent == null
+        ? -1
+        : timeline!.events
+            .where((event) => event.isVisibleInGui || event.eventId == eventId)
+            .toList()
+            .indexOf(foundEvent);
+
     if (eventIndex == -1) {
       setState(() {
         timeline = null;
@@ -1191,7 +1214,7 @@ class ChatController extends State<ChatPageWithRoom>
       duration: FluffyThemes.animationDuration,
       preferPosition: AutoScrollPosition.middle,
     );
-    _updateScrollController();
+    updateScrollController();
   }
 
   void scrollDown() async {
@@ -1303,8 +1326,7 @@ class ChatController extends State<ChatPageWithRoom>
   /// text and selection stored for the text in that overlay
   void closeSelectionOverlay() {
     MatrixState.pAnyState.closeAllOverlays();
-    textSelection.clearMessageText();
-    textSelection.onSelection(null);
+    // selectedTokenIndicies.clear();
   }
   // Pangea#
 
@@ -1493,18 +1515,18 @@ class ChatController extends State<ChatPageWithRoom>
     );
   }
 
-  Timer? _storeInputTimeoutTimer;
-  static const Duration _storeInputTimeout = Duration(milliseconds: 500);
+  Timer? storeInputTimeoutTimer;
+  static const storeInputTimeout = Duration(milliseconds: 500);
 
   void onInputBarChanged(String text) {
-    if (_inputTextIsEmpty != text.isEmpty) {
+    if (inputTextIsEmpty != text.isEmpty) {
       setState(() {
-        _inputTextIsEmpty = text.isEmpty;
+        inputTextIsEmpty = text.isEmpty;
       });
     }
 
-    _storeInputTimeoutTimer?.cancel();
-    _storeInputTimeoutTimer = Timer(_storeInputTimeout, () async {
+    storeInputTimeoutTimer?.cancel();
+    storeInputTimeoutTimer = Timer(storeInputTimeout, () async {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('draft_$roomId', text);
     });
@@ -1543,7 +1565,7 @@ class ChatController extends State<ChatPageWithRoom>
     }
   }
 
-  bool _inputTextIsEmpty = true;
+  var inputTextIsEmpty = true;
 
   bool get isArchived =>
       {Membership.leave, Membership.ban}.contains(room.membership);
@@ -1610,8 +1632,6 @@ class ChatController extends State<ChatPageWithRoom>
       });
 
 // #Pangea
-  MessageTextSelection textSelection = MessageTextSelection();
-
   void showToolbar(
     PangeaMessageEvent pangeaMessageEvent, {
     MessageMode? mode,
@@ -1619,9 +1639,10 @@ class ChatController extends State<ChatPageWithRoom>
     Event? prevEvent,
   }) {
     if (![
-      MessageTypes.Text,
-      MessageTypes.Audio,
-    ].contains(pangeaMessageEvent.event.messageType)) {
+          MessageTypes.Text,
+          MessageTypes.Audio,
+        ].contains(pangeaMessageEvent.event.messageType) ||
+        pangeaMessageEvent.event.redacted) {
       return;
     }
 
@@ -1642,10 +1663,9 @@ class ChatController extends State<ChatPageWithRoom>
     Widget? overlayEntry;
     try {
       overlayEntry = MessageSelectionOverlay(
-        controller: this,
+        chatController: this,
         event: pangeaMessageEvent.event,
         pangeaMessageEvent: pangeaMessageEvent,
-        textSelection: textSelection,
         nextEvent: nextEvent,
         prevEvent: prevEvent,
       );
@@ -1659,7 +1679,7 @@ class ChatController extends State<ChatPageWithRoom>
       context: context,
       child: overlayEntry,
       transformTargetId: "",
-      backgroundColor: const Color.fromRGBO(0, 0, 0, 1).withAlpha(100),
+      backgroundColor: const Color.fromRGBO(0, 0, 0, 1).withAlpha(150),
       closePrevOverlay:
           MatrixState.pangeaController.subscriptionController.isSubscribed,
       position: OverlayPositionEnum.centered,
@@ -1670,71 +1690,97 @@ class ChatController extends State<ChatPageWithRoom>
     onSelectMessage(pangeaMessageEvent.event);
     HapticFeedback.mediumImpact();
   }
-  // Pangea#
 
-  late final ValueNotifier<bool> _displayChatDetailsColumn;
+  // final List<int> selectedTokenIndicies = [];
+  // void onClickOverlayMessageToken(
+  //   PangeaMessageEvent pangeaMessageEvent,
+  //   int tokenIndex,
+  // ) {
+  //   if (pangeaMessageEvent.originalSent?.tokens == null ||
+  //       tokenIndex < 0 ||
+  //       tokenIndex >= pangeaMessageEvent.originalSent!.tokens!.length) {
+  //     selectedTokenIndicies.clear();
+  //     return;
+  //   }
+
+  //   // if there's stuff that's already selected, then we already ahve a sentence deselect
+  //   if (selectedTokenIndicies.isNotEmpty) {
+  //     final bool listContainedIndex =
+  //         selectedTokenIndicies.contains(tokenIndex);
+
+  //     selectedTokenIndicies.clear();
+  //     if (!listContainedIndex) {
+  //       selectedTokenIndicies.add(tokenIndex);
+  //     }
+  //   }
+
+  //   // TODO
+  //   // if this is already selected, see if there's sentnence and selelct that
+
+  //   // if nothing is select, select one token
+  //   else {
+  //     selectedTokenIndicies.add(tokenIndex);
+  //   }
+  // }
+  // // Pangea#
+
+  late final ValueNotifier<bool> displayChatDetailsColumn;
 
   void toggleDisplayChatDetailsColumn() async {
     await Matrix.of(context).store.setBool(
           SettingKeys.displayChatDetailsColumn,
-          !_displayChatDetailsColumn.value,
+          !displayChatDetailsColumn.value,
         );
-    _displayChatDetailsColumn.value = !_displayChatDetailsColumn.value;
+    displayChatDetailsColumn.value = !displayChatDetailsColumn.value;
   }
 
   @override
-  Widget build(BuildContext context) => Row(
-        children: [
-          Expanded(
-            child: ChatView(this),
-          ),
-          AnimatedSize(
-            duration: FluffyThemes.animationDuration,
-            curve: FluffyThemes.animationCurve,
-            child: ValueListenableBuilder(
-              valueListenable: _displayChatDetailsColumn,
-              builder: (context, displayChatDetailsColumn, _) {
-                if (!FluffyThemes.isThreeColumnMode(context) ||
-                    room.membership != Membership.join ||
-                    !displayChatDetailsColumn) {
-                  return const SizedBox(
-                    height: double.infinity,
-                    width: 0,
-                  );
-                }
-                return Container(
-                  width: FluffyThemes.columnWidth,
-                  clipBehavior: Clip.hardEdge,
-                  decoration: BoxDecoration(
-                    border: Border(
-                      left: BorderSide(
-                        width: 1,
-                        color: Theme.of(context).dividerColor,
-                      ),
-                    ),
-                  ),
-                  child: ChatDetails(
-                    roomId: roomId,
-                    embeddedCloseButton: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: toggleDisplayChatDetailsColumn,
-                    ),
-                  ),
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Row(
+      children: [
+        Expanded(
+          child: ChatView(this),
+        ),
+        AnimatedSize(
+          duration: FluffyThemes.animationDuration,
+          curve: FluffyThemes.animationCurve,
+          child: ValueListenableBuilder(
+            valueListenable: displayChatDetailsColumn,
+            builder: (context, displayChatDetailsColumn, _) {
+              if (!FluffyThemes.isThreeColumnMode(context) ||
+                  room.membership != Membership.join ||
+                  !displayChatDetailsColumn) {
+                return const SizedBox(
+                  height: double.infinity,
+                  width: 0,
                 );
-              },
-            ),
+              }
+              return Container(
+                width: FluffyThemes.columnWidth,
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(
+                  border: Border(
+                    left: BorderSide(
+                      width: 1,
+                      color: theme.dividerColor,
+                    ),
+                  ),
+                ),
+                child: ChatDetails(
+                  roomId: roomId,
+                  embeddedCloseButton: IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: toggleDisplayChatDetailsColumn,
+                  ),
+                ),
+              );
+            },
           ),
-        ],
-      );
+        ),
+      ],
+    );
+  }
 }
 
 enum EmojiPickerType { reaction, keyboard }
-
-extension on List<Event> {
-  int get firstIndexWhereNotError {
-    if (isEmpty) return 0;
-    final index = indexWhere((event) => !event.status.isError);
-    if (index == -1) return length;
-    return index;
-  }
-}

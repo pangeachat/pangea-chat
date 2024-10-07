@@ -120,7 +120,7 @@ class SpanCardState extends State<SpanCard> {
     }
   }
 
-  Future<void> onChoiceSelect(int index) async {
+  Future<void> onChoiceSelect(String value, int index) async {
     selectedChoiceIndex = index;
     if (selectedChoice != null) {
       if (!selectedChoice!.selected) {
@@ -143,6 +143,8 @@ class SpanCardState extends State<SpanCard> {
     }
   }
 
+  /// @ggurdin - this seems like it would be including the correct answer as well
+  /// we only want to give this kind of points for ignored distractors
   /// Returns the list of choices that are not selected
   List<SpanChoice>? get ignoredMatches => widget.scm.pangeaMatch?.match.choices
       ?.where((choice) => !choice.selected)

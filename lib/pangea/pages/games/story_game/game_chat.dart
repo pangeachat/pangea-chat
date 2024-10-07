@@ -2,12 +2,10 @@ import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/constants/model_keys.dart';
-import 'package:fluffychat/pangea/enum/instructions_enum.dart';
 import 'package:fluffychat/pangea/utils/overlay.dart';
 import 'package:fluffychat/pangea/widgets/chat/game_leaderboard.dart';
 import 'package:fluffychat/utils/date_time_extension.dart';
 import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
@@ -210,14 +208,14 @@ extension GameChatController on ChatController {
         : MainAxisAlignment.start;
   }
 
-  void showVoteWarning(String eventID) {
-    final instructionsController = MatrixState.pangeaController.instructions;
-    instructionsController.showInstructionsPopup(
-      context,
-      InstructionsEnum.voteInstructions,
-      eventID,
-    );
-  }
+  // void showVoteWarning(String eventID) {
+  //   final instructionsController = MatrixState.pangeaController.instructions;
+  //   instructionsController.showInstructionsPopup(
+  //     context,
+  //     InstructionsEnum.voteInstructions,
+  //     eventID,
+  //   );
+  // }
 }
 
 extension StoryGameEvent on Event {
