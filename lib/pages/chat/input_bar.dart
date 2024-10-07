@@ -1,7 +1,6 @@
 import 'package:emojis/emoji.dart';
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pages/chat/command_hints.dart';
-import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/widgets/igc/pangea_text_controller.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/widgets/avatar.dart';
@@ -52,9 +51,6 @@ class InputBar extends StatelessWidget {
   });
 
   List<Map<String, String?>> getSuggestions(String text) {
-    // #Pangea
-    final List<Map<String, String?>> ret = <Map<String, String?>>[];
-    // Pangea#
     if (controller!.selection.baseOffset !=
             controller!.selection.extentOffset ||
         controller!.selection.baseOffset < 0) {
@@ -62,9 +58,7 @@ class InputBar extends StatelessWidget {
     }
     final searchText =
         controller!.text.substring(0, controller!.selection.baseOffset);
-    // #Pangea
-    // final List<Map<String, String?>> ret = <Map<String, String?>>[];
-    // Pangea#
+    final ret = <Map<String, String?>>[];
     const maxResults = 30;
 
     final commandMatch = RegExp(r'^/(\w*)$').firstMatch(searchText);
@@ -230,6 +224,7 @@ class InputBar extends StatelessWidget {
     Map<String, String?> suggestion,
     Client? client,
   ) {
+    final theme = Theme.of(context);
     const size = 30.0;
     // #Pangea
     // const padding = EdgeInsets.all(4.0);
@@ -254,7 +249,7 @@ class InputBar extends StatelessWidget {
                 hint,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodySmall,
+                style: theme.textTheme.bodySmall,
               ),
             ],
           ),
@@ -482,7 +477,8 @@ class InputBar extends StatelessWidget {
             key: controller?.choreographer.inputLayerLinkAndKey.key,
             // builder: (context, controller, focusNode) => TextField(
             builder: (context, _, focusNode) => TextField(
-              readOnly: room.isJudging,
+              // readOnly: room.isJudging,
+              enableSuggestions: false,
               // Pangea#
               controller: controller,
               focusNode: focusNode,

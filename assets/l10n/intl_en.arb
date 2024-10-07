@@ -1,6 +1,10 @@
 {
   "@@locale": "en",
   "@@last_modified": "2021-08-14 12:38:37.885451",
+  "alwaysUse24HourFormat": "false",
+  "@alwaysUse24HourFormat": {
+    "description": "Set to true to always display time of day in 24 hour format."
+  },
   "repeatPassword": "Repeat password",
   "@repeatPassword": {},
   "notAnImage": "Not an image file.",
@@ -197,6 +201,20 @@
       "supportedVersions": {}
     }
   },
+  "countChatsAndCountParticipants": "{chats} chats and {participants} participants",
+  "@countChatsAndCountParticipants": {
+    "type": "text",
+    "placeholders": {
+      "chats": {},
+      "participants": {}
+    }
+  },
+  "noMoreChatsFound": "No more chats found...",
+  "noChatsFoundHere": "No chats found here yet. Start a new chat with someone by using the button below. ⤵️",
+  "joinedChats": "Joined chats",
+  "unread": "Unread",
+  "space": "Space",
+  "spaces": "Spaces",
   "banFromChat": "Ban from chat",
   "@banFromChat": {
     "type": "text",
@@ -660,7 +678,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "defaultPermissionLevel": "Default permission level",
+  "defaultPermissionLevel": "Default permission level for new users",
   "@defaultPermissionLevel": {
     "type": "text",
     "placeholders": {}
@@ -3117,7 +3135,7 @@
   "prettyGood": "Pretty good! Here's what I would have said.",
   "letMeThink": "Hmm, let's see how you did!",
   "clickMessageTitle": "Need help?",
-  "clickMessageBody": "Click a message for language help! Click and hold to react 😀.",
+  "clickMessageBody": "Click a message for language tools like translation, play back and more!",
   "understandingMessagesTitle": "Definitions and translations!",
   "understandingMessagesBody": "Click underlined words for definitions. Translate with message options (upper right).",
   "allDone": "All done!",
@@ -3131,7 +3149,7 @@
   "generateVocabulary": "Generate vocabulary from title and description",
   "generatePrompts": "Generate prompts",
   "subscribe": "Subscribe",
-  "getAccess": "Unlock learning tools",
+  "getAccess": "Subscribe now!",
   "subscriptionDesc": "Messaging is free! Subscribe to unlock interactive translation, grammar checking and learning analytics.",
   "subscriptionManagement": "Subscription Management",
   "currentSubscription": "Current Subscription",
@@ -3770,7 +3788,7 @@
     }
   },
   "freeTrialDesc": "New users recieve a one week free trial of Pangea Chat",
-  "activateTrial": "Activate Free Trial",
+  "activateTrial": "Free 7-Day Trial",
   "inNoSpaces": "You are not a member of any spaces",
   "successfullySubscribed": "You have successfully subscribed!",
   "clickToManageSubscription": "Click here to manage your subscription.",
@@ -3885,7 +3903,7 @@
   "define": "Define",
   "listen": "Listen",
   "addConversationBot": "Enable Conversation Bot",
-  "addConversationBotDesc": "Add a bot to this group chat",
+  "addConversationBotDesc": "Add a bot to this chat",
   "convoBotSettingsTitle": "Conversation Bot Settings",
   "convoBotSettingsDescription": "Edit conversation topic and difficulty",
   "enterAConversationTopic": "Enter a conversation topic",
@@ -3950,11 +3968,11 @@
   "seeOptions": "See options",
   "continuedWithoutSubscription": "Continue without subscribing",
   "trialPeriodExpired": "Your trial period has expired",
-  "selectToDefine": "Double click a word to see its definition!",
+  "selectToDefine": "Click any word to see its definition!",
   "translations": "translations",
   "messageAudio": "message audio",
   "definitions": "definitions",
-  "subscribedToUnlockTools": "Subscribe to unlock language tools, including",
+  "subscribedToUnlockTools": "Subscribe to unlock interactive translation and grammar checking, audio playback, personalized practice activities, and learning analytics!",
   "more": "More",
   "translationTooltip": "Translate",
   "audioTooltip": "Play Audio",
@@ -4042,14 +4060,38 @@
   "tooltipInstructionsMobileBody": "Press and hold items to view tooltips.",
   "tooltipInstructionsBrowserBody": "Hover over items to view tooltips.",
   "addSpaceToSpaceDescription": "Select a space to add as a parent",
-  "roomCapacity": "Room Capacity",
+  "roomCapacity": "{roomType} Capacity",
+  "@roomCapacity": {
+    "type": "text",
+    "placeholders": {
+      "roomType": {}
+    }
+  },
   "roomFull": "This room is already at capacity.",
   "topicNotSet": "The topic has not been set.",
   "capacityNotSet": "This room has no capacity limit.",
-  "roomCapacityHasBeenChanged": "Room capacity changed",
+  "roomCapacityHasBeenChanged": "{roomType} capacity changed",
+  "@roomCapacityHasBeenChanged": {
+    "type": "text",
+    "placeholders": {
+      "roomType": {}
+    }
+  },
   "roomExceedsCapacity": "Room exceeds capacity. Consider removing students from the room, or raising the capacity.",
-  "capacitySetTooLow": "Room capacity cannot be set below the current number of non-admins.",
-  "roomCapacityExplanation": "Room capacity limits the number of non-admins allowed in a room.",
+  "capacitySetTooLow": "{roomType} capacity cannot be set below the current number of non-admins.",
+  "@capacitySetTooLow": {
+    "type": "text",
+    "placeholders": {
+      "roomType": {}
+    }
+  },
+  "roomCapacityExplanation": "{roomType} capacity limits the number of non-admins allowed in a room.",
+  "@roomCapacityExplanation": {
+    "type": "text",
+    "placeholders": {
+      "roomType": {}
+    }
+  },
   "enterNumber": "Please enter a whole number value.",
   "buildTranslation": "Build your translation from the choices above",
   "noDatabaseEncryption": "Database encryption is not supported on this platform",
@@ -4072,14 +4114,14 @@
     "placeholders": {}
   },
   "addChatToSpaceDesc": "Adding a chat to a space will make the chat appear within the space for students and give them access.",
-  "addSpaceToSpaceDesc": "Adding a space to another space will make the child space appear within the parent space for students and give them access.",
+  "addSpaceToSpaceDesc": "Adding a sub space to space will make the sub space appear in the main space's chat list.",
   "spaceAnalytics": "Space Analytics",
   "changeAnalyticsLanguage": "Change Analytics Language",
   "suggestToSpace": "Suggest this space",
-  "suggestToSpaceDesc": "Suggested spaces will appear in the chat lists for their parent spaces",
+  "suggestToSpaceDesc": "Suggested sub spaces will appear in their main space's chat list",
   "practice": "Practice",
   "noLanguagesSet": "No languages set",
-  "noActivitiesFound": "No practice activities found for this message",
+  "noActivitiesFound": "That's enough on this for now! Come back later for more.",
   "hintTitle": "Hint:",
   "speechToTextBody": "See how well you did by looking at your Accuracy and Words Per Minute scores",
   "previous": "Previous",
@@ -4120,7 +4162,7 @@
     "placeholders": {}
   },
   "changeAnalyticsView": "Change Analytics View",
-  "l1TranslationBody": "Oops! It looks like this message wasn't sent in your target language. Messages not sent in your target language will not be translated.",
+  "l1TranslationBody": "Messages in your base language will not be translated.",
   "continueText": "Continue",
   "deleteSubscriptionWarningTitle": "You have an active subscription",
   "deleteSubscriptionWarningBody": "Deleting your account will not automatically cancel your subscription.",
@@ -4167,5 +4209,62 @@
   "judgeThisRound": "Judge: ",
   "playersThisRound": "Players: ",
   "judgingHintText": "You're judging this round! Vote on the best answer from other players.",
-  "translationChoicesBody": "Click and hold an option for a hint."
+  "translationChoicesBody": "Click and hold an option for a hint.",
+  "sendCanceled": "Sending canceled",
+  "goToSpace": "Go to space: {space}",
+  "@goToSpace": {
+    "type": "text",
+    "space": {}
+  },
+  "markAsUnread": "Mark as unread",
+  "userLevel": "{level} - User",
+  "@userLevel": {
+    "type": "text",
+    "placeholders": {
+      "level": {}
+    }
+  },
+  "moderatorLevel": "{level} - Moderator",
+  "@moderatorLevel": {
+    "type": "text",
+    "placeholders": {
+      "level": {}
+    }
+  },
+  "adminLevel": "{level} - Admin",
+  "@adminLevel": {
+    "type": "text",
+    "placeholders": {
+      "level": {}
+    }
+  },
+  "changeGeneralChatSettings": "Change general chat settings",
+  "inviteOtherUsers": "Invite other users to this chat",
+  "changeTheChatPermissions": "Change the chat permissions",
+  "changeTheVisibilityOfChatHistory": "Change the visibility of the chat history",
+  "changeTheCanonicalRoomAlias": "Change the main public chat address",
+  "sendRoomNotifications": "Send a @room notifications",
+  "changeTheDescriptionOfTheGroup": "Change the description of the chat",
+  "chatPermissionsDescription": "Define which power level is necessary for certain actions in this chat. The power levels 0, 50 and 100 are usually representing users, moderators and admins, but any gradation is possible.",
+  "updateInstalled": "🎉 Update {version} installed!",
+  "@updateInstalled": {
+    "type": "text",
+    "placeholders": {
+      "version": {}
+    }
+  },
+  "changelog": "Changelog",
+  "loginWithMatrixId": "Login with Matrix-ID",
+  "discoverHomeservers": "Discover homeservers",
+  "whatIsAHomeserver": "What is a homeserver?",
+  "homeserverDescription": "All your data is stored on the homeserver, just like an email provider. You can choose which homeserver you want to use, while you can still communicate with everyone. Learn more at at https://matrix.org.",
+  "doesNotSeemToBeAValidHomeserver": "Doesn't seem to be a compatible homeserver. Wrong URL?",
+  "grammar": "Grammar",
+  "contactHasBeenInvitedToTheChat": "Contact has been invited to the chat",
+  "inviteChat": "📨 Invite chat",
+  "chatName": "Chat name",
+  "reportContentIssueTitle": "Report content issue",
+  "feedback": "Optional feedback",
+  "reportContentIssueDescription": "Uh oh! AI can faciliate personalized learning experiences but... also hallucinates. Please provide any feedback you have and we'll try again.",
+  "clickTheWordAgainToDeselect": "Click the selected word to deselect it."
 }

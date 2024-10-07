@@ -348,4 +348,7 @@ class MatrixLocals extends MatrixLocalizations {
 
   @override
   String invitedBy(String senderName) => l10n.invitedBy(senderName);
+
+  @override
+  String get cancelledSend => l10n.sendCanceled;
 }

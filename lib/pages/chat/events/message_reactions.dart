@@ -1,6 +1,5 @@
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:fluffychat/widgets/mxc_image.dart';
@@ -12,14 +11,14 @@ class MessageReactions extends StatelessWidget {
   final Event event;
   final Timeline timeline;
   // #Pangea
-  final Function(String eventID) showVoteWarning;
+  // final Function(String eventID) showVoteWarning;
   // Pangea#
 
   const MessageReactions(
     this.event,
     this.timeline,
     // #Pangea
-    this.showVoteWarning,
+    // this.showVoteWarning,
     // Pangea#
     {
     super.key,
@@ -52,28 +51,28 @@ class MessageReactions extends StatelessWidget {
     }
 
     // #Pangea
-    final shouldFilterVotes = event.room.isActiveRound &&
-        reactionMap.containsKey('👍') &&
-        reactionMap['👍']!.count > 0;
+    // final shouldFilterVotes = event.room.isActiveRound &&
+    //     reactionMap.containsKey('👍') &&
+    //     reactionMap['👍']!.count > 0;
 
-    if (shouldFilterVotes) {
-      final userReactors = reactionMap['👍']
-          ?.reactors
-          ?.where((user) => user.id == event.room.client.userID)
-          .toList();
+    // if (shouldFilterVotes) {
+    //   final userReactors = reactionMap['👍']
+    //       ?.reactors
+    //       ?.where((user) => user.id == event.room.client.userID)
+    //       .toList();
 
-      final bool userVoted = userReactors != null && userReactors.isNotEmpty;
-      if (userVoted) {
-        reactionMap['👍'] = _ReactionEntry(
-          key: '👍',
-          count: 1,
-          reacted: true,
-          reactors: userReactors,
-        );
-      } else {
-        reactionMap.remove('👍');
-      }
-    }
+    //   final bool userVoted = userReactors != null && userReactors.isNotEmpty;
+    //   if (userVoted) {
+    //     reactionMap['👍'] = _ReactionEntry(
+    //       key: '👍',
+    //       count: 1,
+    //       reacted: true,
+    //       reactors: userReactors,
+    //     );
+    //   } else {
+    //     reactionMap.remove('👍');
+    //   }
+    // }
     // Pangea#
 
     final reactionList = reactionMap.values.toList();
@@ -105,12 +104,12 @@ class MessageReactions extends StatelessWidget {
                 }
               } else {
                 // #Pangea
-                // event.room.sendReaction(event.eventId, r.key);
-                if (event.room.shouldShowVoteWarning(r.key)) {
-                  showVoteWarning(event.eventId);
-                } else {
-                  event.room.sendStoryGameReaction(event.eventId, r.key);
-                }
+                event.room.sendReaction(event.eventId, r.key);
+                // if (event.room.shouldShowVoteWarning(r.key)) {
+                //   showVoteWarning(event.eventId);
+                // } else {
+                //   event.room.sendStoryGameReaction(event.eventId, r.key);
+                // }
                 // Pangea#
               }
             },
@@ -151,10 +150,10 @@ class _Reaction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textColor = Theme.of(context).brightness == Brightness.dark
-        ? Colors.white
-        : Colors.black;
-    final color = Theme.of(context).colorScheme.surface;
+    final theme = Theme.of(context);
+    final textColor =
+        theme.brightness == Brightness.dark ? Colors.white : Colors.black;
+    final color = theme.colorScheme.surface;
     Widget content;
     if (reactionKey.startsWith('mxc://')) {
       content = Row(
@@ -201,8 +200,8 @@ class _Reaction extends StatelessWidget {
           border: Border.all(
             width: 1,
             color: reacted!
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.primaryContainer,
+                ? theme.colorScheme.primary
+                : theme.colorScheme.primaryContainer,
           ),
           borderRadius: BorderRadius.circular(AppConfig.borderRadius / 2),
         ),

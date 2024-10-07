@@ -126,33 +126,41 @@ class ModelKey {
 
   static const String gameState = "game_state";
 
-  // Round States
-  static const String currentCharacter = "current_character";
-  static const String currentCharacterText = "current_character_text";
+  // // Round States
+  // static const String currentCharacter = "current_character";
+  // static const String currentCharacterText = "current_character_text";
   static const String startTime = "start_time";
-  static const String endPreviousRoundTime = "end_previous_round_time";
-  static const String phase = "phase";
-  static const String isGameEnd = "is_game_end";
+  // static const String endPreviousRoundTime = "end_previous_round_time";
+  // static const String phase = "phase";
+  // static const String isGameEnd = "is_game_end";
   static const String playerScores = "player_scores";
   static const String winner = "winner";
   static const String narrator = "narrator";
   static const String character = "character";
-  static const String votes = "voters";
+  // static const String votes = "voters";
   static const String isInstructions = "is_instructions";
-  static const String judge = "judge";
+  // // static const String judge = "judge";
 
-  // Settings States
-  static const String delayBeforeNextRoundSeconds =
-      "delay_before_next_round_seconds";
-  static const String roundSeconds = "round_seconds";
-  static const String delayRangeBeforeSendingMimicPlayerMessageSeconds =
-      "delay_range_before_sending_mimic_player_message_seconds";
-  static const String maxRounds = "max_rounds";
+  // // Settings States
+  // static const String delayBeforeNextRoundSeconds =
+  //     "delay_before_next_round_seconds";
+  // static const String roundSeconds = "round_seconds";
+  // static const String delayRangeBeforeSendingMimicPlayerMessageSeconds =
+  //     "delay_range_before_sending_mimic_player_message_seconds";
+  // static const String maxRounds = "max_rounds";
 
-  // Story States
-  static const String storyDescription = "story_description";
-  static const String goalState = "goal_state";
-  static const String failState = "fail_state";
-  static const String goalStateCharacterText = "goal_state_character_text";
-  static const String failStateCharacterText = "fail_state_character_text";
+  // // Story States
+  // static const String storyDescription = "story_description";
+  // static const String goalState = "goal_state";
+  // static const String failState = "fail_state";
+  // static const String goalStateCharacterText = "goal_state_character_text";
+  // static const String failStateCharacterText = "fail_state_character_text";
+
+  static const String characterMessages = "character_messages";
+  static const String timerStarts = "timer_starts";
+  static const String timerEnds = "timer_ends";
+  static const String timerText = "timer_text";
+  static const String playerCharacter = "player_character";
+  static const String timerPositionAfterEventID =
+      "timer_position_after_event_id";
 }

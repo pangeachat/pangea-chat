@@ -5,12 +5,10 @@ import 'dart:developer';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:collection/collection.dart';
 import 'package:fluffychat/pangea/constants/class_default_values.dart';
-import 'package:fluffychat/pangea/constants/game_constants.dart';
 import 'package:fluffychat/pangea/constants/language_constants.dart';
 import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/constants/pangea_room_types.dart';
 import 'package:fluffychat/pangea/controllers/language_list_controller.dart';
-import 'package:fluffychat/pangea/enum/instructions_enum.dart';
 import 'package:fluffychat/pangea/models/analytics/constructs_event.dart';
 import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
 import 'package:fluffychat/pangea/models/bot_options_model.dart';
@@ -319,36 +317,11 @@ extension PangeaRoom on Room {
   GameModel get gameState =>
       GameModel.fromJson(getState(PangeaEventTypes.storyGame)?.content ?? {});
 
-  Duration? get currentRoundDuration => gameState.startTime != null
-      ? DateTime.now().difference(gameState.startTime!)
-      : null;
-
-  Duration? roundWaitDuration(DateTime? beginWaitTime) =>
-      beginWaitTime != null ? DateTime.now().difference(beginWaitTime) : null;
-
-  bool get isActiveRound => [
-        StoryGamePhase.beginPlayerCompetes,
-        StoryGamePhase.endPlayerCompetes,
-      ].contains(gameState.phase);
-
-  bool get isBetweenRounds => [
-        StoryGamePhase.beginWaitNextRound,
-        StoryGamePhase.endWaitNextRound,
-        StoryGamePhase.beginDecideWinner,
-        StoryGamePhase.endDecideWinner,
-      ].contains(gameState.phase);
-
-  bool get isAfterPlayerCompete => [
-        StoryGamePhase.beginDecideWinner,
-        StoryGamePhase.endDecideWinner,
-        StoryGamePhase.beginWaitNextRound,
-        StoryGamePhase.endWaitNextRound,
-        StoryGamePhase.beginEndGame,
-        StoryGamePhase.endEndGame,
-      ].contains(gameState.phase);
-
-  bool get isJudging =>
-      gameState.judge != null && gameState.judge == client.userID;
+  bool get isActiveRound =>
+      gameState.timerStarts != null &&
+      gameState.timerEnds != null &&
+      gameState.timerEnds!.isAfter(DateTime.now()) &&
+      gameState.timerStarts!.isBefore(DateTime.now());
 
   bool isEventVisibleInGame(Event event, Timeline timeline) {
     if (!{
@@ -358,38 +331,39 @@ extension PangeaRoom on Room {
       EventTypes.CallInvite,
       PangeaEventTypes.storyGame,
     }.contains(event.type)) return true;
-    // if (event.type == PangeaEventTypes.storyGame) {
-    //   final mostRecentUpdate = timeline.events
-    //       .firstWhereOrNull((e) => e.type == PangeaEventTypes.storyGame);
-    //   return event.originServerTs == mostRecentUpdate?.originServerTs;
-    // }
+    if (event.type == PangeaEventTypes.storyGame) {
+      return true;
+    }
 
     if (event.isGMMessage) {
-      return sentDuringRound(event) ||
+      return isCandidateMessage(event.eventId) ||
           event.character != null ||
           event.messageType == MessageTypes.Image ||
           event.isInstructions;
     }
 
-    return sentDuringRound(event);
+    return isCandidateMessage(event.eventId);
   }
 
-  bool sentDuringRound(Event event) {
-    if (gameState.startTime == null) return false;
-    return event.originServerTs.isAfter(gameState.startTime!);
+  bool isCandidateMessage(String eventID) =>
+      candidateMessageIDs.contains(eventID);
+
+  List<String> get candidateMessageIDs =>
+      gameState.characterMessages.values.expand((e) => e).toList();
+
+  List<Event> get candidateMessages {
+    if (timeline == null) return [];
+    return timeline!.events
+        .where((event) => candidateMessageIDs.contains(event.eventId))
+        .toList();
   }
 
   bool userHasVotedThisRound(String userID) {
-    if (timeline == null) return false;
-    for (final event in timeline!.events) {
-      if (!sentDuringRound(event)) break;
-      if (event.type != EventTypes.Message) continue;
-
-      final allUserVotes = event
+    for (final message in candidateMessages) {
+      final allUserVotes = message
           .aggregatedEvents(timeline!, RelationshipTypes.reaction)
           .where((event) => event.senderId == userID && event.isVote)
           .toList();
-
       if (allUserVotes.isNotEmpty) return true;
     }
     return false;
@@ -405,46 +379,46 @@ extension PangeaRoom on Room {
   ///
   /// Returns `true` if the [emoji] is a valid vote emoji and the vote instructions have not been toggled off,
   /// and the user has already voted during the current round.
-  bool shouldShowVoteWarning(String emoji) {
-    if (!GameConstants.voteEmojis.contains(emoji)) return false;
-    final instructionsController = MatrixState.pangeaController.instructions;
-    final bool showedWarning = instructionsController.wereInstructionsShown(
-      InstructionsEnum.voteInstructions.toString(),
-    );
-    if (showedWarning) return false;
-    return hasVotedThisRound;
-  }
+  // bool shouldShowVoteWarning(String emoji) {
+  //   if (!GameConstants.voteEmojis.contains(emoji)) return false;
+  //   final instructionsController = MatrixState.pangeaController.instructions;
+  //   final bool showedWarning = instructionsController.wereInstructionsShown(
+  //     InstructionsEnum.voteInstructions.toString(),
+  //   );
+  //   if (showedWarning) return false;
+  //   return hasVotedThisRound;
+  // }
 
-  /// Send a reaction to a story game event. Redacts all
-  /// previous votes by the user during the active round.
-  Future<void> sendStoryGameReaction(String eventID, String emoji) async {
-    // if it's not a vote reaction, just send it
-    if (!GameConstants.voteEmojis.contains(emoji) || timeline == null) {
-      await sendReaction(eventID, emoji);
-      return;
-    }
+  // /// Send a reaction to a story game event. Redacts all
+  // /// previous votes by the user during the active round.
+  // Future<void> sendStoryGameReaction(String eventID, String emoji) async {
+  //   // if it's not a vote reaction, just send it
+  //   if (!GameConstants.voteEmojis.contains(emoji) || timeline == null) {
+  //     await sendReaction(eventID, emoji);
+  //     return;
+  //   }
 
-    // If the vote warning popup was showing, close it
-    MatrixState.pAnyState.closeOverlay();
+  //   // If the vote warning popup was showing, close it
+  //   MatrixState.pAnyState.closeOverlay();
 
-    // Redact all previous votes by the user during the active round
-    final List<Future> redactFutures = [];
-    for (final event in timeline!.events) {
-      if (!sentDuringRound(event)) break;
-      if (event.type != EventTypes.Message) continue;
+  //   // Redact all previous votes by the user during the active round
+  //   final List<Future> redactFutures = [];
+  //   for (final event in timeline!.events) {
+  //     if (!sentDuringRound(event)) break;
+  //     if (event.type != EventTypes.Message) continue;
 
-      final allMyVotes = event
-          .aggregatedEvents(timeline!, RelationshipTypes.reaction)
-          .where((event) => event.senderId == client.userID && event.isVote)
-          .toList();
+  //     final allMyVotes = event
+  //         .aggregatedEvents(timeline!, RelationshipTypes.reaction)
+  //         .where((event) => event.senderId == client.userID && event.isVote)
+  //         .toList();
 
-      if (allMyVotes.isEmpty) continue;
-      redactFutures.addAll(
-        allMyVotes.map((voteEvent) => voteEvent.redactEvent()),
-      );
-    }
+  //     if (allMyVotes.isEmpty) continue;
+  //     redactFutures.addAll(
+  //       allMyVotes.map((voteEvent) => voteEvent.redactEvent()),
+  //     );
+  //   }
 
-    await Future.wait(redactFutures);
-    await sendReaction(eventID, emoji);
-  }
+  //   await Future.wait(redactFutures);
+  //   await sendReaction(eventID, emoji);
+  // }
 }

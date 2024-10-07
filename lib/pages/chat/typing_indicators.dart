@@ -13,6 +13,8 @@ class TypingIndicators extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     const avatarSize = Avatar.defaultSize / 2;
 
     return StreamBuilder<Object>(
@@ -82,7 +84,7 @@ class TypingIndicators extends StatelessWidget {
                 Material(
                   color:
                       // ignore: deprecated_member_use
-                      Theme.of(context).colorScheme.surfaceVariant,
+                      theme.colorScheme.surfaceVariant,
                   borderRadius: const BorderRadius.all(
                     Radius.circular(AppConfig.borderRadius),
                   ),
@@ -138,6 +140,7 @@ class __TypingDotsState extends State<_TypingDots> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     const size = 8.0;
 
     return Row(
@@ -155,7 +158,7 @@ class __TypingDotsState extends State<_TypingDots> {
             ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(size * 2),
-              color: Theme.of(context).colorScheme.secondary,
+              color: theme.colorScheme.secondary,
             ),
           ),
       ],

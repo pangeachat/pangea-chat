@@ -8,9 +8,11 @@ import 'package:fluffychat/pangea/enum/instructions_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/representation_content_model.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
+import 'package:fluffychat/pangea/widgets/chat/message_toolbar_selection_area.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
 
 import '../../models/pangea_match_model.dart';
 
@@ -20,6 +22,8 @@ class PangeaRichText extends StatefulWidget {
   final TextStyle? style;
   final bool isOverlay;
   final ChatController controller;
+  final Event? nextEvent;
+  final Event? prevEvent;
 
   const PangeaRichText({
     super.key,
@@ -27,6 +31,8 @@ class PangeaRichText extends StatefulWidget {
     required this.immersionMode,
     required this.isOverlay,
     required this.controller,
+    this.nextEvent,
+    this.prevEvent,
     this.style,
   });
 
@@ -61,9 +67,6 @@ class PangeaRichTextState extends State<PangeaRichText> {
       if (!mounted) return; // Early exit if the widget is no longer in the tree
       setState(() {
         textSpan = newTextSpan;
-        if (widget.isOverlay) {
-          widget.controller.textSelection.setMessageText(textSpan);
-        }
       });
     } catch (error, stackTrace) {
       ErrorHandler.logError(
@@ -134,37 +137,33 @@ class PangeaRichTextState extends State<PangeaRichText> {
     }
 
     //TODO - take out of build function of every message
-    final Widget richText = SelectableText.rich(
-      onSelectionChanged: (selection, cause) {
-        if (widget.isOverlay) {
-          widget.controller.textSelection.onTextSelection(selection);
-        }
-      },
-      onTap: () {
-        if (!widget.isOverlay) {
-          widget.controller.showToolbar(widget.pangeaMessageEvent);
-        }
-      },
-      enableInteractiveSelection: widget.isOverlay,
-      TextSpan(
-        text: textSpan,
-        style: widget.style,
-        children: [
-          if (_fetchingRepresentation)
-            const WidgetSpan(
-              child: Padding(
-                padding: EdgeInsets.only(left: 5.0),
-                child: SizedBox(
-                  height: 14,
-                  width: 14,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.0,
-                    color: AppConfig.secondaryColor,
+    final Widget richText = ToolbarSelectionArea(
+      isOverlay: widget.isOverlay,
+      pangeaMessageEvent: widget.pangeaMessageEvent,
+      controller: widget.controller,
+      nextEvent: widget.nextEvent,
+      prevEvent: widget.prevEvent,
+      child: RichText(
+        text: TextSpan(
+          text: textSpan,
+          style: widget.style,
+          children: [
+            if (_fetchingRepresentation)
+              const WidgetSpan(
+                child: Padding(
+                  padding: EdgeInsets.only(left: 5.0),
+                  child: SizedBox(
+                    height: 14,
+                    width: 14,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.0,
+                      color: AppConfig.secondaryColor,
+                    ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
 

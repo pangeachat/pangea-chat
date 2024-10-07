@@ -9,9 +9,11 @@ import 'package:fluffychat/pangea/models/analytics/construct_list_model.dart';
 import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
 import 'package:fluffychat/pangea/widgets/animations/progress_bar/progress_bar.dart';
 import 'package:fluffychat/pangea/widgets/animations/progress_bar/progress_bar_details.dart';
+import 'package:fluffychat/pangea/widgets/chat_list/analytics_summary/analytics_popup.dart';
 import 'package:fluffychat/pangea/widgets/chat_list/analytics_summary/progress_indicator.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
@@ -40,9 +42,6 @@ class LearningProgressIndicatorsState
 
   /// Vocabulary constructs model
   ConstructListModel? words;
-
-  /// Grammar constructs model
-  ConstructListModel? errors;
 
   /// Morph constructs model
   ConstructListModel? morphs;
@@ -87,10 +86,6 @@ class LearningProgressIndicatorsState
       type: ConstructTypeEnum.vocab,
       uses: constructs,
     );
-    errors = ConstructListModel(
-      type: ConstructTypeEnum.grammar,
-      uses: constructs,
-    );
     morphs = ConstructListModel(
       type: ConstructTypeEnum.morph,
       uses: constructs,
@@ -102,12 +97,22 @@ class LearningProgressIndicatorsState
   }
 
   /// Get the number of points for a given progress indicator
+  ConstructListModel? getConstructsModel(ProgressIndicatorEnum indicator) {
+    switch (indicator) {
+      case ProgressIndicatorEnum.wordsUsed:
+        return words;
+      case ProgressIndicatorEnum.morphsUsed:
+        return morphs;
+      default:
+        return null;
+    }
+  }
+
+  /// Get the number of points for a given progress indicator
   int? getProgressPoints(ProgressIndicatorEnum indicator) {
     switch (indicator) {
       case ProgressIndicatorEnum.wordsUsed:
         return words?.lemmas.length;
-      case ProgressIndicatorEnum.errorTypes:
-        return errors?.lemmas.length;
       case ProgressIndicatorEnum.morphsUsed:
         return morphs?.lemmas.length;
       case ProgressIndicatorEnum.level:
@@ -138,7 +143,9 @@ class LearningProgressIndicatorsState
     final progressBar = ProgressBar(
       levelBars: [
         LevelBarDetails(
-          fillColor: const Color.fromARGB(255, 0, 190, 83),
+          fillColor: kDebugMode
+              ? const Color.fromARGB(255, 0, 190, 83)
+              : Theme.of(context).colorScheme.primary,
           currentPoints: currentXP,
         ),
         LevelBarDetails(
@@ -170,7 +177,7 @@ class LearningProgressIndicatorsState
       child: Center(
         child: Text(
           "$level",
-          style: const TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white, fontSize: 16),
         ),
       ),
     );
@@ -216,7 +223,17 @@ class LearningProgressIndicatorsState
                         .map(
                           (indicator) => ProgressIndicatorBadge(
                             points: getProgressPoints(indicator),
-                            onTap: () {},
+                            onTap: () {
+                              final model = getConstructsModel(indicator);
+                              if (model == null) return;
+                              showDialog<AnalyticsPopup>(
+                                context: context,
+                                builder: (c) => AnalyticsPopup(
+                                  indicator: indicator,
+                                  constructsModel: model,
+                                ),
+                              );
+                            },
                             progressIndicator: indicator,
                             loading: loading,
                           ),

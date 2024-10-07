@@ -1,9 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pages/chat/input_bar.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/send_button.dart';
 import 'package:fluffychat/pangea/constants/language_constants.dart';
-import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/matrix.dart';
@@ -13,6 +11,7 @@ import 'package:matrix/matrix.dart';
 
 import '../../config/themes.dart';
 import 'chat.dart';
+import 'input_bar.dart';
 
 class ChatInputRow extends StatelessWidget {
   final ChatController controller;
@@ -21,6 +20,7 @@ class ChatInputRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     if (controller.showEmojiPicker &&
         controller.emojiPickerType == EmojiPickerType.reaction) {
       return const SizedBox.shrink();
@@ -34,9 +34,9 @@ class ChatInputRow extends StatelessWidget {
         controller.pangeaController.languageController.activeL2Model();
 
     String hintText() {
-      if (controller.room.isJudging) {
-        return L10n.of(context)!.judgingHintText;
-      }
+      // if (controller.room.isJudging) {
+      //   return L10n.of(context)!.judgingHintText;
+      // }
       if (controller.choreographer.itController.willOpen) {
         return L10n.of(context)!.buildTranslation;
       }
@@ -71,7 +71,7 @@ class ChatInputRow extends StatelessWidget {
                       height: height,
                       child: TextButton(
                         style: TextButton.styleFrom(
-                          foregroundColor: Theme.of(context).colorScheme.error,
+                          foregroundColor: theme.colorScheme.error,
                         ),
                         onPressed: controller.deleteErrorEventsAction,
                         child: Row(
@@ -144,15 +144,7 @@ class ChatInputRow extends StatelessWidget {
                     duration: FluffyThemes.animationDuration,
                     curve: FluffyThemes.animationCurve,
                     height: height,
-                    // #Pangea
-                    // width:
-                    //     controller.sendController.text.isEmpty ? height : 0,
-                    width: controller.sendController.text.isEmpty &&
-                            controller.pangeaController.permissionsController
-                                .showChatInputAddButton(controller.roomId)
-                        ? height
-                        : 0,
-                    // Pangea#
+                    width: controller.sendController.text.isEmpty ? height : 0,
                     alignment: Alignment.center,
                     clipBehavior: Clip.hardEdge,
                     decoration: const BoxDecoration(),
@@ -229,21 +221,6 @@ class ChatInputRow extends StatelessWidget {
                               contentPadding: const EdgeInsets.all(0),
                             ),
                           ),
-                        if (controller.room
-                            .getImagePacks(ImagePackUsage.sticker)
-                            .isNotEmpty)
-                          PopupMenuItem<String>(
-                            value: 'sticker',
-                            child: ListTile(
-                              leading: const CircleAvatar(
-                                backgroundColor: Colors.orange,
-                                foregroundColor: Colors.white,
-                                child: Icon(Icons.emoji_emotions_outlined),
-                              ),
-                              title: Text(L10n.of(context)!.sendSticker),
-                              contentPadding: const EdgeInsets.all(0),
-                            ),
-                          ),
                         //#Pangea
                         // if (PlatformInfos.isMobile)
                         if (PlatformInfos.isMobile &&
@@ -265,9 +242,6 @@ class ChatInputRow extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // #Pangea
-                  // ),
-                  // Pangea#
                   Container(
                     height: height,
                     width: height,
@@ -308,9 +282,6 @@ class ChatInputRow extends StatelessWidget {
                       ),
                       onPressed: controller.emojiPickerAction,
                     ),
-                    // #Pangea
-                    // ),
-                    // Pangea#
                   ),
                   // #Pangea
                   // if (Matrix.of(context).isMultiAccount &&
@@ -378,10 +349,8 @@ class ChatInputRow extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(height),
                             ),
-                            backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            foregroundColor:
-                                Theme.of(context).colorScheme.onPrimary,
+                            backgroundColor: theme.colorScheme.primary,
+                            foregroundColor: theme.colorScheme.onPrimary,
                             child: const Icon(Icons.mic_none_outlined),
                           )
                         :
@@ -395,11 +364,9 @@ class ChatInputRow extends StatelessWidget {
                     //     shape: RoundedRectangleBorder(
                     //       borderRadius: BorderRadius.circular(height),
                     //     ),
-                    //     backgroundColor: Theme.of(context)
-                    //         .colorScheme
-                    //         .onPrimaryContainer,
-                    //     foregroundColor:
-                    //         Theme.of(context).colorScheme.onPrimary,
+                    //     backgroundColor:
+                    //         theme.colorScheme.onPrimaryContainer,
+                    //     foregroundColor: theme.colorScheme.onPrimary,
                     //     child: const Icon(Icons.send_outlined),
                     //   ),
                     // Pangea#

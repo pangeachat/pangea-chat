@@ -258,17 +258,16 @@ class ConversationBotSettingsState extends State<ConversationBotSettings> {
                       },
                     );
                     if (confirm == true) {
+                      updateBotOption(() {
+                        botOptions = botOptions;
+                      });
                       final bool isBotRoomMember =
                           await widget.room?.isBotRoom ?? false;
-
                       if (addBot && !isBotRoomMember) {
                         await widget.room?.invite(BotName.byEnvironment);
                       } else if (!addBot && isBotRoomMember) {
                         await widget.room?.kick(BotName.byEnvironment);
                       }
-                      updateBotOption(() {
-                        botOptions = botOptions;
-                      });
                     }
                   },
           ),

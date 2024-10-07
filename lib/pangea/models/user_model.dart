@@ -128,7 +128,7 @@ class UserToolSettings {
     this.interactiveGrammar = true,
     this.immersionMode = false,
     this.definitions = true,
-    this.autoIGC = false,
+    this.autoIGC = true,
   });
 
   factory UserToolSettings.fromJson(Map<String, dynamic> json) =>
@@ -139,7 +139,7 @@ class UserToolSettings {
             json[ToolSetting.interactiveGrammar.toString()] ?? true,
         immersionMode: json[ToolSetting.immersionMode.toString()] ?? false,
         definitions: json[ToolSetting.definitions.toString()] ?? true,
-        autoIGC: json[ToolSetting.autoIGC.toString()] ?? false,
+        autoIGC: json[ToolSetting.autoIGC.toString()] ?? true,
       );
 
   Map<String, dynamic> toJson() {
@@ -174,7 +174,7 @@ class UserToolSettings {
           true,
       autoIGC: (accountData[ToolSetting.autoIGC.toString()]
               ?.content[ToolSetting.autoIGC.toString()] as bool?) ??
-          false,
+          true,
     );
   }
 }
@@ -185,11 +185,12 @@ class UserInstructions {
   bool showedClickMessage;
   bool showedBlurMeansTranslate;
   bool showedTooltipInstructions;
-  bool showedVoteInstructions;
+  // bool showedVoteInstructions;
 
   bool showedSpeechToTextTooltip;
   bool showedL1TranslationTooltip;
   bool showedTranslationChoicesTooltip;
+  bool showedClickAgainToDeselect;
 
   UserInstructions({
     this.showedItInstructions = false,
@@ -199,13 +200,13 @@ class UserInstructions {
     this.showedSpeechToTextTooltip = false,
     this.showedL1TranslationTooltip = false,
     this.showedTranslationChoicesTooltip = false,
-    this.showedVoteInstructions = false,
+    // this.showedVoteInstructions = false,
+    this.showedClickAgainToDeselect = false,
   });
 
   factory UserInstructions.fromJson(Map<String, dynamic> json) =>
       UserInstructions(
-        showedItInstructions:
-            json[InstructionsEnum.itInstructions.toString()] ?? false,
+        showedItInstructions: json[InstructionsEnum.itInstructions.toString()],
         showedClickMessage:
             json[InstructionsEnum.clickMessage.toString()] ?? false,
         showedBlurMeansTranslate:
@@ -213,13 +214,13 @@ class UserInstructions {
         showedTooltipInstructions:
             json[InstructionsEnum.tooltipInstructions.toString()] ?? false,
         showedL1TranslationTooltip:
-            json[InlineInstructions.l1Translation.toString()] ?? false,
+            json[InstructionsEnum.l1Translation.toString()] ?? false,
         showedTranslationChoicesTooltip:
-            json[InlineInstructions.translationChoices.toString()] ?? false,
+            json[InstructionsEnum.translationChoices.toString()] ?? false,
         showedSpeechToTextTooltip:
-            json[InlineInstructions.speechToText.toString()] ?? false,
-        showedVoteInstructions:
-            json[InstructionsEnum.voteInstructions.toString()] ?? false,
+            json[InstructionsEnum.speechToText.toString()] ?? false,
+        showedClickAgainToDeselect:
+            json[InstructionsEnum.clickAgainToDeselect.toString()] ?? false,
       );
 
   Map<String, dynamic> toJson() {
@@ -230,13 +231,13 @@ class UserInstructions {
         showedBlurMeansTranslate;
     data[InstructionsEnum.tooltipInstructions.toString()] =
         showedTooltipInstructions;
-    data[InlineInstructions.l1Translation.toString()] =
+    data[InstructionsEnum.l1Translation.toString()] =
         showedL1TranslationTooltip;
-    data[InlineInstructions.translationChoices.toString()] =
+    data[InstructionsEnum.translationChoices.toString()] =
         showedTranslationChoicesTooltip;
-    data[InlineInstructions.speechToText.toString()] =
-        showedSpeechToTextTooltip;
-    data[InstructionsEnum.voteInstructions.toString()] = showedVoteInstructions;
+    data[InstructionsEnum.speechToText.toString()] = showedSpeechToTextTooltip;
+    data[InstructionsEnum.clickAgainToDeselect.toString()] =
+        showedClickAgainToDeselect;
     return data;
   }
 
@@ -263,20 +264,25 @@ class UserInstructions {
                   as bool?) ??
               false,
       showedL1TranslationTooltip:
-          (accountData[InlineInstructions.l1Translation.toString()]
-                      ?.content[InlineInstructions.l1Translation.toString()]
+          (accountData[InstructionsEnum.l1Translation.toString()]
+                      ?.content[InstructionsEnum.l1Translation.toString()]
                   as bool?) ??
               false,
-      showedTranslationChoicesTooltip: (accountData[
-                      InlineInstructions.translationChoices.toString()]
-                  ?.content[InlineInstructions.translationChoices.toString()]
+      showedTranslationChoicesTooltip:
+          (accountData[InstructionsEnum.translationChoices.toString()]
+                      ?.content[InstructionsEnum.translationChoices.toString()]
+                  as bool?) ??
+              false,
+      showedSpeechToTextTooltip:
+          (accountData[InstructionsEnum.speechToText.toString()]
+                      ?.content[InstructionsEnum.speechToText.toString()]
+                  as bool?) ??
+              false,
+      showedClickAgainToDeselect: (accountData[
+                      InstructionsEnum.clickAgainToDeselect.toString()]
+                  ?.content[InstructionsEnum.clickAgainToDeselect.toString()]
               as bool?) ??
           false,
-      showedSpeechToTextTooltip:
-          (accountData[InlineInstructions.speechToText.toString()]
-                      ?.content[InlineInstructions.speechToText.toString()]
-                  as bool?) ??
-              false,
     );
   }
 }

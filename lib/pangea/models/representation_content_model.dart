@@ -146,29 +146,32 @@ class PangeaRepresentation {
     final List<OneConstructUse> uses = [];
     final lemma = token.lemma;
     final content = token.text.content;
-    final morphs = token.morph.values.toList();
 
     if (choreo == null) {
       final bool inUserL2 = langCode ==
           MatrixState.pangeaController.languageController.activeL2Code();
       final useType =
           inUserL2 ? ConstructUseTypeEnum.wa : ConstructUseTypeEnum.unk;
-      uses.addAll(
-        morphs.map(
-          (morph) => OneConstructUse(
+      for (final entry in token.morph.entries) {
+        uses.add(
+          OneConstructUse(
             useType: useType,
-            lemma: morph,
+            lemma: entry.value,
+            categories: [entry.key],
             constructType: ConstructTypeEnum.morph,
             metadata: metadata,
           ),
-        ),
-      );
-      uses.add(
-        lemma.toVocabUse(
-          inUserL2 ? ConstructUseTypeEnum.wa : ConstructUseTypeEnum.unk,
-          metadata,
-        ),
-      );
+        );
+      }
+
+      if (lemma.saveVocab) {
+        uses.add(
+          lemma.toVocabUse(
+            inUserL2 ? ConstructUseTypeEnum.wa : ConstructUseTypeEnum.unk,
+            metadata,
+          ),
+        );
+      }
       return uses;
     }
 
@@ -205,22 +208,25 @@ class PangeaRepresentation {
       }
     }
 
-    uses.addAll(
-      morphs.map(
-        (morph) => OneConstructUse(
+    for (final entry in token.morph.entries) {
+      uses.add(
+        OneConstructUse(
           useType: ConstructUseTypeEnum.wa,
-          lemma: morph,
+          lemma: entry.value,
+          categories: [entry.key],
           constructType: ConstructTypeEnum.morph,
           metadata: metadata,
         ),
-      ),
-    );
-    uses.add(
-      lemma.toVocabUse(
-        ConstructUseTypeEnum.wa,
-        metadata,
-      ),
-    );
+      );
+    }
+    if (lemma.saveVocab) {
+      uses.add(
+        lemma.toVocabUse(
+          ConstructUseTypeEnum.wa,
+          metadata,
+        ),
+      );
+    }
     return uses;
   }
 }

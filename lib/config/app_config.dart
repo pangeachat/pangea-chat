@@ -19,9 +19,10 @@ abstract class AppConfig {
   static double fontSizeFactor = 1;
   static const Color chatColor = primaryColor;
   static Color? colorSchemeSeed = primaryColor;
-  static const double messageFontSize = 15.75;
+  static const double messageFontSize = 16.0;
   static const bool allowOtherHomeservers = true;
   static const bool enableRegistration = true;
+  static const double toolbarMaxHeight = 300.0;
   // #Pangea
   // static const Color primaryColor = Color(0xFF5625BA);
   // static const Color primaryColorLight = Color(0xFFCCBDEA);
@@ -56,6 +57,8 @@ abstract class AppConfig {
   static const String supportUrl = 'https://www.pangeachat.com/faqs';
   static const String termsOfServiceUrl =
       'https://www.pangeachat.com/terms-of-service';
+  // static const String changelogUrl =
+  //     'https://github.com/krille-chan/fluffychat/blob/main/CHANGELOG.md';
   //Pangea#
   static final Uri newIssueUrl = Uri(
     scheme: 'https',
@@ -152,10 +155,10 @@ abstract class AppConfig {
       _defaultHomeserver = json['default_homeserver'];
     }
     if (json['privacy_url'] is String) {
-      _webBaseUrl = json['privacy_url'];
+      _privacyUrl = json['privacy_url'];
     }
     if (json['web_base_url'] is String) {
-      _privacyUrl = json['web_base_url'];
+      _webBaseUrl = json['web_base_url'];
     }
     if (json['render_html'] is bool) {
       // #Pangea

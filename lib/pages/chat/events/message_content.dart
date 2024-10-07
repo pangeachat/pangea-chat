@@ -6,13 +6,15 @@ import 'package:fluffychat/pages/chat/events/video_player.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/pages/games/story_game/game_chat.dart';
 import 'package:fluffychat/pangea/utils/bot_style.dart';
+import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
+import 'package:fluffychat/pangea/widgets/chat/message_toolbar_selection_area.dart';
+import 'package:fluffychat/pangea/widgets/chat/overlay_message_text.dart';
 import 'package:fluffychat/pangea/widgets/igc/pangea_rich_text.dart';
 import 'package:fluffychat/utils/adaptive_bottom_sheet.dart';
 import 'package:fluffychat/utils/date_time_extension.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:matrix/matrix.dart';
@@ -33,14 +35,15 @@ class MessageContent extends StatelessWidget {
   final void Function(Event)? onInfoTab;
   final BorderRadius borderRadius;
   // #Pangea
-  final bool selected;
   final PangeaMessageEvent? pangeaMessageEvent;
   //question: are there any performance benefits to using booleans
   //here rather than passing the choreographer? pangea rich text, a widget
   //further down in the chain is also using pangeaController so its not constant
   final bool immersionMode;
-  final bool isOverlay;
+  final MessageOverlayController? overlayController;
   final ChatController controller;
+  final Event? nextEvent;
+  final Event? prevEvent;
   // Pangea#
 
   const MessageContent(
@@ -49,11 +52,12 @@ class MessageContent extends StatelessWidget {
     super.key,
     required this.textColor,
     // #Pangea
-    required this.selected,
     this.pangeaMessageEvent,
     required this.immersionMode,
-    this.isOverlay = false,
+    this.overlayController,
     required this.controller,
+    this.nextEvent,
+    this.prevEvent,
     // Pangea#
     required this.borderRadius,
   });
@@ -126,6 +130,7 @@ class MessageContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // debugger(when: overlayController != null);
     final fontSize = AppConfig.messageFontSize * AppConfig.fontSizeFactor;
     final buttonTextColor = textColor;
     switch (event.type) {
@@ -217,6 +222,13 @@ class MessageContent extends StatelessWidget {
                 html: html,
                 textColor: textColor,
                 room: event.room,
+                // #Pangea
+                isOverlay: overlayController != null,
+                controller: controller,
+                pangeaMessageEvent: pangeaMessageEvent,
+                nextEvent: nextEvent,
+                prevEvent: prevEvent,
+                // Pangea#
               );
             }
             // else we fall through to the normal message rendering
@@ -298,8 +310,8 @@ class MessageContent extends StatelessWidget {
             final bigEmotes = event.onlyEmotes &&
                 event.numberEmotes > 0 &&
                 event.numberEmotes <= 10;
+
             // #Pangea
-            // return Linkify(
             final messageTextStyle = TextStyle(
               overflow: TextOverflow.ellipsis,
               color: textColor,
@@ -307,72 +319,71 @@ class MessageContent extends StatelessWidget {
               decoration: event.redacted ? TextDecoration.lineThrough : null,
               height: 1.3,
             );
+
+            // debugger(when: overlayController != null);
+            if (overlayController != null && pangeaMessageEvent != null) {
+              return OverlayMessageText(
+                pangeaMessageEvent: pangeaMessageEvent!,
+                overlayController: overlayController!,
+              );
+            }
+
             if (immersionMode && pangeaMessageEvent != null) {
               return Flexible(
                 child: PangeaRichText(
                   style: messageTextStyle,
                   pangeaMessageEvent: pangeaMessageEvent!,
                   immersionMode: immersionMode,
-                  isOverlay: isOverlay,
+                  isOverlay: overlayController != null,
                   controller: controller,
                 ),
               );
             }
+            // Pangea#
 
-            if (isOverlay) {
-              controller.textSelection.setMessageText(
-                event.calcLocalizedBodyFallback(
+            return
+                // #Pangea
+                ToolbarSelectionArea(
+              controller: controller,
+              pangeaMessageEvent: pangeaMessageEvent,
+              isOverlay: overlayController != null,
+              nextEvent: nextEvent,
+              prevEvent: prevEvent,
+              child:
+                  // Pangea#
+                  Linkify(
+                text: event.calcLocalizedBodyFallback(
                   MatrixLocals(L10n.of(context)!),
                   hideReply: true,
                 ),
-              );
-            }
-
-            return SelectableLinkify(
-              onSelectionChanged: (selection, cause) {
-                if (isOverlay) {
-                  controller.textSelection.onTextSelection(selection);
-                }
-              },
-              onTap: () {
-                if (pangeaMessageEvent != null && !isOverlay) {
-                  HapticFeedback.mediumImpact();
-                  controller.showToolbar(pangeaMessageEvent!);
-                }
-              },
-              enableInteractiveSelection: isOverlay,
-              // Pangea#
-              text: event.calcLocalizedBodyFallback(
-                MatrixLocals(L10n.of(context)!),
-                hideReply: true,
+                // #Pangea
+                // style: TextStyle(
+                //   color: textColor,
+                //   fontSize: bigEmotes ? fontSize * 3 : fontSize,
+                //   decoration: event.redacted ? TextDecoration.lineThrough : null,
+                // ),
+                style: !event.isNarratorMessage && !event.isInstructions
+                    ? TextStyle(
+                        color: textColor,
+                        fontSize: bigEmotes ? fontSize * 3 : fontSize,
+                        decoration:
+                            event.redacted ? TextDecoration.lineThrough : null,
+                      )
+                    : BotStyle.text(
+                        context,
+                        big: true,
+                        italics: event.isNarratorMessage,
+                      ),
+                // Pangea#
+                options: const LinkifyOptions(humanize: false),
+                linkStyle: TextStyle(
+                  color: textColor.withAlpha(150),
+                  fontSize: bigEmotes ? fontSize * 3 : fontSize,
+                  decoration: TextDecoration.underline,
+                  decorationColor: textColor.withAlpha(150),
+                ),
+                onOpen: (url) => UrlLauncher(context, url.url).launchUrl(),
               ),
-              // #Pangea
-              // style: TextStyle(
-              //   color: textColor,
-              //   fontSize: bigEmotes ? fontSize * 3 : fontSize,
-              //   decoration: event.redacted ? TextDecoration.lineThrough : null,
-              // ),
-              style: !event.isNarratorMessage && !event.isInstructions
-                  ? TextStyle(
-                      color: textColor,
-                      fontSize: bigEmotes ? fontSize * 3 : fontSize,
-                      decoration:
-                          event.redacted ? TextDecoration.lineThrough : null,
-                    )
-                  : BotStyle.text(
-                      context,
-                      big: true,
-                      italics: event.isNarratorMessage,
-                    ),
-              // Pangea#
-              options: const LinkifyOptions(humanize: false),
-              linkStyle: TextStyle(
-                color: textColor.withAlpha(150),
-                fontSize: bigEmotes ? fontSize * 3 : fontSize,
-                decoration: TextDecoration.underline,
-                decorationColor: textColor.withAlpha(150),
-              ),
-              onOpen: (url) => UrlLauncher(context, url.url).launchUrl(),
             );
         }
       case EventTypes.CallInvite:

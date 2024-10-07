@@ -1,9 +1,7 @@
-import 'package:emoji_proposal/emoji_proposal.dart';
 import 'package:emojis/src/emoji.dart';
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/app_emojis.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
-import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
@@ -16,6 +14,8 @@ class ReactionsPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     if (controller.showEmojiPicker) return const SizedBox.shrink();
     final display = controller.editEvent == null &&
         controller.replyEvent == null &&
@@ -59,22 +59,12 @@ class ReactionsPicker extends StatelessWidget {
             if (!display) {
               return const SizedBox.shrink();
             }
-
-            final proposals =
-                // #Pangea
+            final emojis = // #Pangea
                 emojiList.isNotEmpty
-                    ? emojiList
+                    ? emojiList.map((e) => e.char).toList()
                     :
                     // Pangea#
-                    proposeEmojis(
-                        controller.selectedEvents.first.plaintextBody,
-                        number: 25,
-                        languageCodes:
-                            EmojiProposalLanguageCodes.values.toSet(),
-                      );
-            final emojis = proposals.isNotEmpty
-                ? proposals.map((e) => e.char).toList()
-                : List<String>.from(AppEmojis.emojis);
+                    List<String>.from(AppEmojis.emojis);
             final allReactionEvents = controller.selectedEvents.first
                 .aggregatedEvents(
                   controller.timeline!,
@@ -96,7 +86,7 @@ class ReactionsPicker extends StatelessWidget {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.onInverseSurface,
+                      color: theme.colorScheme.onInverseSurface,
                       borderRadius: const BorderRadius.only(
                         bottomRight: Radius.circular(AppConfig.borderRadius),
                       ),
@@ -112,34 +102,33 @@ class ReactionsPicker extends StatelessWidget {
                             // #Pangea
                             // warning icon if the user has already voted this round
                             // and hasn't seen the voting warning yet
-                            Badge(
-                          offset: const Offset(-5, 5),
-                          backgroundColor: Colors.transparent,
-                          label:
-                              controller.room.shouldShowVoteWarning(emojis[i])
-                                  ? CircleAvatar(
-                                      radius: 10,
-                                      backgroundColor: Colors.red,
-                                      child: IconButton(
-                                        padding: EdgeInsets.zero,
-                                        icon: const Icon(
-                                          Icons.error_outline,
-                                          size: 15,
-                                        ),
-                                        onPressed: () {},
-                                      ),
-                                    )
-                                  : null,
-                          child:
-                              // Pangea#
-                              Container(
-                            width: 56,
-                            height: 56,
-                            alignment: Alignment.center,
-                            child: Text(
-                              emojis[i],
-                              style: const TextStyle(fontSize: 30),
-                            ),
+                            //   Badge(
+                            // offset: const Offset(-5, 5),
+                            // backgroundColor: Colors.transparent,
+                            // label:
+                            //     controller.room.shouldShowVoteWarning(emojis[i])
+                            //         ? CircleAvatar(
+                            //             radius: 10,
+                            //             backgroundColor: Colors.red,
+                            //             child: IconButton(
+                            //               padding: EdgeInsets.zero,
+                            //               icon: const Icon(
+                            //                 Icons.error_outline,
+                            //                 size: 15,
+                            //               ),
+                            //               onPressed: () {},
+                            //             ),
+                            //           )
+                            //         : null,
+                            // child:
+                            // Pangea#
+                            Container(
+                          width: 56,
+                          height: 56,
+                          alignment: Alignment.center,
+                          child: Text(
+                            emojis[i],
+                            style: const TextStyle(fontSize: 30),
                           ),
                         ),
                       ),

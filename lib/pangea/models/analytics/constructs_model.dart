@@ -74,8 +74,9 @@ class ConstructAnalyticsModel {
 
 class OneConstructUse {
   String? lemma;
-  ConstructTypeEnum? constructType;
   String? form;
+  List<String> categories;
+  ConstructTypeEnum constructType;
   ConstructUseTypeEnum useType;
   String? id;
   ConstructUseMetaData metadata;
@@ -85,6 +86,7 @@ class OneConstructUse {
     required this.lemma,
     required this.constructType,
     required this.metadata,
+    this.categories = const [],
     this.form,
     this.id,
   });
@@ -94,15 +96,21 @@ class OneConstructUse {
   DateTime get timeStamp => metadata.timeStamp;
 
   factory OneConstructUse.fromJson(Map<String, dynamic> json) {
+    final constructType = json['constructType'] != null
+        ? ConstructTypeUtil.fromString(json['constructType'])
+        : null;
+    debugger(when: kDebugMode && constructType == null);
+
     return OneConstructUse(
       useType: ConstructUseTypeEnum.values
               .firstWhereOrNull((e) => e.string == json['useType']) ??
           ConstructUseTypeEnum.unk,
       lemma: json['lemma'],
       form: json['form'],
-      constructType: json['constructType'] != null
-          ? ConstructTypeUtil.fromString(json['constructType'])
-          : null,
+      categories: json['categories'] != null
+          ? List<String>.from(json['categories'])
+          : [],
+      constructType: constructType ?? ConstructTypeEnum.vocab,
       id: json['id'],
       metadata: ConstructUseMetaData(
         eventId: json['msgId'],
@@ -112,20 +120,20 @@ class OneConstructUse {
     );
   }
 
-  Map<String, dynamic> toJson([bool condensed = false]) {
-    final Map<String, String?> data = {
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {
       'useType': useType.string,
       'chatId': metadata.roomId,
       'timeStamp': metadata.timeStamp.toIso8601String(),
       'form': form,
       'msgId': metadata.eventId,
     };
-    if (!condensed && lemma != null) data['lemma'] = lemma!;
-    if (!condensed && constructType != null) {
-      data['constructType'] = constructType!.string;
-    }
-    if (id != null) data['id'] = id;
 
+    data['lemma'] = lemma!;
+    data['constructType'] = constructType.string;
+
+    if (id != null) data['id'] = id;
+    data['categories'] = categories;
     return data;
   }
 
