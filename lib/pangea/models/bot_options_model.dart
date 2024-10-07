@@ -1,11 +1,10 @@
 import 'dart:developer';
 
 import 'package:fluffychat/pangea/constants/model_keys.dart';
+import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:flutter/foundation.dart';
 import 'package:matrix/matrix.dart';
-
-import '../constants/pangea_event_types.dart';
 
 class BotOptionsModel {
   int? languageLevel;
@@ -58,7 +57,9 @@ class BotOptionsModel {
       //////////////////////////////////////////////////////////////////////////
       // General Bot Options
       //////////////////////////////////////////////////////////////////////////
-      languageLevel: json[ModelKey.languageLevel],
+      languageLevel: json[ModelKey.languageLevel] is int
+          ? json[ModelKey.languageLevel]
+          : null,
       safetyModeration: json[ModelKey.safetyModeration] ?? true,
       mode: json[ModelKey.mode] ?? "story_game",
 

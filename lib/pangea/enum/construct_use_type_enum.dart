@@ -29,13 +29,14 @@ enum ConstructUseTypeEnum {
   /// encountered as distractor in IGC flow and selected it
   incIGC,
 
-  /// selected correctly in practice activity flow
+  /// selected correctly in word meaning in context practice activity
   corPA,
 
-  /// encountered as distractor in practice activity flow and correctly ignored it
+  /// encountered as distractor in word meaning in context practice activity and correctly ignored it
+  /// Currently not used
   ignPA,
 
-  /// was target construct in practice activity but user did not select correctly
+  /// was target construct in word meaning in context practice activity and incorrectly selected
   incPA,
 
   /// was from selected winning message in story game
@@ -116,7 +117,6 @@ extension ConstructUseTypeExtension on ConstructUseTypeEnum {
       case ConstructUseTypeEnum.wa:
         return 3;
       case ConstructUseTypeEnum.corIGC:
-      case ConstructUseTypeEnum.corPA:
       case ConstructUseTypeEnum.ga:
         return 2;
       case ConstructUseTypeEnum.ignPA:
@@ -128,9 +128,12 @@ extension ConstructUseTypeExtension on ConstructUseTypeEnum {
       case ConstructUseTypeEnum.unk:
         return 0;
       case ConstructUseTypeEnum.incIt:
-      case ConstructUseTypeEnum.incPA:
       case ConstructUseTypeEnum.incIGC:
         return -1;
+      case ConstructUseTypeEnum.corPA:
+        return 5;
+      case ConstructUseTypeEnum.incPA:
+        return -2;
     }
   }
 }

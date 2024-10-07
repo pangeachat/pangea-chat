@@ -1,3 +1,4 @@
+import 'package:fluffychat/pangea/constants/bot_mode.dart';
 import 'package:fluffychat/pangea/models/bot_options_model.dart';
 import 'package:fluffychat/pangea/widgets/conversation_bot/conversation_bot_custom_zone.dart';
 import 'package:fluffychat/pangea/widgets/conversation_bot/conversation_bot_text_adventure_zone.dart';
@@ -18,7 +19,7 @@ class ConversationBotModeDynamicZone extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final zoneMap = {
-      'discussion': ConversationBotDiscussionZone(
+      BotMode.discussion: ConversationBotDiscussionZone(
         initialBotOptions: initialBotOptions,
         onChanged: onChanged,
       ),
@@ -31,6 +32,9 @@ class ConversationBotModeDynamicZone extends StatelessWidget {
         onChanged: onChanged,
       ),
     };
+    if (!zoneMap.containsKey(initialBotOptions.mode)) {
+      return Container();
+    }
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
