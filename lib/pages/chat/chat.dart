@@ -28,6 +28,7 @@ import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/utils/firebase_analytics.dart';
 import 'package:fluffychat/pangea/utils/overlay.dart';
 import 'package:fluffychat/pangea/utils/report_message.dart';
+import 'package:fluffychat/pangea/widgets/chat/game_leaderboard.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
 import 'package:fluffychat/pangea/widgets/igc/pangea_text_controller.dart';
 import 'package:fluffychat/pangea/widgets/user_settings/p_language_dialog.dart';
@@ -1767,13 +1768,17 @@ class ChatController extends State<ChatPageWithRoom>
                     ),
                   ),
                 ),
-                child: ChatDetails(
-                  roomId: roomId,
-                  embeddedCloseButton: IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: toggleDisplayChatDetailsColumn,
-                  ),
-                ),
+                child: isStoryGameMode
+                    ? Scaffold(
+                        body: GameLeaderBoard(room: room),
+                      )
+                    : ChatDetails(
+                        roomId: roomId,
+                        embeddedCloseButton: IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: toggleDisplayChatDetailsColumn,
+                        ),
+                      ),
               );
             },
           ),
