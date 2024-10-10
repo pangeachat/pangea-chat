@@ -335,17 +335,200 @@ extension PangeaRoom on Room {
       return true;
     }
 
-    if (event.isGMMessage) {
-      return isCandidateMessage(event.eventId) ||
-          event.character != null ||
-          event.messageType == MessageTypes.Image ||
-          event.isInstructions;
+    if (!event.isGMMessage) {
+      // event in this scope will be sent by the bot
+
+      // player suggestions are events sent by user that suggests what the
+      // character should say. These are the messages that will be voted on.
+      if (!isPlayerSuggestions(event.eventId)) {
+        return false;
+      }
+
+      // event in this scope from this point on are player suggestions
+
+      // renders the event in timeline if
+      // state "playerMessageVisibleFrom" is not set
+      if (gameState.playerMessageVisibleFrom == null) {
+        return true;
+      }
+
+      // do not render the event if it was sent before the
+      // playerMessageVisibleFrom state
+      if (event.originServerTs.isBefore(gameState.playerMessageVisibleFrom!)) {
+        return false;
+      }
+
+      // event in this scope from this point on are player suggestions that
+      // are sent after the playerMessageVisibleFrom state
+
+      // if playerMessageVisibleTo is not set, render the event
+      if (gameState.playerMessageVisibleTo == null) {
+        return true;
+      }
+
+      // do not render the event if it was sent after the
+      // playerMessageVisibleTo state
+      if (event.originServerTs.isAfter(gameState.playerMessageVisibleTo!)) {
+        return false;
+      }
+
+      // otherwise, render the event cuz its within the visible range
+      return true;
     }
 
-    return isCandidateMessage(event.eventId);
+    // event in this scope from this point on are sent by the bot
+
+    if (event.isCharacterSuggestionMessage) {
+      // event in this scope from this point on are messages sent by the bot
+      // when it is suggesting what the character should say
+
+      // render the event if the characterOptionMessageVisibleFrom state
+      // is not set
+      if (gameState.characterOptionMessageVisibleFrom == null) {
+        return true;
+      }
+
+      // do not render the event if it was sent before the
+      // characterOptionMessageVisibleFrom state
+      if (event.originServerTs
+          .isBefore(gameState.characterOptionMessageVisibleFrom!)) {
+        return false;
+      }
+
+      // render the event if the characterOptionMessageVisibleTo state
+      // is not set
+      if (gameState.playerMessageVisibleTo == null) {
+        return true;
+      }
+
+      // do not render the event if it was sent after the
+      // characterOptionMessageVisibleTo state
+      if (event.originServerTs.isAfter(gameState.playerMessageVisibleTo!)) {
+        return false;
+      }
+
+      // otherwise, render the event cuz its within the visible range
+      return true;
+    }
+
+    // character option messages are messages sent by game master
+    // that users can vote on to decide what the character should they
+    // be role playing as. This if statement handles if those messages
+    // should be rendered in the timeline
+    if (gameState.characterOptionMessageIds != null &&
+        gameState.characterOptionMessageIds!.contains(event.eventId)) {
+      // renders the event in timeline if the state
+      // "characterOptionMessageVisibleFrom" is not set
+      if (gameState.characterOptionMessageVisibleFrom == null) {
+        return true;
+      }
+
+      // do not render the event if it was sent before the
+      // characterOptionMessageVisibleFrom state
+      if (event.originServerTs
+          .isBefore(gameState.characterOptionMessageVisibleFrom!)) {
+        return false;
+      }
+
+      // render the event if the characterOptionMessageVisibleTo state
+      // is not set
+      if (gameState.characterOptionMessageVisibleTo == null) {
+        return true;
+      }
+
+      // do not render the event if it was sent after the
+      // characterOptionMessageVisibleTo state
+      if (event.originServerTs
+          .isAfter(gameState.characterOptionMessageVisibleTo!)) {
+        return false;
+      }
+
+      // otherwise, render the event cuz its within the visible range
+      return true;
+    }
+
+    // scene option messages are messages sent by game master
+    // that users can vote on to decide what the scene should be
+    // about. This if statement handles if those messages should be
+    // rendered in the timeline
+    if (gameState.sceneOptionMessageIds != null &&
+        gameState.sceneOptionMessageIds!.contains(event.eventId)) {
+      // renders the event in timeline if the state
+      // "sceneOptionMessageVisibleFrom" is not set
+      if (gameState.sceneOptionMessageVisibleFrom == null) {
+        return true;
+      }
+
+      // do not render the event if it was sent before the
+      // sceneOptionMessageVisibleFrom state
+      if (event.originServerTs
+          .isBefore(gameState.sceneOptionMessageVisibleFrom!)) {
+        return false;
+      }
+
+      // render the event if the sceneOptionMessageVisibleTo state
+      // is not set
+      if (gameState.sceneOptionMessageVisibleTo == null) {
+        return true;
+      }
+
+      // do not render the event if it was sent after the
+      // sceneOptionMessageVisibleTo state
+      if (event.originServerTs
+          .isAfter(gameState.sceneOptionMessageVisibleTo!)) {
+        return false;
+      }
+
+      // otherwise, render the event cuz its within the visible range
+      return true;
+    }
+
+    // illustration messages are images and it should not be hidden
+    if (event.messageType == MessageTypes.Image) {
+      return true;
+    }
+
+    // instruction messages are messages sent by the game master
+    // that are instructions for the game. This if statement handles
+    // if those messages should be rendered in the timeline
+    if (event.isInstructions) {
+      // renders the event in timeline if the state
+      // "instructionMessageVisibleFrom" is not set
+      if (gameState.instructionMessageVisibleFrom == null) {
+        return true;
+      }
+
+      // do not render the event if it was sent before the
+      // instructionMessageVisibleFrom state
+      if (event.originServerTs
+          .isBefore(gameState.instructionMessageVisibleFrom!)) {
+        return false;
+      }
+
+      // render the event if the instructionMessageVisibleTo state
+      // is not set
+      if (gameState.instructionMessageVisibleTo == null) {
+        return true;
+      }
+
+      // do not render the event if it was sent after the
+      // instructionMessageVisibleTo state
+      if (event.originServerTs
+          .isAfter(gameState.instructionMessageVisibleTo!)) {
+        return false;
+      }
+
+      // otherwise, render the event cuz its within the visible range
+      return true;
+    }
+
+    // render the event if it's not a candidate message nor a game master
+    // message nor an instruction message nor a character option message nor
+    // a scene option message nor an illustration message
+    return true;
   }
 
-  bool isCandidateMessage(String eventID) =>
+  bool isPlayerSuggestions(String eventID) =>
       candidateMessageIDs.contains(eventID);
 
   List<String> get candidateMessageIDs =>

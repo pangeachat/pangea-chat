@@ -139,6 +139,23 @@ class ModelKey {
   static const String character = "character";
   // static const String votes = "voters";
   static const String isInstructions = "is_instructions";
+  static const String characterSuggestionIntention =
+      "character_suggestion_intention";
+  static const String sceneOptionMessageIds = "scene_option_message_ids";
+  static const String sceneOptionMessageVisibleFrom =
+      "scene_option_message_visible_from";
+  static const String sceneOptionMessageVisibleTo =
+      "scene_option_message_visible_to";
+  static const String characterOptionMessageIds =
+      "character_option_message_ids";
+  static const String characterOptionMessageVisibleFrom =
+      "character_option_message_visible_from";
+  static const String characterOptionMessageVisibleTo =
+      "character_option_message_visible_to";
+  static const String instructionMessageVisibleFrom =
+      "instruction_message_visible_from";
+  static const String instructionMessageVisibleTo =
+      "instruction_message_visible_to";
   // // static const String judge = "judge";
 
   // // Settings States
@@ -163,4 +180,6 @@ class ModelKey {
   static const String playerCharacter = "player_character";
   static const String timerPositionAfterEventID =
       "timer_position_after_event_id";
+  static const String playerMessageVisibleFrom = "player_message_visible_from";
+  static const String playerMessageVisibleTo = "player_message_visible_to";
 }

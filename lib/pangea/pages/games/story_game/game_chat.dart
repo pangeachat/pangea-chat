@@ -222,6 +222,8 @@ extension StoryGameEvent on Event {
   String? get character => content[ModelKey.character] as String?;
   String? get winner => content[ModelKey.winner] as String?;
   bool get isInstructions => content[ModelKey.isInstructions] == true;
+  String? get characterMessageIntention =>
+      content[ModelKey.characterSuggestionIntention] as String?;
 
   bool isRevealed(Timeline timeline) {
     final Set<Event> events = aggregatedEvents(
@@ -239,6 +241,9 @@ extension StoryGameEvent on Event {
   }
 
   bool get isGMMessage => senderId == GameConstants.gameMaster;
+
+  bool get isCharacterSuggestionMessage =>
+      isGMMessage && character == null && characterMessageIntention != null;
 
   bool get isNarratorMessage => isGMMessage && character == ModelKey.narrator;
 

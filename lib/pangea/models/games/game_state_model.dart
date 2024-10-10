@@ -125,6 +125,16 @@ class GameModel {
   DateTime? timerEnds;
   String? playerCharacter;
   String? timerPositionAfterEventID;
+  DateTime? playerMessageVisibleFrom;
+  DateTime? playerMessageVisibleTo;
+  List<String>? characterOptionMessageIds;
+  List<String>? sceneOptionMessageIds;
+  DateTime? sceneOptionMessageVisibleFrom;
+  DateTime? sceneOptionMessageVisibleTo;
+  DateTime? characterOptionMessageVisibleFrom;
+  DateTime? characterOptionMessageVisibleTo;
+  DateTime? instructionMessageVisibleFrom;
+  DateTime? instructionMessageVisibleTo;
 
   GameModel({
     // this.currentCharacter,
@@ -152,6 +162,16 @@ class GameModel {
     this.timerEnds,
     this.playerCharacter,
     this.timerPositionAfterEventID,
+    this.playerMessageVisibleFrom,
+    this.playerMessageVisibleTo,
+    this.characterOptionMessageIds,
+    this.sceneOptionMessageIds,
+    this.characterOptionMessageVisibleFrom,
+    this.characterOptionMessageVisibleTo,
+    this.sceneOptionMessageVisibleFrom,
+    this.sceneOptionMessageVisibleTo,
+    this.instructionMessageVisibleFrom,
+    this.instructionMessageVisibleTo,
   });
 
   factory GameModel.fromJson(json) {
@@ -179,6 +199,44 @@ class GameModel {
           ? Map<String, int>.from(json[ModelKey.playerScores])
           : {},
       timerPositionAfterEventID: json[ModelKey.timerPositionAfterEventID],
+      playerMessageVisibleFrom: json[ModelKey.playerMessageVisibleFrom] != null
+          ? DateTime.parse(json[ModelKey.playerMessageVisibleFrom])
+          : null,
+      playerMessageVisibleTo: json[ModelKey.playerMessageVisibleTo] != null
+          ? DateTime.parse(json[ModelKey.playerMessageVisibleTo])
+          : null,
+      sceneOptionMessageIds: json[ModelKey.sceneOptionMessageIds] != null
+          ? List<String>.from(json[ModelKey.sceneOptionMessageIds])
+          : null,
+      sceneOptionMessageVisibleFrom:
+          json[ModelKey.sceneOptionMessageVisibleFrom] != null
+              ? DateTime.parse(json[ModelKey.sceneOptionMessageVisibleFrom])
+              : null,
+      sceneOptionMessageVisibleTo:
+          json[ModelKey.sceneOptionMessageVisibleTo] != null
+              ? DateTime.parse(json[ModelKey.sceneOptionMessageVisibleTo])
+              : null,
+      characterOptionMessageIds:
+          json[ModelKey.characterOptionMessageIds] != null
+              ? List<String>.from(json[ModelKey.characterOptionMessageIds])
+              : null,
+      characterOptionMessageVisibleFrom:
+          json[ModelKey.characterOptionMessageVisibleFrom] != null
+              ? DateTime.parse(json[ModelKey.characterOptionMessageVisibleFrom])
+              : null,
+      characterOptionMessageVisibleTo:
+          json[ModelKey.characterOptionMessageVisibleTo] != null
+              ? DateTime.parse(json[ModelKey.characterOptionMessageVisibleTo])
+              : null,
+      instructionMessageVisibleFrom:
+          json[ModelKey.instructionMessageVisibleFrom] != null
+              ? DateTime.parse(json[ModelKey.instructionMessageVisibleFrom])
+              : null,
+      instructionMessageVisibleTo:
+          json[ModelKey.instructionMessageVisibleTo] != null
+              ? DateTime.parse(json[ModelKey.instructionMessageVisibleTo])
+              : null,
+
       // currentCharacter: json[ModelKey.currentCharacter],
       // currentCharacterText: json[ModelKey.currentCharacterText],
       // startTime: json[ModelKey.startTime] != null
@@ -222,6 +280,17 @@ class GameModel {
       data[ModelKey.playerCharacter] = playerCharacter;
       data[ModelKey.playerScores] = playerScores;
       data[ModelKey.timerPositionAfterEventID] = timerPositionAfterEventID;
+      data[ModelKey.playerMessageVisibleFrom] =
+          playerMessageVisibleFrom?.toIso8601String();
+      data[ModelKey.playerMessageVisibleTo] =
+          playerMessageVisibleTo?.toIso8601String();
+      data[ModelKey.characterOptionMessageIds] = characterOptionMessageIds;
+      data[ModelKey.sceneOptionMessageIds] = sceneOptionMessageIds;
+      data[ModelKey.instructionMessageVisibleFrom] =
+          instructionMessageVisibleFrom?.toIso8601String();
+      data[ModelKey.instructionMessageVisibleTo] =
+          instructionMessageVisibleTo?.toIso8601String();
+
       // data[ModelKey.currentCharacter] = currentCharacter;
       // data[ModelKey.currentCharacterText] = currentCharacterText;
       // data[ModelKey.startTime] = startTime?.toIso8601String();
