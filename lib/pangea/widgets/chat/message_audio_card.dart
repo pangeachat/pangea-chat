@@ -1,6 +1,9 @@
-import 'package:fluffychat/pages/chat/events/audio_player.dart';
+import 'dart:math';
+
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
+import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
+import 'package:fluffychat/pangea/widgets/chat/audio_section_player.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
 import 'package:fluffychat/pangea/widgets/chat/toolbar_content_loading_indicator.dart';
@@ -12,11 +15,13 @@ import 'package:matrix/matrix.dart';
 class MessageAudioCard extends StatefulWidget {
   final PangeaMessageEvent messageEvent;
   final MessageOverlayController overlayController;
+  final PangeaTokenText? selection;
 
   const MessageAudioCard({
     super.key,
     required this.messageEvent,
     required this.overlayController,
+    this.selection,
   });
 
   @override
@@ -71,8 +76,21 @@ class MessageAudioCardState extends State<MessageAudioCard> {
     return;
   }
 
+  final rnd = Random();
+  double? sectionStartMS;
+  double? sectionEndMS;
+
   @override
   void initState() {
+    if (widget.selection != null) {
+      sectionStartMS = rnd.nextDouble() * (1 - 0) + 0;
+      sectionEndMS = rnd.nextDouble() * (1 - 0) + 0;
+      if (sectionEndMS! < sectionStartMS!) {
+        final double temp = sectionEndMS!;
+        sectionEndMS = sectionStartMS;
+        sectionStartMS = temp;
+      }
+    }
     super.initState();
 
     //once we have audio for words, we'll play that
@@ -81,6 +99,27 @@ class MessageAudioCardState extends State<MessageAudioCard> {
     }
 
     fetchAudio();
+  }
+
+  @override
+  void didUpdateWidget(covariant oldWidget) {
+    if (oldWidget.selection != widget.selection) {
+      debugPrint('selection changed');
+      if (widget.selection == null) {
+        sectionStartMS = null;
+        sectionEndMS = null;
+      } else {
+        sectionStartMS = rnd.nextDouble() * (1 - 0) + 0;
+        sectionEndMS = rnd.nextDouble() * (1 - 0) + 0;
+        if (sectionEndMS! < sectionStartMS!) {
+          final double temp = sectionEndMS!;
+          sectionEndMS = sectionStartMS;
+          sectionStartMS = temp;
+        }
+      }
+      setState(() {});
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -94,11 +133,11 @@ class MessageAudioCardState extends State<MessageAudioCard> {
           : localAudioEvent != null || audioFile != null
               ? Column(
                   children: [
-                    AudioPlayerWidget(
+                    AudioSectionPlayerWidget(
                       localAudioEvent,
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
                       matrixFile: audioFile,
-                      autoplay: true,
+                      sectionStartMS: sectionStartMS,
+                      sectionEndMS: sectionEndMS,
                     ),
                   ],
                 )
