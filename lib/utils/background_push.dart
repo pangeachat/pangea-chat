@@ -481,65 +481,63 @@ class BackgroundPush {
     } catch (e, s) {
       ErrorHandler.logError(e: e, s: s);
     }
-    // Pangea#
   }
-
-// #Pangea
-  @pragma('vm:entry-point')
-  Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-    try {
-      await Firebase.initializeApp(
-        name: 'background_firebase',
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-
-      if (message.data.isNotEmpty) {
-        showNotification(message);
-      }
-    } catch (e, s) {
-      ErrorHandler.logError(e: e, s: s);
-    }
-  }
-
-  Future<void> showNotification(RemoteMessage message) async {
-    try {
-      final sender = message.data['sender'];
-      final body = message.data['content_body'];
-      if (sender == null || sender.isEmpty || body == null || body.isEmpty) {
-        return;
-      }
-
-      final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-          FlutterLocalNotificationsPlugin();
-
-      flutterLocalNotificationsPlugin.initialize(
-        const InitializationSettings(
-          android: AndroidInitializationSettings('notifications_icon'),
-          iOS: DarwinInitializationSettings(),
-        ),
-      );
-
-      const androidDetails = AndroidNotificationDetails(
-        AppConfig.pushNotificationsChannelId,
-        "Incoming messages",
-        importance: Importance.high,
-        priority: Priority.high,
-        largeIcon: DrawableResourceAndroidBitmap('notifications_icon'),
-      );
-
-      const iosDetails = DarwinNotificationDetails();
-      const notificationDetails =
-          NotificationDetails(android: androidDetails, iOS: iosDetails);
-
-      await flutterLocalNotificationsPlugin.show(
-        0,
-        message.data['sender_display_name'] ?? sender,
-        body,
-        notificationDetails,
-      );
-    } catch (e, s) {
-      ErrorHandler.logError(e: e, s: s);
-    }
-  }
-// Pangea#
 }
+
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  try {
+    await Firebase.initializeApp(
+      name: 'background_firebase',
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+
+    if (message.data.isNotEmpty) {
+      showNotification(message);
+    }
+  } catch (e, s) {
+    ErrorHandler.logError(e: e, s: s);
+  }
+}
+
+Future<void> showNotification(RemoteMessage message) async {
+  try {
+    final sender = message.data['sender'];
+    final body = message.data['content_body'];
+    if (sender == null || sender.isEmpty || body == null || body.isEmpty) {
+      return;
+    }
+
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+
+    flutterLocalNotificationsPlugin.initialize(
+      const InitializationSettings(
+        android: AndroidInitializationSettings('notifications_icon'),
+        iOS: DarwinInitializationSettings(),
+      ),
+    );
+
+    const androidDetails = AndroidNotificationDetails(
+      AppConfig.pushNotificationsChannelId,
+      "Incoming messages",
+      importance: Importance.high,
+      priority: Priority.high,
+      largeIcon: DrawableResourceAndroidBitmap('notifications_icon'),
+    );
+
+    const iosDetails = DarwinNotificationDetails();
+    const notificationDetails =
+        NotificationDetails(android: androidDetails, iOS: iosDetails);
+
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      message.data['sender_display_name'] ?? sender,
+      body,
+      notificationDetails,
+    );
+  } catch (e, s) {
+    ErrorHandler.logError(e: e, s: s);
+  }
+}
+// Pangea#
