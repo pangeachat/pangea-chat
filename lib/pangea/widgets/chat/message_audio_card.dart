@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:fluffychat/pages/chat/events/audio_player.dart';
 import 'package:fluffychat/pangea/controllers/text_to_speech_controller.dart';
+import 'package:fluffychat/pangea/extensions/pangea_event_extension.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
@@ -11,6 +12,7 @@ import 'package:fluffychat/pangea/widgets/chat/toolbar_content_loading_indicator
 import 'package:fluffychat/pangea/widgets/igc/card_error_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
 
 class MessageAudioCard extends StatefulWidget {
@@ -31,7 +33,6 @@ class MessageAudioCard extends StatefulWidget {
 
 class MessageAudioCardState extends State<MessageAudioCard> {
   bool _isLoading = false;
-  Event? localAudioEvent;
   PangeaAudioFile? audioFile;
 
   double? sectionStartMS;
@@ -40,7 +41,6 @@ class MessageAudioCardState extends State<MessageAudioCard> {
   @override
   void initState() {
     super.initState();
-
     fetchAudio();
   }
 
@@ -121,50 +121,49 @@ class MessageAudioCardState extends State<MessageAudioCard> {
     if (!mounted) return;
     setState(() => _isLoading = true);
 
-    // try {
-    final String langCode = widget.messageEvent.messageDisplayLangCode;
-    final String? text =
-        widget.messageEvent.representationByLanguage(langCode)?.text;
+    try {
+      final String langCode = widget.messageEvent.messageDisplayLangCode;
+      final String? text =
+          widget.messageEvent.representationByLanguage(langCode)?.text;
 
-    if (text != null) {
-      //TODO - handle error but get out of flow
-    }
+      if (text != null) {
+        //TODO - handle error but get out of flow
+      }
 
-    final Event? localEvent =
-        widget.messageEvent.getTextToSpeechLocal(langCode, text!);
+      final Event? localEvent =
+          widget.messageEvent.getTextToSpeechLocal(langCode, text!);
 
-    if (localEvent != null) {
-      debugger(when: kDebugMode);
-      localAudioEvent = localEvent;
-      // @ggurdin why don't we set audioFile here?
+      if (localEvent != null) {
+        audioFile = await localEvent.getPangeaAudioFile();
+      } else {
+        audioFile = await widget.messageEvent.getMatrixAudioFile(
+          langCode,
+          context,
+        );
+      }
+      debugPrint("audio file is now: $audioFile. setting starts and ends...");
+      setSectionStartAndEndFromSelection();
       if (mounted) setState(() => _isLoading = false);
-      return;
+    } catch (e, s) {
+      debugger(when: kDebugMode);
+      debugPrint(StackTrace.current.toString());
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(L10n.of(context)!.errorGettingAudio),
+        ),
+      );
+      ErrorHandler.logError(
+        e: Exception(),
+        s: s,
+        m: 'something wrong getting audio in MessageAudioCardState',
+        data: {
+          'widget.messageEvent.messageDisplayLangCode':
+              widget.messageEvent.messageDisplayLangCode,
+        },
+      );
     }
-
-    audioFile = await widget.messageEvent.getMatrixAudioFile(langCode, context);
-
-    setSectionStartAndEndFromSelection();
-    // } catch (e, s) {
-    //   debugger(when: kDebugMode);
-    //   debugPrint(StackTrace.current.toString());
-    //   if (!mounted) return;
-    //   setState(() => _isLoading = false);
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(
-    //       content: Text(L10n.of(context)!.errorGettingAudio),
-    //     ),
-    //   );
-    //   ErrorHandler.logError(
-    //     e: Exception(),
-    //     s: s,
-    //     m: 'something wrong getting audio in MessageAudioCardState',
-    //     data: {
-    //       'widget.messageEvent.messageDisplayLangCode':
-    //           widget.messageEvent.messageDisplayLangCode,
-    //     },
-    //   );
-    // }
-    return;
   }
 
   @override
@@ -175,11 +174,11 @@ class MessageAudioCardState extends State<MessageAudioCard> {
       alignment: Alignment.center,
       child: _isLoading
           ? const ToolbarContentLoadingIndicator()
-          : localAudioEvent != null || audioFile != null
+          : audioFile != null
               ? Column(
                   children: [
                     AudioPlayerWidget(
-                      localAudioEvent,
+                      null,
                       matrixFile: audioFile,
                       sectionStartMS: sectionStartMS,
                       sectionEndMS: sectionEndMS,

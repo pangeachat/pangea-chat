@@ -157,43 +157,43 @@ class PangeaMessageEvent {
   Event? getTextToSpeechLocal(String langCode, String text) {
     return allAudio.firstWhereOrNull(
       (event) {
-        // try {
-        // Safely access
-        final dataMap = event.content.tryGetMap(ModelKey.transcription);
+        try {
+          // Safely access
+          final dataMap = event.content.tryGetMap(ModelKey.transcription);
 
-        if (dataMap == null) {
-          return false;
-        }
+          if (dataMap == null) {
+            return false;
+          }
 
-        // old text to speech content will not have TTSToken data
-        // we want to disregard them and just generate new ones
-        // for that, we'll return false if 'tokens' are null
-        // while in-development, we'll pause here to inspect
-        // debugger can be removed after we're sure it's working
-        if (dataMap['tokens'] == null) {
-          // events before today will definitely not have the tokens
-          debugger(
-            when: kDebugMode &&
-                event.originServerTs.isAfter(DateTime(2024, 10, 16)),
+          // old text to speech content will not have TTSToken data
+          // we want to disregard them and just generate new ones
+          // for that, we'll return false if 'tokens' are null
+          // while in-development, we'll pause here to inspect
+          // debugger can be removed after we're sure it's working
+          if (dataMap['tokens'] == null) {
+            // events before today will definitely not have the tokens
+            debugger(
+              when: kDebugMode &&
+                  event.originServerTs.isAfter(DateTime(2024, 10, 16)),
+            );
+            return false;
+          }
+
+          final PangeaAudioEventData audioData =
+              PangeaAudioEventData.fromJson(dataMap as dynamic);
+
+          // Check if both language code and text match
+          return audioData.langCode == langCode && audioData.text == text;
+        } catch (e, s) {
+          debugger(when: kDebugMode);
+          ErrorHandler.logError(
+            e: e,
+            s: s,
+            data: event.content.tryGetMap(ModelKey.transcription),
+            m: "error parsing data in getTextToSpeechLocal",
           );
           return false;
         }
-
-        final PangeaAudioEventData audioData =
-            PangeaAudioEventData.fromJson(dataMap as dynamic);
-
-        // Check if both language code and text match
-        return audioData.langCode == langCode && audioData.text == text;
-        // } catch (e, s) {
-        //   debugger(when: kDebugMode);
-        //   ErrorHandler.logError(
-        //     e: e,
-        //     s: s,
-        //     data: event.content.tryGetMap(ModelKey.transcription),
-        //     m: "error parsing data in getTextToSpeechLocal",
-        //   );
-        //   return false;
-        // }
       },
     );
   }
