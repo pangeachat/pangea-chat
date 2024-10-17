@@ -19,7 +19,6 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -493,10 +492,6 @@ class BackgroundPush {
         name: 'background_firebase',
         options: DefaultFirebaseOptions.currentPlatform,
       );
-
-      debugPrint("testing after message is received");
-      debugPrint("Message data: ${message.data}");
-      debugger();
 
       if (message.data.isNotEmpty) {
         showNotification(message);
