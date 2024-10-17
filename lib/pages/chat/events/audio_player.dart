@@ -29,8 +29,8 @@ class AudioPlayerWidget extends StatefulWidget {
   // static const int wavesCount = 40;
   static const int wavesCount = 100;
 
-  final double? sectionStartMS;
-  final double? sectionEndMS;
+  final int? sectionStartMS;
+  final int? sectionEndMS;
   // Pangea#
 
   const AudioPlayerWidget(
@@ -67,20 +67,6 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
   MatrixFile? matrixFile;
   File? audioFile;
 
-  // #Pangea
-  int? get startMS {
-    return widget.sectionStartMS != null
-        ? (widget.sectionStartMS! * maxPosition).round()
-        : null;
-  }
-
-  int? get endMS {
-    return widget.sectionEndMS != null
-        ? (widget.sectionEndMS! * maxPosition).round()
-        : null;
-  }
-  // Pangea#
-
   @override
   void dispose() {
     if (audioPlayer?.playerState.playing == true) {
@@ -100,8 +86,8 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
     if ((oldWidget.sectionEndMS != widget.sectionEndMS) ||
         (oldWidget.sectionStartMS != widget.sectionStartMS)) {
       debugPrint('selection changed');
-      if (startMS != null) {
-        audioPlayer?.seek(Duration(milliseconds: startMS!));
+      if (widget.sectionStartMS != null) {
+        audioPlayer?.seek(Duration(milliseconds: widget.sectionStartMS!));
         audioPlayer?.play();
       } else {
         audioPlayer?.stop();
@@ -201,11 +187,11 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
             .round();
       });
       // #Pangea
-      if (startMS != null &&
-          endMS != null &&
-          state.inMilliseconds.toDouble() >= endMS!) {
+      if (widget.sectionStartMS != null &&
+          widget.sectionEndMS != null &&
+          state.inMilliseconds.toDouble() >= widget.sectionEndMS!) {
         audioPlayer.stop();
-        audioPlayer.seek(Duration(milliseconds: startMS!));
+        audioPlayer.seek(Duration(milliseconds: widget.sectionStartMS!));
       } else if (state.inMilliseconds.toDouble() == maxPosition) {
         // if (state.inMilliseconds.toDouble() == maxPosition) {
         // Pangea#
@@ -243,8 +229,8 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
       // Pangea#
     }
     // #Pangea
-    if (startMS != null) {
-      audioPlayer.seek(Duration(milliseconds: startMS!));
+    if (widget.sectionStartMS != null) {
+      audioPlayer.seek(Duration(milliseconds: widget.sectionStartMS!));
     }
     // Pangea#
     audioPlayer.play().onError(
@@ -367,11 +353,12 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
 
     // #Pangea
     final msPerWave = (maxPosition / AudioPlayerWidget.wavesCount);
-    final int? startWave = startMS != null && msPerWave > 0
-        ? (startMS! / msPerWave).floor()
+    final int? startWave = widget.sectionStartMS != null && msPerWave > 0
+        ? (widget.sectionStartMS! / msPerWave).floor()
         : null;
-    final int? endWave =
-        endMS != null && msPerWave > 0 ? (endMS! / msPerWave).ceil() : null;
+    final int? endWave = widget.sectionEndMS != null && msPerWave > 0
+        ? (widget.sectionEndMS! / msPerWave).ceil()
+        : null;
     // Pangea#
 
     return Padding(
@@ -457,8 +444,8 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                 for (var i = 0; i < AudioPlayerWidget.wavesCount; i++)
                   Builder(
                     builder: (context) {
-                      final bool hasSelection =
-                          endMS != null && startMS != null;
+                      final bool hasSelection = widget.sectionEndMS != null &&
+                          widget.sectionStartMS != null;
 
                       final bool inRange = startWave != null &&
                           i >= startWave &&

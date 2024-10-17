@@ -35,8 +35,8 @@ class MessageAudioCardState extends State<MessageAudioCard> {
   bool _isLoading = false;
   PangeaAudioFile? audioFile;
 
-  double? sectionStartMS;
-  double? sectionEndMS;
+  int? sectionStartMS;
+  int? sectionEndMS;
 
   @override
   void initState() {
@@ -53,7 +53,7 @@ class MessageAudioCardState extends State<MessageAudioCard> {
     super.didUpdateWidget(oldWidget);
   }
 
-  void setSectionStartAndEnd(double? start, double? end) => mounted
+  void setSectionStartAndEnd(int? start, int? end) => mounted
       ? setState(() {
           sectionStartMS = start;
           sectionEndMS = end;
@@ -96,9 +96,10 @@ class MessageAudioCardState extends State<MessageAudioCard> {
     for (int i = 0; i < tokens.length; i++) {
       final TTSToken ttsToken = tokens[i];
       if (ttsToken.text.offset == selection.offset) {
-        final double start = ttsToken.startMS.toDouble();
-        final double end = ttsToken.endMS.toDouble();
-        return setSectionStartAndEnd(start, end);
+        return setSectionStartAndEnd(
+          ttsToken.startMS,
+          ttsToken.endMS,
+        );
       }
     }
 
