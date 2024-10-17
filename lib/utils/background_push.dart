@@ -19,6 +19,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -458,75 +459,92 @@ class BackgroundPush {
   }
 
   Future<void> firebaseMessagingForegroundHandler(RemoteMessage message) async {
-    if (message.data.isEmpty ||
-        !message.data.containsKey('room_id') ||
-        message.data['room_id'] == null ||
-        message.data['room_id'].isEmpty) return;
+    try {
+      if (message.data.isEmpty ||
+          !message.data.containsKey('room_id') ||
+          message.data['room_id'] == null ||
+          message.data['room_id'].isEmpty) return;
 
-    final routeParts = FluffyChatApp
-        .router.routerDelegate.currentConfiguration.uri
-        .toString()
-        .split("/");
-    if (routeParts.isEmpty) {
-      showNotification(message);
-      return;
-    }
+      final routeParts = FluffyChatApp
+          .router.routerDelegate.currentConfiguration.uri
+          .toString()
+          .split("/");
+      if (routeParts.isEmpty) {
+        showNotification(message);
+        return;
+      }
 
-    final msgRoomID = message.data['room_id'];
-    final isMsgInActiveRoom = msgRoomID != routeParts.last;
-    if (!isMsgInActiveRoom) {
-      showNotification(message);
+      final msgRoomID = message.data['room_id'];
+      final isMsgInActiveRoom = msgRoomID == routeParts.last;
+      if (!isMsgInActiveRoom) {
+        showNotification(message);
+      }
+    } catch (e, s) {
+      ErrorHandler.logError(e: e, s: s);
     }
+    // Pangea#
   }
-  // Pangea#
-}
 
 // #Pangea
-@pragma('vm:entry-point')
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  @pragma('vm:entry-point')
+  Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+    try {
+      await Firebase.initializeApp(
+        name: 'background_firebase',
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
 
-  if (message.data.isNotEmpty) {
-    showNotification(message);
+      debugPrint("testing after message is received");
+      debugPrint("Message data: ${message.data}");
+      debugger();
+
+      if (message.data.isNotEmpty) {
+        showNotification(message);
+      }
+    } catch (e, s) {
+      ErrorHandler.logError(e: e, s: s);
+    }
   }
-}
 
-Future<void> showNotification(RemoteMessage message) async {
-  final sender = message.data['sender'];
-  final body = message.data['content_body'];
-  if (sender == null || sender.isEmpty || body == null || body.isEmpty) {
-    return;
+  Future<void> showNotification(RemoteMessage message) async {
+    try {
+      final sender = message.data['sender'];
+      final body = message.data['content_body'];
+      if (sender == null || sender.isEmpty || body == null || body.isEmpty) {
+        return;
+      }
+
+      final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+          FlutterLocalNotificationsPlugin();
+
+      flutterLocalNotificationsPlugin.initialize(
+        const InitializationSettings(
+          android: AndroidInitializationSettings('notifications_icon'),
+          iOS: DarwinInitializationSettings(),
+        ),
+      );
+
+      const androidDetails = AndroidNotificationDetails(
+        AppConfig.pushNotificationsChannelId,
+        "Incoming messages",
+        importance: Importance.high,
+        priority: Priority.high,
+        largeIcon: DrawableResourceAndroidBitmap('notifications_icon'),
+      );
+
+      const iosDetails = DarwinNotificationDetails();
+      const notificationDetails =
+          NotificationDetails(android: androidDetails, iOS: iosDetails);
+
+      await flutterLocalNotificationsPlugin.show(
+        0,
+        message.data['sender_display_name'] ?? sender,
+        body,
+        notificationDetails,
+      );
+    } catch (e, s) {
+      ErrorHandler.logError(e: e, s: s);
+    }
   }
-
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-
-  flutterLocalNotificationsPlugin.initialize(
-    const InitializationSettings(
-      android: AndroidInitializationSettings('notifications_icon'),
-      iOS: DarwinInitializationSettings(),
-    ),
-  );
-
-  const androidDetails = AndroidNotificationDetails(
-    AppConfig.pushNotificationsChannelId,
-    "Incoming messages",
-    importance: Importance.high,
-    priority: Priority.high,
-    largeIcon: DrawableResourceAndroidBitmap('notifications_icon'),
-  );
-
-  const iosDetails = DarwinNotificationDetails();
-  const notificationDetails =
-      NotificationDetails(android: androidDetails, iOS: iosDetails);
-
-  await flutterLocalNotificationsPlugin.show(
-    0,
-    message.data['sender_display_name'] ?? sender,
-    body,
-    notificationDetails,
-  );
-}
 // Pangea#
+}
