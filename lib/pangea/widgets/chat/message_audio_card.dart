@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:math';
 
 import 'package:fluffychat/pages/chat/events/audio_player.dart';
 import 'package:fluffychat/pangea/controllers/text_to_speech_controller.dart';
@@ -97,8 +98,8 @@ class MessageAudioCardState extends State<MessageAudioCard> {
       final TTSToken ttsToken = tokens[i];
       if (ttsToken.text.offset == selection.offset) {
         return setSectionStartAndEnd(
-          ttsToken.startMS,
-          ttsToken.endMS,
+          max(ttsToken.startMS - 150, 0),
+          min(ttsToken.endMS + 150, audioFile!.duration!),
         );
       }
     }
@@ -127,7 +128,7 @@ class MessageAudioCardState extends State<MessageAudioCard> {
       final String? text =
           widget.messageEvent.representationByLanguage(langCode)?.text;
 
-      if (text != null) {
+      if (text == null) {
         //TODO - handle error but get out of flow
       }
 
