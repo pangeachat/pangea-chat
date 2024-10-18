@@ -1,6 +1,6 @@
-import 'dart:io';
-
 import 'package:fluffychat/config/app_config.dart';
+import 'package:fluffychat/utils/platform_infos.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 
@@ -20,7 +20,7 @@ class MissingVoiceButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isLanguageAvailable =
         availableLangCodes.contains(targetLangCode);
-    if (isLanguageAvailable || !Platform.isAndroid) {
+    if (kIsWeb || isLanguageAvailable || !PlatformInfos.isAndroid) {
       return const SizedBox.shrink();
     }
 
