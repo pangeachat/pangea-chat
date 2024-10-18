@@ -27,7 +27,7 @@ class AudioPlayerWidget extends StatefulWidget {
 
   // #Pangea
   // static const int wavesCount = 40;
-  static const int wavesCount = 100;
+  static const int wavesCount = kIsWeb ? 100 : 40;
 
   final int? sectionStartMS;
   final int? sectionEndMS;
@@ -81,21 +81,21 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
   }
 
   // #Pangea
-  @override
-  void didUpdateWidget(covariant oldWidget) {
-    if ((oldWidget.sectionEndMS != widget.sectionEndMS) ||
-        (oldWidget.sectionStartMS != widget.sectionStartMS)) {
-      debugPrint('selection changed');
-      if (widget.sectionStartMS != null) {
-        audioPlayer?.seek(Duration(milliseconds: widget.sectionStartMS!));
-        audioPlayer?.play();
-      } else {
-        audioPlayer?.stop();
-        audioPlayer?.seek(null);
-      }
-    }
-    super.didUpdateWidget(oldWidget);
-  }
+  // @override
+  // void didUpdateWidget(covariant oldWidget) {
+  //   if ((oldWidget.sectionEndMS != widget.sectionEndMS) ||
+  //       (oldWidget.sectionStartMS != widget.sectionStartMS)) {
+  //     debugPrint('selection changed');
+  //     if (widget.sectionStartMS != null) {
+  //       audioPlayer?.seek(Duration(milliseconds: widget.sectionStartMS!));
+  //       audioPlayer?.play();
+  //     } else {
+  //       audioPlayer?.stop();
+  //       audioPlayer?.seek(null);
+  //     }
+  //   }
+  //   super.didUpdateWidget(oldWidget);
+  // }
   // Pangea#
 
   Future<void> _downloadAction() async {
@@ -187,12 +187,13 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
             .round();
       });
       // #Pangea
-      if (widget.sectionStartMS != null &&
-          widget.sectionEndMS != null &&
-          state.inMilliseconds.toDouble() >= widget.sectionEndMS!) {
-        audioPlayer.stop();
-        audioPlayer.seek(Duration(milliseconds: widget.sectionStartMS!));
-      } else if (state.inMilliseconds.toDouble() == maxPosition) {
+      // if (widget.sectionStartMS != null &&
+      //     widget.sectionEndMS != null &&
+      //     state.inMilliseconds.toDouble() >= widget.sectionEndMS!) {
+      //   audioPlayer.stop();
+      //   audioPlayer.seek(Duration(milliseconds: widget.sectionStartMS!));
+      // } else
+      if (state.inMilliseconds.toDouble() == maxPosition) {
         // if (state.inMilliseconds.toDouble() == maxPosition) {
         // Pangea#
         audioPlayer.stop();
@@ -229,9 +230,9 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
       // Pangea#
     }
     // #Pangea
-    if (widget.sectionStartMS != null) {
-      audioPlayer.seek(Duration(milliseconds: widget.sectionStartMS!));
-    }
+    // if (widget.sectionStartMS != null) {
+    //   audioPlayer.seek(Duration(milliseconds: widget.sectionStartMS!));
+    // }
     // Pangea#
     audioPlayer.play().onError(
           ErrorReporter(context, 'Unable to play audio message')
@@ -444,75 +445,54 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                 for (var i = 0; i < AudioPlayerWidget.wavesCount; i++)
                   Builder(
                     builder: (context) {
-                      final bool hasSelection = widget.sectionEndMS != null &&
-                          widget.sectionStartMS != null;
-
-                      final bool inRange = startWave != null &&
-                          i >= startWave &&
-                          endWave != null &&
-                          i < endWave;
-
-                      double barOpacity = currentPosition > i ? 1 : 0.5;
-                      if (hasSelection && !inRange) {
-                        barOpacity = 0.5;
-                      }
-
+                      final double barOpacity = currentPosition > i ? 1 : 0.5;
                       return Expanded(
-                        child: Stack(
-                          children: [
-                            Expanded(
-                              child: GestureDetector(
-                                onTapDown: (_) => audioPlayer?.seek(
-                                  Duration(
-                                    milliseconds: (maxPosition /
-                                                AudioPlayerWidget.wavesCount)
+                        child: GestureDetector(
+                          onTapDown: (_) {
+                            audioPlayer?.seek(
+                              Duration(
+                                milliseconds:
+                                    (maxPosition / AudioPlayerWidget.wavesCount)
                                             .round() *
                                         i,
-                                  ),
-                                ),
-                                child: Expanded(
-                                  child: Container(
-                                    height: 32,
-                                    color: widget.color.withAlpha(0),
-                                    alignment: Alignment.center,
-                                    child: Opacity(
-                                      opacity: barOpacity,
-                                      child: Expanded(
-                                        child: Container(
-                                          margin: const EdgeInsets.symmetric(
-                                            horizontal: 1,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: widget.color,
-                                            borderRadius:
-                                                BorderRadius.circular(2),
-                                          ),
-                                          height: 32 * (waveform[i] / 1024),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
                               ),
-                            ),
-                            if (startWave != null &&
-                                i >= startWave &&
-                                endWave != null &&
-                                i < endWave)
-                              Expanded(
-                                child: Opacity(
-                                  opacity: 0.5,
-                                  child: Container(
-                                    height: 32,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.green,
-                                    ),
-                                  ),
+                            );
+                          },
+                          child: Stack(
+                            children: [
+                              Container(
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 0.5,
                                 ),
+                                decoration: BoxDecoration(
+                                  color: widget.color.withOpacity(barOpacity),
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
+                                height: 32 * (waveform[i] / 1024),
                               ),
-                          ],
+                            ],
+                          ),
                         ),
                       );
+                      // return Container(
+                      //   height: 32,
+                      //   width: 2,
+                      //   alignment: Alignment.center,
+                      //   child: Opacity(
+                      //     opacity: barOpacity,
+                      //     child: Container(
+                      //       margin: const EdgeInsets.symmetric(
+                      //         horizontal: 1,
+                      //       ),
+                      //       decoration: BoxDecoration(
+                      //         color: widget.color,
+                      //         borderRadius: BorderRadius.circular(2),
+                      //       ),
+                      //       height: 32 * (waveform[i] / 1024),
+                      //       width: 2,
+                      //     ),
+                      //   ),
+                      // );
                     },
                   ),
               ],

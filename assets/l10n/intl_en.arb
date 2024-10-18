@@ -4237,5 +4237,7 @@
   "l2SupportNa": "Not Available",
   "l2SupportAlpha": "Alpha",
   "l2SupportBeta": "Beta",
-  "l2SupportFull": "Full"
+  "l2SupportFull": "Full",
+  "voiceNotAvailable": "It looks like you don't have a voice installed for this language.",
+  "openVoiceSettings": "Click here to open voice settings"
 }

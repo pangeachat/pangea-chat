@@ -1,5 +1,7 @@
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:android_intent_plus/android_intent.dart';
 import 'package:fluffychat/pages/chat/events/audio_player.dart';
 import 'package:fluffychat/pangea/controllers/text_to_speech_controller.dart';
 import 'package:fluffychat/pangea/extensions/pangea_event_extension.dart';
@@ -8,11 +10,14 @@ import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
+import 'package:fluffychat/pangea/widgets/chat/missing_voice_button.dart';
 import 'package:fluffychat/pangea/widgets/chat/toolbar_content_loading_indicator.dart';
 import 'package:fluffychat/pangea/widgets/igc/card_error_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:flutter_tts/flutter_tts.dart' as flutter_tts;
+import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 
 class MessageAudioCard extends StatefulWidget {
@@ -38,10 +43,14 @@ class MessageAudioCardState extends State<MessageAudioCard> {
   int? sectionStartMS;
   int? sectionEndMS;
 
+  List<String>? availableLangCodes;
+  final flutter_tts.FlutterTts tts = flutter_tts.FlutterTts();
+
   @override
   void initState() {
     super.initState();
     fetchAudio();
+    setAvailableVoices();
   }
 
   @override
@@ -49,8 +58,33 @@ class MessageAudioCardState extends State<MessageAudioCard> {
     if (oldWidget.selection != widget.selection) {
       debugPrint('selection changed');
       setSectionStartAndEndFromSelection();
+      playSelectionAudio();
     }
     super.didUpdateWidget(oldWidget);
+  }
+
+  Future<void> setAvailableVoices() async {
+    try {
+      final voices = await tts.getVoices;
+      setState(
+        () => availableLangCodes = voices
+            .map((v) => v['name'].split("-").first)
+            .toSet()
+            .cast<String>()
+            .toList(),
+      );
+    } catch (e, s) {
+      ErrorHandler.logError(e: e, s: s);
+    }
+  }
+
+  void playSelectionAudio() {
+    final PangeaTokenText selection = widget.selection!;
+    final tokenText = selection.content;
+    final langCode = widget.messageEvent.messageDisplayLangCode;
+
+    tts.setLanguage(langCode);
+    tts.speak(tokenText);
   }
 
   void setSectionStartAndEnd(int? start, int? end) => mounted
@@ -60,7 +94,7 @@ class MessageAudioCardState extends State<MessageAudioCard> {
         })
       : null;
 
-  void setSectionStartAndEndFromSelection() {
+  void setSectionStartAndEndFromSelection() async {
     if (audioFile == null) {
       // should never happen but just in case
       debugger(when: kDebugMode);
@@ -167,6 +201,20 @@ class MessageAudioCardState extends State<MessageAudioCard> {
     }
   }
 
+  void launchTTSSettings() {
+    if (Platform.isAndroid) {
+      const intent = AndroidIntent(
+        action: 'com.android.settings.TTS_SETTINGS',
+        package: 'com.talktolearn.chat',
+      );
+
+      showFutureLoadingDialog(
+        context: context,
+        future: intent.launch,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -185,6 +233,13 @@ class MessageAudioCardState extends State<MessageAudioCard> {
                       sectionEndMS: sectionEndMS,
                       color: Theme.of(context).colorScheme.onPrimaryContainer,
                     ),
+                    if (availableLangCodes != null)
+                      MissingVoiceButton(
+                        launchTTSSettings: launchTTSSettings,
+                        targetLangCode:
+                            widget.messageEvent.messageDisplayLangCode,
+                        availableLangCodes: availableLangCodes!,
+                      ),
                   ],
                 )
               : const CardErrorWidget(),
