@@ -49,13 +49,24 @@ class MessageAudioCardState extends State<MessageAudioCard> {
 
   @override
   void initState() {
+    tts.setLanguage(
+      widget.messageEvent.messageDisplayLangCode,
+    );
+
     super.initState();
     fetchAudio();
-    setAvailableVoices();
+    setupTTS();
   }
 
   @override
   void didUpdateWidget(covariant oldWidget) {
+    if (widget.messageEvent.messageDisplayLangCode !=
+        oldWidget.messageEvent.messageDisplayLangCode) {
+      tts.setLanguage(
+        widget.messageEvent.messageDisplayLangCode,
+      );
+    }
+
     if (oldWidget.selection != widget.selection) {
       debugPrint('selection changed');
       setSectionStartAndEndFromSelection();
@@ -64,7 +75,8 @@ class MessageAudioCardState extends State<MessageAudioCard> {
     super.didUpdateWidget(oldWidget);
   }
 
-  Future<void> setAvailableVoices() async {
+  Future<void> setupTTS() async {
+    await tts.awaitSpeakCompletion(true);
     try {
       final voices = await tts.getVoices;
       setState(
@@ -79,13 +91,12 @@ class MessageAudioCardState extends State<MessageAudioCard> {
     }
   }
 
-  void playSelectionAudio() {
+  Future<void> playSelectionAudio() async {
     final PangeaTokenText selection = widget.selection!;
     final tokenText = selection.content;
-    final langCode = widget.messageEvent.messageDisplayLangCode;
 
-    tts.setLanguage(langCode);
-    tts.speak(tokenText);
+    await tts.stop();
+    await tts.speak(tokenText);
   }
 
   void setSectionStartAndEnd(int? start, int? end) => mounted
