@@ -1,8 +1,6 @@
 import 'dart:developer';
-import 'dart:io';
 import 'dart:math';
 
-import 'package:android_intent_plus/android_intent.dart';
 import 'package:fluffychat/pages/chat/events/audio_player.dart';
 import 'package:fluffychat/pangea/controllers/text_to_speech_controller.dart';
 import 'package:fluffychat/pangea/extensions/pangea_event_extension.dart';
@@ -11,14 +9,12 @@ import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
-import 'package:fluffychat/pangea/widgets/chat/missing_voice_button.dart';
 import 'package:fluffychat/pangea/widgets/chat/toolbar_content_loading_indicator.dart';
+import 'package:fluffychat/pangea/widgets/chat/tts_controller.dart';
 import 'package:fluffychat/pangea/widgets/igc/card_error_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:flutter_tts/flutter_tts.dart' as flutter_tts;
-import 'package:future_loading_dialog/future_loading_dialog.dart';
 import 'package:matrix/matrix.dart';
 
 class MessageAudioCard extends StatefulWidget {
@@ -44,28 +40,27 @@ class MessageAudioCardState extends State<MessageAudioCard> {
   int? sectionStartMS;
   int? sectionEndMS;
 
-  List<String>? availableLangCodes;
-  final flutter_tts.FlutterTts tts = flutter_tts.FlutterTts();
+  TtsController tts = TtsController();
 
   @override
   void initState() {
-    tts.setLanguage(
-      widget.messageEvent.messageDisplayLangCode,
-    );
-
     super.initState();
     fetchAudio();
-    setupTTS();
+
+    // initializeTTS();
   }
+
+  // initializeTTS() async {
+  //   tts.setupTTS().then((value) => setState(() {}));
+  // }
 
   @override
   void didUpdateWidget(covariant oldWidget) {
-    if (widget.messageEvent.messageDisplayLangCode !=
-        oldWidget.messageEvent.messageDisplayLangCode) {
-      tts.setLanguage(
-        widget.messageEvent.messageDisplayLangCode,
-      );
-    }
+    // @ggurdin did you find a case of needing to reinitialize TTS because of a language change?
+    // if (widget.messageEvent.messageDisplayLangCode !=
+    //     oldWidget.messageEvent.messageDisplayLangCode) {
+    //   initializeTTS();
+    // }
 
     if (oldWidget.selection != widget.selection) {
       debugPrint('selection changed');
@@ -75,27 +70,10 @@ class MessageAudioCardState extends State<MessageAudioCard> {
     super.didUpdateWidget(oldWidget);
   }
 
-  Future<void> setupTTS() async {
-    await tts.awaitSpeakCompletion(true);
-    try {
-      final voices = await tts.getVoices;
-      setState(
-        () => availableLangCodes = voices
-            .map((v) => v['name'].split("-").first)
-            .toSet()
-            .cast<String>()
-            .toList(),
-      );
-    } catch (e, s) {
-      ErrorHandler.logError(e: e, s: s);
-    }
-  }
-
   Future<void> playSelectionAudio() async {
     final PangeaTokenText selection = widget.selection!;
     final tokenText = selection.content;
 
-    await tts.stop();
     await tts.speak(tokenText);
   }
 
@@ -213,20 +191,6 @@ class MessageAudioCardState extends State<MessageAudioCard> {
     }
   }
 
-  void launchTTSSettings() {
-    if (Platform.isAndroid) {
-      const intent = AndroidIntent(
-        action: 'com.android.settings.TTS_SETTINGS',
-        package: 'com.talktolearn.chat',
-      );
-
-      showFutureLoadingDialog(
-        context: context,
-        future: intent.launch,
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -245,13 +209,7 @@ class MessageAudioCardState extends State<MessageAudioCard> {
                       sectionEndMS: sectionEndMS,
                       color: Theme.of(context).colorScheme.onPrimaryContainer,
                     ),
-                    if (availableLangCodes != null)
-                      MissingVoiceButton(
-                        launchTTSSettings: launchTTSSettings,
-                        targetLangCode:
-                            widget.messageEvent.messageDisplayLangCode,
-                        availableLangCodes: availableLangCodes!,
-                      ),
+                    tts.missingVoiceButton ?? const SizedBox(),
                   ],
                 )
               : const CardErrorWidget(),

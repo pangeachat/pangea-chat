@@ -4239,5 +4239,7 @@
   "l2SupportBeta": "Beta",
   "l2SupportFull": "Full",
   "voiceNotAvailable": "It looks like you don't have a voice installed for this language.",
-  "openVoiceSettings": "Click here to open voice settings"
+  "openVoiceSettings": "Click here to open voice settings",
+  "playAudio": "Play",
+  "stop": "Stop"
 }

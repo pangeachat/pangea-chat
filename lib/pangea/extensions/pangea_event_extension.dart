@@ -49,6 +49,9 @@ extension PangeaEvent on Event {
       );
       return null;
     }
+
+    // @ggurdin what are cases where these would be null?
+    // if it would be unexpected, we should log an error with details to investigate
     final transcription =
         content.tryGetMap<String, dynamic>(ModelKey.transcription);
     final audioContent =
@@ -58,8 +61,11 @@ extension PangeaEvent on Event {
     final matrixFile = await downloadAndDecryptAttachment();
     final duration = audioContent.tryGet<int>('duration');
     final waveform = audioContent.tryGetList<int>('waveform');
+
+    // old audio messages will not have tokens
     final tokensContent = transcription.tryGetList(ModelKey.tokens);
     if (tokensContent == null) return null;
+
     final tokens = tokensContent
         .map((e) => TTSToken.fromJson(e as Map<String, dynamic>))
         .toList();
