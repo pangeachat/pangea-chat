@@ -1,29 +1,35 @@
+import 'dart:io';
+
+import 'package:android_intent_plus/android_intent.dart';
 import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:future_loading_dialog/future_loading_dialog.dart';
 
 class MissingVoiceButton extends StatelessWidget {
-  final VoidCallback launchTTSSettings;
   final String targetLangCode;
-  final List<String> availableLangCodes;
 
   const MissingVoiceButton({
-    required this.launchTTSSettings,
     required this.targetLangCode,
-    required this.availableLangCodes,
     super.key,
   });
 
+  void launchTTSSettings(BuildContext context) {
+    if (Platform.isAndroid) {
+      const intent = AndroidIntent(
+        action: 'com.android.settings.TTS_SETTINGS',
+        package: 'com.talktolearn.chat',
+      );
+
+      showFutureLoadingDialog(
+        context: context,
+        future: intent.launch,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final bool isLanguageAvailable =
-        availableLangCodes.contains(targetLangCode);
-    if (kIsWeb || isLanguageAvailable || !PlatformInfos.isAndroid) {
-      return const SizedBox.shrink();
-    }
-
     return Container(
       decoration: BoxDecoration(
         color:
@@ -42,7 +48,7 @@ class MissingVoiceButton extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           TextButton(
-            onPressed: launchTTSSettings,
+            onPressed: () => launchTTSSettings,
             style: const ButtonStyle(
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
