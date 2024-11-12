@@ -4494,5 +4494,12 @@
   "enterDiscussionTopic": "Please enter a discussion topic",
   "selectBotChatMode": "Select chat mode",
   "messageNotInTargetLang": "Message not in target language",
-  "other": "Other"
+  "other": "Other",
+  "levelShort": "LVL {level}",
+  "@levelShort": {
+    "type": "text",
+    "placeholders": {
+      "level": {}
+    }
+  }
 }
