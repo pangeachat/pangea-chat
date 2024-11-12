@@ -6,6 +6,7 @@ import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/message_activity_request.dart';
+import 'package:fluffychat/widgets/matrix.dart';
 
 /// Picks which tokens to do activities on and what types of activities to do
 /// Caches result so that we don't have to recompute it
@@ -109,6 +110,10 @@ class MessageAnalyticsEntry {
   Future<void> updateTokensWithConstructs(
     List<OneConstructUse> constructUses,
   ) async {
+    if (!MatrixState.pangeaController.getAnalytics.initCompleter.isCompleted) {
+      await MatrixState.pangeaController.getAnalytics.initCompleter.future;
+    }
+
     for (final token in tokensWithXp) {
       // we don't need to do this for tokens that don't have saveVocab set to true
       if (!token.token.lemma.saveVocab) {
