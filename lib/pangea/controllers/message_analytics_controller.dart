@@ -1,12 +1,9 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:fluffychat/pangea/controllers/get_analytics_controller.dart';
 import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
-import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/message_activity_request.dart';
-import 'package:fluffychat/widgets/matrix.dart';
 
 /// Picks which tokens to do activities on and what types of activities to do
 /// Caches result so that we don't have to recompute it
@@ -105,44 +102,6 @@ class MessageAnalyticsEntry {
         (token) =>
             token.targetTypes.contains(ActivityTypeEnum.hiddenWordListening),
       );
-
-  /// Should only do this with short lists of constructUses
-  Future<void> updateTokensWithConstructs(
-    List<OneConstructUse> constructUses,
-  ) async {
-    if (!MatrixState.pangeaController.getAnalytics.initCompleter.isCompleted) {
-      await MatrixState.pangeaController.getAnalytics.initCompleter.future;
-    }
-
-    for (final token in tokensWithXp) {
-      // we don't need to do this for tokens that don't have saveVocab set to true
-      if (!token.token.lemma.saveVocab) {
-        continue;
-      }
-
-      // debugger(when: kDebugMode && token.token.text.content == "Claro");
-
-      for (final construct in token.constructs) {
-        for (final use in constructUses) {
-          if (use.category == construct.id.category &&
-              use.lemma == construct.id.lemma &&
-              use.constructType == construct.id.type) {
-            // TODO get updates from getAnalyticsController
-            // construct.xp += use.pointValue;
-            construct.setLastUsed(use.timeStamp);
-            construct.uses.add(use);
-          }
-        }
-      }
-    }
-
-    nextActivityToken = null;
-    nextActivityType = null;
-
-    computeTargetTypesForMessage(false);
-
-    //TODO - do we need to make sure we don't do more hidden word activities at this point?
-  }
 }
 
 /// computes TokenWithXP for given a pangeaMessageEvent and caches the result, according to the full text of the message

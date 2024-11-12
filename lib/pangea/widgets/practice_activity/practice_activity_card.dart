@@ -250,12 +250,9 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
           .pangeaController.getAnalytics.perMessage
           .get(widget.pangeaMessageEvent, false);
       // messageAnalytics will only be null if there are no tokens to update
-      messageAnalytics!.updateTokensWithConstructs(
-        currentCompletionRecord!.usesForAllResponses(
-          currentActivity!,
-          metadata,
-        ),
-      );
+
+      // set the target types for the next activity
+      messageAnalytics!.computeTargetTypesForMessage(false);
 
       widget.overlayController.onActivityFinish();
       pangeaController.activityRecordController.completeActivity(

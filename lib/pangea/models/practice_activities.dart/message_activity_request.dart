@@ -11,14 +11,46 @@ import 'package:flutter/foundation.dart';
 
 class TokenWithXP {
   final PangeaToken token;
-  List<ConstructUses> constructs = [];
   late List<ActivityTypeEnum> targetTypes;
 
   TokenWithXP({
     required this.token,
   }) {
-    setConstructsWithXP();
     targetTypes = [];
+  }
+
+  List<ConstructIdentifier> get _constructIDs {
+    final List<ConstructIdentifier> ids = [];
+    ids.add(
+      ConstructIdentifier(
+        lemma: token.lemma.text,
+        type: ConstructTypeEnum.vocab,
+        category: token.pos,
+      ),
+    );
+    for (final morph in token.morph.entries) {
+      ids.add(
+        ConstructIdentifier(
+          lemma: morph.value,
+          type: ConstructTypeEnum.morph,
+          category: morph.key,
+        ),
+      );
+    }
+    return ids;
+  }
+
+  List<ConstructUses> get constructs {
+    final List<ConstructUses> constructs = [];
+    for (final id in _constructIDs) {
+      final construct = MatrixState
+          .pangeaController.getAnalytics.constructListModel
+          .getConstructUses(id);
+      if (construct != null) {
+        constructs.add(construct);
+      }
+    }
+    return constructs;
   }
 
   factory TokenWithXP.fromJson(Map<String, dynamic> json) {
@@ -89,45 +121,6 @@ class TokenWithXP {
       0,
       (previousValue, element) => previousValue + element.points,
     );
-  }
-
-  /// potentially expensive to calculate
-  /// should be used sparingly and cached
-  void setConstructsWithXP() {
-    debugPrint('calculating constructsWithXP');
-    if (!token.lemma.saveVocab) {
-      return;
-    }
-
-    final vocabUses = MatrixState
-        .pangeaController.getAnalytics.constructListModel
-        .getConstructUses(
-      ConstructIdentifier(
-        lemma: token.lemma.text,
-        type: ConstructTypeEnum.vocab,
-        category: token.pos,
-      ),
-    );
-
-    if (vocabUses != null) {
-      constructs.add(vocabUses);
-    }
-
-    for (final morph in token.morph.entries) {
-      final morphUses = MatrixState
-          .pangeaController.getAnalytics.constructListModel
-          .getConstructUses(
-        ConstructIdentifier(
-          lemma: morph.value,
-          type: ConstructTypeEnum.morph,
-          category: morph.key,
-        ),
-      );
-
-      if (morphUses != null) {
-        constructs.add(morphUses);
-      }
-    }
   }
 
   ///

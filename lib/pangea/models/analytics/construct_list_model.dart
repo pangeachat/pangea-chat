@@ -65,6 +65,7 @@ class ConstructListModel {
             category: use.category,
           );
       currentUses.uses.add(use);
+      currentUses.setLastUsed(use.timeStamp);
       _constructMap[use.identifier.string] = currentUses;
     }
   }
