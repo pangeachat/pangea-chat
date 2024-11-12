@@ -90,6 +90,13 @@ class PracticeGenerationController {
 
       final response = MessageActivityResponse.fromJson(json);
 
+      // workaround for the server not returning the tgtConstructs
+      // if (response.activity != null &&
+      //     response.activity!.tgtConstructs.isEmpty) {
+      //   response.activity?.tgtConstructs.addAll(
+      //     requestModel.clientTokenRequest.constructIDs,
+      //   );
+      // }
       return response;
     } else {
       debugger(when: kDebugMode);
