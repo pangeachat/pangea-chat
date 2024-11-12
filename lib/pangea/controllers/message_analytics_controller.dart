@@ -122,8 +122,9 @@ class MessageAnalyticsEntry {
           if (use.category == construct.id.category &&
               use.lemma == construct.id.lemma &&
               use.constructType == construct.id.type) {
-            construct.xp += use.pointValue;
-            construct.lastUsed = use.timeStamp;
+            // TODO get updates from getAnalyticsController
+            // construct.xp += use.pointValue;
+            construct.setLastUsed(use.timeStamp);
             construct.uses.add(use);
           }
         }

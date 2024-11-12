@@ -3,66 +3,22 @@ import 'dart:developer';
 import 'package:collection/collection.dart';
 import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
 import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
-import 'package:fluffychat/pangea/enum/construct_use_type_enum.dart';
-import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
+import 'package:fluffychat/pangea/models/analytics/construct_use_model.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/foundation.dart';
 
-class ConstructWithXP {
-  final ConstructIdentifier id;
-  int xp;
-  DateTime? lastUsed;
-  List<OneConstructUse> uses = [];
-
-  ConstructWithXP({
-    required this.id,
-    this.xp = 0,
-    this.lastUsed,
-  });
-
-  Map<String, dynamic> toJson() {
-    final json = {
-      'construct_id': id.toJson(),
-      'xp': xp,
-      'last_used': lastUsed?.toIso8601String(),
-
-      /// NOTE - sent to server as just the useTypes
-      'uses': uses.map((e) => e.useType.string).toList(),
-    };
-    return json;
-  }
-
-  //override == operator
-  // check that id, xp, and lastUsed are the same
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is ConstructWithXP &&
-        other.id == id &&
-        other.xp == xp &&
-        other.lastUsed == lastUsed;
-  }
-
-  @override
-  int get hashCode {
-    return id.hashCode ^ xp.hashCode ^ lastUsed.hashCode;
-  }
-}
-
 class TokenWithXP {
   final PangeaToken token;
-  late List<ConstructWithXP> constructs;
+  List<ConstructUses> constructs = [];
   late List<ActivityTypeEnum> targetTypes;
 
   TokenWithXP({
     required this.token,
   }) {
-    constructs = getConstructsWithXP();
+    setConstructsWithXP();
     targetTypes = [];
-    // targetTypes = getTargetTypes();
   }
 
   factory TokenWithXP.fromJson(Map<String, dynamic> json) {
@@ -113,18 +69,16 @@ class TokenWithXP {
     }
   }
 
-  ConstructWithXP get vocabConstruct {
+  ConstructUses get vocabConstruct {
     final vocab = constructs.firstWhereOrNull(
       (element) => element.id.type == ConstructTypeEnum.vocab,
     );
     if (vocab == null) {
-      debugger(when: kDebugMode);
-      return ConstructWithXP(
-        id: ConstructIdentifier(
-          lemma: token.lemma.text,
-          type: ConstructTypeEnum.vocab,
-          category: token.pos,
-        ),
+      return ConstructUses(
+        lemma: token.lemma.text,
+        constructType: ConstructTypeEnum.vocab,
+        category: token.pos,
+        uses: [],
       );
     }
     return vocab;
@@ -133,61 +87,47 @@ class TokenWithXP {
   int get xp {
     return constructs.fold<int>(
       0,
-      (previousValue, element) => previousValue + element.xp,
+      (previousValue, element) => previousValue + element.points,
     );
   }
 
   /// potentially expensive to calculate
   /// should be used sparingly and cached
-  List<ConstructWithXP> getConstructsWithXP() {
+  void setConstructsWithXP() {
     debugPrint('calculating constructsWithXP');
     if (!token.lemma.saveVocab) {
-      return [];
+      return;
     }
 
-    final List<ConstructWithXP> constructsWithXP = [];
-
-    constructsWithXP.add(
-      ConstructWithXP(
-        id: ConstructIdentifier(
-          lemma: token.lemma.text,
-          type: ConstructTypeEnum.vocab,
-          category: token.pos,
-        ),
+    final vocabUses = MatrixState
+        .pangeaController.getAnalytics.constructListModel
+        .getConstructUses(
+      ConstructIdentifier(
+        lemma: token.lemma.text,
+        type: ConstructTypeEnum.vocab,
+        category: token.pos,
       ),
     );
 
-    for (final morph in token.morph.entries) {
-      constructsWithXP.add(
-        ConstructWithXP(
-          id: ConstructIdentifier(
-            lemma: morph.value,
-            type: ConstructTypeEnum.morph,
-            category: morph.key,
-          ),
-        ),
-      );
+    if (vocabUses != null) {
+      constructs.add(vocabUses);
     }
 
-    for (final construct in constructsWithXP) {
-      final constructUseModel = MatrixState
+    for (final morph in token.morph.entries) {
+      final morphUses = MatrixState
           .pangeaController.getAnalytics.constructListModel
           .getConstructUses(
         ConstructIdentifier(
-          lemma: construct.id.lemma,
-          type: construct.id.type,
-          category: construct.id.category,
+          lemma: morph.value,
+          type: ConstructTypeEnum.morph,
+          category: morph.key,
         ),
       );
 
-      if (constructUseModel != null) {
-        construct.xp = constructUseModel.points;
-        construct.lastUsed = constructUseModel.lastUsed;
-        construct.uses = constructUseModel.uses;
+      if (morphUses != null) {
+        constructs.add(morphUses);
       }
     }
-
-    return constructsWithXP;
   }
 
   ///
