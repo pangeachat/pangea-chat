@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:fluffychat/pangea/constants/class_default_values.dart';
 import 'package:fluffychat/pangea/constants/local.key.dart';
+import 'package:fluffychat/pangea/controllers/message_analytics_controller.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/controllers/put_analytics_controller.dart';
 import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
@@ -19,28 +20,40 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 /// A minimized version of AnalyticsController that get the logged in user's analytics
 class GetAnalyticsController {
   late PangeaController _pangeaController;
+  late MessageAnalyticsController perMessage;
   final List<AnalyticsCacheEntry> _cache = [];
   StreamSubscription<AnalyticsUpdate>? _analyticsUpdateSubscription;
   StreamController<AnalyticsStreamUpdate> analyticsStream =
       StreamController.broadcast();
 
   ConstructListModel constructListModel = ConstructListModel(uses: []);
+  Completer<void> initCompleter = Completer<void>();
 
   GetAnalyticsController(PangeaController pangeaController) {
     _pangeaController = pangeaController;
+
+    perMessage = MessageAnalyticsController(
+      this,
+    );
   }
 
   String? get _l2Code => _pangeaController.languageController.userL2?.langCode;
   Client get _client => _pangeaController.matrixState.client;
 
   // the minimum XP required for a given level
-  double get _minXPForLevel {
-    return 12.5 * (2 * pow(constructListModel.level - 1, 2) - 1);
+  int get _minXPForLevel {
+    return _calculateMinXpForLevel(constructListModel.level);
   }
 
   // the minimum XP required for the next level
-  double get _minXPForNextLevel {
-    return 12.5 * (2 * pow(constructListModel.level, 2) - 1);
+  int get _minXPForNextLevel {
+    return _calculateMinXpForLevel(constructListModel.level + 1);
+  }
+
+  /// Calculates the minimum XP required for a specific level.
+  int _calculateMinXpForLevel(int level) {
+    if (level == 1) return 0; // Ensure level 1 starts at 0 XP
+    return ((100 / 8) * (2 * pow(level - 1, 2))).floor();
   }
 
   // the progress within the current level as a percentage (0.0 to 1.0)
@@ -50,20 +63,26 @@ class GetAnalyticsController {
     return progress >= 0 ? progress : 0;
   }
 
-  void initialize() {
-    _analyticsUpdateSubscription ??= _pangeaController
-        .putAnalytics.analyticsUpdateStream.stream
-        .listen(_onAnalyticsUpdate);
+  Future<void> initialize() async {
+    if (initCompleter.isCompleted) return;
 
-    _pangeaController.putAnalytics.lastUpdatedCompleter.future.then((_) {
-      _getConstructs().then((_) {
-        constructListModel.updateConstructs([
-          ...(_getConstructsLocal() ?? []),
-          ..._locallyCachedConstructs,
-        ]);
-        _updateAnalyticsStream();
-      });
-    });
+    try {
+      _analyticsUpdateSubscription ??= _pangeaController
+          .putAnalytics.analyticsUpdateStream.stream
+          .listen(_onAnalyticsUpdate);
+
+      await _pangeaController.putAnalytics.lastUpdatedCompleter.future;
+      await _getConstructs();
+      constructListModel.updateConstructs([
+        ...(_getConstructsLocal() ?? []),
+        ..._locallyCachedConstructs,
+      ]);
+      _updateAnalyticsStream();
+    } catch (err, s) {
+      ErrorHandler.logError(e: err, s: s);
+    } finally {
+      if (!initCompleter.isCompleted) initCompleter.complete();
+    }
   }
 
   /// Clear all cached analytics data.
@@ -71,7 +90,9 @@ class GetAnalyticsController {
     constructListModel.dispose();
     _analyticsUpdateSubscription?.cancel();
     _analyticsUpdateSubscription = null;
+    initCompleter = Completer<void>();
     _cache.clear();
+    // perMessage.dispose();
   }
 
   Future<void> _onAnalyticsUpdate(AnalyticsUpdate analyticsUpdate) async {
