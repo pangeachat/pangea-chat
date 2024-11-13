@@ -53,6 +53,30 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
   List<PracticeActivityEvent> get practiceActivities =>
       widget.pangeaMessageEvent.practiceActivities;
 
+  PracticeActivityEvent? get existingActivityMatchingNeeds {
+    final messageAnalyticsEntry = pangeaController.getAnalytics.perMessage
+        .get(widget.pangeaMessageEvent, false);
+
+    if (messageAnalyticsEntry?.nextActivityToken == null) {
+      debugger(when: kDebugMode);
+      return null;
+    }
+
+    for (final existingActivity in practiceActivities) {
+      for (final c in messageAnalyticsEntry!.nextActivityToken!.constructs) {
+        if (existingActivity.practiceActivity.tgtConstructs
+                .any((tc) => tc == c.id) &&
+            existingActivity.practiceActivity.activityType ==
+                messageAnalyticsEntry.nextActivityType) {
+          debugPrint('found existing activity');
+          return existingActivity;
+        }
+      }
+    }
+
+    return null;
+  }
+
   // Used to show an animation when the user completes an activity
   // while simultaneously fetching a new activity and not showing the loading spinner
   // until the appropriate time has passed to 'savor the joy'
@@ -93,16 +117,16 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
   /// If not, get a new activity from the server.
   Future<void> initialize() async {
     _setPracticeActivity(
-      await _fetchNewActivity(),
+      await _fetchActivity(),
     );
   }
 
-  Future<PracticeActivityModel?> _fetchNewActivity([
+  Future<PracticeActivityModel?> _fetchActivity([
     ActivityQualityFeedback? activityFeedback,
   ]) async {
     // temporary
     // try {
-    debugPrint('Fetching new activity');
+    debugPrint('Fetching activity');
     // debugger();
     _updateFetchingActivity(true);
 
@@ -141,6 +165,7 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
 
     final messageAnalyticsEntry = pangeaController.getAnalytics.perMessage
         .get(widget.pangeaMessageEvent, false);
+
     // the client is going to be choosing the next activity now
     // if nothing is set then it must be done with practice
     if (messageAnalyticsEntry?.nextActivityToken == null ||
@@ -148,6 +173,12 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
       debugger(when: kDebugMode);
       _updateFetchingActivity(false);
       return null;
+    }
+
+    final existingActivity = existingActivityMatchingNeeds;
+
+    if (existingActivity != null) {
+      return existingActivity.practiceActivity;
     }
 
     debugPrint(
@@ -252,7 +283,7 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
       // messageAnalytics will only be null if there are no tokens to update
 
       // set the target types for the next activity
-      messageAnalytics!.computeTargetTypesForMessage(false);
+      messageAnalytics!.computeTargetTypesForMessageAsync();
 
       widget.overlayController.onActivityFinish();
       pangeaController.activityRecordController.completeActivity(
@@ -263,7 +294,7 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
       // and setting it to replace the previous activity
       final Iterable<dynamic> result = await Future.wait([
         _savorTheJoy(),
-        _fetchNewActivity(),
+        _fetchActivity(),
       ]);
 
       _setPracticeActivity(result.last as PracticeActivityModel?);
@@ -305,7 +336,7 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
       );
     }
 
-    _fetchNewActivity(
+    _fetchActivity(
       ActivityQualityFeedback(
         feedbackText: feedback,
         badActivity: currentActivity!,

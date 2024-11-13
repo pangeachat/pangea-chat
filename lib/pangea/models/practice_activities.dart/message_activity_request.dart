@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:collection/collection.dart';
 import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
 import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
@@ -7,7 +5,6 @@ import 'package:fluffychat/pangea/models/analytics/construct_use_model.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-import 'package:flutter/foundation.dart';
 
 class TokenWithXP {
   final PangeaToken token;
@@ -40,18 +37,19 @@ class TokenWithXP {
     return ids;
   }
 
-  List<ConstructUses> get constructs {
-    final List<ConstructUses> constructs = [];
-    for (final id in _constructIDs) {
-      final construct = MatrixState
-          .pangeaController.getAnalytics.constructListModel
-          .getConstructUses(id);
-      if (construct != null) {
-        constructs.add(construct);
-      }
-    }
-    return constructs;
-  }
+  List<ConstructUses> get constructs => _constructIDs
+      .map(
+        (id) =>
+            MatrixState.pangeaController.getAnalytics.constructListModel
+                .getConstructUses(id) ??
+            ConstructUses(
+              lemma: id.lemma,
+              constructType: id.type,
+              category: id.category,
+              uses: [],
+            ),
+      )
+      .toList();
 
   factory TokenWithXP.fromJson(Map<String, dynamic> json) {
     return TokenWithXP(
@@ -78,7 +76,6 @@ class TokenWithXP {
   }
 
   bool didActivity(ActivityTypeEnum a) {
-    debugger(when: kDebugMode && token.text.content == "Claro");
     switch (a) {
       case ActivityTypeEnum.wordMeaning:
         return vocabConstruct.uses

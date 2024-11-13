@@ -4,6 +4,7 @@ import 'package:fluffychat/pangea/controllers/get_analytics_controller.dart';
 import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/message_activity_request.dart';
+import 'package:flutter/foundation.dart';
 
 /// Picks which tokens to do activities on and what types of activities to do
 /// Caches result so that we don't have to recompute it
@@ -17,29 +18,40 @@ class MessageAnalyticsEntry {
 
   final PangeaMessageEvent pmEvent;
 
-  TokenWithXP? nextActivityToken;
+  //
+  bool isFirstTimeComputing = true;
 
+  TokenWithXP? nextActivityToken;
   ActivityTypeEnum? nextActivityType;
 
   MessageAnalyticsEntry(this.pmEvent) {
+    debugPrint('making MessageAnalyticsEntry: ${pmEvent.messageDisplayText}');
     if (pmEvent.messageDisplayRepresentation?.tokens == null) {
       throw Exception('No tokens in message in MessageAnalyticsEntry');
     }
     tokensWithXp = pmEvent.messageDisplayRepresentation!.tokens!
-        .map(
-          (token) => TokenWithXP(
-            token: token,
-          ),
-        )
+        .map((token) => TokenWithXP(token: token))
         .toList();
 
-    computeTargetTypesForMessage(true);
+    computeTargetTypesForMessage();
   }
 
   List<TokenWithXP> get tokensThatCanBeHeard =>
       tokensWithXp.where((t) => t.token.canBeHeard).toList();
 
-  void computeTargetTypesForMessage(bool includeHiddenWordActivities) {
+  // compute target tokens within async wrapper that adds a 250ms delay
+  // to avoid blocking the UI thread
+  Future<void> computeTargetTypesForMessageAsync() async {
+    await Future.delayed(const Duration(milliseconds: 250));
+    computeTargetTypesForMessage();
+  }
+
+  void computeTargetTypesForMessage() {
+    // reset
+    nextActivityToken = null;
+    nextActivityType = null;
+
+    // compute target types for each token
     for (final token in tokensWithXp) {
       token.targetTypes = [];
 
@@ -51,21 +63,19 @@ class MessageAnalyticsEntry {
         continue;
       }
 
-      if (!token.didActivity(ActivityTypeEnum.wordMeaning)) {
-        // debugger(when: kDebugMode && token.token.text.content == "Claro");
+      if (token.eligibleForActivity(ActivityTypeEnum.wordMeaning) &&
+          !token.didActivity(ActivityTypeEnum.wordMeaning)) {
         token.targetTypes.add(ActivityTypeEnum.wordMeaning);
       }
 
-      if (!token.didActivity(ActivityTypeEnum.wordFocusListening) &&
+      if (token.eligibleForActivity(ActivityTypeEnum.wordFocusListening) &&
+          !token.didActivity(ActivityTypeEnum.wordFocusListening) &&
           tokensThatCanBeHeard.length > 3) {
         token.targetTypes.add(ActivityTypeEnum.wordFocusListening);
       }
 
-      // we only want to include hidden word activities the first time we pick activities to do
-      // in second runs, it's because the constructs have been updated by doing practice
-      // however, at this point, the user has already seen those words
-      if (token.targetTypes.isEmpty &&
-          includeHiddenWordActivities &&
+      if (token.eligibleForActivity(ActivityTypeEnum.hiddenWordListening) &&
+          isFirstTimeComputing &&
           !token.didActivity(ActivityTypeEnum.hiddenWordListening) &&
           !pmEvent.ownMessage) {
         token.targetTypes.add(ActivityTypeEnum.hiddenWordListening);
@@ -86,16 +96,27 @@ class MessageAnalyticsEntry {
     if (withListening.isNotEmpty) {
       final int randomIndex =
           withListening[Random().nextInt(withListening.length)];
+
       nextActivityToken = tokensWithXp[randomIndex];
       nextActivityType = ActivityTypeEnum.hiddenWordListening;
-      return;
+
+      // remove from all other tokens
+      for (int i = 0; i < tokensWithXp.length; i++) {
+        if (i != randomIndex) {
+          tokensWithXp[i]
+              .targetTypes
+              .remove(ActivityTypeEnum.hiddenWordListening);
+        }
+      }
     }
 
-    // if we didn't find any hiddenWordListening, pick the first token that has a target type
-    // do an activity with that token and type
-    nextActivityToken =
+    // if we didn't find any hiddenWordListening,
+    // pick the first token that has a target type
+    nextActivityToken ??=
         tokensWithXp.where((t) => t.targetTypes.isNotEmpty).firstOrNull;
-    nextActivityType = nextActivityToken?.targetTypes.firstOrNull;
+    nextActivityType ??= nextActivityToken?.targetTypes.firstOrNull;
+
+    isFirstTimeComputing = false;
   }
 
   bool get shouldHideToken => tokensWithXp.any(
