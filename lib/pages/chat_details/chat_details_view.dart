@@ -342,11 +342,12 @@ class ChatDetailsView extends StatelessWidget {
                               ),
                             ),
                           // #Pangea
-                          VisibilityToggle(
-                            room: room,
-                            setVisibility: controller.setVisibility,
-                            iconColor: iconColor,
-                          ),
+                          if (room.isRoomAdmin)
+                            VisibilityToggle(
+                              room: room,
+                              setVisibility: controller.setVisibility,
+                              iconColor: iconColor,
+                            ),
                           // Pangea#
                           Divider(color: theme.dividerColor),
                           // #Pangea
