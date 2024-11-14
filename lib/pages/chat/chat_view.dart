@@ -479,23 +479,38 @@ class ChatView extends StatelessWidget {
                                 alignment: Alignment.center,
                                 child: Material(
                                   clipBehavior: Clip.hardEdge,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .surfaceContainerHighest,
+                                  // #Pangea
+                                  // color: Theme.of(context)
+                                  //     .colorScheme
+                                  //     .surfaceContainerHighest,
+                                  type: MaterialType.transparency,
+                                  // Pangea#
                                   borderRadius: const BorderRadius.all(
                                     Radius.circular(24),
                                   ),
+
                                   child: Column(
                                     children: [
                                       const ConnectionStatusHeader(),
                                       ITBar(
                                         choreographer: controller.choreographer,
                                       ),
-                                      ReplyDisplay(controller),
-                                      ChatInputRowWrapper(
-                                        controller: controller,
+                                      DecoratedBox(
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .surfaceContainerHighest,
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            ReplyDisplay(controller),
+                                            ChatInputRowWrapper(
+                                              controller: controller,
+                                            ),
+                                            ChatEmojiPicker(controller),
+                                          ],
+                                        ),
                                       ),
-                                      ChatEmojiPicker(controller),
                                     ],
                                   ),
                                 ),

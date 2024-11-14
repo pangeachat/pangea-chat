@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/choreographer.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/it_controller.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/it_bar_buttons.dart';
@@ -16,7 +17,6 @@ import 'package:fluffychat/pangea/widgets/animations/gain_points.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../../../config/app_config.dart';
 import '../../controllers/it_feedback_controller.dart';
 import '../../models/it_response_model.dart';
 import '../../utils/overlay.dart';
@@ -31,19 +31,39 @@ class ITBar extends StatefulWidget {
   ITBarState createState() => ITBarState();
 }
 
-class ITBarState extends State<ITBar> {
+class ITBarState extends State<ITBar> with SingleTickerProviderStateMixin {
   ITController get itController => widget.choreographer.itController;
   StreamSubscription? _choreoSub;
 
   bool showedClickInstruction = false;
 
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  bool wasOpen = false;
+
   @override
   void initState() {
+    super.initState();
+
     // Rebuild the widget each time there's an update from choreo.
     _choreoSub = widget.choreographer.stateListener.stream.listen((_) {
+      if (itController.willOpen != wasOpen) {
+        itController.willOpen ? _controller.forward() : _controller.reverse();
+      }
+      wasOpen = itController.willOpen;
       setState(() {});
     });
-    super.initState();
+
+    wasOpen = itController.willOpen;
+
+    _controller = AnimationController(
+      duration: itController.animationSpeed,
+      vsync: this,
+    );
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+
+    // Start in the correct state
+    itController.willOpen ? _controller.forward() : _controller.reverse();
   }
 
   bool get showITInstructionsTooltip {
@@ -74,125 +94,79 @@ class ITBarState extends State<ITBar> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedSize(
-      duration: itController.animationSpeed,
-      curve: Curves.fastOutSlowIn,
-      clipBehavior: Clip.none,
-      child: !itController.willOpen
-          ? const SizedBox()
-          : CompositedTransformTarget(
-              link: widget.choreographer.itBarLinkAndKey.link,
-              child: AnimatedOpacity(
-                duration: itController.animationSpeed,
-                opacity: itController.willOpen ? 1.0 : 0.0,
-                child: Container(
-                  key: widget.choreographer.itBarLinkAndKey.key,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).brightness == Brightness.light
-                        ? Colors.white
-                        : Colors.black,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(AppConfig.borderRadius),
-                      topRight: Radius.circular(AppConfig.borderRadius),
-                    ),
-                  ),
-                  width: double.infinity,
-                  padding: const EdgeInsets.fromLTRB(0, 3, 3, 3),
-                  child: Stack(
-                    alignment: Alignment.topCenter,
-                    children: [
-                      const Positioned(
-                        top: 60,
-                        child: PointsGainedAnimation(
-                          origin: AnalyticsUpdateOrigin.it,
-                        ),
+    return SizeTransition(
+      sizeFactor: _animation,
+      axis: Axis.vertical,
+      axisAlignment: -1.0,
+      child: CompositedTransformTarget(
+        link: widget.choreographer.itBarLinkAndKey.link,
+        child: Container(
+          key: widget.choreographer.itBarLinkAndKey.key,
+          decoration: BoxDecoration(
+            color: Theme.of(context).brightness == Brightness.light
+                ? Colors.white
+                : Colors.black,
+          ),
+          padding: const EdgeInsets.fromLTRB(0, 3, 3, 3),
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Column(
+                  children: [
+                    OriginalText(controller: itController),
+                    const SizedBox(height: 8.0),
+                    if (showITInstructionsTooltip)
+                      const InlineTooltip(
+                        instructionsEnum: InstructionsEnum.clickBestOption,
                       ),
-                      SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            // Row(
-                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            //   crossAxisAlignment: CrossAxisAlignment.start,
-                            //   children: [
-                            //     // Row(
-                            //     //   mainAxisAlignment: MainAxisAlignment.start,
-                            //     //   crossAxisAlignment: CrossAxisAlignment.start,
-                            //     //   children: [
-                            //     //     CounterDisplay(
-                            //     //       correct: controller.correctChoices,
-                            //     //       custom: controller.customChoices,
-                            //     //       incorrect: controller.incorrectChoices,
-                            //     //       yellow: controller.wildcardChoices,
-                            //     //     ),
-                            //     //     CompositedTransformTarget(
-                            //     //       link: choreographer.itBotLayerLinkAndKey.link,
-                            //     //       child: ITBotButton(
-                            //     //         key: choreographer.itBotLayerLinkAndKey.key,
-                            //     //         choreographer: choreographer,
-                            //     //       ),
-                            //     //     ),
-                            //     //   ],
-                            //     // ),
-                            //     ITCloseButton(choreographer: choreographer),
-                            //   ],
-                            // ),
-                            // const SizedBox(height: 40.0),
-                            OriginalText(controller: itController),
-                            const SizedBox(height: 7.0),
-                            if (showITInstructionsTooltip)
-                              const InlineTooltip(
-                                instructionsEnum:
-                                    InstructionsEnum.clickBestOption,
-                              ),
-                            if (showTranslationsChoicesTooltip)
-                              const InlineTooltip(
-                                instructionsEnum:
-                                    InstructionsEnum.translationChoices,
-                              ),
-                            IntrinsicHeight(
-                              child: Container(
-                                constraints:
-                                    const BoxConstraints(minHeight: 80),
-                                width: double.infinity,
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 4.0),
-                                child: Center(
-                                  child: itController
-                                          .choreographer.errorService.isError
-                                      ? ITError(
-                                          error: itController.choreographer
-                                              .errorService.error!,
+                    if (showTranslationsChoicesTooltip)
+                      const InlineTooltip(
+                        instructionsEnum: InstructionsEnum.translationChoices,
+                      ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      constraints: const BoxConstraints(minHeight: 80),
+                      child: AnimatedSize(
+                        duration: itController.animationSpeed,
+                        child: Center(
+                          child: itController.choreographer.errorService.isError
+                              ? ITError(
+                                  error: itController
+                                      .choreographer.errorService.error!,
+                                  controller: itController,
+                                )
+                              : itController.showChoiceFeedback
+                                  ? ChoiceFeedbackText(
+                                      controller: itController,
+                                    )
+                                  : itController.isTranslationDone
+                                      ? TranslationFeedback(
                                           controller: itController,
                                         )
-                                      : itController.showChoiceFeedback
-                                          ? ChoiceFeedbackText(
-                                              controller: itController,
-                                            )
-                                          : itController.isTranslationDone
-                                              ? TranslationFeedback(
-                                                  controller: itController,
-                                                )
-                                              : ITChoices(
-                                                  controller: itController,
-                                                ),
-                                ),
-                              ),
-                            ),
-                          ],
+                                      : ITChoices(controller: itController),
                         ),
                       ),
-                      Positioned(
-                        top: 0.0,
-                        right: 0.0,
-                        child:
-                            ITCloseButton(choreographer: widget.choreographer),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-              // ),
-            ),
+              Positioned(
+                top: 0.0,
+                right: 0.0,
+                child: ITCloseButton(
+                  choreographer: widget.choreographer,
+                ),
+              ),
+              const Positioned(
+                top: 60,
+                child: PointsGainedAnimation(
+                  origin: AnalyticsUpdateOrigin.it,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -250,9 +224,14 @@ class OriginalText extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           if (!controller.isEditingSourceText)
-            controller.sourceText != null
-                ? Flexible(child: Text(controller.sourceText!))
-                : const LinearProgressIndicator(),
+            Expanded(
+              child: controller.sourceText != null
+                  ? Text(
+                      controller.sourceText!,
+                      textAlign: TextAlign.center,
+                    )
+                  : const LinearProgressIndicator(),
+            ),
           const SizedBox(width: 4),
           if (controller.isEditingSourceText)
             Expanded(
