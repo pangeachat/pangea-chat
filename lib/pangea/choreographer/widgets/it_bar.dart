@@ -140,16 +140,14 @@ class ITBarState extends State<ITBar> {
                             OriginalText(controller: itController),
                             const SizedBox(height: 7.0),
                             if (showITInstructionsTooltip)
-                              InlineTooltip(
+                              const InlineTooltip(
                                 instructionsEnum:
                                     InstructionsEnum.clickBestOption,
-                                onClose: () => setState(() {}),
                               ),
                             if (showTranslationsChoicesTooltip)
-                              InlineTooltip(
+                              const InlineTooltip(
                                 instructionsEnum:
                                     InstructionsEnum.translationChoices,
-                                onClose: () => setState(() {}),
                               ),
                             IntrinsicHeight(
                               child: Container(
