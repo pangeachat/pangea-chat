@@ -8,7 +8,6 @@ import 'package:fluffychat/pages/chat/chat_event_list.dart';
 import 'package:fluffychat/pages/chat/pinned_events.dart';
 import 'package:fluffychat/pages/chat/reply_display.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/it_bar.dart';
-import 'package:fluffychat/pangea/choreographer/widgets/start_igc_button.dart';
 import 'package:fluffychat/pangea/controllers/put_analytics_controller.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/widgets/animations/gain_points.dart';
@@ -443,26 +442,18 @@ class ChatView extends StatelessWidget {
                                     maxWidth: FluffyThemes.columnWidth * 2.4,
                                   ),
                                   child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      StartIGCButton(
-                                        controller: controller,
+                                      PointsGainedAnimation(
+                                        gainColor: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
+                                        origin:
+                                            AnalyticsUpdateOrigin.sendMessage,
                                       ),
-                                      Row(
-                                        children: [
-                                          PointsGainedAnimation(
-                                            gainColor: Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary,
-                                            origin: AnalyticsUpdateOrigin
-                                                .sendMessage,
-                                          ),
-                                          const SizedBox(width: 100),
-                                          ChatFloatingActionButton(
-                                            controller: controller,
-                                          ),
-                                        ],
+                                      const SizedBox(width: 100),
+                                      ChatFloatingActionButton(
+                                        controller: controller,
                                       ),
                                     ],
                                   ),
