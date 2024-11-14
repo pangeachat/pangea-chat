@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/choreographer.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/it_controller.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/it_bar_buttons.dart';
@@ -11,6 +10,7 @@ import 'package:fluffychat/pangea/constants/choreo_constants.dart';
 import 'package:fluffychat/pangea/controllers/put_analytics_controller.dart';
 import 'package:fluffychat/pangea/enum/construct_use_type_enum.dart';
 import 'package:fluffychat/pangea/enum/instructions_enum.dart';
+import 'package:fluffychat/pangea/pages/settings_learning/settings_learning.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/utils/inline_tooltip.dart';
 import 'package:fluffychat/pangea/widgets/animations/gain_points.dart';
@@ -92,6 +92,9 @@ class ITBarState extends State<ITBar> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
+  final double iconDimension = 36;
+  final double iconSize = 20;
+
   @override
   Widget build(BuildContext context) {
     return SizeTransition(
@@ -109,11 +112,99 @@ class ITBarState extends State<ITBar> with SingleTickerProviderStateMixin {
           ),
           padding: const EdgeInsets.fromLTRB(0, 3, 3, 3),
           child: Stack(
+            alignment: Alignment.topCenter,
             children: [
               SingleChildScrollView(
                 child: Column(
                   children: [
-                    OriginalText(controller: itController),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        if (!itController.isEditingSourceText &&
+                            itController.sourceText != null)
+                          SizedBox(width: iconDimension * 3),
+                        if (!itController.isEditingSourceText)
+                          Expanded(
+                            child: itController.sourceText != null
+                                ? Text(
+                                    itController.sourceText!,
+                                    textAlign: TextAlign.center,
+                                  )
+                                : const LinearProgressIndicator(),
+                          ),
+                        if (itController.isEditingSourceText)
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 20,
+                                right: 10,
+                                top: 10,
+                              ),
+                              child: TextField(
+                                controller: TextEditingController(
+                                  text: itController.sourceText,
+                                ),
+                                autofocus: true,
+                                enableSuggestions: false,
+                                maxLines: null,
+                                textInputAction: TextInputAction.send,
+                                onSubmitted:
+                                    itController.onEditSourceTextSubmit,
+                                obscureText: false,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ),
+                          ),
+                        if (!itController.isEditingSourceText &&
+                            itController.sourceText != null)
+                          SizedBox(
+                            width: iconDimension,
+                            height: iconDimension,
+                            child: IconButton(
+                              iconSize: iconSize,
+                              color: Theme.of(context).colorScheme.primary,
+                              onPressed: () {
+                                if (itController.nextITStep != null) {
+                                  itController.setIsEditingSourceText(true);
+                                }
+                              },
+                              icon: const Icon(Icons.edit_outlined),
+                              // iconSize: 20,
+                            ),
+                          ),
+                        if (!itController.isEditingSourceText)
+                          SizedBox(
+                            width: iconDimension,
+                            height: iconDimension,
+                            child: IconButton(
+                              iconSize: iconSize,
+                              color: Theme.of(context).colorScheme.primary,
+                              icon: const Icon(Icons.settings_outlined),
+                              onPressed: () => showDialog(
+                                context: context,
+                                builder: (c) => const SettingsLearning(),
+                              ),
+                            ),
+                          ),
+                        SizedBox(
+                          width: iconDimension,
+                          height: iconDimension,
+                          child: IconButton(
+                            iconSize: iconSize,
+                            color: Theme.of(context).colorScheme.primary,
+                            icon: const Icon(Icons.close_outlined),
+                            onPressed: () {
+                              itController.isEditingSourceText
+                                  ? itController.setIsEditingSourceText(false)
+                                  : itController.closeIT();
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 8.0),
                     if (showITInstructionsTooltip)
                       const InlineTooltip(
@@ -148,13 +239,6 @@ class ITBarState extends State<ITBar> with SingleTickerProviderStateMixin {
                       ),
                     ),
                   ],
-                ),
-              ),
-              Positioned(
-                top: 0.0,
-                right: 0.0,
-                child: ITCloseButton(
-                  choreographer: widget.choreographer,
                 ),
               ),
               const Positioned(
@@ -197,75 +281,6 @@ class ChoiceFeedbackText extends StatelessWidget {
     //     ),
     //   ],
     // );
-  }
-}
-
-class OriginalText extends StatelessWidget {
-  const OriginalText({
-    super.key,
-    required this.controller,
-  });
-
-  final ITController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(minHeight: 50),
-      padding: const EdgeInsets.only(left: 60.0, right: 40.0),
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(AppConfig.borderRadius),
-          topRight: Radius.circular(AppConfig.borderRadius),
-        ),
-      ),
-      child: Row(
-        //PTODO - does this already update after reset or we need to setState?
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (!controller.isEditingSourceText)
-            Expanded(
-              child: controller.sourceText != null
-                  ? Text(
-                      controller.sourceText!,
-                      textAlign: TextAlign.center,
-                    )
-                  : const LinearProgressIndicator(),
-            ),
-          const SizedBox(width: 4),
-          if (controller.isEditingSourceText)
-            Expanded(
-              child: TextField(
-                controller: TextEditingController(text: controller.sourceText),
-                autofocus: true,
-                enableSuggestions: false,
-                maxLines: null,
-                textInputAction: TextInputAction.send,
-                onSubmitted: controller.onEditSourceTextSubmit,
-                obscureText: false,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-          if (!controller.isEditingSourceText && controller.sourceText != null)
-            AnimatedOpacity(
-              duration: const Duration(milliseconds: 500),
-              opacity: controller.nextITStep != null ? 0.7 : 0.0,
-              child: IconButton(
-                onPressed: () => {
-                  if (controller.nextITStep != null)
-                    {
-                      controller.setIsEditingSourceText(true),
-                    },
-                },
-                icon: const Icon(Icons.edit_outlined),
-                iconSize: 20,
-              ),
-            ),
-        ],
-      ),
-    );
   }
 }
 
