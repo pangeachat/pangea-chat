@@ -63,8 +63,6 @@ jobs:
         env:
           API_KEY_JSON: ${{ secrets.APP_STORE_CONNECT_API_KEY_JSON }}
 
-      - run: bundle install
-
       - run: bundle exec fastlane upload_testflight --api_key_path api_key_info.json
 
       - run: bundle exec fastlane upload_metadata_app_store
