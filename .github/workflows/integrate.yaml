@@ -1,8 +1,7 @@
 name: Pull Request Workflow
 
 on:
-  pull_request:
-  - main
+  # pull_request:
   merge_group:
 
 jobs:
