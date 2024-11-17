@@ -35,5 +35,7 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
-      - name: Run ios
-        run: ./scripts/release-ios-testflight.sh
+      - name: Use local my-action
+        uses: ./.github/workflows/build-ios.yml
+      - name: Use local my-action
+        uses: ./.github/workflows/upload-release-ios.yml
