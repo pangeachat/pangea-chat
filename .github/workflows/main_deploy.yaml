@@ -23,6 +23,7 @@ jobs:
 
   deploy_ios_internal:
     runs-on: macos-latest
+    environment: staging
     defaults:
       run:
         working-directory: ./ios
