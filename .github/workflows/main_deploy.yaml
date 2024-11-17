@@ -29,7 +29,7 @@ jobs:
         working-directory: ./ios
     steps:
       - uses: actions/checkout@v4
-      - run: cat .github/workflows/versions.env >> $GITHUB_ENV
+      - run: cat ../.github/workflows/versions.env >> $GITHUB_ENV
       - run: 'echo "$API_KEY" | base64 --decode > AuthKey.p8'
         shell: bash
         env:
