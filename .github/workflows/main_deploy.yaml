@@ -3,7 +3,7 @@ name: Main Deploy Workflow
 on:
   push:
     branches:
-      - main
+      - gh-action-android-ios
   workflow_dispatch:
 
 env:
