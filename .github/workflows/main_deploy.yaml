@@ -37,8 +37,6 @@ jobs:
 
       - run: bundle install
 
-      - run: bundle exec fastlane versioning
-
       - name: Flutter
         uses: subosito/flutter-action@v2
         with:
