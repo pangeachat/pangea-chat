@@ -57,13 +57,10 @@ jobs:
 
       # Build ios Release
       - run: flutter build ios --release --config-only --no-codesign --target=lib/main.dart
-        if: ${{ inputs.ipa == 'true' }}
 
       - run: bundle exec fastlane build
-        if: ${{ inputs.ipa == 'true' }}
 
       - name: Archive ipa
-        if: ${{ inputs.ipa == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: Runner.ipa
