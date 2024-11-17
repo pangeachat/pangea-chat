@@ -12,6 +12,8 @@
 .svn/
 prime
 *.env
+*.secrets
+keys.json
 !/public/.env
 *.env.local_choreo
 *.env.prod
