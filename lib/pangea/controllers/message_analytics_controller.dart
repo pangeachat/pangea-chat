@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:fluffychat/pangea/controllers/get_analytics_controller.dart';
 import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
+import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
 import 'package:flutter/foundation.dart';
@@ -30,14 +31,14 @@ class TargetTokensAndActivityType {
     // This is kind of complicated
     // if it's causing problems,
     // maybe we just verify that the target span of the activity is the same as the target span of the target?
-    final List<ConstructIdentifier> allTokenConstructs = tokens
+    final List<ConstructIdentifier> relevantConstructs = tokens
         .map((t) => t.constructs)
         .expand((e) => e)
         .map((c) => c.id)
         .where(activityType.constructFilter)
         .toList();
 
-    return listEquals(activity.tgtConstructs, allTokenConstructs);
+    return listEquals(activity.tgtConstructs, relevantConstructs);
   }
 
   @override
@@ -74,6 +75,8 @@ class MessageAnalyticsEntry {
   TargetTokensAndActivityType? get nextActivity =>
       _activityQueue.isNotEmpty ? _activityQueue.first : null;
 
+  /// If there are more than 4 tokens that can be heard, we don't want to do word focus listening
+  /// Otherwise, we don't have enough distractors
   bool get canDoWordFocusListening =>
       _tokens.where((t) => t.canBeHeard).length > 4;
 
@@ -125,6 +128,29 @@ class MessageAnalyticsEntry {
     return queue.take(3).toList();
   }
 
+  /// Adds a word focus listening activity to the front of the queue
+  /// And limits to 3 activities
+  void addForWordMeaning(PangeaToken selectedToken) {
+    _activityQueue.insert(
+      0,
+      TargetTokensAndActivityType(
+        tokens: [selectedToken],
+        activityType: ActivityTypeEnum.wordMeaning,
+      ),
+    );
+    // remove down to three activities
+    if (_activityQueue.length > 3) {
+      _activityQueue.removeRange(3, _activityQueue.length);
+    }
+  }
+
+  int get numActivities => _activityQueue.length;
+
+  void clearActivityQueue() {
+    _activityQueue.clear();
+  }
+
+  /// Returns a hidden word activity if there is a sequence of tokens that have hiddenWordListening in their eligibleActivityTypes
   TargetTokensAndActivityType? getHiddenWordActivity(int numOtherActivities) {
     // don't do hidden word listening on own messages
     if (!_includeHiddenWordActivities) {
@@ -160,8 +186,11 @@ class MessageAnalyticsEntry {
       (a, b) => a.length > b.length ? a : b,
     );
 
+    // Truncate the sequence to a maximum of 2 words
+    final truncatedSequence = longestSequence.take(2).toList();
+
     return TargetTokensAndActivityType(
-      tokens: longestSequence,
+      tokens: truncatedSequence,
       activityType: ActivityTypeEnum.hiddenWordListening,
     );
   }
@@ -209,13 +238,17 @@ class MessageAnalyticsController {
 
   MessageAnalyticsEntry? get(
     List<PangeaToken> tokens,
-    bool includeHiddenWordActivities,
+    PangeaMessageEvent pangeaMessageEvent,
   ) {
     final String key = _key(tokens);
 
     if (_cache.containsKey(key)) {
       return _cache[key];
     }
+
+    final bool includeHiddenWordActivities = !pangeaMessageEvent.ownMessage &&
+        pangeaMessageEvent.messageDisplayRepresentation?.tokens != null &&
+        pangeaMessageEvent.messageDisplayLangIsL2;
 
     _cache[key] = MessageAnalyticsEntry(
       tokens: tokens,

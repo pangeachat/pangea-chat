@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:collection/collection.dart';
-import 'package:fluffychat/pangea/controllers/message_analytics_controller.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/controllers/practice_activity_generation_controller.dart';
 import 'package:fluffychat/pangea/controllers/put_analytics_controller.dart';
@@ -10,7 +9,6 @@ import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/practice_activity_event.dart';
 import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
-import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/message_activity_request.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_record_model.dart';
@@ -33,14 +31,12 @@ class PracticeActivityCard extends StatefulWidget {
   final PangeaMessageEvent pangeaMessageEvent;
   final MessageOverlayController overlayController;
   final TtsController ttsController;
-  final PangeaToken? selectedTargetTokenForWordMeaning;
 
   const PracticeActivityCard({
     super.key,
     required this.pangeaMessageEvent,
     required this.overlayController,
     required this.ttsController,
-    required this.selectedTargetTokenForWordMeaning,
   });
 
   @override
@@ -97,16 +93,12 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
   /// If not, get a new activity from the server.
   Future<void> initialize() async {
     _setPracticeActivity(
-      await _fetchActivity(
-        selectedTargetTokenForWordMeaning:
-            widget.selectedTargetTokenForWordMeaning,
-      ),
+      await _fetchActivity(),
     );
   }
 
   Future<PracticeActivityModel?> _fetchActivity({
     ActivityQualityFeedback? activityFeedback,
-    PangeaToken? selectedTargetTokenForWordMeaning,
   }) async {
     // try {
     debugPrint('Fetching activity');
@@ -122,17 +114,8 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
       return null;
     }
 
-    // if the user selected a token which is not already in a hidden word activity,
-    // we're going to give them an activity on that token first
-    // otherwise, we're going to give them an activity on the next token in the queue
-    final TargetTokensAndActivityType? nextActivitySpecs =
-        selectedTargetTokenForWordMeaning != null
-            ? TargetTokensAndActivityType(
-                tokens: [selectedTargetTokenForWordMeaning],
-                activityType: ActivityTypeEnum.wordMeaning,
-              )
-            : widget.overlayController.messageAnalyticsEntry?.nextActivity;
-
+    final nextActivitySpecs =
+        widget.overlayController.messageAnalyticsEntry?.nextActivity;
     // the client is going to be choosing the next activity now
     // if nothing is set then it must be done with practice
     if (nextActivitySpecs == null) {
@@ -141,11 +124,11 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
       return null;
     }
 
+    // check if we already have an activity matching the specs
     final existingActivity = practiceActivities.firstWhereOrNull(
       (activity) =>
           nextActivitySpecs.matchesActivity(activity.practiceActivity),
     );
-
     if (existingActivity != null) {
       debugPrint('found existing activity');
       _updateFetchingActivity(false);
@@ -153,7 +136,7 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
     }
 
     debugPrint(
-      "client requesting ${nextActivitySpecs.activityType.string} for ${nextActivitySpecs.tokens.map((t) => t.text).join(' ')}",
+      "client requesting ${nextActivitySpecs.activityType.string} for: ${nextActivitySpecs.tokens.map((t) => t.text.content).join(' ')}",
     );
 
     final PracticeActivityModelResponse? activityResponse =
@@ -161,7 +144,7 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
       MessageActivityRequest(
         userL1: pangeaController.languageController.userL1!.langCode,
         userL2: pangeaController.languageController.userL2!.langCode,
-        messageText: widget.pangeaMessageEvent.originalSent!.text,
+        messageText: widget.pangeaMessageEvent.messageDisplayText,
         messageTokens: widget.overlayController.tokens!,
         activityQualityFeedback: activityFeedback,
         targetTokens: nextActivitySpecs.tokens,
