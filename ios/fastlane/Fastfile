@@ -18,6 +18,8 @@ default_platform(:ios)
 platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
+
+    # TODO: Not working
     increment_build_number(
       xcodeproj: "Runner.xcodeproj",
       build_number: latest_testflight_build_number + 1
@@ -28,6 +30,7 @@ platform :ios do
     increment_version_number(version_number: version_name)
     build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
     upload_to_testflight(
+      ipa: "../build/ios/ipa/pangeachat.ipa" # Verify location
       distribute_external: true,
       groups: "App Store Connect Users",
       changelog: "This is a release candidate for PangeaChat. Please test if the app is overall in a good condition before we push this to production.",
