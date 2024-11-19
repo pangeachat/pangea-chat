@@ -1,5 +1,6 @@
 import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pangea/utils/bot_style.dart';
+import 'package:fluffychat/pangea/enum/instructions_enum.dart';
+import 'package:fluffychat/pangea/utils/inline_tooltip.dart';
 import 'package:flutter/material.dart';
 
 class StarAnimationWidget extends StatefulWidget {
@@ -66,24 +67,19 @@ class _StarAnimationWidgetState extends State<StarAnimationWidget>
 }
 
 class GamifiedTextWidget extends StatelessWidget {
-  final String userMessage;
-
-  const GamifiedTextWidget({super.key, required this.userMessage});
+  const GamifiedTextWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return const SizedBox(
       width: AppConfig.toolbarMinWidth,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+        padding: EdgeInsets.fromLTRB(16, 20, 16, 16),
         child: Column(
           children: [
-            const StarAnimationWidget(),
-            const SizedBox(height: 10),
-            Text(
-              userMessage,
-              style: BotStyle.text(context),
-              textAlign: TextAlign.center,
+            StarAnimationWidget(),
+            InlineTooltip(
+              instructionsEnum: InstructionsEnum.unlockedLanguageTools,
             ),
           ],
         ),

@@ -1,7 +1,7 @@
-import 'package:collection/collection.dart';
 import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
 import 'package:fluffychat/pangea/enum/progress_indicators_enum.dart';
 import 'package:fluffychat/pangea/models/analytics/construct_list_model.dart';
+import 'package:fluffychat/pangea/models/analytics/construct_use_model.dart';
 import 'package:fluffychat/pangea/widgets/chat_list/analytics_summary/analytics_popup/analytics_xp_tile.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
@@ -93,11 +93,7 @@ class AnalyticsPopupState extends State<AnalyticsPopup> {
       dialogContent = Center(child: Text(L10n.of(context)!.noDataFound));
     } else if (hasNoCategories || !widget.showGroups) {
       dialogContent = ConstructsTileList(
-        _constructsModel.constructList(type: widget.type).sorted((a, b) {
-          final comp = b.points.compareTo(a.points);
-          if (comp != 0) return comp;
-          return a.lemma.compareTo(b.lemma);
-        }),
+        _constructsModel.constructList(type: widget.type),
       );
     } else {
       dialogContent = ListView.builder(

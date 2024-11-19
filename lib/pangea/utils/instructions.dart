@@ -59,6 +59,12 @@ class InstructionsController {
         case InstructionsEnum.missingVoice:
           profile.instructionSettings.showedMissingVoice = value;
           break;
+        case InstructionsEnum.clickBestOption:
+          profile.instructionSettings.showedClickBestOption = value;
+          break;
+        case InstructionsEnum.unlockedLanguageTools:
+          profile.instructionSettings.showedUnlockedLanguageTools = value;
+          break;
       }
       return profile;
     });
@@ -72,6 +78,7 @@ class InstructionsController {
     String transformTargetKey, {
     bool showToggle = true,
     Widget? customContent,
+    bool forceShow = false,
   }) async {
     final bool userLangsSet =
         await _pangeaController.userController.areUserLanguagesSet;
@@ -79,12 +86,12 @@ class InstructionsController {
       return;
     }
 
-    if (_instructionsShown[key.toString()] ?? false) {
+    if ((_instructionsShown[key.toString()] ?? false) && !forceShow) {
       return;
     }
     _instructionsShown[key.toString()] = true;
 
-    if (key.toggledOff()) {
+    if (key.toggledOff() && !forceShow) {
       return;
     }
     if (L10n.of(context) == null) {

@@ -6,6 +6,7 @@ import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:matrix/matrix_api_lite/model/matrix_exception.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -137,11 +138,15 @@ class SignupPageController extends State<SignupPage> {
           displayname,
         );
       }
-    } catch (e) {
+    } on MatrixException catch (e) {
+      if (e.error != MatrixError.M_THREEPID_IN_USE) {
+        rethrow;
+      }
+    } catch (e, s) {
       //#Pangea
       const cancelledString = "Exception: Request has been canceled";
       if (e.toString() != cancelledString) {
-        ErrorHandler.logError(e: e);
+        ErrorHandler.logError(e: e, s: s);
         error = (e).toLocalizedString(context);
       }
       // Pangea#
