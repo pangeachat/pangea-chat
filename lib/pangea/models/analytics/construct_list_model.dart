@@ -1,9 +1,11 @@
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
-import 'package:fluffychat/pangea/enum/construct_use_type_enum.dart';
+import 'package:fluffychat/pangea/models/analytics/construct_use_model.dart';
 import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
+import 'package:fluffychat/pangea/utils/error_handler.dart';
 
 /// A wrapper around a list of [OneConstructUse]s, used to simplify
 /// the process of filtering / sorting / displaying the events.
@@ -51,19 +53,25 @@ class ConstructListModel {
     _updateMetrics();
   }
 
+  int _sortConstructs(ConstructUses a, ConstructUses b) {
+    final comp = b.points.compareTo(a.points);
+    if (comp != 0) return comp;
+    return a.lemma.compareTo(b.lemma);
+  }
+
   /// A map of lemmas to ConstructUses, each of which contains a lemma
   /// key = lemmma + constructType.string, value = ConstructUses
   void _updateConstructMap(final List<OneConstructUse> newUses) {
     for (final use in newUses) {
-      if (use.lemma == null) continue;
       final currentUses = _constructMap[use.identifier.string] ??
           ConstructUses(
             uses: [],
             constructType: use.constructType,
-            lemma: use.lemma!,
+            lemma: use.lemma,
             category: use.category,
           );
       currentUses.uses.add(use);
+      currentUses.setLastUsed(use.timeStamp);
       _constructMap[use.identifier.string] = currentUses;
     }
   }
@@ -73,11 +81,7 @@ class ConstructListModel {
   void _updateConstructList() {
     // TODO check how expensive this is
     _constructList = _constructMap.values.toList();
-    _constructList.sort((a, b) {
-      final comp = b.uses.length.compareTo(a.uses.length);
-      if (comp != 0) return comp;
-      return a.lemma.compareTo(b.lemma);
-    });
+    _constructList.sort(_sortConstructs);
   }
 
   void _updateCategoriesToUses() {
@@ -104,11 +108,48 @@ class ConstructListModel {
       0,
       (total, construct) => total + construct.points,
     );
-    level = 1 + sqrt((1 + 8 * totalXP / 100) / 2).floor();
+
+    // Don't call .floor() if NaN or Infinity
+    // https://pangea-chat.sentry.io/issues/6052871310
+    final double levelCalculation = 1 + sqrt((1 + 8 * totalXP / 100) / 2);
+    if (!levelCalculation.isNaN && levelCalculation.isFinite) {
+      level = levelCalculation.floor();
+    } else {
+      level = 0;
+      ErrorHandler.logError(
+        e: "Calculated level in Nan or Infinity",
+        data: {
+          "totalXP": totalXP,
+          "prevXP": prevXP,
+          "level": levelCalculation,
+        },
+      );
+    }
   }
 
   ConstructUses? getConstructUses(ConstructIdentifier identifier) {
-    return _constructMap[identifier.string];
+    final partialKey = "${identifier.lemma}-${identifier.type.string}";
+
+    if (_constructMap.containsKey(identifier.string)) {
+      // try to get construct use entry with full ID key
+      return _constructMap[identifier.string];
+    } else if (identifier.category.toLowerCase() == "other") {
+      // if the category passed to this function is "other", return the first
+      // construct use entry that starts with the partial key
+      return _constructMap.entries
+          .firstWhereOrNull((entry) => entry.key.startsWith(partialKey))
+          ?.value;
+    } else {
+      // if the category passed to this function is not "other", return the first
+      // construct use entry that starts with the partial key and ends with "other"
+      return _constructMap.entries
+          .firstWhereOrNull(
+            (entry) =>
+                entry.key.startsWith(partialKey) &&
+                entry.key.toLowerCase().endsWith("other"),
+          )
+          ?.value;
+    }
   }
 
   List<ConstructUses> constructList({ConstructTypeEnum? type}) => _constructList
@@ -131,39 +172,4 @@ class ConstructListModel {
       }).where((entry) => entry.value.isNotEmpty),
     );
   }
-}
-
-/// One lemma and a list of construct uses for that lemma
-class ConstructUses {
-  final List<OneConstructUse> uses;
-  final ConstructTypeEnum constructType;
-  final String lemma;
-  final String? _category;
-
-  ConstructUses({
-    required this.uses,
-    required this.constructType,
-    required this.lemma,
-    required category,
-  }) : _category = category;
-
-  // Total points for all uses of this lemma
-  int get points {
-    return uses.fold<int>(
-      0,
-      (total, use) => total + use.useType.pointValue,
-    );
-  }
-
-  DateTime? _lastUsed;
-  DateTime? get lastUsed {
-    if (_lastUsed != null) return _lastUsed;
-    final lastUse = uses.fold<DateTime?>(null, (DateTime? last, use) {
-      if (last == null) return use.timeStamp;
-      return use.timeStamp.isAfter(last) ? use.timeStamp : last;
-    });
-    return _lastUsed = lastUse;
-  }
-
-  String get category => _category ?? "Other";
 }

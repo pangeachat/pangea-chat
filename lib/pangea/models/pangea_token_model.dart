@@ -1,11 +1,13 @@
 import 'dart:developer';
 
 import 'package:collection/collection.dart';
+import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
 import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
 import 'package:fluffychat/pangea/enum/construct_use_type_enum.dart';
+import 'package:fluffychat/pangea/models/analytics/construct_use_model.dart';
 import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
-import 'package:fluffychat/pangea/models/practice_activities.dart/message_activity_request.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
+import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/foundation.dart';
 
 import '../constants/model_keys.dart';
@@ -13,6 +15,9 @@ import 'lemma.dart';
 
 class PangeaToken {
   PangeaTokenText text;
+
+  //TODO - make this a string and move save_vocab to this class
+  // clients have been able to handle null lemmas for 12 months so this is safe
   Lemma lemma;
 
   /// [pos] ex "VERB" - part of speech of the token
@@ -29,6 +34,18 @@ class PangeaToken {
     required this.pos,
     required this.morph,
   });
+
+  @override
+  bool operator ==(Object other) {
+    if (other is PangeaToken) {
+      return other.text.content == text.content &&
+          other.text.offset == text.offset;
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => text.content.hashCode ^ text.offset.hashCode;
 
   /// reconstructs the text from the tokens
   /// [tokens] - the tokens to reconstruct
@@ -120,37 +137,25 @@ class PangeaToken {
   /// alias for the end of the token ie offset + length
   int get end => text.offset + text.length;
 
-  /// create an empty tokenWithXP object
-  TokenWithXP get emptyTokenWithXP {
-    final List<ConstructWithXP> constructs = [];
+  bool get isContentWord =>
+      ["NOUN", "VERB", "ADJ", "ADV", "AUX", "PRON"].contains(pos) &&
+      lemma.saveVocab;
 
-    constructs.add(
-      ConstructWithXP(
-        id: ConstructIdentifier(
-          lemma: lemma.text,
-          type: ConstructTypeEnum.vocab,
-          category: pos,
-        ),
-      ),
-    );
-
-    for (final morph in morph.entries) {
-      constructs.add(
-        ConstructWithXP(
-          id: ConstructIdentifier(
-            lemma: morph.value,
-            type: ConstructTypeEnum.morph,
-            category: morph.key,
-          ),
-        ),
-      );
-    }
-
-    return TokenWithXP(
-      token: this,
-      constructs: constructs,
-    );
-  }
+  bool get canBeHeard =>
+      [
+        "ADJ",
+        "ADV",
+        "AUX",
+        "DET",
+        "INTJ",
+        "NOUN",
+        "NUM",
+        "PRON",
+        "PROPN",
+        "SCONJ",
+        "VERB",
+      ].contains(pos) &&
+      lemma.saveVocab;
 
   /// Given a [type] and [metadata], returns a [OneConstructUse] for this lemma
   OneConstructUse toVocabUse(
@@ -160,11 +165,179 @@ class PangeaToken {
     return OneConstructUse(
       useType: type,
       lemma: lemma.text,
-      form: lemma.form,
+      form: text.content,
       constructType: ConstructTypeEnum.vocab,
       metadata: metadata,
       category: pos,
     );
+  }
+
+  bool _isActivityBasicallyEligible(ActivityTypeEnum a) {
+    switch (a) {
+      case ActivityTypeEnum.wordMeaning:
+        return isContentWord;
+      case ActivityTypeEnum.wordFocusListening:
+      case ActivityTypeEnum.hiddenWordListening:
+        return canBeHeard;
+    }
+  }
+
+  bool _didActivity(ActivityTypeEnum a) {
+    switch (a) {
+      case ActivityTypeEnum.wordMeaning:
+        return vocabConstruct.uses
+            .map((u) => u.useType)
+            .any((u) => a.associatedUseTypes.contains(u));
+      case ActivityTypeEnum.wordFocusListening:
+        return vocabConstruct.uses
+            // TODO - double-check that form is going to be available here
+            // .where((u) =>
+            //     u.form?.toLowerCase() == text.content.toLowerCase(),)
+            .map((u) => u.useType)
+            .any((u) => a.associatedUseTypes.contains(u));
+      case ActivityTypeEnum.hiddenWordListening:
+        return vocabConstruct.uses
+            // TODO - double-check that form is going to be available here
+            // .where((u) =>
+            //     u.form?.toLowerCase() == text.content.toLowerCase(),)
+            .map((u) => u.useType)
+            .any((u) => a.associatedUseTypes.contains(u));
+    }
+  }
+
+  bool _didActivitySuccessfully(ActivityTypeEnum a) {
+    switch (a) {
+      case ActivityTypeEnum.wordMeaning:
+        return vocabConstruct.uses
+            .map((u) => u.useType)
+            .any((u) => u == ConstructUseTypeEnum.corPA);
+      case ActivityTypeEnum.wordFocusListening:
+        return vocabConstruct.uses
+            // TODO - double-check that form is going to be available here
+            // .where((u) =>
+            //     u.form?.toLowerCase() == text.content.toLowerCase(),)
+            .map((u) => u.useType)
+            .any((u) => u == ConstructUseTypeEnum.corWL);
+      case ActivityTypeEnum.hiddenWordListening:
+        return vocabConstruct.uses
+            // TODO - double-check that form is going to be available here
+            // .where((u) =>
+            //     u.form?.toLowerCase() == text.content.toLowerCase(),)
+            .map((u) => u.useType)
+            .any((u) => u == ConstructUseTypeEnum.corHWL);
+    }
+  }
+
+  bool _isActivityProbablyLevelAppropriate(ActivityTypeEnum a) {
+    switch (a) {
+      case ActivityTypeEnum.wordMeaning:
+        return vocabConstruct.points < 15 || daysSinceLastUseByType(a) > 2;
+      case ActivityTypeEnum.wordFocusListening:
+        return !_didActivitySuccessfully(a) || daysSinceLastUseByType(a) > 2;
+      case ActivityTypeEnum.hiddenWordListening:
+        return daysSinceLastUseByType(a) > 2;
+    }
+  }
+
+  bool shouldDoActivity(ActivityTypeEnum a) =>
+      lemma.saveVocab &&
+      _isActivityBasicallyEligible(a) &&
+      _isActivityProbablyLevelAppropriate(a);
+
+  List<ActivityTypeEnum> get eligibleActivityTypes {
+    final List<ActivityTypeEnum> eligibleActivityTypes = [];
+
+    if (!lemma.saveVocab) {
+      return eligibleActivityTypes;
+    }
+
+    for (final type in ActivityTypeEnum.values) {
+      if (shouldDoActivity(type)) {
+        eligibleActivityTypes.add(type);
+      }
+    }
+
+    return eligibleActivityTypes;
+  }
+
+  ConstructUses get vocabConstruct {
+    final vocab = constructs.firstWhereOrNull(
+      (element) => element.id.type == ConstructTypeEnum.vocab,
+    );
+    if (vocab == null) {
+      return ConstructUses(
+        lemma: lemma.text,
+        constructType: ConstructTypeEnum.vocab,
+        category: pos,
+        uses: [],
+      );
+    }
+    return vocab;
+  }
+
+  int get xp {
+    return constructs.fold<int>(
+      0,
+      (previousValue, element) => previousValue + element.points,
+    );
+  }
+
+  /// lastUsed by activity type
+  DateTime? _lastUsedByActivityType(ActivityTypeEnum a) =>
+      constructs.where((c) => a.constructFilter(c.id)).fold<DateTime?>(
+        null,
+        (previousValue, element) {
+          if (previousValue == null) return element.lastUsed;
+          if (element.lastUsed == null) return previousValue;
+          return element.lastUsed!.isAfter(previousValue)
+              ? element.lastUsed
+              : previousValue;
+        },
+      );
+
+  /// daysSinceLastUse by activity type
+  int daysSinceLastUseByType(ActivityTypeEnum a) {
+    final lastUsed = _lastUsedByActivityType(a);
+    if (lastUsed == null) return 1000;
+    return DateTime.now().difference(lastUsed).inDays;
+  }
+
+  List<ConstructIdentifier> get _constructIDs {
+    final List<ConstructIdentifier> ids = [];
+    ids.add(
+      ConstructIdentifier(
+        lemma: lemma.text,
+        type: ConstructTypeEnum.vocab,
+        category: pos,
+      ),
+    );
+    for (final morph in morph.entries) {
+      ids.add(
+        ConstructIdentifier(
+          lemma: morph.value,
+          type: ConstructTypeEnum.morph,
+          category: morph.key,
+        ),
+      );
+    }
+    return ids;
+  }
+
+  List<ConstructUses> get constructs => _constructIDs
+      .map(
+        (id) => MatrixState.pangeaController.getAnalytics.constructListModel
+            .getConstructUses(id),
+      )
+      .where((construct) => construct != null)
+      .cast<ConstructUses>()
+      .toList();
+
+  Map<String, dynamic> toServerChoiceTokenWithXP() {
+    return {
+      'token': toJson(),
+      'constructs_with_xp': constructs.map((e) => e.toJson()).toList(),
+      'target_types': eligibleActivityTypes.map((e) => e.string).toList(),
+    };
   }
 }
 

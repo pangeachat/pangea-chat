@@ -4,8 +4,8 @@ import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pages/chat/events/video_player.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
+import 'package:fluffychat/pangea/widgets/chat/message_token_text.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar_selection_area.dart';
-import 'package:fluffychat/pangea/widgets/chat/overlay_message_text.dart';
 import 'package:fluffychat/pangea/widgets/igc/pangea_rich_text.dart';
 import 'package:fluffychat/utils/adaptive_bottom_sheet.dart';
 import 'package:fluffychat/utils/date_time_extension.dart';
@@ -299,19 +299,11 @@ class MessageContent extends StatelessWidget {
 
             // #Pangea
             final messageTextStyle = TextStyle(
-              overflow: TextOverflow.ellipsis,
               color: textColor,
               fontSize: bigEmotes ? fontSize * 3 : fontSize,
               decoration: event.redacted ? TextDecoration.lineThrough : null,
               height: 1.3,
             );
-
-            if (overlayController != null && pangeaMessageEvent != null) {
-              return OverlayMessageText(
-                pangeaMessageEvent: pangeaMessageEvent!,
-                overlayController: overlayController!,
-              );
-            }
 
             if (immersionMode && pangeaMessageEvent != null) {
               return Flexible(
@@ -324,6 +316,22 @@ class MessageContent extends StatelessWidget {
                 ),
               );
             }
+
+            if (pangeaMessageEvent != null) {
+              return MessageTokenText(
+                pangeaMessageEvent: pangeaMessageEvent!,
+                tokens:
+                    pangeaMessageEvent!.messageDisplayRepresentation?.tokens,
+                style: messageTextStyle,
+                onClick: overlayController?.onClickOverlayMessageToken ??
+                    (token) => controller.showToolbar(
+                          pangeaMessageEvent!,
+                          selectedToken: token,
+                        ),
+                isSelected: overlayController?.isTokenSelected,
+              );
+            }
+
             // Pangea#
 
             return
@@ -346,6 +354,9 @@ class MessageContent extends StatelessWidget {
                   fontSize: bigEmotes ? fontSize * 3 : fontSize,
                   decoration:
                       event.redacted ? TextDecoration.lineThrough : null,
+                  // #Pangea
+                  height: 1.3,
+                  // Pangea#
                 ),
                 options: const LinkifyOptions(humanize: false),
                 linkStyle: TextStyle(

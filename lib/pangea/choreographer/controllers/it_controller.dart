@@ -59,9 +59,7 @@ class ITController {
     choreographer.setState();
   }
 
-  Duration get animationSpeed => (!_willOpen)
-      ? const Duration(milliseconds: 500)
-      : const Duration(milliseconds: 2000);
+  Duration get animationSpeed => const Duration(milliseconds: 500);
 
   Future<void> initializeIT(ITStartData itStartData) async {
     _willOpen = true;
@@ -145,6 +143,8 @@ class ITController {
         //             null
         //     ? _customInputTranslation(currentText)
         //     : _systemChoiceTranslation(translationId));
+
+        if (sourceText == null) return;
 
         if (res.goldContinuances != null && res.goldContinuances!.isNotEmpty) {
           goldRouteTracker = GoldRouteTracker(

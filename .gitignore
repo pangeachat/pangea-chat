@@ -11,8 +11,9 @@
 .history
 .svn/
 prime
-*.env
+# act; local github actions
 *.secrets
+# Android keys file
 keys.json
 !/public/.env
 *.env.local_choreo

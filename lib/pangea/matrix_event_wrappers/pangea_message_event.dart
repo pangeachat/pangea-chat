@@ -84,16 +84,15 @@ class PangeaMessageEvent {
   ) async {
     final RepresentationEvent? rep = representationByLanguage(langCode);
 
-    if (rep == null) return null;
-
     final TextToSpeechRequest params = TextToSpeechRequest(
-      text: rep.content.text,
-      tokens: (await rep.tokensGlobal(
-        senderId,
-        originServerTs,
-      ))
-          .map((t) => t.text)
-          .toList(),
+      text: rep?.content.text ?? body,
+      tokens: (await rep?.tokensGlobal(
+            senderId,
+            originServerTs,
+          ))
+              ?.map((t) => t.text)
+              .toList() ??
+          [],
       langCode: langCode,
       userL1: l1Code ?? LanguageKeys.unknownLanguage,
       userL2: l2Code ?? LanguageKeys.unknownLanguage,
@@ -118,7 +117,7 @@ class PangeaMessageEvent {
       tokens: response.ttsTokens,
     );
 
-    sendAudioEvent(file, response, rep.text, langCode);
+    sendAudioEvent(file, response, rep?.text ?? body, langCode);
 
     return file;
   }
@@ -550,6 +549,10 @@ class PangeaMessageEvent {
 
   String? get l1Code =>
       MatrixState.pangeaController.languageController.userL1?.langCode;
+
+  /// Should almost always be true. Useful in the case that the message
+  /// display rep has the langCode "unk"
+  bool get messageDisplayLangIsL2 => messageDisplayLangCode == l2Code;
 
   String get messageDisplayLangCode {
     final bool immersionMode = MatrixState

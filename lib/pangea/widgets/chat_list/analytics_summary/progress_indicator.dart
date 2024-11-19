@@ -21,31 +21,52 @@ class ProgressIndicatorBadge extends StatelessWidget {
     return Tooltip(
       message: indicator.tooltip(context),
       child: InkWell(
+        customBorder: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
         onTap: onTap,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              indicator.icon,
-              color: indicator.color(context),
-            ),
-            const SizedBox(width: 5),
-            !loading
-                ? Text(
-                    points.toString(),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            color: Theme.of(context).colorScheme.surfaceBright,
+            boxShadow: [
+              BoxShadow(
+                color: Theme.of(context).colorScheme.primary,
+                spreadRadius: 1,
+                blurRadius: 1,
+                offset: const Offset(-1, 1), // changes position of shadow
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                size: 14,
+                indicator.icon,
+                color: indicator.color(context),
+                weight: 1000,
+              ),
+              const SizedBox(width: 5),
+              !loading
+                  ? Text(
+                      points.toString(),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: indicator.color(context),
+                      ),
+                    )
+                  : const SizedBox(
+                      height: 8,
+                      width: 8,
+                      child: CircularProgressIndicator.adaptive(
+                        strokeWidth: 2,
+                      ),
                     ),
-                  )
-                : const SizedBox(
-                    height: 8,
-                    width: 8,
-                    child: CircularProgressIndicator.adaptive(
-                      strokeWidth: 2,
-                    ),
-                  ),
-          ],
+            ],
+          ),
         ),
       ),
     );

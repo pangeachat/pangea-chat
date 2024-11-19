@@ -146,7 +146,7 @@ class PutAnalyticsController extends BaseController<AnalyticsStream> {
     );
   }
 
-  Future<void> _onUpdateLanguages(String previousL2) async {
+  Future<void> _onUpdateLanguages(String? previousL2) async {
     await sendLocalAnalyticsToAnalyticsRoom(
       l2Override: previousL2,
     );
@@ -174,7 +174,7 @@ class PutAnalyticsController extends BaseController<AnalyticsStream> {
           (token) => OneConstructUse(
             useType: useType,
             lemma: token.lemma.text,
-            form: token.lemma.form,
+            form: token.text.content,
             constructType: ConstructTypeEnum.vocab,
             metadata: metadata,
             category: token.pos,
@@ -189,6 +189,7 @@ class PutAnalyticsController extends BaseController<AnalyticsStream> {
           OneConstructUse(
             useType: useType,
             lemma: entry.value,
+            form: token.text.content,
             category: entry.key,
             constructType: ConstructTypeEnum.morph,
             metadata: metadata,

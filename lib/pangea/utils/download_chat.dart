@@ -23,13 +23,12 @@ enum DownloadType { txt, csv, xlsx }
 Future<void> downloadChat(
   Room room,
   DownloadType type,
-  Client client,
   BuildContext context,
 ) async {
   List<PangeaMessageEvent> allPangeaMessages;
 
   try {
-    final List<Event> allEvents = await getAllEvents(room, client);
+    final List<Event> allEvents = await getAllEvents(room);
     final TimelineChunk chunk = TimelineChunk(events: allEvents);
     final Timeline timeline = Timeline(
       room: room,
@@ -41,13 +40,8 @@ Future<void> downloadChat(
       timeline,
       room,
     );
-  } catch (err) {
-    ErrorHandler.logError(
-      e: Exception(
-        "Failed to fetch messages for chat ${room.id} in while downloading chat",
-      ),
-      s: StackTrace.current,
-    );
+  } catch (err, s) {
+    ErrorHandler.logError(e: err, s: s);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -90,14 +84,14 @@ Future<void> downloadChat(
   }
 }
 
-Future<List<Event>> getAllEvents(Room room, Client client) async {
+Future<List<Event>> getAllEvents(Room room) async {
   final GetRoomEventsResponse initalResp =
-      await client.getRoomEvents(room.id, Direction.b);
+      await room.client.getRoomEvents(room.id, Direction.b);
   if (initalResp.end == null) return [];
   String? nextStartToken = initalResp.end;
   List<MatrixEvent> allMatrixEvents = initalResp.chunk;
   while (nextStartToken != null) {
-    final GetRoomEventsResponse resp = await client.getRoomEvents(
+    final GetRoomEventsResponse resp = await room.client.getRoomEvents(
       room.id,
       Direction.b,
       from: nextStartToken,
@@ -214,12 +208,9 @@ Future<void> downloadFile(
           directory = await getExternalStorageDirectory();
         }
       }
-    } catch (err) {
+    } catch (err, s) {
       debugPrint("Failed to get download folder path");
-      ErrorHandler.logError(
-        e: Exception("Failed to get download folder path"),
-        s: StackTrace.current,
-      );
+      ErrorHandler.logError(e: err, s: s);
     }
     if (directory != null) {
       final File f = File("${directory.path}/$filename");
