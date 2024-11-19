@@ -61,7 +61,10 @@ class ConstructIdentifier {
 
     return other is ConstructIdentifier &&
         other.lemma == lemma &&
-        other.type == type;
+        other.type == type &&
+        (category == other.category ||
+            category.toLowerCase() == "other" ||
+            other.category.toLowerCase() == "other");
   }
 
   @override
@@ -189,14 +192,12 @@ class PracticeActivityRequest {
 class PracticeActivityModel {
   final List<ConstructIdentifier> tgtConstructs;
   final String langCode;
-  final String msgId;
   final ActivityTypeEnum activityType;
   final ActivityContent content;
 
   PracticeActivityModel({
     required this.tgtConstructs,
     required this.langCode,
-    required this.msgId,
     required this.activityType,
     required this.content,
   });
@@ -223,7 +224,6 @@ class PracticeActivityModel {
           .map((e) => ConstructIdentifier.fromJson(e as Map<String, dynamic>))
           .toList(),
       langCode: json['lang_code'] as String,
-      msgId: json['msg_id'] as String,
       activityType:
           ActivityTypeEnum.wordMeaning.fromString(json['activity_type']),
       content: ActivityContent.fromJson(contentMap),
@@ -237,7 +237,6 @@ class PracticeActivityModel {
     return {
       'target_constructs': tgtConstructs.map((e) => e.toJson()).toList(),
       'lang_code': langCode,
-      'msg_id': msgId,
       'activity_type': activityType.string,
       'content': content.toJson(),
     };
@@ -251,7 +250,6 @@ class PracticeActivityModel {
     return other is PracticeActivityModel &&
         const ListEquality().equals(other.tgtConstructs, tgtConstructs) &&
         other.langCode == langCode &&
-        other.msgId == msgId &&
         other.activityType == activityType &&
         other.content == content;
   }
@@ -260,7 +258,6 @@ class PracticeActivityModel {
   int get hashCode {
     return const ListEquality().hash(tgtConstructs) ^
         langCode.hashCode ^
-        msgId.hashCode ^
         activityType.hashCode ^
         content.hashCode;
   }
