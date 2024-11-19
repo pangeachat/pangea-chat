@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
@@ -8,6 +9,7 @@ import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dar
 import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
 import 'package:fluffychat/pangea/widgets/pressable_button.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -156,21 +158,21 @@ class DisabledAnimationState extends State<DisabledAnimation>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 750),
+      duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
 
     _animation = TweenSequence<double>([
       TweenSequenceItem<double>(
-        tween: Tween<double>(begin: 0, end: 1),
+        tween: Tween<double>(begin: 0, end: 0.9),
         weight: 1.0,
       ),
       TweenSequenceItem<double>(
-        tween: Tween<double>(begin: 1, end: 1),
+        tween: Tween<double>(begin: 0.9, end: 0.9),
         weight: 1.0,
       ),
       TweenSequenceItem<double>(
-        tween: Tween<double>(begin: 1, end: 0),
+        tween: Tween<double>(begin: 0.9, end: 0),
         weight: 1.0,
       ),
     ]).animate(_controller);
@@ -190,7 +192,11 @@ class DisabledAnimationState extends State<DisabledAnimation>
         return GestureDetector(
           onTap: () {
             _controller.forward().then((_) => _controller.reset());
-            HapticFeedback.mediumImpact();
+            if (!kIsWeb) {
+              Platform.isAndroid
+                  ? HapticFeedback.mediumImpact()
+                  : HapticFeedback.vibrate();
+            }
           },
           child: SizedBox(
             width: widget.size,
@@ -199,7 +205,7 @@ class DisabledAnimationState extends State<DisabledAnimation>
               opacity: _animation.value,
               child: const Icon(
                 Icons.lock,
-                color: Colors.red,
+                color: AppConfig.primaryColor,
                 size: 28,
               ),
             ),

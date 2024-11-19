@@ -1,4 +1,6 @@
+import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
 import 'package:fluffychat/pangea/enum/construct_use_type_enum.dart';
+import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
 
 enum ActivityTypeEnum { wordMeaning, wordFocusListening, hiddenWordListening }
 
@@ -11,6 +13,16 @@ extension ActivityTypeExtension on ActivityTypeEnum {
         return 'word_focus_listening';
       case ActivityTypeEnum.hiddenWordListening:
         return 'hidden_word_listening';
+    }
+  }
+
+  bool get hiddenType {
+    switch (this) {
+      case ActivityTypeEnum.wordMeaning:
+      case ActivityTypeEnum.wordFocusListening:
+        return false;
+      case ActivityTypeEnum.hiddenWordListening:
+        return true;
     }
   }
 
@@ -42,20 +54,30 @@ extension ActivityTypeExtension on ActivityTypeEnum {
         return [
           ConstructUseTypeEnum.corPA,
           ConstructUseTypeEnum.incPA,
-          ConstructUseTypeEnum.ignPA
+          ConstructUseTypeEnum.ignPA,
         ];
       case ActivityTypeEnum.wordFocusListening:
         return [
           ConstructUseTypeEnum.corWL,
           ConstructUseTypeEnum.incWL,
-          ConstructUseTypeEnum.ignWL
+          ConstructUseTypeEnum.ignWL,
         ];
       case ActivityTypeEnum.hiddenWordListening:
         return [
           ConstructUseTypeEnum.corHWL,
           ConstructUseTypeEnum.incHWL,
-          ConstructUseTypeEnum.ignHWL
+          ConstructUseTypeEnum.ignHWL,
         ];
+    }
+  }
+
+  /// Filters out constructs that are not relevant to the activity type
+  bool Function(ConstructIdentifier) get constructFilter {
+    switch (this) {
+      case ActivityTypeEnum.wordMeaning:
+      case ActivityTypeEnum.wordFocusListening:
+      case ActivityTypeEnum.hiddenWordListening:
+        return (id) => id.type == ConstructTypeEnum.vocab;
     }
   }
 }
