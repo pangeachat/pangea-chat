@@ -1,5 +1,4 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pages/chat_details/chat_details.dart';
 import 'package:fluffychat/pages/chat_details/participant_list_item.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
@@ -8,7 +7,6 @@ import 'package:fluffychat/pangea/pages/class_settings/p_class_widgets/class_des
 import 'package:fluffychat/pangea/pages/class_settings/p_class_widgets/class_details_toggle_add_students_tile.dart';
 import 'package:fluffychat/pangea/pages/class_settings/p_class_widgets/class_invitation_buttons.dart';
 import 'package:fluffychat/pangea/pages/class_settings/p_class_widgets/room_capacity_button.dart';
-import 'package:fluffychat/pangea/utils/lock_room.dart';
 import 'package:fluffychat/pangea/widgets/chat/visibility_toggle.dart';
 import 'package:fluffychat/pangea/widgets/conversation_bot/conversation_bot_settings.dart';
 import 'package:fluffychat/utils/fluffy_share.dart';
@@ -459,44 +457,6 @@ class ChatDetailsView extends StatelessWidget {
                               }
                             },
                           ),
-                          if (room.isRoomAdmin && !room.isDirectChat)
-                            SwitchListTile.adaptive(
-                              activeColor: AppConfig.activeToggleColor,
-                              title: Text(
-                                room.isSpace
-                                    ? L10n.of(context)!.lockSpace
-                                    : L10n.of(context)!.lockChat,
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              secondary: CircleAvatar(
-                                backgroundColor:
-                                    Theme.of(context).scaffoldBackgroundColor,
-                                foregroundColor: iconColor,
-                                child: Icon(
-                                  room.isLocked
-                                      ? Icons.lock_outlined
-                                      : Icons.no_encryption_outlined,
-                                ),
-                              ),
-                              value: room.isLocked,
-                              onChanged: (value) => showFutureLoadingDialog(
-                                context: context,
-                                future: () => value
-                                    ? lockRoom(
-                                        room,
-                                        Matrix.of(context).client,
-                                      )
-                                    : unlockRoom(
-                                        room,
-                                        Matrix.of(context).client,
-                                      ),
-                              ),
-                            ),
-                          const Divider(height: 1),
                           // Pangea#
                           ListTile(
                             title: Text(
