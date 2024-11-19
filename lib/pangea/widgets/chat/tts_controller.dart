@@ -23,7 +23,9 @@ class TtsController {
     setupTTS();
   }
 
-  bool get _useAlternativeTTS => PlatformInfos.isWindows;
+  bool get _useAlternativeTTS {
+    return PlatformInfos.getOperatingSystem() == 'Windows';
+  }
 
   Future<void> dispose() async {
     await _tts.stop();
