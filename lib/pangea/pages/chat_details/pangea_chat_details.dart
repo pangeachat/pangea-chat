@@ -362,8 +362,8 @@ class PangeaChatDetailsView extends StatelessWidget {
                               foregroundColor: iconColor,
                               child: Icon(
                                 room.pushRuleState == PushRuleState.notify
-                                    ? Icons.volume_up
-                                    : Icons.volume_off,
+                                    ? Icons.notifications_off_outlined
+                                    : Icons.notifications_off,
                               ),
                             ),
                             onTap: controller.toggleMute,
