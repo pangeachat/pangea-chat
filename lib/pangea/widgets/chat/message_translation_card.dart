@@ -4,7 +4,6 @@ import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dar
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/models/representation_content_model.dart';
 import 'package:fluffychat/pangea/repo/full_text_translation_repo.dart';
-import 'package:fluffychat/pangea/utils/bot_style.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/utils/inline_tooltip.dart';
 import 'package:fluffychat/pangea/widgets/chat/toolbar_content_loading_indicator.dart';
@@ -153,7 +152,10 @@ class MessageTranslationCardState extends State<MessageTranslationCard> {
         children: [
           Text(
             widget.selection != null ? selectionTranslation! : repEvent!.text,
-            style: BotStyle.text(context),
+            style: AppConfig.messageTextStyle(
+              widget.messageEvent.event,
+              Theme.of(context).colorScheme.primary,
+            ),
             textAlign: TextAlign.center,
           ),
           if (notGoingToTranslate &&
