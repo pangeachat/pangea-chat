@@ -30,6 +30,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
+    namespace "com.talktolearn.chat"
     compileSdkVersion 34
 
     sourceSets {
