@@ -28,7 +28,7 @@ jobs:
       - run: flutter analyze
       - run: flutter test
 
-  build_debug_apk:
+  build_apk:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -48,18 +48,10 @@ jobs:
           # this might remove tools that are actually needed,
           # if set to "true" but frees about 6 GB
           tool-cache: false
-          
-          # all of these default to true, but feel free to set to
-          # "false" if necessary for your workflow
           android: false
-          dotnet: true
-          haskell: true
-          large-packages: true
-          docker-images: true
-          swap-storage: true
-      - run: flutter build apk --debug
+      - run: flutter build apk --release
 
-  build_debug_web:
+  build_web:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -102,4 +94,4 @@ jobs:
           xcode-version: latest
       - run: brew install sqlcipher
       - run: flutter pub get
-      - run: flutter build ios --no-codesign
+      - run: flutter build ipa --no-codesign
