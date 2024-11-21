@@ -84,17 +84,27 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
       return null;
     }
 
+    debugPrint(
+      "selected token: ${widget._initialSelectedToken?.text.content} total_xp:${widget._initialSelectedToken?.xp} vocab_construct_xp: ${widget._initialSelectedToken?.vocabConstruct.points} daysSincelastUseInWordMeaning ${widget._initialSelectedToken?.daysSinceLastUseByType(ActivityTypeEnum.wordMeaning)}",
+    );
+    debugPrint(
+      "${widget._initialSelectedToken?.vocabConstruct.uses.map((u) => "${u.useType} ${u.timeStamp}").join(", ")}",
+    );
+
     // should not already be involved in a hidden word activity
     final isInHiddenWordActivity =
         messageAnalyticsEntry!.isTokenInHiddenWordActivity(
       widget._initialSelectedToken!,
     );
-
     // whether the activity should generally be involved in an activity
     final shouldDoActivity = widget._initialSelectedToken!
         .shouldDoActivity(ActivityTypeEnum.wordMeaning);
 
-    return !isInHiddenWordActivity && shouldDoActivity
+    return !isInHiddenWordActivity &&
+            widget._initialSelectedToken!.eligibleActivityTypes.isNotEmpty &&
+            widget._initialSelectedToken!
+                    .daysSinceLastUseByType(ActivityTypeEnum.wordMeaning) >
+                1
         ? widget._initialSelectedToken
         : null;
   }
@@ -103,21 +113,8 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
   void initState() {
     super.initState();
 
-    _getTokens();
+    _initializeTokensAndMode();
     _setupSubscriptions();
-
-    if (_selectedTargetTokenForWordMeaning != null) {
-      messageAnalyticsEntry?.addForWordMeaning(
-        _selectedTargetTokenForWordMeaning!,
-      );
-    }
-
-    debugPrint(
-      "selected token: ${widget._initialSelectedToken?.text.content} total_xp:${widget._initialSelectedToken?.xp} vocab_construct_xp: ${widget._initialSelectedToken?.vocabConstruct.points} daysSincelastUseInWordMeaning ${widget._initialSelectedToken?.daysSinceLastUseByType(ActivityTypeEnum.wordMeaning)}",
-    );
-    debugPrint(
-      "${widget._initialSelectedToken?.vocabConstruct.uses.map((u) => "${u.useType} ${u.timeStamp}").join(", ")}",
-    );
   }
 
   void _setupSubscriptions() {
@@ -157,7 +154,7 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
         )
       : null;
 
-  Future<void> _getTokens() async {
+  Future<void> _initializeTokensAndMode() async {
     try {
       final repEvent = pangeaMessageEvent.messageDisplayRepresentation;
       if (repEvent != null) {
@@ -169,6 +166,11 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
     } catch (e, s) {
       ErrorHandler.logError(e: e, s: s);
     } finally {
+      if (_selectedTargetTokenForWordMeaning != null) {
+        messageAnalyticsEntry?.addForWordMeaning(
+          _selectedTargetTokenForWordMeaning!,
+        );
+      }
       _setInitialToolbarMode();
       initialized = true;
       if (mounted) setState(() {});
@@ -373,7 +375,6 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
     final currentBottomOffset = _screenHeight! -
         _messageOffset!.dy -
         _messageHeight -
-        (_mediaQuery?.padding.bottom ?? 0) -
         _belowMessageHeight;
 
     final bool hasHeaderOverflow =
@@ -494,8 +495,10 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
 
   // height of the reply/forward bar + the reaction picker + contextual padding
   double get _footerHeight {
-    return 56 + 16 + (FluffyThemes.isColumnMode(context) ? 16.0 : 8.0);
-    // (_mediaQuery?.padding.bottom ?? 0);
+    return 56 +
+        16 +
+        (FluffyThemes.isColumnMode(context) ? 16.0 : 8.0) +
+        (_mediaQuery?.padding.bottom ?? 0);
   }
 
   MediaQueryData? get _mediaQuery {
@@ -625,7 +628,6 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
                 bottom: _screenHeight! -
                     _messageOffset!.dy -
                     _messageHeight -
-                    (_mediaQuery?.padding.bottom ?? 0) -
                     _belowMessageHeight,
                 child: overlayMessage,
               )
@@ -641,41 +643,45 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
             },
           );
 
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: horizontalPadding,
-          right: horizontalPadding,
-        ),
-        child: Stack(
-          children: [
-            positionedOverlayMessage,
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        OverlayFooter(controller: widget.chatController),
-                      ],
-                    ),
+    return Padding(
+      padding: EdgeInsets.only(
+        left: horizontalPadding,
+        right: horizontalPadding,
+      ),
+      child: Stack(
+        children: [
+          positionedOverlayMessage,
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      OverlayFooter(controller: widget.chatController),
+                      SizedBox(height: _mediaQuery?.padding.bottom ?? 0),
+                    ],
                   ),
-                  if (showDetails)
-                    const SizedBox(
-                      width: FluffyThemes.columnWidth,
-                    ),
-                ],
-              ),
+                ),
+                if (showDetails)
+                  const SizedBox(
+                    width: FluffyThemes.columnWidth,
+                  ),
+              ],
             ),
-            Material(
-              type: MaterialType.transparency,
-              child: OverlayHeader(controller: widget.chatController),
+          ),
+          Material(
+            type: MaterialType.transparency,
+            child: Column(
+              children: [
+                SizedBox(height: _mediaQuery?.padding.top ?? 0),
+                OverlayHeader(controller: widget.chatController),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
