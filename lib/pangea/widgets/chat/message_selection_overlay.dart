@@ -26,6 +26,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:matrix/matrix.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class MessageSelectionOverlay extends StatefulWidget {
   final ChatController chatController;
@@ -85,8 +86,7 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
     }
 
     debugPrint(
-      "selected token: ${widget._initialSelectedToken?.text.content} total_xp:${widget._initialSelectedToken?.xp} vocab_construct_xp: ${widget._initialSelectedToken?.vocabConstruct.points} daysSincelastUseInWordMeaning ${widget._initialSelectedToken?.daysSinceLastUseByType(ActivityTypeEnum.wordMeaning)}",
-    );
+        "selected token ${widget._initialSelectedToken?.analyticsDebugPrint}");
     debugPrint(
       "${widget._initialSelectedToken?.vocabConstruct.uses.map((u) => "${u.useType} ${u.timeStamp}").join(", ")}",
     );
@@ -379,7 +379,7 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
 
     final bool hasHeaderOverflow =
         _messageOffset!.dy < (AppConfig.toolbarMaxHeight + _headerHeight);
-    final bool hasFooterOverflow = _footerHeight > currentBottomOffset;
+    final bool hasFooterOverflow = (_footerHeight + 5) > currentBottomOffset;
 
     if (!hasHeaderOverflow && !hasFooterOverflow) return;
 
@@ -406,8 +406,8 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
       }
       scrollOffset = animationEndOffset - currentBottomOffset;
     } else if (hasFooterOverflow) {
-      scrollOffset = _footerHeight - currentBottomOffset;
-      animationEndOffset = _footerHeight;
+      scrollOffset = (_footerHeight + 5) - currentBottomOffset;
+      animationEndOffset = (_footerHeight + 5);
     }
 
     // If, after ajusting the overlay position, the message still overflows the footer,
@@ -485,8 +485,8 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
 
     try {
       return _messageRenderBox?.localToGlobal(Offset.zero);
-    } catch (e, s) {
-      ErrorHandler.logError(e: "Error getting message offset: $e", s: s);
+    } catch (e) {
+      Sentry.addBreadcrumb(Breadcrumb(message: "Error getting message offset"));
       return null;
     }
   }
