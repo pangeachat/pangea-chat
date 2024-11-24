@@ -42,13 +42,13 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: false
       - run: flutter pub get
-      # - name: Free Disk Space (Ubuntu)
-        # uses: jlumbroso/free-disk-space@main
-        # with:
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
+        with:
           # this might remove tools that are actually needed,
           # if set to "true" but frees about 6 GB
-          # tool-cache: false
-          # android: false
+          tool-cache: false
+          android: false
       - run: flutter build apk --debug
 
   build_web:
