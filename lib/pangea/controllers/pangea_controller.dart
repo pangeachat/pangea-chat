@@ -429,13 +429,22 @@ class PangeaController {
     }
   }
 
+  /// Joins the user to the support space if they are
+  /// not already a member and have not previously left.
   Future<void> joinSupportSpace() async {
+    // if the user is already in the space, return
     await matrixState.client.roomsLoading;
     final isInSupportSpace = matrixState.client.rooms.any(
       (room) => room.id == Environment.supportSpaceId,
     );
     if (isInSupportSpace) return;
 
+    // if the user has previously joined the space, return
+    final bool previouslyJoined =
+        userController.profile.userSettings.hasJoinedHelpSpace ?? false;
+    if (previouslyJoined) return;
+
+    // join the space
     try {
       await matrixState.client.joinRoomById(Environment.supportSpaceId);
       final room = matrixState.client.getRoomById(Environment.supportSpaceId);
@@ -445,6 +454,10 @@ class PangeaController {
           join: true,
         );
       }
+      userController.updateProfile((profile) {
+        profile.userSettings.hasJoinedHelpSpace = true;
+        return profile;
+      });
     } catch (err, s) {
       ErrorHandler.logError(e: err, s: s);
       return;
