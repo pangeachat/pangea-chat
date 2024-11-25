@@ -61,7 +61,7 @@ dependencies:
   # flutter_webrtc: ^0.10.3
   # Pangea#
   future_loading_dialog: ^0.3.0
-  geolocator: ^7.6.2
+  geolocator: ^13.0.2
   go_router: ^14.0.1
   handy_window: ^0.4.0
   hive: ^2.2.3
@@ -222,19 +222,3 @@ msix_config:
   execution_alias: fluffychat
   sign_msix: false
   install_certificate: false
-
-dependency_overrides:
-  # Until https://github.com/mogol/flutter_secure_storage/issues/616 is fixed
-  flutter_secure_storage_linux: 1.1.3
-  geolocator_android:
-    hosted: https://hanntech-gmbh.gitlab.io/free2pass/flutter-geolocator-floss
-    version: ^1.0.1
-  # waiting for null safety
-  # Upstream pull request: https://github.com/AntoineMarcel/keyboard_shortcuts/pull/13
-  # #Pangea
-  # keyboard_shortcuts:
-  #   git:
-  #     url: https://github.com/TheOneWithTheBraid/keyboard_shortcuts.git
-  #     ref: null-safety
-  # win32: 5.5.3
-  # Pangea#
