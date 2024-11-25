@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:math';
 
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:fluffychat/pangea/config/environment.dart';
 import 'package:fluffychat/pangea/constants/bot_mode.dart';
 import 'package:fluffychat/pangea/constants/class_default_values.dart';
@@ -31,9 +30,6 @@ import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/utils/instructions.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:future_loading_dialog/future_loading_dialog.dart';
-import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -97,6 +93,7 @@ class PangeaController {
     startChatWithBotIfNotPresent();
     inviteBotToExistingSpaces();
     setPangeaPushRules();
+    joinSupportSpace();
   }
 
   /// Initialize controllers
@@ -432,36 +429,25 @@ class PangeaController {
     }
   }
 
-  Future<void> joinSupportSpace(BuildContext context) async {
+  Future<void> joinSupportSpace() async {
     await matrixState.client.roomsLoading;
     final isInSupportSpace = matrixState.client.rooms.any(
       (room) => room.id == Environment.supportSpaceId,
     );
     if (isInSupportSpace) return;
 
-    final response = await showOkCancelAlertDialog(
-      context: context,
-      message: "Would you like to join the support space?",
-    );
-
-    if (response != OkCancelResult.ok) return;
-    final resp = await showFutureLoadingDialog(
-      context: context,
-      future: () async {
-        await matrixState.client.joinRoomById(Environment.supportSpaceId);
-        final room = matrixState.client.getRoomById(Environment.supportSpaceId);
-        if (room == null) {
-          await matrixState.client.waitForRoomInSync(
-            Environment.supportSpaceId,
-            join: true,
-          );
-        }
-      },
-    );
-
-    if (resp.isError) return;
-    classController
-        .setActiveSpaceIdInChatListController(Environment.supportSpaceId);
-    context.go("/rooms/${Environment.supportSpaceId}/details");
+    try {
+      await matrixState.client.joinRoomById(Environment.supportSpaceId);
+      final room = matrixState.client.getRoomById(Environment.supportSpaceId);
+      if (room == null) {
+        await matrixState.client.waitForRoomInSync(
+          Environment.supportSpaceId,
+          join: true,
+        );
+      }
+    } catch (err, s) {
+      ErrorHandler.logError(e: err, s: s);
+      return;
+    }
   }
 }

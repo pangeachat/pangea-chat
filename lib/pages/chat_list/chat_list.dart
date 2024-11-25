@@ -1049,7 +1049,6 @@ class ChatListController extends State<ChatList>
     client.migrateAnalyticsRooms();
     MatrixState.pangeaController.initControllers();
     if (mounted) {
-      MatrixState.pangeaController.joinSupportSpace(context);
       MatrixState.pangeaController.classController.joinCachedSpaceCode(context);
     }
   }
