@@ -333,7 +333,6 @@ class ChatController extends State<ChatPageWithRoom>
           ),
         );
       }
-      await Matrix.of(context).client.roomsLoading;
     });
     // Pangea#
     tryLoadTimeline();
@@ -1665,22 +1664,15 @@ class ChatController extends State<ChatPageWithRoom>
         editEvent = null;
       });
 
-// #Pangea
+  // #Pangea
   void showToolbar(
-    PangeaMessageEvent pangeaMessageEvent, {
+    Event event, {
+    PangeaMessageEvent? pangeaMessageEvent,
     PangeaToken? selectedToken,
     MessageMode? mode,
     Event? nextEvent,
     Event? prevEvent,
   }) {
-    if (![
-          MessageTypes.Text,
-          MessageTypes.Audio,
-        ].contains(pangeaMessageEvent.event.messageType) ||
-        pangeaMessageEvent.event.redacted) {
-      return;
-    }
-
     // Close keyboard, if open
     if (inputFocus.hasFocus && PlatformInfos.isMobile) {
       inputFocus.unfocus();
@@ -1699,7 +1691,7 @@ class ChatController extends State<ChatPageWithRoom>
     try {
       overlayEntry = MessageSelectionOverlay(
         chatController: this,
-        event: pangeaMessageEvent.event,
+        event: event,
         pangeaMessageEvent: pangeaMessageEvent,
         initialSelectedToken: selectedToken,
         nextEvent: nextEvent,
@@ -1724,7 +1716,7 @@ class ChatController extends State<ChatPageWithRoom>
     );
 
     // select the message
-    onSelectMessage(pangeaMessageEvent.event);
+    onSelectMessage(event);
     if (!kIsWeb) {
       HapticFeedback.mediumImpact();
     }
