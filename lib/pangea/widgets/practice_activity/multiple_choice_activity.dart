@@ -5,6 +5,7 @@ import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/choice_array.dart';
 import 'package:fluffychat/pangea/controllers/put_analytics_controller.dart';
 import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
+import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_record_model.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
@@ -44,6 +45,8 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
 
   @override
   void initState() {
+    speakTargetTokens();
+
     super.initState();
   }
 
@@ -53,19 +56,58 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
     if (widget.practiceCardController.currentCompletionRecord?.responses
             .isEmpty ??
         false) {
+      speakTargetTokens();
+
       setState(() => selectedChoiceIndex = null);
+    }
+  }
+
+  void speakTargetTokens() {
+    if (widget.practiceCardController.currentActivity?.targetTokens != null) {
+      widget.practiceCardController.tts.tryToSpeak(
+        PangeaToken.reconstructText(
+          widget.practiceCardController.currentActivity!.targetTokens!,
+        ),
+        context,
+        null,
+      );
     }
   }
 
   TtsController get tts => widget.practiceCardController.tts;
 
   void updateChoice(String value, int index) {
+    final bool isCorrect =
+        widget.currentActivity.content.isCorrect(value, index);
+
+    // If the activity is not set to include TTS on click, and the choice is correct, speak the target tokens
+    // We have to check if tokens
+    if (!widget.currentActivity.activityType.includeTTSOnClick &&
+        isCorrect &&
+        mounted) {
+      // should be set by now but just in case we make a mistake
+      if (widget.practiceCardController.currentActivity?.targetTokens == null) {
+        debugger(when: kDebugMode);
+        ErrorHandler.logError(
+          e: "Missing target tokens in multiple choice activity",
+          data: {
+            "currentActivity": widget.practiceCardController.currentActivity,
+          },
+        );
+      } else {
+        tts.tryToSpeak(
+          PangeaToken.reconstructText(
+            widget.practiceCardController.currentActivity!.targetTokens!,
+          ),
+          context,
+          null,
+        );
+      }
+    }
+
     if (currentRecordModel?.hasTextResponse(value) ?? false) {
       return;
     }
-
-    final bool isCorrect =
-        widget.currentActivity.content.isCorrect(value, index);
 
     currentRecordModel?.addResponse(
       text: value,
