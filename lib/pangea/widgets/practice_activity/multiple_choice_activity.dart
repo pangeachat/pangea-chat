@@ -21,7 +21,6 @@ import 'package:matrix/matrix.dart';
 class MultipleChoiceActivity extends StatefulWidget {
   final PracticeActivityCardState practiceCardController;
   final PracticeActivityModel currentActivity;
-  final TtsController tts;
   final Event event;
   final VoidCallback? onError;
 
@@ -29,7 +28,6 @@ class MultipleChoiceActivity extends StatefulWidget {
     super.key,
     required this.practiceCardController,
     required this.currentActivity,
-    required this.tts,
     required this.event,
     this.onError,
   });
@@ -58,6 +56,8 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
       setState(() => selectedChoiceIndex = null);
     }
   }
+
+  TtsController get tts => widget.practiceCardController.tts;
 
   void updateChoice(String value, int index) {
     if (currentRecordModel?.hasTextResponse(value) ?? false) {
@@ -136,7 +136,7 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
             ActivityTypeEnum.wordFocusListening)
           WordAudioButton(
             text: practiceActivity.content.answer,
-            ttsController: widget.tts,
+            ttsController: tts,
             eventID: widget.event.eventId,
           ),
         if (practiceActivity.activityType ==
@@ -146,7 +146,7 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
                 widget.practiceCardController.widget.pangeaMessageEvent,
             overlayController:
                 widget.practiceCardController.widget.overlayController,
-            tts: widget.practiceCardController.widget.overlayController.tts,
+            tts: tts,
             setIsPlayingAudio: widget.practiceCardController.widget
                 .overlayController.setIsPlayingAudio,
             onError: widget.onError,
@@ -170,6 +170,7 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
               .toList(),
           isActive: true,
           id: currentRecordModel?.hashCode.toString(),
+          tts: practiceActivity.activityType.includeTTSOnClick ? tts : null,
         ),
       ],
     );

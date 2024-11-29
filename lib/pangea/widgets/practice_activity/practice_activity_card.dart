@@ -30,13 +30,11 @@ import 'package:flutter/material.dart';
 class PracticeActivityCard extends StatefulWidget {
   final PangeaMessageEvent pangeaMessageEvent;
   final MessageOverlayController overlayController;
-  final TtsController ttsController;
 
   const PracticeActivityCard({
     super.key,
     required this.pangeaMessageEvent,
     required this.overlayController,
-    required this.ttsController,
   });
 
   @override
@@ -58,6 +56,9 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
   // until the appropriate time has passed to 'savor the joy'
   Duration appropriateTimeForJoy = const Duration(milliseconds: 1500);
   bool savoringTheJoy = false;
+
+  TtsController get tts =>
+      widget.overlayController.widget.chatController.choreographer.tts;
 
   @override
   void initState() {
@@ -313,7 +314,6 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
         return MultipleChoiceActivity(
           practiceCardController: this,
           currentActivity: currentActivity!,
-          tts: widget.ttsController,
           event: widget.pangeaMessageEvent.event,
           onError: _onError,
         );
