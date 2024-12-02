@@ -4519,5 +4519,6 @@
   "notificationsOn": "Notifications on",
   "notificationsOff": "Notifications off",
   "spaceCanBeFoundViaSearch": "Space can be found via search",
-  "chatCanBeFoundViaSearch": "Chat can be found via search"
+  "chatCanBeFoundViaSearch": "Chat can be found via search",
+  "calculatingFileSize": "Calculating file size..."
 }

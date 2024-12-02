@@ -22,6 +22,7 @@ dependencies:
   characters: ^1.2.0
   chewie: ^1.8.1
   collection: ^1.18.0
+  cross_file: ^0.3.4+2
   cupertino_icons: any
   # #Pangea
   # desktop_drop: ^0.4.4
@@ -81,6 +82,7 @@ dependencies:
       ref: main # branch
   # matrix: ^0.33.0
   # Pangea#
+  mime: ^1.0.6
   native_imaging: ^0.1.1
   opus_caf_converter_dart: ^1.0.1
   package_info_plus: ^6.0.0

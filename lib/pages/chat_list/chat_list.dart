@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:cross_file/cross_file.dart';
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/send_file_dialog.dart';
@@ -227,7 +228,13 @@ class ChatListController extends State<ChatList>
           context: context,
           useRootNavigator: false,
           builder: (c) => SendFileDialog(
-            files: [shareFile],
+            files: [
+              XFile.fromData(
+                shareFile.bytes,
+                name: shareFile.name,
+                mimeType: shareFile.mimeType,
+              ),
+            ],
             room: room,
           ),
         );
