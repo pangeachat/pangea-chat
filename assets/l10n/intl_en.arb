@@ -2452,7 +2452,14 @@
   "reopenChat": "Reopen chat",
   "noBackupWarning": "Don't forget your password!",
   "noOtherDevicesFound": "No other devices found",
-  "fileIsTooBigForServer": "The server reports that the file is too large to be sent.",
+  "@noOtherDevicesFound": {},
+  "fileIsTooBigForServer": "Unable to send! The server only supports attachments up to {max}.",
+  "@fileIsTooBigForServer": {
+    "type": "text",
+    "placeholders": {
+      "max": {}
+    }
+  },
   "fileHasBeenSavedAt": "File has been saved at {path}",
   "@fileHasBeenSavedAt": {
     "type": "text",
@@ -4520,5 +4527,24 @@
   "notificationsOff": "Notifications off",
   "spaceCanBeFoundViaSearch": "Space can be found via search",
   "chatCanBeFoundViaSearch": "Chat can be found via search",
-  "calculatingFileSize": "Calculating file size..."
+  "calculatingFileSize": "Calculating file size...",
+  "prepareSendingAttachment": "Prepare sending attachment...",
+  "sendingAttachment": "Sending attachment...",
+  "generatingVideoThumbnail": "Generating video thumbnail...",
+  "compressVideo": "Compressing video...",
+  "sendingAttachmentCountOfCount": "Sending attachment {index} of {length}...",
+  "@sendingAttachmentCountOfCount": {
+    "type": "integer",
+    "placeholders": {
+      "index": {},
+      "length": {}
+    }
+  },
+  "serverLimitReached": "Server limit reached! Waiting {seconds} seconds...",
+  "@serverLimitReached": {
+    "type": "integer",
+    "placeholders": {
+      "seconds": {}
+    }
+  }
 }

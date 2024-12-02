@@ -236,6 +236,7 @@ class ChatListController extends State<ChatList>
               ),
             ],
             room: room,
+            outerContext: context,
           ),
         );
         Matrix.of(context).shareContent = null;

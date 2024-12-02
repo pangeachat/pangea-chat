@@ -148,13 +148,14 @@ class ChatController extends State<ChatPageWithRoom>
   //   setState(() => dragging = false);
   //   if (details.files.isEmpty) return;
 
-  //   await showAdaptiveDialog(
-  //     context: context,
-  //     builder: (c) => SendFileDialog(
-  //       files: details.files,
-  //       room: room,
-  //     ),
-  //   );
+  // await showAdaptiveDialog(
+  //   context: context,
+  //   builder: (c) => SendFileDialog(
+  //     files: details.files,
+  //     room: room,
+  //     outerContext: context,
+  //   ),
+  // );
   // }
 
   //   await showAdaptiveDialog(
@@ -715,7 +716,7 @@ class ChatController extends State<ChatPageWithRoom>
     final result = await AppLock.of(context).pauseWhile(
       FilePicker.platform.pickFiles(
         compressionQuality: 0,
-        allowMultiple: false,
+        allowMultiple: true,
       ),
     );
     if (result == null || result.files.isEmpty) return;
@@ -724,6 +725,7 @@ class ChatController extends State<ChatPageWithRoom>
       builder: (c) => SendFileDialog(
         files: result.xFiles,
         room: room,
+        outerContext: context,
       ),
     );
   }
@@ -735,6 +737,7 @@ class ChatController extends State<ChatPageWithRoom>
       builder: (c) => SendFileDialog(
         files: [XFile.fromData(image)],
         room: room,
+        outerContext: context,
       ),
     );
   }
@@ -744,7 +747,7 @@ class ChatController extends State<ChatPageWithRoom>
       FilePicker.platform.pickFiles(
         compressionQuality: 0,
         type: FileType.image,
-        allowMultiple: false,
+        allowMultiple: true,
       ),
     );
     if (result == null || result.files.isEmpty) return;
@@ -754,6 +757,7 @@ class ChatController extends State<ChatPageWithRoom>
       builder: (c) => SendFileDialog(
         files: result.xFiles,
         room: room,
+        outerContext: context,
       ),
     );
   }
@@ -769,6 +773,7 @@ class ChatController extends State<ChatPageWithRoom>
       builder: (c) => SendFileDialog(
         files: [file],
         room: room,
+        outerContext: context,
       ),
     );
   }
@@ -787,6 +792,7 @@ class ChatController extends State<ChatPageWithRoom>
       builder: (c) => SendFileDialog(
         files: [file],
         room: room,
+        outerContext: context,
       ),
     );
   }
