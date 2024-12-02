@@ -148,14 +148,14 @@ class ChatController extends State<ChatPageWithRoom>
   //   setState(() => dragging = false);
   //   if (details.files.isEmpty) return;
 
-  // await showAdaptiveDialog(
-  //   context: context,
-  //   builder: (c) => SendFileDialog(
-  //     files: details.files,
-  //     room: room,
-  //     outerContext: context,
-  //   ),
-  // );
+  //   await showAdaptiveDialog(
+  //     context: context,
+  //     builder: (c) => SendFileDialog(
+  //       files: details.files,
+  //       room: room,
+  //       outerContext: context,
+  //     ),
+  //   );
   // }
 
   //   await showAdaptiveDialog(
