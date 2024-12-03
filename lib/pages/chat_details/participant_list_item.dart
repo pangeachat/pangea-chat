@@ -50,28 +50,22 @@ class ParticipantListItem extends StatelessWidget {
             if (permissionBatch.isNotEmpty)
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 4,
+                  horizontal: 8,
                   vertical: 2,
                 ),
-                margin: const EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
                   // #Pangea
                   // color: theme.colorScheme.primaryContainer,
                   color: theme.secondaryHeaderColor,
                   // Pangea#
-                  borderRadius: BorderRadius.circular(8),
-                  // #Pangea
-                  // border: Border.all(
-                  //   color: theme.colorScheme.primary,
-                  // ),
-                  // Pangea#
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: Text(
                   permissionBatch,
                   // #Pangea
                   // style: TextStyle(
-                  //   fontSize: 14,
-                  //   color: theme.colorScheme.primary,
+                  //   fontSize: 12,
+                  //   color: theme.colorScheme.onPrimaryContainer,
                   // ),
                   // Pangea#
                 ),
