@@ -2,7 +2,6 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:fluffychat/pages/device_settings/device_settings_view.dart';
 import 'package:fluffychat/pages/key_verification/key_verification_dialog.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:future_loading_dialog/future_loading_dialog.dart';
@@ -27,9 +26,6 @@ class DevicesSettingsController extends State<DevicesSettings> {
   }
 
   void reload() => setState(() => devices = null);
-
-  bool loadingDeletingDevices = false;
-  String? errorDeletingDevices;
 
   bool? chatBackupEnabled;
 
@@ -68,24 +64,16 @@ class DevicesSettingsController extends State<DevicesSettings> {
       deviceIds.add(userDevice.deviceId);
     }
 
-    try {
-      setState(() {
-        loadingDeletingDevices = true;
-        errorDeletingDevices = null;
-      });
-      await matrix.client.uiaRequestBackground(
+    await showFutureLoadingDialog(
+      context: context,
+      future: () => matrix.client.uiaRequestBackground(
         (auth) => matrix.client.deleteDevices(
           deviceIds,
           auth: auth,
         ),
-      );
-      reload();
-    } catch (e, s) {
-      Logs().w('Error while deleting devices', e, s);
-      setState(() => errorDeletingDevices = e.toLocalizedString(context));
-    } finally {
-      setState(() => loadingDeletingDevices = false);
-    }
+      ),
+    );
+    reload();
   }
 
   void renameDeviceAction(Device device) async {
