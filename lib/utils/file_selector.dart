@@ -7,7 +7,7 @@ import 'package:flutter/widgets.dart';
 Future<List<XFile>> selectFiles(
   BuildContext context, {
   String? title,
-  FileSelectorType type = FileSelectorType.any,
+  List<String>? extensions,
   bool allowMultiple = false,
 }) async {
   if (!PlatformInfos.isLinux) {
@@ -15,8 +15,7 @@ Future<List<XFile>> selectFiles(
       FilePicker.platform.pickFiles(
         compressionQuality: 0,
         allowMultiple: allowMultiple,
-        type: type.filePickerType,
-        allowedExtensions: type.extensions,
+        allowedExtensions: extensions,
       ),
     );
     return result?.xFiles ?? [];
@@ -26,53 +25,31 @@ Future<List<XFile>> selectFiles(
     return await AppLock.of(context).pauseWhile(
       openFiles(
         confirmButtonText: title,
-        acceptedTypeGroups: type.groups,
+        acceptedTypeGroups: [
+          if (extensions != null) XTypeGroup(extensions: extensions),
+        ],
       ),
     );
   }
   final file = await AppLock.of(context).pauseWhile(
     openFile(
       confirmButtonText: title,
-      acceptedTypeGroups: type.groups,
+      acceptedTypeGroups: [
+        if (extensions != null) XTypeGroup(extensions: extensions),
+      ],
     ),
   );
   if (file == null) return [];
   return [file];
 }
 
-enum FileSelectorType {
-  any([], FileType.any, null),
-  images(
-    [
-      XTypeGroup(
-        label: 'JPG',
-        extensions: <String>['jpg', 'JPG', 'jpeg', 'JPEG'],
-      ),
-      XTypeGroup(
-        label: 'PNGs',
-        extensions: <String>['png', 'PNG'],
-      ),
-      XTypeGroup(
-        label: 'WEBP',
-        extensions: <String>['WebP', 'WEBP'],
-      ),
-    ],
-    FileType.image,
-    null,
-  ),
-  zip(
-    [
-      XTypeGroup(
-        label: 'ZIP',
-        extensions: <String>['zip', 'ZIP'],
-      ),
-    ],
-    FileType.custom,
-    ['zip', 'ZIP'],
-  );
-
-  const FileSelectorType(this.groups, this.filePickerType, this.extensions);
-  final List<XTypeGroup> groups;
-  final FileType filePickerType;
-  final List<String>? extensions;
-}
+const imageExtensions = [
+  'png',
+  'PNG',
+  'jpg',
+  'JPG',
+  'jpeg',
+  'JPEG',
+  'webp',
+  'WebP',
+];

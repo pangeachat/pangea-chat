@@ -1,11 +1,9 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:collection/collection.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:fluffychat/pages/settings/settings.dart';
 import 'package:fluffychat/pangea/pages/chat_details/pangea_chat_details.dart';
 import 'package:fluffychat/pangea/utils/set_class_name.dart';
+import 'package:fluffychat/utils/file_selector.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/app_lock.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
@@ -175,16 +173,15 @@ class ChatDetailsController extends State<ChatDetails> {
         name: result.path,
       );
     } else {
-      final picked = await AppLock.of(context).pauseWhile(
-        FilePicker.platform.pickFiles(
-          type: FileType.image,
-          withData: true,
-        ),
+      final picked = await selectFiles(
+        context,
+        allowMultiple: false,
+        extensions: imageExtensions,
       );
-      final pickedFile = picked?.files.firstOrNull;
+      final pickedFile = picked.firstOrNull;
       if (pickedFile == null) return;
       file = MatrixFile(
-        bytes: pickedFile.bytes!,
+        bytes: await pickedFile.readAsBytes(),
         name: pickedFile.name,
       );
     }

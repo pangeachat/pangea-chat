@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:core';
 import 'dart:developer';
 import 'dart:io';
 
@@ -6,7 +7,6 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:collection/collection.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/setting_keys.dart';
 import 'package:fluffychat/config/themes.dart';
@@ -33,11 +33,11 @@ import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
 import 'package:fluffychat/pangea/widgets/igc/pangea_text_controller.dart';
 import 'package:fluffychat/pangea/widgets/user_settings/p_language_dialog.dart';
 import 'package:fluffychat/utils/error_reporter.dart';
+import 'package:fluffychat/utils/file_selector.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/event_extension.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/filtered_timeline_extension.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/app_lock.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -713,17 +713,12 @@ class ChatController extends State<ChatPageWithRoom>
   }
 
   void sendFileAction() async {
-    final result = await AppLock.of(context).pauseWhile(
-      FilePicker.platform.pickFiles(
-        compressionQuality: 0,
-        allowMultiple: true,
-      ),
-    );
-    if (result == null || result.files.isEmpty) return;
+    final files = await selectFiles(context, allowMultiple: true);
+    if (files.isEmpty) return;
     await showAdaptiveDialog(
       context: context,
       builder: (c) => SendFileDialog(
-        files: result.xFiles,
+        files: files,
         room: room,
         outerContext: context,
       ),
@@ -743,19 +738,17 @@ class ChatController extends State<ChatPageWithRoom>
   }
 
   void sendImageAction() async {
-    final result = await AppLock.of(context).pauseWhile(
-      FilePicker.platform.pickFiles(
-        compressionQuality: 0,
-        type: FileType.image,
-        allowMultiple: true,
-      ),
+    final files = await selectFiles(
+      context,
+      allowMultiple: true,
+      extensions: imageExtensions,
     );
-    if (result == null || result.files.isEmpty) return;
+    if (files.isEmpty) return;
 
     await showAdaptiveDialog(
       context: context,
       builder: (c) => SendFileDialog(
-        files: result.xFiles,
+        files: files,
         room: room,
         outerContext: context,
       ),

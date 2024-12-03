@@ -42,7 +42,7 @@ class NewSpaceController extends State<NewSpace> {
   void selectPhoto() async {
     final photo = await selectFiles(
       context,
-      type: FileSelectorType.images,
+      extensions: imageExtensions,
     );
     final bytes = await photo.firstOrNull?.readAsBytes();
     setState(() {
