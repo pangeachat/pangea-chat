@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
-
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-
 import 'package:fluffychat/pages/device_settings/device_settings.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+
 import 'user_device_list_item.dart';
 
 class DevicesSettingsView extends StatelessWidget {
@@ -48,6 +47,19 @@ class DevicesSettingsView extends StatelessWidget {
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      if (controller.chatBackupEnabled == false)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: ListTile(
+                            leading: const CircleAvatar(
+                              child: Icon(Icons.info_outlined),
+                            ),
+                            subtitle: Text(
+                              L10n.of(context)
+                                  .noticeChatBackupDeviceVerification,
+                            ),
+                          ),
+                        ),
                       if (controller.thisDevice != null) ...[
                         Container(
                           padding: const EdgeInsets.symmetric(
