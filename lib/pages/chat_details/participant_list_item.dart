@@ -1,3 +1,4 @@
+import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/utils/adaptive_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
@@ -50,24 +51,18 @@ class ParticipantListItem extends StatelessWidget {
             if (permissionBatch.isNotEmpty)
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 2,
+                  horizontal: 12,
+                  vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  // #Pangea
-                  // color: theme.colorScheme.primaryContainer,
-                  color: theme.secondaryHeaderColor,
-                  // Pangea#
-                  borderRadius: BorderRadius.circular(16),
+                  color: theme.colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(
+                    AppConfig.borderRadius,
+                  ),
                 ),
                 child: Text(
                   permissionBatch,
-                  // #Pangea
-                  // style: TextStyle(
-                  //   fontSize: 12,
-                  //   color: theme.colorScheme.onPrimaryContainer,
-                  // ),
-                  // Pangea#
+                  style: TextStyle(color: theme.colorScheme.onPrimaryContainer),
                 ),
               ),
             membershipBatch == null
