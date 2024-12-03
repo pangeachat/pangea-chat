@@ -300,7 +300,7 @@ Future<void> _tryPushHelper(
     ),
     importance: Importance.high,
     priority: Priority.max,
-    groupKey: notificationGroupId,
+    groupKey: event.room.spaceParents.firstOrNull?.roomId ?? 'rooms',
   );
   const iOSPlatformChannelSpecifics = DarwinNotificationDetails();
   final platformChannelSpecifics = NotificationDetails(
