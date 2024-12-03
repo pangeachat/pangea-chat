@@ -256,15 +256,15 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
 
   void initLoadingDialog() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      LoadingDialog.defaultTitle = L10n.of(context)!.loadingPleaseWait;
-      LoadingDialog.defaultBackLabel = L10n.of(context)!.close;
+      LoadingDialog.defaultTitle = L10n.of(context).loadingPleaseWait;
+      LoadingDialog.defaultBackLabel = L10n.of(context).close;
       // #Pangea
       // LoadingDialog.defaultOnError =
       //     (e) => (e as Object?)!.toLocalizedString(context);
       LoadingDialog.defaultOnError = (e) =>
           (e as Object?)?.toLocalizedString(context) ??
           e?.toString() ??
-          L10n.of(context)!.oopsSomethingWentWrong;
+          L10n.of(context).oopsSomethingWentWrong;
       // Pangea#
     });
   }
@@ -338,7 +338,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
               context,
         ).showSnackBar(
           SnackBar(
-            content: Text(L10n.of(context)!.oneClientLoggedOut),
+            content: Text(L10n.of(context).oneClientLoggedOut),
           ),
         );
 
@@ -423,13 +423,12 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
             context: FluffyChatApp
                     .router.routerDelegate.navigatorKey.currentContext ??
                 context,
-            title: L10n.of(context)!.pushNotificationsNotAvailable,
+            title: L10n.of(context).pushNotificationsNotAvailable,
             message: errorMsg,
             fullyCapitalizedForMaterial: false,
-            okLabel: link == null
-                ? L10n.of(context)!.ok
-                : L10n.of(context)!.learnMore,
-            cancelLabel: L10n.of(context)!.doNotShowAgain,
+            okLabel:
+                link == null ? L10n.of(context).ok : L10n.of(context).learnMore,
+            cancelLabel: L10n.of(context).doNotShowAgain,
           );
           if (result == OkCancelResult.ok && link != null) {
             launchUrlString(
@@ -547,8 +546,8 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
     final response = await showOkCancelAlertDialog(
       context: context,
       isDestructiveAction: true,
-      title: L10n.of(context)!.dehydrate,
-      message: L10n.of(context)!.dehydrateWarning,
+      title: L10n.of(context).dehydrate,
+      message: L10n.of(context).dehydrateWarning,
     );
     if (response != OkCancelResult.ok) {
       return;

@@ -41,9 +41,9 @@ class ClassDescriptionButton extends StatelessWidget {
                   room.topic.isEmpty
                       ? (room.isRoomAdmin
                           ? (room.isSpace
-                              ? L10n.of(context)!.classDescriptionDesc
-                              : L10n.of(context)!.setChatDescription)
-                          : L10n.of(context)!.topicNotSet)
+                              ? L10n.of(context).classDescriptionDesc
+                              : L10n.of(context).setChatDescription)
+                          : L10n.of(context).topicNotSet)
                       : room.topic,
                 ),
               ),
@@ -51,8 +51,8 @@ class ClassDescriptionButton extends StatelessWidget {
           ),
           title: Text(
             room.isSpace
-                ? L10n.of(context)!.classDescription
-                : L10n.of(context)!.chatDescription,
+                ? L10n.of(context).classDescription
+                : L10n.of(context).chatDescription,
             style: TextStyle(
               color: Theme.of(context).colorScheme.secondary,
               fontWeight: FontWeight.bold,
@@ -73,8 +73,8 @@ void setClassTopic(Room room, BuildContext context) {
     builder: (BuildContext context) => AlertDialog(
       title: Text(
         room.isSpace
-            ? L10n.of(context)!.classDescription
-            : L10n.of(context)!.chatDescription,
+            ? L10n.of(context).classDescription
+            : L10n.of(context).chatDescription,
       ),
       content: TextField(
         controller: textFieldController,
@@ -85,13 +85,13 @@ void setClassTopic(Room room, BuildContext context) {
       ),
       actions: [
         TextButton(
-          child: Text(L10n.of(context)!.cancel),
+          child: Text(L10n.of(context).cancel),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         TextButton(
-          child: Text(L10n.of(context)!.ok),
+          child: Text(L10n.of(context).ok),
           onPressed: () async {
             if (textFieldController.text == "") return;
             final success = await showFutureLoadingDialog(
@@ -102,7 +102,7 @@ void setClassTopic(Room room, BuildContext context) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content:
-                      Text(L10n.of(context)!.groupDescriptionHasBeenChanged),
+                      Text(L10n.of(context).groupDescriptionHasBeenChanged),
                 ),
               );
               Navigator.of(context).pop();

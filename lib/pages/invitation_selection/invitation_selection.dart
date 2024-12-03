@@ -140,15 +140,15 @@ class InvitationSelectionController extends State<InvitationSelection> {
     if (OkCancelResult.ok !=
         await showOkCancelAlertDialog(
           context: context,
-          title: L10n.of(context)!.inviteContact,
-          message: L10n.of(context)!.inviteContactToGroupQuestion(
+          title: L10n.of(context).inviteContact,
+          message: L10n.of(context).inviteContactToGroupQuestion(
             displayname,
             room.getLocalizedDisplayname(
-              MatrixLocals(L10n.of(context)!),
+              MatrixLocals(L10n.of(context)),
             ),
           ),
-          okLabel: L10n.of(context)!.invite,
-          cancelLabel: L10n.of(context)!.cancel,
+          okLabel: L10n.of(context).invite,
+          cancelLabel: L10n.of(context).cancel,
         )) {
       return;
     }
@@ -160,8 +160,8 @@ class InvitationSelectionController extends State<InvitationSelection> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           // #Pangea
-          // content: Text(L10n.of(context)!.contactHasBeenInvitedToTheGroup),
-          content: Text(L10n.of(context)!.contactHasBeenInvitedToTheChat),
+          // content: Text(L10n.of(context).contactHasBeenInvitedToTheGroup),
+          content: Text(L10n.of(context).contactHasBeenInvitedToTheChat),
           // Pangea#
         ),
       );

@@ -63,8 +63,8 @@ class RoomCapacityButtonState extends State<RoomCapacityButton> {
         SnackBar(
           content: Text(
             spaceMode
-                ? L10n.of(context)!.chatExceedsCapacity
-                : L10n.of(context)!.spaceExceedsCapacity,
+                ? L10n.of(context).chatExceedsCapacity
+                : L10n.of(context).spaceExceedsCapacity,
           ),
         ),
       );
@@ -88,15 +88,15 @@ class RoomCapacityButtonState extends State<RoomCapacityButton> {
           ),
           trailing: Text(
             (capacity == null)
-                ? L10n.of(context)!.noCapacityLimit
+                ? L10n.of(context).noCapacityLimit
                 : (nonAdmins != null)
                     ? '$nonAdmins/$capacity'
                     : '$capacity',
           ),
           title: Text(
             spaceMode
-                ? L10n.of(context)!.spaceCapacity
-                : L10n.of(context)!.chatCapacity,
+                ? L10n.of(context).spaceCapacity
+                : L10n.of(context).chatCapacity,
             style: TextStyle(
               color: Theme.of(context).colorScheme.secondary,
               fontWeight: FontWeight.bold,
@@ -115,13 +115,13 @@ class RoomCapacityButtonState extends State<RoomCapacityButton> {
     final input = await showTextInputDialog(
       context: context,
       title: spaceMode
-          ? L10n.of(context)!.spaceCapacity
-          : L10n.of(context)!.chatCapacity,
+          ? L10n.of(context).spaceCapacity
+          : L10n.of(context).chatCapacity,
       message: spaceMode
-          ? L10n.of(context)!.spaceCapacityExplanation
-          : L10n.of(context)!.chatCapacityExplanation,
-      okLabel: L10n.of(context)!.ok,
-      cancelLabel: L10n.of(context)!.cancel,
+          ? L10n.of(context).spaceCapacityExplanation
+          : L10n.of(context).chatCapacityExplanation,
+      okLabel: L10n.of(context).ok,
+      cancelLabel: L10n.of(context).cancel,
       textFields: [
         DialogTextField(
           initialText: ((capacity != null) ? '$capacity' : ''),
@@ -132,12 +132,12 @@ class RoomCapacityButtonState extends State<RoomCapacityButton> {
                 value.isEmpty ||
                 int.tryParse(value) == null ||
                 int.parse(value) < 0) {
-              return L10n.of(context)!.enterNumber;
+              return L10n.of(context).enterNumber;
             }
             if (nonAdmins != null && int.parse(value) < int.parse(nonAdmins!)) {
               return spaceMode
-                  ? L10n.of(context)!.spaceCapacitySetTooLow
-                  : L10n.of(context)!.chatCapacitySetTooLow;
+                  ? L10n.of(context).spaceCapacitySetTooLow
+                  : L10n.of(context).chatCapacitySetTooLow;
             }
             return null;
           },
@@ -164,8 +164,8 @@ class RoomCapacityButtonState extends State<RoomCapacityButton> {
         SnackBar(
           content: Text(
             spaceMode
-                ? L10n.of(context)!.spaceCapacityHasBeenChanged
-                : L10n.of(context)!.chatCapacityHasBeenChanged,
+                ? L10n.of(context).spaceCapacityHasBeenChanged
+                : L10n.of(context).chatCapacityHasBeenChanged,
           ),
         ),
       );

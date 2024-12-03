@@ -12,7 +12,7 @@ void setClassDisplayname(BuildContext context, String? roomId) async {
   final TextEditingController textFieldController = TextEditingController(
     text: room.getLocalizedDisplayname(
       MatrixLocals(
-        L10n.of(context)!,
+        L10n.of(context),
       ),
     ),
   );
@@ -23,8 +23,8 @@ void setClassDisplayname(BuildContext context, String? roomId) async {
     builder: (BuildContext context) => AlertDialog(
       title: Text(
         room.isSpace
-            ? L10n.of(context)!.changeTheNameOfTheClass
-            : L10n.of(context)!.changeTheNameOfTheChat,
+            ? L10n.of(context).changeTheNameOfTheClass
+            : L10n.of(context).changeTheNameOfTheChat,
       ),
       content: TextField(
         maxLength: 64,
@@ -32,13 +32,13 @@ void setClassDisplayname(BuildContext context, String? roomId) async {
       ),
       actions: [
         TextButton(
-          child: Text(L10n.of(context)!.cancel),
+          child: Text(L10n.of(context).cancel),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         TextButton(
-          child: Text(L10n.of(context)!.ok),
+          child: Text(L10n.of(context).ok),
           onPressed: () async {
             if (textFieldController.text == "") return;
             final success = await showFutureLoadingDialog(
@@ -48,7 +48,7 @@ void setClassDisplayname(BuildContext context, String? roomId) async {
             if (success.error == null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(L10n.of(context)!.displaynameHasBeenChanged),
+                  content: Text(L10n.of(context).displaynameHasBeenChanged),
                 ),
               );
               Navigator.of(context).pop();

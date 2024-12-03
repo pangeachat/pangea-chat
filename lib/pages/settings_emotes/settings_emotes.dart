@@ -134,8 +134,8 @@ class EmotesSettingsController extends State<EmotesSettings> {
       showOkAlertDialog(
         useRootNavigator: false,
         context: context,
-        message: L10n.of(context)!.emoteExists,
-        okLabel: L10n.of(context)!.ok,
+        message: L10n.of(context).emoteExists,
+        okLabel: L10n.of(context).ok,
       );
       return;
     }
@@ -144,8 +144,8 @@ class EmotesSettingsController extends State<EmotesSettings> {
       showOkAlertDialog(
         useRootNavigator: false,
         context: context,
-        message: L10n.of(context)!.emoteInvalid,
-        okLabel: L10n.of(context)!.ok,
+        message: L10n.of(context).emoteInvalid,
+        okLabel: L10n.of(context).ok,
       );
       return;
     }
@@ -180,8 +180,8 @@ class EmotesSettingsController extends State<EmotesSettings> {
       await showOkAlertDialog(
         useRootNavigator: false,
         context: context,
-        message: L10n.of(context)!.emoteWarnNeedToPick,
-        okLabel: L10n.of(context)!.ok,
+        message: L10n.of(context).emoteWarnNeedToPick,
+        okLabel: L10n.of(context).ok,
       );
       return;
     }
@@ -190,8 +190,8 @@ class EmotesSettingsController extends State<EmotesSettings> {
       await showOkAlertDialog(
         useRootNavigator: false,
         context: context,
-        message: L10n.of(context)!.emoteExists,
-        okLabel: L10n.of(context)!.ok,
+        message: L10n.of(context).emoteExists,
+        okLabel: L10n.of(context).ok,
       );
       return;
     }
@@ -199,8 +199,8 @@ class EmotesSettingsController extends State<EmotesSettings> {
       await showOkAlertDialog(
         useRootNavigator: false,
         context: context,
-        message: L10n.of(context)!.emoteInvalid,
-        okLabel: L10n.of(context)!.ok,
+        message: L10n.of(context).emoteInvalid,
+        okLabel: L10n.of(context).ok,
       );
       return;
     }

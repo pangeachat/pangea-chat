@@ -25,8 +25,8 @@ class NewGroupView extends StatelessWidget {
           ),
         ),
         // #Pangea
-        // title: Text(L10n.of(context)!.createGroup),
-        title: Text(L10n.of(context)!.newChat),
+        // title: Text(L10n.of(context).createGroup),
+        title: Text(L10n.of(context).newChat),
         // Pangea#
       ),
       body: MaxWidthBody(
@@ -63,8 +63,8 @@ class NewGroupView extends StatelessWidget {
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.people_outlined),
                   // #Pangea
-                  // labelText: L10n.of(context)!.groupName,
-                  labelText: L10n.of(context)!.chatName,
+                  // labelText: L10n.of(context).groupName,
+                  labelText: L10n.of(context).chatName,
                   // Pangea#
                 ),
               ),
@@ -73,7 +73,7 @@ class NewGroupView extends StatelessWidget {
             SwitchListTile.adaptive(
               contentPadding: const EdgeInsets.symmetric(horizontal: 32),
               secondary: const Icon(Icons.public_outlined),
-              title: Text(L10n.of(context)!.groupIsPublic),
+              title: Text(L10n.of(context).groupIsPublic),
               value: controller.publicGroup,
               onChanged: controller.loading ? null : controller.setPublicGroup,
             ),
@@ -85,8 +85,8 @@ class NewGroupView extends StatelessWidget {
                           const EdgeInsets.symmetric(horizontal: 32),
                       secondary: const Icon(Icons.search_outlined),
                       // #Pangea
-                      // title: Text(L10n.of(context)!.groupCanBeFoundViaSearch),
-                      title: Text(L10n.of(context)!.chatCanBeFoundViaSearch),
+                      // title: Text(L10n.of(context).groupCanBeFoundViaSearch),
+                      title: Text(L10n.of(context).chatCanBeFoundViaSearch),
                       // Pangea#
                       value: controller.groupCanBeFound,
                       onChanged: controller.loading
@@ -103,7 +103,7 @@ class NewGroupView extends StatelessWidget {
             //     color: theme.colorScheme.onSurface,
             //   ),
             //   title: Text(
-            //     L10n.of(context)!.enableEncryption,
+            //     L10n.of(context).enableEncryption,
             //     style: TextStyle(
             //       color: theme.colorScheme.onSurface,
             //     ),
@@ -121,7 +121,7 @@ class NewGroupView extends StatelessWidget {
                       controller.loading ? null : controller.submitAction,
                   child: controller.loading
                       ? const LinearProgressIndicator()
-                      : Text(L10n.of(context)!.createGroupAndInviteUsers),
+                      : Text(L10n.of(context).createGroupAndInviteUsers),
                 ),
               ),
             ),

@@ -6,7 +6,7 @@ import 'package:matrix/matrix.dart' as matrix;
 import 'package:matrix/matrix.dart';
 
 class AddRoomDialog extends StatefulWidget {
-  final AddRoomType? roomType;
+  final AddRoomType roomType;
 
   const AddRoomDialog({
     required this.roomType,
@@ -60,23 +60,23 @@ class AddRoomDialogState extends State<AddRoomDialog> {
                     Text(
                       style: Theme.of(context).textTheme.headlineSmall,
                       widget.roomType == AddRoomType.subspace
-                          ? L10n.of(context)!.createNewSpace
-                          : L10n.of(context)!.createChat,
+                          ? L10n.of(context).createNewSpace
+                          : L10n.of(context).createChat,
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: _roomNameController,
                       decoration: InputDecoration(
                         hintText: widget.roomType == AddRoomType.subspace
-                            ? L10n.of(context)!.spaceName
-                            : L10n.of(context)!.chatName,
+                            ? L10n.of(context).spaceName
+                            : L10n.of(context).chatName,
                       ),
                       minLines: 1,
                       maxLines: 1,
                       maxLength: 64,
                       validator: (text) {
                         if (text == null || text.isEmpty) {
-                          return L10n.of(context)!.pleaseChoose;
+                          return L10n.of(context).pleaseChoose;
                         }
                         return null;
                       },
@@ -87,7 +87,7 @@ class AddRoomDialogState extends State<AddRoomDialog> {
                     TextFormField(
                       controller: _roomDescriptionController,
                       decoration: InputDecoration(
-                        hintText: L10n.of(context)!.chatDescription,
+                        hintText: L10n.of(context).chatDescription,
                       ),
                       minLines: 4,
                       maxLines: 8,
@@ -114,7 +114,7 @@ class AddRoomDialogState extends State<AddRoomDialog> {
                       onPressed: () {
                         Navigator.of(context).pop(null);
                       },
-                      child: Text(L10n.of(context)!.cancel),
+                      child: Text(L10n.of(context).cancel),
                     ),
                     const SizedBox(width: 20),
                     TextButton(
@@ -131,7 +131,7 @@ class AddRoomDialogState extends State<AddRoomDialog> {
                           ),
                         );
                       },
-                      child: Text(L10n.of(context)!.confirm),
+                      child: Text(L10n.of(context).confirm),
                     ),
                   ],
                 ),

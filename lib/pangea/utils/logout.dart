@@ -8,11 +8,11 @@ void pLogoutAction(BuildContext context, {bool? isDestructiveAction}) async {
   if (await showOkCancelAlertDialog(
         useRootNavigator: false,
         context: context,
-        title: L10n.of(context)!.areYouSureYouWantToLogout,
-        message: L10n.of(context)!.noBackupWarning,
+        title: L10n.of(context).areYouSureYouWantToLogout,
+        message: L10n.of(context).noBackupWarning,
         isDestructiveAction: isDestructiveAction ?? false,
-        okLabel: L10n.of(context)!.logout,
-        cancelLabel: L10n.of(context)!.cancel,
+        okLabel: L10n.of(context).logout,
+        cancelLabel: L10n.of(context).cancel,
       ) ==
       OkCancelResult.cancel) {
     return;

@@ -42,7 +42,7 @@ class MissingVoiceButton extends StatelessWidget {
         await launchTTSSettings(context);
       },
       child: Center(
-        child: Text(L10n.of(context)!.openVoiceSettings),
+        child: Text(L10n.of(context).openVoiceSettings),
       ),
     );
   }

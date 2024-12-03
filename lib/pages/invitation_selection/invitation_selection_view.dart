@@ -19,16 +19,16 @@ class InvitationSelectionView extends StatelessWidget {
     if (room == null) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(L10n.of(context)!.oopsSomethingWentWrong),
+          title: Text(L10n.of(context).oopsSomethingWentWrong),
         ),
         body: Center(
-          child: Text(L10n.of(context)!.youAreNoLongerParticipatingInThisChat),
+          child: Text(L10n.of(context).youAreNoLongerParticipatingInThisChat),
         ),
       );
     }
 
     // #Pangea
-    // final groupName = room.name.isEmpty ? L10n.of(context)!.group : room.name;
+    // final groupName = room.name.isEmpty ? L10n.of(context).group : room.name;
     // Pangea#
     final theme = Theme.of(context);
     return Scaffold(
@@ -42,7 +42,7 @@ class InvitationSelectionView extends StatelessWidget {
         ),
 // Pangea#
         titleSpacing: 0,
-        title: Text(L10n.of(context)!.inviteContact),
+        title: Text(L10n.of(context).inviteContact),
       ),
       body: MaxWidthBody(
         innerPadding: const EdgeInsets.symmetric(vertical: 8),
@@ -64,8 +64,8 @@ class InvitationSelectionView extends StatelessWidget {
                     fontWeight: FontWeight.normal,
                   ),
                   // #Pangea
-                  hintText: L10n.of(context)!.inviteStudentByUserName,
-                  // hintText: L10n.of(context)!.inviteContactToGroup(groupName),
+                  hintText: L10n.of(context).inviteStudentByUserName,
+                  // hintText: L10n.of(context).inviteContactToGroup(groupName),
                   // Pangea#
                   prefixIcon: controller.loading
                       ? const Padding(
@@ -102,7 +102,7 @@ class InvitationSelectionView extends StatelessWidget {
                           displayname: controller
                                   .foundProfiles[i].displayName ??
                               controller.foundProfiles[i].userId.localpart ??
-                              L10n.of(context)!.user,
+                              L10n.of(context).user,
                           userId: controller.foundProfiles[i].userId,
                           isMember: participants
                               .contains(controller.foundProfiles[i].userId),
@@ -111,7 +111,7 @@ class InvitationSelectionView extends StatelessWidget {
                             controller.foundProfiles[i].userId,
                             controller.foundProfiles[i].displayName ??
                                 controller.foundProfiles[i].userId.localpart ??
-                                L10n.of(context)!.user,
+                                L10n.of(context).user,
                           ),
                         ),
                       )
@@ -135,7 +135,7 @@ class InvitationSelectionView extends StatelessWidget {
                               avatarUrl: contacts[i].avatarUrl,
                               displayname: contacts[i].displayName ??
                                   contacts[i].id.localpart ??
-                                  L10n.of(context)!.user,
+                                  L10n.of(context).user,
                               userId: contacts[i].id,
                               isMember: participants.contains(contacts[i].id),
                               onTap: () => controller.inviteAction(
@@ -143,7 +143,7 @@ class InvitationSelectionView extends StatelessWidget {
                                 contacts[i].id,
                                 contacts[i].displayName ??
                                     contacts[i].id.localpart ??
-                                    L10n.of(context)!.user,
+                                    L10n.of(context).user,
                               ),
                             ),
                           );
@@ -200,7 +200,7 @@ class _InviteContactListTile extends StatelessWidget {
         ),
         onTap: isMember ? null : onTap,
         trailing: isMember
-            ? Text(L10n.of(context)!.participant)
+            ? Text(L10n.of(context).participant)
             : const Icon(Icons.person_add_outlined),
       ),
     );

@@ -41,8 +41,8 @@ class VisibilityToggle extends StatelessWidget {
           activeColor: AppConfig.activeToggleColor,
           title: Text(
             room?.isSpace ?? spaceMode
-                ? L10n.of(context)!.spaceIsPublic
-                : L10n.of(context)!.groupIsPublic,
+                ? L10n.of(context).spaceIsPublic
+                : L10n.of(context).groupIsPublic,
             style: TextStyle(
               color: Theme.of(context).colorScheme.secondary,
               fontWeight: FontWeight.bold,
@@ -69,8 +69,8 @@ class VisibilityToggle extends StatelessWidget {
                 activeColor: AppConfig.activeToggleColor,
                 title: Text(
                   room?.isSpace ?? spaceMode
-                      ? L10n.of(context)!.spaceCanBeFoundViaSearch
-                      : L10n.of(context)!.chatCanBeFoundViaSearch,
+                      ? L10n.of(context).spaceCanBeFoundViaSearch
+                      : L10n.of(context).chatCanBeFoundViaSearch,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.secondary,
                     fontWeight: FontWeight.bold,

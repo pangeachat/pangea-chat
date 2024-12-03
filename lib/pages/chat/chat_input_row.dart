@@ -24,7 +24,9 @@ class ChatInputRow extends StatelessWidget {
 
   const ChatInputRow(
     this.controller, {
+    // #Pangea
     this.isOverlay = false,
+    // Pangea#
     super.key,
   });
 
@@ -45,13 +47,13 @@ class ChatInputRow extends StatelessWidget {
 
     String hintText() {
       if (controller.choreographer.itController.willOpen) {
-        return L10n.of(context)!.buildTranslation;
+        return L10n.of(context).buildTranslation;
       }
       return activel1 != null &&
               activel2 != null &&
               activel1.langCode != LanguageKeys.unknownLanguage &&
               activel2.langCode != LanguageKeys.unknownLanguage
-          ? L10n.of(context)!.writeAMessageFlag(
+          ? L10n.of(context).writeAMessageFlag(
               activel1.languageEmoji ??
                   activel1.getDisplayName(context) ??
                   activel1.langCode,
@@ -59,9 +61,13 @@ class ChatInputRow extends StatelessWidget {
                   activel2.getDisplayName(context) ??
                   activel2.langCode,
             )
-          : L10n.of(context)!.writeAMessage;
+          : L10n.of(context).writeAMessage;
     }
 
+    // Pangea#
+
+    // #Pangea
+    // return Row(
     return Column(
       children: [
         CompositedTransformTarget(
@@ -88,31 +94,30 @@ class ChatInputRow extends StatelessWidget {
                           child: Row(
                             children: <Widget>[
                               const Icon(Icons.delete),
-                              Text(L10n.of(context)!.delete),
+                              Text(L10n.of(context).delete),
                             ],
                           ),
                         ),
                       )
-                    // #Pangea
-                    // else
-                    //   SizedBox(
-                    //     height: height,
-                    //     child: TextButton(
-                    //       onPressed: controller.forwardEventsAction,
-                    //       child: Row(
-                    //         children: <Widget>[
-                    //           const Icon(Icons.keyboard_arrow_left_outlined),
-                    //           Text(L10n.of(context)!.forward),
-                    //         ],
-                    //       ),
-                    //     ),
-                    //   ),
                     else
+                      // #Pangea
+                      //   SizedBox(
+                      //     height: height,
+                      //     child: TextButton(
+                      //       onPressed: controller.forwardEventsAction,
+                      //       child: Row(
+                      //         children: <Widget>[
+                      //           const Icon(Icons.keyboard_arrow_left_outlined),
+                      //           Text(L10n.of(context).forward),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ),
                       // Pangea#
                       controller.selectedEvents.length == 1
                           ?
                           // #Pangea
-                          // controller.selectedEvents.first
+                          // ? controller.selectedEvents.first
                           //         .getDisplayEvent(controller.timeline!)
                           //         .status
                           //         .isSent
@@ -125,11 +130,11 @@ class ChatInputRow extends StatelessWidget {
                                 child: Row(
                                   children: <Widget>[
                                     // #Pangea
-                                    // Text(L10n.of(context)!.reply),
+                                    // Text(L10n.of(context).reply),
                                     // const Icon(Icons.keyboard_arrow_right),
                                     const Icon(Symbols.reply),
                                     const SizedBox(width: 6),
-                                    Text(L10n.of(context)!.reply),
+                                    Text(L10n.of(context).reply),
                                     // Pangea#
                                   ],
                                 ),
@@ -142,9 +147,10 @@ class ChatInputRow extends StatelessWidget {
                           //       onPressed: controller.sendAgainAction,
                           //       child: Row(
                           //         children: <Widget>[
-                          //           Text(L10n.of(context)!.tryToSendAgain),
+                          //           Text(L10n.of(context).tryToSendAgain),
                           //           const SizedBox(width: 4),
-                          //           const Icon(Icons.send_outlined, size: 16),
+                          //           const Icon(Icons.send_outlined,
+                          //               size: 16),
                           //         ],
                           //       ),
                           //     ),
@@ -164,7 +170,7 @@ class ChatInputRow extends StatelessWidget {
                           onPressed: controller.sendAgainAction,
                           child: Row(
                             children: <Widget>[
-                              Text(L10n.of(context)!.tryToSendAgain),
+                              Text(L10n.of(context).tryToSendAgain),
                               const SizedBox(width: 4),
                               const Icon(Icons.send_outlined, size: 16),
                             ],
@@ -174,8 +180,8 @@ class ChatInputRow extends StatelessWidget {
                     // Pangea#
                   ]
                 : <Widget>[
+                    const SizedBox(width: 4),
                     // #Pangea
-                    // const SizedBox(width: 4),
                     // KeyBoardShortcuts(
                     //   keysToPress: {
                     //     LogicalKeyboardKey.altLeft,
@@ -183,7 +189,7 @@ class ChatInputRow extends StatelessWidget {
                     //   },
                     //   onKeysPressed: () =>
                     //       controller.onAddPopupMenuButtonSelected('file'),
-                    //   helpLabel: L10n.of(context)!.sendFile,
+                    //   helpLabel: L10n.of(context).sendFile,
                     //   child:
                     // Pangea#
                     AnimatedContainer(
@@ -212,7 +218,7 @@ class ChatInputRow extends StatelessWidget {
                                   foregroundColor: Colors.white,
                                   child: Icon(Icons.attachment_outlined),
                                 ),
-                                title: Text(L10n.of(context)!.sendFile),
+                                title: Text(L10n.of(context).sendFile),
                                 contentPadding: const EdgeInsets.all(0),
                               ),
                             ),
@@ -228,7 +234,7 @@ class ChatInputRow extends StatelessWidget {
                                   foregroundColor: Colors.white,
                                   child: Icon(Icons.image_outlined),
                                 ),
-                                title: Text(L10n.of(context)!.sendImage),
+                                title: Text(L10n.of(context).sendImage),
                                 contentPadding: const EdgeInsets.all(0),
                               ),
                             ),
@@ -246,7 +252,7 @@ class ChatInputRow extends StatelessWidget {
                                   foregroundColor: Colors.white,
                                   child: Icon(Icons.camera_alt_outlined),
                                 ),
-                                title: Text(L10n.of(context)!.openCamera),
+                                title: Text(L10n.of(context).openCamera),
                                 contentPadding: const EdgeInsets.all(0),
                               ),
                             ),
@@ -264,7 +270,7 @@ class ChatInputRow extends StatelessWidget {
                                   foregroundColor: Colors.white,
                                   child: Icon(Icons.videocam_outlined),
                                 ),
-                                title: Text(L10n.of(context)!.openVideoCamera),
+                                title: Text(L10n.of(context).openVideoCamera),
                                 contentPadding: const EdgeInsets.all(0),
                               ),
                             ),
@@ -282,7 +288,7 @@ class ChatInputRow extends StatelessWidget {
                                   foregroundColor: Colors.white,
                                   child: Icon(Icons.gps_fixed_outlined),
                                 ),
-                                title: Text(L10n.of(context)!.shareLocation),
+                                title: Text(L10n.of(context).shareLocation),
                                 contentPadding: const EdgeInsets.all(0),
                               ),
                             ),
@@ -297,19 +303,17 @@ class ChatInputRow extends StatelessWidget {
                             height: height,
                             width: height,
                             alignment: Alignment.center,
-                            child:
-                                // #Pangea
-                                // KeyBoardShortcuts(
-                                //   keysToPress: {
-                                //     LogicalKeyboardKey.altLeft,
-                                //     LogicalKeyboardKey.keyE,
-                                //   },
-                                //   onKeysPressed: controller.emojiPickerAction,
-                                //   helpLabel: L10n.of(context)!.emojis,
-                                //   child:
-                                // Pangea#
-                                IconButton(
-                              tooltip: L10n.of(context)!.emojis,
+                            // #Pangea
+                            // child: KeyBoardShortcuts(
+                            //   keysToPress: {
+                            //     LogicalKeyboardKey.altLeft,
+                            //     LogicalKeyboardKey.keyE,
+                            //   },
+                            //   onKeysPressed: controller.emojiPickerAction,
+                            //   helpLabel: L10n.of(context).emojis,
+                            // Pangea#
+                            child: IconButton(
+                              tooltip: L10n.of(context).emojis,
                               icon: PageTransitionSwitcher(
                                 transitionBuilder: (
                                   Widget child,
@@ -334,8 +338,9 @@ class ChatInputRow extends StatelessWidget {
                               ),
                               onPressed: controller.emojiPickerAction,
                             ),
+                            // #Pangea
+                            // ),
                           )
-                        // #Pangea
                         : const SizedBox(width: 10),
                     // if (Matrix.of(context).isMultiAccount &&
                     //     Matrix.of(context).hasComplexBundles &&
@@ -377,7 +382,7 @@ class ChatInputRow extends StatelessWidget {
                               top: 3.0,
                             ),
                             // #Pangea
-                            // hintText: L10n.of(context)!.writeAMessage,
+                            // hintText: L10n.of(context).writeAMessage,
                             hintText: hintText(),
                             disabledBorder: InputBorder.none,
                             // Pangea#
@@ -406,7 +411,7 @@ class ChatInputRow extends StatelessWidget {
                               !controller.choreographer.itController.willOpen
                           // Pangea#
                           ? FloatingActionButton.small(
-                              tooltip: L10n.of(context)!.voiceMessage,
+                              tooltip: L10n.of(context).voiceMessage,
                               onPressed: controller.voiceMessageAction,
                               elevation: 0,
                               heroTag: null,
@@ -419,7 +424,7 @@ class ChatInputRow extends StatelessWidget {
                             )
                           // #Pangea
                           // : FloatingActionButton.small(
-                          //     tooltip: L10n.of(context)!.send,
+                          //     tooltip: L10n.of(context).send,
                           //     onPressed: controller.send,
                           //     elevation: 0,
                           //     heroTag: null,

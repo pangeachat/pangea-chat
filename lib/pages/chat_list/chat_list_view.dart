@@ -82,7 +82,7 @@ class ChatListView extends StatelessWidget {
                               onTap: controller.clearActiveSpace,
                               icon: const Icon(Icons.forum_outlined),
                               selectedIcon: const Icon(Icons.forum),
-                              toolTip: L10n.of(context)!.chats,
+                              toolTip: L10n.of(context).chats,
                               unreadBadgeFilter: (room) => true,
                             );
                           }
@@ -92,13 +92,13 @@ class ChatListView extends StatelessWidget {
                               isSelected: false,
                               onTap: () => context.go('/rooms/newspace'),
                               icon: const Icon(Icons.add),
-                              toolTip: L10n.of(context)!.createNewSpace,
+                              toolTip: L10n.of(context).createNewSpace,
                             );
                           }
                           final space = rootSpaces[i];
                           final displayname =
                               rootSpaces[i].getLocalizedDisplayname(
-                            MatrixLocals(L10n.of(context)!),
+                            MatrixLocals(L10n.of(context)),
                           );
                           final spaceChildrenIds =
                               space.spaceChildren.map((c) => c.roomId).toSet();
@@ -146,7 +146,7 @@ class ChatListView extends StatelessWidget {
                         //     LogicalKeyboardKey.keyN,
                         //   },
                         //   onKeysPressed: () => context.go('/rooms/newprivatechat'),
-                        //   helpLabel: L10n.of(context)!.newChat,
+                        //   helpLabel: L10n.of(context).newChat,
                         //   child:
                         // Pangea#
                         selectMode == SelectMode.normal &&
@@ -160,7 +160,7 @@ class ChatListView extends StatelessWidget {
                                 // Pangea#
                                 icon: const Icon(Icons.add_outlined),
                                 label: Text(
-                                  L10n.of(context)!.chat,
+                                  L10n.of(context).chat,
                                   overflow: TextOverflow.fade,
                                 ),
                               )

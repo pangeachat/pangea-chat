@@ -229,7 +229,7 @@ class InputBar extends StatelessWidget {
     // Pangea#
     if (suggestion['type'] == 'command') {
       final command = suggestion['name']!;
-      final hint = commandHint(L10n.of(context)!, command);
+      final hint = commandHint(L10n.of(context), command);
       return Tooltip(
         message: hint,
         waitDuration: const Duration(days: 1), // don't show on hover

@@ -8,8 +8,8 @@ void showEditFieldDialog(BuildContext context, String title) async {
     useRootNavigator: false,
     context: context,
     title: title,
-    okLabel: L10n.of(context)!.ok,
-    cancelLabel: L10n.of(context)!.cancel,
+    okLabel: L10n.of(context).ok,
+    cancelLabel: L10n.of(context).cancel,
     textFields: [
       DialogTextField(
         hintText: title,
@@ -28,7 +28,7 @@ void showEditFieldDialog(BuildContext context, String title) async {
   if (success.error == null) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(L10n.of(context)!.groupDescriptionHasBeenChanged),
+        content: Text(L10n.of(context).groupDescriptionHasBeenChanged),
       ),
     );
   }
