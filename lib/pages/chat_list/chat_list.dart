@@ -949,10 +949,10 @@ class ChatListController extends State<ChatList>
   }
 
   // #Pangea
-  // Remove a room from a space. Often, the user will have permission to set
-  // the SpaceChild event for the parent space, but not the SpaceParent event.
-  // This would cause a permissions error, but the child will still be removed
-  // via the SpaceChild event. If that's the case, silence the error.
+  /// Remove a room from a space. Often, the user will have permission to set
+  /// the SpaceChild event for the parent space, but not the SpaceParent event.
+  /// This would cause a permissions error, but the child will still be removed
+  /// via the SpaceChild event. If that's the case, silence the error.
   Future<void> removeSpaceChild(Room space, String roomId) async {
     try {
       await space.removeSpaceChild(roomId);
