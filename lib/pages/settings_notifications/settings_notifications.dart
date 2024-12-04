@@ -1,12 +1,11 @@
-import 'package:flutter/material.dart';
-
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:collection/collection.dart' show IterableExtension;
+import 'package:fluffychat/utils/localized_exception_extension.dart';
+import 'package:fluffychat/widgets/future_loading_dialog.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import '../../widgets/matrix.dart';
 import 'settings_notifications_view.dart';
 
@@ -102,6 +101,7 @@ class SettingsNotificationsController extends State<SettingsNotifications> {
     });
     try {
       await Matrix.of(context).client.setPushRuleEnabled(
+            // MERGE TODO: upgrade SDK and remove this first argument
             'global',
             item.type,
             item.key,
