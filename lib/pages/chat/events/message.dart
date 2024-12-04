@@ -1,5 +1,6 @@
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
+import 'package:fluffychat/pages/chat/events/room_creation_state_event.dart';
 import 'package:fluffychat/pangea/enum/use_type.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/utils/any_state_holder.dart';
@@ -111,6 +112,9 @@ class Message extends StatelessWidget {
     }.contains(event.type)) {
       if (event.type.startsWith('m.call.')) {
         return const SizedBox.shrink();
+      }
+      if (event.type == EventTypes.RoomCreate) {
+        return RoomCreationStateEvent(event: event);
       }
       return StateMessage(event);
     }
