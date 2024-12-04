@@ -57,17 +57,17 @@ class ErrorReporter {
   //       ),
   //     ),
   //     actions: [
-  //       TextButton(
+  //       AdaptiveDialogAction(
   //         onPressed: () => Navigator.of(context).pop(),
   //         child: Text(L10n.of(context).close),
   //       ),
-  //       TextButton(
+  //       AdaptiveDialogAction(
   //         onPressed: () => Clipboard.setData(
   //           ClipboardData(text: text),
   //         ),
   //         child: Text(L10n.of(context).copy),
   //       ),
-  //       TextButton(
+  //       AdaptiveDialogAction(
   //         onPressed: () => launchUrl(
   //           AppConfig.newIssueUrl.resolveUri(
   //             Uri(
@@ -84,5 +84,5 @@ class ErrorReporter {
   //     ],
   //   ),
   // );
-  // Pangea#
+  // #Pangea
 }
