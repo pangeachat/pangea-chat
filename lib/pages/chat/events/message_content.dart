@@ -297,7 +297,8 @@ class MessageContent extends StatelessWidget {
             }
             final bigEmotes = event.onlyEmotes &&
                 event.numberEmotes > 0 &&
-                event.numberEmotes <= 10;
+                event.numberEmotes <= 3;
+
             // #Pangea
             final messageTextStyle =
                 AppConfig.messageTextStyle(event, textColor);
@@ -340,7 +341,11 @@ class MessageContent extends StatelessWidget {
               );
             }
 
-            return ToolbarSelectionArea(
+            // Pangea#
+
+            return
+                // #Pangea
+                ToolbarSelectionArea(
               event: event,
               controller: controller,
               pangeaMessageEvent: pangeaMessageEvent,
@@ -349,6 +354,7 @@ class MessageContent extends StatelessWidget {
               prevEvent: prevEvent,
               child:
                   // Pangea#
+
                   Linkify(
                 text: event.calcLocalizedBodyFallback(
                   MatrixLocals(L10n.of(context)),
@@ -357,7 +363,7 @@ class MessageContent extends StatelessWidget {
                 // #Pangea
                 // style: TextStyle(
                 //   color: textColor,
-                //   fontSize: bigEmotes ? fontSize * 3 : fontSize,
+                //   fontSize: bigEmotes ? fontSize * 5 : fontSize,
                 //   decoration:
                 //       event.redacted ? TextDecoration.lineThrough : null,
                 // ),
@@ -366,7 +372,7 @@ class MessageContent extends StatelessWidget {
                 options: const LinkifyOptions(humanize: false),
                 linkStyle: TextStyle(
                   color: textColor.withAlpha(150),
-                  fontSize: bigEmotes ? fontSize * 3 : fontSize,
+                  fontSize: fontSize,
                   decoration: TextDecoration.underline,
                   decorationColor: textColor.withAlpha(150),
                 ),

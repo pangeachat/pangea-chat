@@ -35,7 +35,7 @@ abstract class AppConfig {
 
     return TextStyle(
       color: textColor,
-      fontSize: bigEmotes ? fontSize * 3 : fontSize,
+      fontSize: bigEmotes ? fontSize * 5 : fontSize,
       decoration: event.redacted ? TextDecoration.lineThrough : null,
       height: 1.3,
     );
