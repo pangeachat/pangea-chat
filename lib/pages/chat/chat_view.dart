@@ -135,7 +135,7 @@ class ChatView extends StatelessWidget {
         ),
       ];
     }
-    // } else if (!controller.room.isArchived) {
+    // else if (!controller.room.isArchived) {
     //   return [
     //     if (Matrix.of(context).voipPlugin != null &&
     //         controller.room.isDirectChat)
@@ -356,10 +356,7 @@ class ChatView extends StatelessWidget {
                                 alignment: Alignment.center,
                                 child: Material(
                                   clipBehavior: Clip.hardEdge,
-                                  color: theme
-                                      .colorScheme
-                                      // ignore: deprecated_member_use
-                                      .surfaceVariant,
+                                  color: theme.colorScheme.surfaceContainerHigh,
                                   borderRadius: const BorderRadius.all(
                                     Radius.circular(24),
                                   ),
