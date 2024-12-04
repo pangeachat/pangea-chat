@@ -924,6 +924,15 @@ class ChatListController extends State<ChatList>
               .toList(),
         );
         if (space == null) return;
+        // #Pangea
+        if (room.isSpace) {
+          final resp = await showOkCancelAlertDialog(
+            context: context,
+            title: L10n.of(context)!.addSubspaceWarning,
+          );
+          if (resp == OkCancelResult.cancel) return;
+        }
+        // Pangea#
         await showFutureLoadingDialog(
           context: context,
           // #Pangea

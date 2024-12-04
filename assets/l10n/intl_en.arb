@@ -4521,5 +4521,6 @@
   "spaceCanBeFoundViaSearch": "Space can be found via search",
   "chatCanBeFoundViaSearch": "Chat can be found via search",
   "requireCodeToJoin": "Require code to join",
-  "canFindInSearch": "Can find in search"
+  "canFindInSearch": "Can find in search",
+  "addSubspaceWarning": "Once you add this, it will not appear in public search results, and it will be visible to all members of the parent space."
 }
