@@ -1186,7 +1186,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "participant": "Mitglieder",
+  "participant": "Mitglied",
   "@participant": {
     "type": "text",
     "placeholders": {}
@@ -2833,5 +2833,9 @@
     "placeholders": {
       "max": {}
     }
-  }
+  },
+  "oneOfYourDevicesIsNotVerified": "Eines deiner Geräte ist nicht verifiziert",
+  "@oneOfYourDevicesIsNotVerified": {},
+  "noticeChatBackupDeviceVerification": "Hinweis: Wenn du alle deine Geräte mit dem Chat-Backup verbindest, sind sie automatisch verifiziert.",
+  "@noticeChatBackupDeviceVerification": {}
 }
