@@ -1,10 +1,8 @@
 import 'dart:async';
 
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:collection/collection.dart';
 import 'package:fluffychat/pages/invitation_selection/invitation_selection_view.dart';
 import 'package:fluffychat/pangea/utils/bot_name.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +35,10 @@ class InvitationSelectionController extends State<InvitationSelection> {
   Future<List<User>> getContacts(BuildContext context) async {
     final client = Matrix.of(context).client;
     final room = client.getRoomById(roomId!)!;
-    final participants = await room.requestParticipants();
+
+    final participants = (room.summary.mJoinedMemberCount ?? 0) > 100
+        ? room.getParticipants()
+        : await room.requestParticipants();
     participants.removeWhere(
       (u) => ![Membership.join, Membership.invite].contains(u.membership),
     );
@@ -137,21 +138,7 @@ class InvitationSelectionController extends State<InvitationSelection> {
 
   void inviteAction(BuildContext context, String id, String displayname) async {
     final room = Matrix.of(context).client.getRoomById(roomId!)!;
-    if (OkCancelResult.ok !=
-        await showOkCancelAlertDialog(
-          context: context,
-          title: L10n.of(context).inviteContact,
-          message: L10n.of(context).inviteContactToGroupQuestion(
-            displayname,
-            room.getLocalizedDisplayname(
-              MatrixLocals(L10n.of(context)),
-            ),
-          ),
-          okLabel: L10n.of(context).invite,
-          cancelLabel: L10n.of(context).cancel,
-        )) {
-      return;
-    }
+
     final success = await showFutureLoadingDialog(
       context: context,
       future: () => room.invite(id),
