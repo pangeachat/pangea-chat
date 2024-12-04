@@ -384,6 +384,11 @@ class BackgroundPush {
       }
       await client.roomsLoading;
       await client.accountDataLoading;
+      if (client.getRoomById(roomId) == null) {
+        await client
+            .waitForRoomInSync(roomId)
+            .timeout(const Duration(seconds: 30));
+      }
       FluffyChatApp.router.go(
         client.getRoomById(roomId)?.membership == Membership.invite
             ? '/rooms'
