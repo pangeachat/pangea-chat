@@ -58,18 +58,27 @@ class NewSpaceView extends StatelessWidget {
             const SizedBox(height: 16),
             SwitchListTile.adaptive(
               contentPadding: const EdgeInsets.symmetric(horizontal: 32),
-              title: Text(L10n.of(context).spaceIsPublic),
-              value: controller.publicGroup,
-              onChanged: controller.setPublicGroup,
+              // #Pangea
+              // title: Text(L10n.of(context).spaceIsPublic),
+              title: Text(L10n.of(context).requireCodeToJoin),
+              // value: controller.publicGroup,
+              // onChanged: controller.setPublicGroup,
+              value: controller.requiredCodeToJoin,
+              onChanged: controller.setRequireCode,
+              // Pangea#
             ),
             // #Pangea
-            if (controller.publicGroup)
-              SwitchListTile.adaptive(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 32),
-                title: Text(L10n.of(context).spaceCanBeFoundViaSearch),
-                value: controller.spaceCanBeFound,
-                onChanged: controller.setSpaceCanBeFound,
-              ),
+            // if (controller.publicGroup)
+            // Pangea#
+            SwitchListTile.adaptive(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 32),
+              // #Pangea
+              // title: Text(L10n.of(context).spaceCanBeFoundViaSearch),
+              title: Text(L10n.of(context).canFindInSearch),
+              // Pangea#
+              value: controller.spaceCanBeFound,
+              onChanged: controller.setSpaceCanBeFound,
+            ),
             // Pangea#
             ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 32),
