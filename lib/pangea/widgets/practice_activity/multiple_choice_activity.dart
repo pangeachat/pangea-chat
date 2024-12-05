@@ -53,11 +53,8 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
   @override
   void didUpdateWidget(covariant MultipleChoiceActivity oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.practiceCardController.currentCompletionRecord?.responses
-            .isEmpty ??
-        false) {
+    if (widget.currentActivity.hashCode != oldWidget.currentActivity.hashCode) {
       speakTargetTokens();
-
       setState(() => selectedChoiceIndex = null);
     }
   }
