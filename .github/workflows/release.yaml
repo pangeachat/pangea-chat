@@ -33,6 +33,12 @@ jobs:
       - run: flutter pub get
       - name: Prepare web
         run: ./scripts/prepare-web.sh
+      - name: Update Website files
+        run: |
+          touch .env
+          touch assets/.env
+          echo "$WEB_APP_ENV" > .env
+          echo "$WEB_APP_ENV" > assets/.env
       - name: Build Release Web
         run: |
           flutter config --enable-web
