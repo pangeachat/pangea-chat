@@ -22,7 +22,12 @@ import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart' as sdk;
 import 'package:matrix/matrix.dart';
 
-enum AddRoomType { chat, subspace }
+enum AddRoomType {
+  chat,
+  // #Pangea
+  // subspace,
+  // Pangea#
+}
 
 class SpaceView extends StatefulWidget {
   final String spaceId;
@@ -310,35 +315,35 @@ class _SpaceViewState extends State<SpaceView> {
   }
 
   void _addChatOrSubspace() async {
-    final roomType = await showConfirmationDialog(
-      context: context,
-      title: L10n.of(context).addChatOrSubSpace,
-      actions: [
-        AlertDialogAction(
-          key: AddRoomType.subspace,
-          // #Pangea
-          // label: L10n.of(context).createNewSpace,
-          label: L10n.of(context).newSpace,
-          // Pangea#
-        ),
-        AlertDialogAction(
-          key: AddRoomType.chat,
-          // #Pangea
-          // label: L10n.of(context).createGroup,
-          label: L10n.of(context).newChat,
-          // Pangea#
-        ),
-      ],
-    );
-    if (roomType == null) return;
+    // #Pangea
+    // final roomType = await showConfirmationDialog(
+    //   context: context,
+    //   title: L10n.of(context).addChatOrSubSpace,
+    //   actions: [
+    //     AlertDialogAction(
+    //       key: AddRoomType.subspace,
+    //       // #Pangea
+    //       // label: L10n.of(context).createNewSpace,
+    //       label: L10n.of(context).newSpace,
+    //       // Pangea#
+    //     ),
+    //     AlertDialogAction(
+    //       key: AddRoomType.chat,
+    //       // #Pangea
+    //       // label: L10n.of(context).createGroup,
+    //       label: L10n.of(context).newChat,
+    //       // Pangea#
+    //     ),
+    //   ],
+    // );
+    // if (roomType == null) return;
+    // Pangea#
 
     // #Pangea
     final RoomResponse? response = await showDialog<RoomResponse?>(
       context: context,
       builder: (context) {
-        return AddRoomDialog(
-          roomType: roomType,
-        );
+        return const AddRoomDialog();
       },
     );
     if (response == null) return;
@@ -383,63 +388,50 @@ class _SpaceViewState extends State<SpaceView> {
         final activeSpace = client.getRoomById(widget.spaceId)!;
         await activeSpace.postLoad();
 
-        if (roomType == AddRoomType.subspace) {
+        // #Pangea
+        // if (roomType == AddRoomType.subspace) {
+        //   roomId = await client.createSpace(
+        //     name: names.first,
+        //     topic: names.last.isEmpty ? null : names.last,
+        //     visibility: activeSpace.joinRules == JoinRules.public
+        //         ? sdk.Visibility.public
+        //         : sdk.Visibility.private,
+        //   );
+        // } else {
+        // Pangea#
+        roomId = await client.createGroupChat(
           // #Pangea
-          // roomId = await client.createSpace(
-          //   name: names.first,
-          //   topic: names.last.isEmpty ? null : names.last,
-          //   visibility: activeSpace.joinRules == JoinRules.public
-          //       ? sdk.Visibility.public
-          //       : sdk.Visibility.private,
-          // );
-          roomId = await client.createRoom(
-            preset: response.joinRules == sdk.JoinRules.public
-                ? sdk.CreateRoomPreset.publicChat
-                : sdk.CreateRoomPreset.privateChat,
-            creationContent: {'type': RoomCreationTypes.mSpace},
-            visibility: response.joinRules == sdk.JoinRules.public
-                ? response.visibility
-                : null,
-            name: response.roomName,
-            topic: response.roomDescription,
-            powerLevelContentOverride: {'events_default': 100},
-          );
+          // groupName: names.first,
+          // preset: activeSpace.joinRules == JoinRules.public
+          //     ? CreateRoomPreset.publicChat
+          //     : CreateRoomPreset.privateChat,
+          // visibility: activeSpace.joinRules == JoinRules.public
+          //     ? sdk.Visibility.public
+          //     : sdk.Visibility.private,
+          // initialState: names.length > 1 && names.last.isNotEmpty
+          //     ? [
+          //         StateEvent(
+          //           type: EventTypes.RoomTopic,
+          //           content: {'topic': names.last},
+          //         ),
+          //       ]
+          //     : null,
+          groupName: response.roomName,
+          preset: response.joinRules == sdk.JoinRules.public
+              ? CreateRoomPreset.publicChat
+              : CreateRoomPreset.privateChat,
+          visibility: response.visibility,
+          initialState: response.roomDescription.isNotEmpty
+              ? [
+                  StateEvent(
+                    type: EventTypes.RoomTopic,
+                    content: {'topic': response.roomDescription},
+                  ),
+                ]
+              : null,
+          enableEncryption: false,
           // Pangea#
-        } else {
-          roomId = await client.createGroupChat(
-            // #Pangea
-            // groupName: names.first,
-            // preset: activeSpace.joinRules == JoinRules.public
-            //     ? CreateRoomPreset.publicChat
-            //     : CreateRoomPreset.privateChat,
-            // visibility: activeSpace.joinRules == JoinRules.public
-            //     ? sdk.Visibility.public
-            //     : sdk.Visibility.private,
-            // initialState: names.length > 1 && names.last.isNotEmpty
-            //     ? [
-            //         StateEvent(
-            //           type: EventTypes.RoomTopic,
-            //           content: {'topic': names.last},
-            //         ),
-            //       ]
-            //     : null,
-            groupName: response.roomName,
-            preset: response.joinRules == sdk.JoinRules.public
-                ? CreateRoomPreset.publicChat
-                : CreateRoomPreset.privateChat,
-            visibility: response.visibility,
-            initialState: response.roomDescription.isNotEmpty
-                ? [
-                    StateEvent(
-                      type: EventTypes.RoomTopic,
-                      content: {'topic': response.roomDescription},
-                    ),
-                  ]
-                : null,
-            enableEncryption: false,
-            // Pangea#
-          );
-        }
+        );
         await activeSpace.setSpaceChild(roomId);
       },
     );
@@ -519,6 +511,19 @@ class _SpaceViewState extends State<SpaceView> {
     }
     return 0;
   }
+
+  List<Room>? get joinedRooms {
+    final room = Matrix.of(context).client.getRoomById(widget.spaceId);
+    if (room == null) return null;
+
+    final spaceChildIds =
+        room.spaceChildren.map((c) => c.roomId).whereType<String>().toSet();
+
+    return room.client.rooms
+        .where((room) => spaceChildIds.contains(room.id))
+        .where((room) => !room.isAnalyticsRoom)
+        .toList();
+  }
   // Pangea#
 
   @override
@@ -552,7 +557,11 @@ class _SpaceViewState extends State<SpaceView> {
               ? null
               : Text(
                   L10n.of(context).countChatsAndCountParticipants(
-                    room.spaceChildren.length,
+                    // #Pangea
+                    // room.spaceChildren.length,
+                    (_discoveredChildren?.length ?? 0) +
+                        (joinedRooms?.length ?? 0),
+                    // Pangea#
                     room.summary.mJoinedMemberCount ?? 1,
                   ),
                   maxLines: 1,
@@ -738,7 +747,10 @@ class _SpaceViewState extends State<SpaceView> {
                                         child: Icon(Icons.add_outlined),
                                       ),
                                       title: Text(
-                                        L10n.of(context).addChatOrSubSpace,
+                                        // #Pangea
+                                        // L10n.of(context).addChatOrSubSpace,
+                                        L10n.of(context).addChatToSpace,
+                                        // Pangea#
                                         style: const TextStyle(fontSize: 14),
                                       ),
                                     ),

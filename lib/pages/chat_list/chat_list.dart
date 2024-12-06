@@ -822,7 +822,12 @@ class ChatListController extends State<ChatList>
             ],
           ),
         ),
-        if (spacesWithPowerLevels.isNotEmpty)
+        if (spacesWithPowerLevels.isNotEmpty
+                // #Pangea
+                &&
+                !room.isSpace
+            // Pangea#
+            )
           PopupMenuItem(
             value: ChatContextAction.addToSpace,
             child: Row(
@@ -935,7 +940,7 @@ class ChatListController extends State<ChatList>
         if (room.isSpace) {
           final resp = await showOkCancelAlertDialog(
             context: context,
-            title: L10n.of(context)!.addSubspaceWarning,
+            title: L10n.of(context).addSubspaceWarning,
           );
           if (resp == OkCancelResult.cancel) return;
         }
@@ -944,7 +949,17 @@ class ChatListController extends State<ChatList>
           context: context,
           // #Pangea
           // future: () => space.setSpaceChild(room.id),
-          future: () => space.pangeaSetSpaceChild(room.id),
+          future: () async {
+            try {
+              await space.pangeaSetSpaceChild(room.id);
+            } catch (err) {
+              if (err is NestedSpaceError) {
+                throw L10n.of(context).nestedSpaceError;
+              } else {
+                rethrow;
+              }
+            }
+          },
           // Pangea#
         );
         // #Pangea

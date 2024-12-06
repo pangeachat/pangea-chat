@@ -551,6 +551,7 @@ class ChatController extends State<ChatPageWithRoom>
     choreographer.dispose();
     clearSelectedEvents();
     MatrixState.pAnyState.closeOverlay();
+    showToolbarStream.close();
     //Pangea#
     super.dispose();
   }
@@ -1614,6 +1615,15 @@ class ChatController extends State<ChatPageWithRoom>
       });
 
   // #Pangea
+  String? get buttonEventID => timeline!.events
+      .firstWhereOrNull(
+        (event) => event.isVisibleInGui && event.senderId != room.client.userID,
+      )
+      ?.eventId;
+
+  final StreamController<String> showToolbarStream =
+      StreamController.broadcast();
+
   void showToolbar(
     Event event, {
     PangeaMessageEvent? pangeaMessageEvent,
@@ -1652,23 +1662,28 @@ class ChatController extends State<ChatPageWithRoom>
       return;
     }
 
-    OverlayUtil.showOverlay(
-      context: context,
-      child: overlayEntry,
-      transformTargetId: "",
-      backgroundColor: Colors.black,
-      closePrevOverlay:
-          MatrixState.pangeaController.subscriptionController.isSubscribed,
-      position: OverlayPositionEnum.centered,
-      onDismiss: clearSelectedEvents,
-      blurBackground: true,
-    );
-
-    // select the message
-    onSelectMessage(event);
+    showToolbarStream.add(event.eventId);
     if (!kIsWeb) {
       HapticFeedback.mediumImpact();
     }
+
+    Future.delayed(
+        Duration(milliseconds: buttonEventID == event.eventId ? 200 : 0), () {
+      OverlayUtil.showOverlay(
+        context: context,
+        child: overlayEntry!,
+        transformTargetId: "",
+        backgroundColor: Colors.black,
+        closePrevOverlay:
+            MatrixState.pangeaController.subscriptionController.isSubscribed,
+        position: OverlayPositionEnum.centered,
+        onDismiss: clearSelectedEvents,
+        blurBackground: true,
+      );
+
+      // select the message
+      onSelectMessage(event);
+    });
   }
 
   // final List<int> selectedTokenIndicies = [];

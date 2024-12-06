@@ -4551,5 +4551,7 @@
   "noticeChatBackupDeviceVerification": "Note: When you connect all your devices to the chat backup, they are automatically verified.",
   "requireCodeToJoin": "Require code to join",
   "canFindInSearch": "Can find in search",
-  "addSubspaceWarning": "Once you add this, it will not appear in public search results, and it will be visible to all members of the parent space."
+  "addSubspaceWarning": "Once you add this, it will not appear in public search results, and it will be visible to all members of the parent space.",
+  "nestedSpaceError": "Spaces should not be added as children of other spaces",
+  "addChatToSpace": "Add chat"
 }
