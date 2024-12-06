@@ -75,7 +75,10 @@ class LoginView extends StatelessWidget {
               children: <Widget>[
                 // #Pangea
                 const SizedBox(height: 80),
-                // Image.asset('assets/banner_transparent.png'),
+                // Hero(
+                //   tag: 'info-logo',
+                //   child: Image.asset('assets/banner_transparent.png'),
+                // ),
                 // const SizedBox(height: 16),
                 // Pangea#
                 Padding(
@@ -102,7 +105,7 @@ class LoginView extends StatelessWidget {
                       ),
                       hintText: L10n.of(context).emailOrUsername,
                       // errorStyle,: const TextStyle(color: Colors.orange),
-                      // hintText: '@username:localpart',
+                      // hintText: '@username:domain',
                       // Pangea#
                       labelText: L10n.of(context).emailOrUsername,
                     ),

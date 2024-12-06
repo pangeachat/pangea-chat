@@ -20,6 +20,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:matrix/matrix.dart';
 import 'package:universal_html/html.dart' as html;
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../utils/localized_exception_extension.dart';
 
@@ -91,20 +92,21 @@ class HomeserverPickerController extends State<HomeserverPicker> {
   /// login type.
   Future<void> checkHomeserverAction([_]) async {
     // #Pangea
-    // homeserverController.text =
+    // final homeserverInput =
     //     homeserverController.text.trim().toLowerCase().replaceAll(' ', '-');
 
-    // if (homeserverController.text.isEmpty) {
+    // if (homeserverInput.isEmpty || !homeserverInput.contains('.')) {
     //   setState(() {
     //     error = loginFlows = null;
     //     isLoading = false;
     //     Matrix.of(context).getLoginClient().homeserver = null;
+    //     _lastCheckedUrl = null;
     //   });
     //   return;
     // }
-    // if (_lastCheckedUrl == homeserverController.text) return;
+    // if (_lastCheckedUrl == homeserverInput) return;
 
-    // _lastCheckedUrl = homeserverController.text;
+    // _lastCheckedUrl = homeserverInput;
     _lastCheckedUrl = AppConfig.defaultHomeserver;
     // Pangea#
     setState(() {
@@ -114,9 +116,9 @@ class HomeserverPickerController extends State<HomeserverPicker> {
 
     try {
       // #Pangea
-      // var homeserver = Uri.parse(homeserverController.text);
+      // var homeserver = Uri.parse(homeserverInput);
       // if (homeserver.scheme.isEmpty) {
-      //   homeserver = Uri.https(homeserverController.text, '');
+      //   homeserver = Uri.https(homeserverInput, '');
       // }
       var homeserver = Uri.parse(AppConfig.defaultHomeserver);
       if (homeserver.scheme.isEmpty) {
@@ -187,7 +189,6 @@ class HomeserverPickerController extends State<HomeserverPicker> {
     final urlScheme = isDefaultPlatform
         ? Uri.parse(redirectUrl).scheme
         : "http://localhost:3001";
-
     // #Pangea
     // final result = await FlutterWebAuth2.authenticate(
     //   url: url.toString(),
@@ -237,18 +238,23 @@ class HomeserverPickerController extends State<HomeserverPicker> {
     } finally {
       if (mounted) {
         setState(() {
-          // #Pangea
-          // isLoading = isLoggingIn = false;
-          isLoggingIn = false;
-          // Pangea#
+          isLoading = isLoggingIn = false;
         });
       }
     }
   }
 
-  void login() => context.push(
-        '${GoRouter.of(context).routeInformationProvider.value.uri.path}/login',
-      );
+  void login() async {
+    // #Pangea
+    // if (!supportsPasswordLogin) {
+    //   homeserverController.text = AppConfig.defaultHomeserver;
+    //   await checkHomeserverAction();
+    // }
+    // Pangea#
+    context.push(
+      '${GoRouter.of(context).routeInformationProvider.value.uri.path}/login',
+    );
+  }
 
   @override
   void initState() {
@@ -308,7 +314,20 @@ class HomeserverPickerController extends State<HomeserverPicker> {
     return list;
   }
   // Pangea#
+
+  void onMoreAction(MoreLoginActions action) {
+    switch (action) {
+      case MoreLoginActions.passwordLogin:
+        login();
+      case MoreLoginActions.privacy:
+        launchUrlString(AppConfig.privacyUrl);
+      case MoreLoginActions.about:
+        PlatformInfos.showDialog(context);
+    }
+  }
 }
+
+enum MoreLoginActions { passwordLogin, privacy, about }
 
 class IdentityProvider {
   final String? id;

@@ -4553,5 +4553,7 @@
   "canFindInSearch": "Can find in search",
   "addSubspaceWarning": "Once you add this, it will not appear in public search results, and it will be visible to all members of the parent space.",
   "nestedSpaceError": "Spaces should not be added as children of other spaces",
-  "addChatToSpace": "Add chat"
+  "addChatToSpace": "Add chat",
+  "continueText": "Continue",
+  "welcomeText": "Hey Hey 👋 This is FluffyChat. You can sign in to any homeserver, which is compatible with https://matrix.org. And then chat with anyone. It's a huge decentralized messaging network!"
 }
