@@ -211,10 +211,19 @@ class SettingsStyleView extends StatelessWidget {
                                       : 12,
                                   bottom: 12,
                                 ),
-                                child: Material(
-                                  color: theme.colorScheme.primary,
-                                  borderRadius: BorderRadius.circular(
-                                    AppConfig.borderRadius,
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        theme.colorScheme.primary,
+                                        theme.colorScheme.onPrimaryFixedVariant,
+                                      ],
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    borderRadius: BorderRadius.circular(
+                                      AppConfig.borderRadius,
+                                    ),
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -244,8 +253,10 @@ class SettingsStyleView extends StatelessWidget {
                                     bottom: 12,
                                   ),
                                   child: Material(
-                                    color: theme
-                                        .colorScheme.surfaceContainerHighest,
+                                    color: accountConfig.wallpaperUrl == null
+                                        ? theme
+                                            .colorScheme.surfaceContainerHighest
+                                        : theme.colorScheme.surfaceBright,
                                     borderRadius: BorderRadius.circular(
                                       AppConfig.borderRadius,
                                     ),
@@ -272,7 +283,12 @@ class SettingsStyleView extends StatelessWidget {
                       ),
                     ),
                     ListTile(
-                      title: OutlinedButton(
+                      title: TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor: theme.colorScheme.secondaryContainer,
+                          foregroundColor:
+                              theme.colorScheme.onSecondaryContainer,
+                        ),
                         onPressed: controller.setWallpaper,
                         child: Text(L10n.of(context).setWallpaper),
                       ),

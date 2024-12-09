@@ -39,13 +39,13 @@ class Message extends StatelessWidget {
   final bool highlightMarker;
   final bool animateIn;
   final void Function()? resetAnimateIn;
+  final bool wallpaperMode;
   // #Pangea
   final bool immersionMode;
   final ChatController controller;
   final MessageOverlayController? overlayController;
   final bool isButton;
   // Pangea#
-  final Color? avatarPresenceBackgroundColor;
 
   const Message(
     this.event, {
@@ -63,7 +63,7 @@ class Message extends StatelessWidget {
     this.highlightMarker = false,
     this.animateIn = false,
     this.resetAnimateIn,
-    this.avatarPresenceBackgroundColor,
+    this.wallpaperMode = false,
     // #Pangea
     required this.immersionMode,
     required this.controller,
@@ -131,7 +131,9 @@ class Message extends StatelessWidget {
     final ownMessage = event.senderId == client.userID;
     final alignment = ownMessage ? Alignment.topRight : Alignment.topLeft;
 
-    var color = theme.colorScheme.surfaceContainerHigh;
+    var color = wallpaperMode
+        ? theme.colorScheme.surfaceBright
+        : theme.colorScheme.surfaceContainerHigh;
     final displayTime = event.type == EventTypes.RoomCreate ||
         nextEvent == null ||
         !event.originServerTs.sameEnvironment(nextEvent!.originServerTs);
@@ -294,7 +296,7 @@ class Message extends StatelessWidget {
                                 name: user.calcDisplayname(),
                                 presenceUserId: user.stateKey,
                                 presenceBackgroundColor:
-                                    avatarPresenceBackgroundColor,
+                                    wallpaperMode ? Colors.transparent : null,
                                 onTap: () => onAvatarTab(event),
                               );
                             },
@@ -333,23 +335,20 @@ class Message extends StatelessWidget {
                                                     ? displayname.color
                                                     : displayname
                                                         .lightColorText),
-                                                shadows:
-                                                    avatarPresenceBackgroundColor ==
-                                                            null
-                                                        ? null
-                                                        : [
-                                                            Shadow(
-                                                              offset:
-                                                                  const Offset(
-                                                                0.0,
-                                                                0.0,
-                                                              ),
-                                                              blurRadius: 5,
-                                                              color: theme
-                                                                  .colorScheme
-                                                                  .surface,
-                                                            ),
-                                                          ],
+                                                shadows: !wallpaperMode
+                                                    ? null
+                                                    : [
+                                                        Shadow(
+                                                          offset: const Offset(
+                                                            0.0,
+                                                            0.0,
+                                                          ),
+                                                          blurRadius: 5,
+                                                          color: theme
+                                                              .colorScheme
+                                                              .surface,
+                                                        ),
+                                                      ],
                                               ),
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
@@ -398,14 +397,27 @@ class Message extends StatelessWidget {
                                       color: color,
                                       child:
                                           // Pangea#
-                                          Material(
-                                        color: noBubble
-                                            ? Colors.transparent
-                                            : color,
-                                        clipBehavior: Clip.antiAlias,
-                                        shape: RoundedRectangleBorder(
+                                          Container(
+                                        decoration: BoxDecoration(
+                                          color: ownMessage
+                                              ? null
+                                              : noBubble
+                                                  ? Colors.transparent
+                                                  : color,
                                           borderRadius: borderRadius,
+                                          gradient: ownMessage && !noBubble
+                                              ? LinearGradient(
+                                                  colors: [
+                                                    theme.colorScheme.primary,
+                                                    theme.colorScheme
+                                                        .onPrimaryFixedVariant,
+                                                  ],
+                                                  begin: Alignment.centerLeft,
+                                                  end: Alignment.bottomRight,
+                                                )
+                                              : null,
                                         ),
+                                        clipBehavior: Clip.antiAlias,
                                         // #Pangea
                                         child: CompositedTransformTarget(
                                           link: overlayController != null

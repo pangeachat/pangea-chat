@@ -334,21 +334,7 @@ class ChatView extends StatelessWidget {
                             Expanded(
                               child: GestureDetector(
                                 onTap: controller.clearSingleSelectedEvent,
-                                child: Builder(
-                                  builder: (context) {
-                                    if (controller.timeline == null) {
-                                      return const Center(
-                                        child:
-                                            CircularProgressIndicator.adaptive(
-                                          strokeWidth: 2,
-                                        ),
-                                      );
-                                    }
-                                    return ChatEventList(
-                                      controller: controller,
-                                    );
-                                  },
-                                ),
+                                child: ChatEventList(controller: controller),
                               ),
                             ),
                             if (controller.room.canSendDefaultMessages &&
@@ -365,7 +351,9 @@ class ChatView extends StatelessWidget {
                                 alignment: Alignment.center,
                                 child: Material(
                                   clipBehavior: Clip.hardEdge,
-                                  color: theme.colorScheme.surfaceContainerHigh,
+                                  color: accountConfig.wallpaperUrl != null
+                                      ? theme.colorScheme.surfaceBright
+                                      : theme.colorScheme.surfaceContainerHigh,
                                   borderRadius: const BorderRadius.all(
                                     Radius.circular(24),
                                   ),
