@@ -192,6 +192,7 @@ class ChatListController extends State<ChatList>
           await room.join();
           await waitForRoom;
         },
+        exceptionContext: ExceptionContext.joinRoom,
       );
       if (joinResult.error != null) return;
     }

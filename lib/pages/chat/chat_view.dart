@@ -17,6 +17,7 @@ import 'package:fluffychat/pangea/widgets/chat/chat_floating_action_button.dart'
 import 'package:fluffychat/pangea/widgets/chat/chat_view_background.dart';
 import 'package:fluffychat/pangea/widgets/chat/input_bar_wrapper.dart';
 import 'package:fluffychat/utils/account_config.dart';
+import 'package:fluffychat/utils/localized_exception_extension.dart';
 import 'package:fluffychat/widgets/connection_status_header.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
@@ -161,6 +162,7 @@ class ChatView extends StatelessWidget {
       showFutureLoadingDialog(
         context: context,
         future: () => controller.room.join(),
+        exceptionContext: ExceptionContext.joinRoom,
       );
       // #Pangea
       controller.room.leaveIfFull().then(
