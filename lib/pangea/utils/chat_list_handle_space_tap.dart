@@ -41,10 +41,6 @@ void chatListHandleSpaceTap(
         }
         setActiveSpaceAndCloseChat();
       },
-      onError: (exception) {
-        ErrorHandler.logError(e: exception);
-        return exception.toString();
-      },
     );
   }
 
