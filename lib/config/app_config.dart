@@ -57,6 +57,10 @@ abstract class AppConfig {
   static String _privacyUrl = "https://www.pangeachat.com/privacy";
   //Pangea#
   static String get privacyUrl => _privacyUrl;
+  // #Pangea
+  // static const String website = 'https://fluffychat.im';
+  static const String website = "https://pangea.chat/";
+  // Pangea#
   static const String enablePushTutorial =
       'https://github.com/krille-chan/fluffychat/wiki/Push-Notifications-without-Google-Services';
   static const String encryptionTutorial =
