@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:cross_file/cross_file.dart';
@@ -429,7 +428,6 @@ class ChatListController extends State<ChatList>
       builder: (context) => ShareScaffoldDialog(
         items: files.map(
           (file) {
-            inspect(file);
             if ({
               SharedMediaType.text,
               SharedMediaType.url,
