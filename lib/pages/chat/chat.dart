@@ -38,8 +38,10 @@ import 'package:fluffychat/utils/matrix_sdk_extensions/event_extension.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/filtered_timeline_extension.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
+import 'package:fluffychat/utils/show_scaffold_dialog.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:fluffychat/widgets/share_scaffold_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -59,14 +61,14 @@ import 'send_location_dialog.dart';
 
 class ChatPage extends StatelessWidget {
   final String roomId;
-  final String? shareText;
+  final List<ShareItem>? shareItems;
   final String? eventId;
 
   const ChatPage({
     super.key,
     required this.roomId,
     this.eventId,
-    this.shareText,
+    this.shareItems,
   });
 
   @override
@@ -90,7 +92,7 @@ class ChatPage extends StatelessWidget {
     return ChatPageWithRoom(
       key: Key('chat_page_${roomId}_$eventId'),
       room: room,
-      shareText: shareText,
+      shareItems: shareItems,
       eventId: eventId,
     );
   }
@@ -98,13 +100,13 @@ class ChatPage extends StatelessWidget {
 
 class ChatPageWithRoom extends StatefulWidget {
   final Room room;
-  final String? shareText;
+  final List<ShareItem>? shareItems;
   final String? eventId;
 
   const ChatPageWithRoom({
     super.key,
     required this.room,
-    this.shareText,
+    this.shareItems,
     this.eventId,
   });
 
@@ -275,10 +277,33 @@ class ChatController extends State<ChatPageWithRoom>
 
   void loadDraft() async {
     final prefs = await SharedPreferences.getInstance();
-    final draft = widget.shareText ?? prefs.getString('draft_$roomId');
+    final draft = prefs.getString('draft_$roomId');
     if (draft != null && draft.isNotEmpty) {
       sendController.text = draft;
     }
+  }
+
+  void _shareItems([_]) {
+    final shareItems = widget.shareItems;
+    if (shareItems == null || shareItems.isEmpty) return;
+    for (final item in shareItems) {
+      if (item is FileShareItem) continue;
+      if (item is TextShareItem) room.sendTextEvent(item.value);
+      if (item is ContentShareItem) room.sendEvent(item.value);
+    }
+    final files = shareItems
+        .whereType<FileShareItem>()
+        .map((item) => item.value)
+        .toList();
+    if (files.isEmpty) return;
+    showAdaptiveDialog(
+      context: context,
+      builder: (c) => SendFileDialog(
+        files: files,
+        room: room,
+        outerContext: context,
+      ),
+    );
   }
 
   @override
@@ -287,6 +312,7 @@ class ChatController extends State<ChatPageWithRoom>
     inputFocus.addListener(inputFocusListener);
 
     loadDraft();
+    WidgetsBinding.instance.addPostFrameCallback(_shareItems);
     super.initState();
     displayChatDetailsColumn = ValueNotifier(
       Matrix.of(context).store.getBool(SettingKeys.displayChatDetailsColumn) ??
@@ -1111,17 +1137,17 @@ class ChatController extends State<ChatPageWithRoom>
   }
 
   void forwardEventsAction() async {
-    if (selectedEvents.length == 1) {
-      Matrix.of(context).shareContent =
-          selectedEvents.first.getDisplayEvent(timeline!).content;
-    } else {
-      Matrix.of(context).shareContent = {
-        'msgtype': 'm.text',
-        'body': getSelectedEventString(),
-      };
-    }
+    if (selectedEvents.isEmpty) return;
+    await showScaffoldDialog(
+      context: context,
+      builder: (context) => ShareScaffoldDialog(
+        items: selectedEvents
+            .map((event) => ContentShareItem(event.content))
+            .toList(),
+      ),
+    );
+    if (!mounted) return;
     setState(() => selectedEvents.clear());
-    context.go('/rooms');
   }
 
   void sendAgainAction() {

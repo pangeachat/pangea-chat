@@ -19,39 +19,20 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final selectMode = controller.selectMode;
-
     return SliverAppBar(
       floating: true,
       // #Pangea
       // toolbarHeight: 72,
       toolbarHeight: controller.isSearchMode ? 72 : 175,
       // Pangea#
-      pinned:
-          FluffyThemes.isColumnMode(context) || selectMode != SelectMode.normal,
-      scrolledUnderElevation: selectMode == SelectMode.normal ? 0 : null,
+      pinned: FluffyThemes.isColumnMode(context),
+      scrolledUnderElevation: 0,
       // #Pangea
-      // backgroundColor:
-      //     selectMode == SelectMode.normal ? Colors.transparent : null,
+      // backgroundColor: Colors.transparent,
       // Pangea#
       automaticallyImplyLeading: false,
-      // #Pangea
-      // leading: selectMode == SelectMode.normal
-      //     ? null
-      //     : IconButton(
-      //         tooltip: L10n.of(context).cancel,
-      //         icon: const Icon(Icons.close_outlined),
-      //         onPressed: controller.cancelAction,
-      //         color: theme.colorScheme.primary,
-      //       ),
-      // Pangea#
       title:
           // #Pangea
-          // selectMode == SelectMode.share
-          //     ? Text(
-          //         L10n.of(context).share,
-          //         key: const ValueKey(SelectMode.share),
-          //       )
           Column(
         children: [
           // Pangea#
@@ -125,12 +106,12 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                   //       maxLines: 2,
                   //     ),
                   //   )
-                  // #Pangea
+                  // Pangea#
                   : const SizedBox(
                       width: 0,
                       child: ClientChooserButton(
                           // #Pangea
-                          // controller
+                          // controller,
                           // Pangea#
                           ),
                     ),
@@ -145,19 +126,6 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
           // Pangea#
         ],
       ),
-      // #Pangea
-      // actions: selectMode == SelectMode.share
-      //     ? [
-      //         Padding(
-      //           padding: const EdgeInsets.symmetric(
-      //             horizontal: 16.0,
-      //             vertical: 8.0,
-      //           ),
-      //           child: ClientChooserButton(controller),
-      //         ),
-      //       ]
-      //     : null,
-      // Pangea#
     );
   }
 

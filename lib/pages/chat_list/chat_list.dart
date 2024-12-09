@@ -4,7 +4,6 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/pages/chat/send_file_dialog.dart';
 import 'package:fluffychat/pages/chat_list/chat_list_view.dart';
 import 'package:fluffychat/pangea/constants/pangea_room_types.dart';
 import 'package:fluffychat/pangea/extensions/client_extension/client_extension.dart';
@@ -16,12 +15,14 @@ import 'package:fluffychat/pangea/widgets/subscription/subscription_snackbar.dar
 import 'package:fluffychat/utils/localized_exception_extension.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
+import 'package:fluffychat/utils/show_scaffold_dialog.dart';
 import 'package:fluffychat/utils/show_update_snackbar.dart';
 import 'package:fluffychat/utils/tor_stub.dart'
     if (dart.library.html) 'package:tor_detector_web/tor_detector_web.dart';
 import 'package:fluffychat/utils/url_launcher.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
+import 'package:fluffychat/widgets/share_scaffold_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,11 +39,6 @@ import '../../config/setting_keys.dart';
 import '../../utils/voip/callkeep_manager.dart';
 import '../../widgets/fluffy_chat_app.dart';
 import '../../widgets/matrix.dart';
-
-enum SelectMode {
-  normal,
-  share,
-}
 
 enum PopupMenuAction {
   settings,
@@ -212,42 +208,6 @@ class ChatListController extends State<ChatList>
     if (room.isSpace) {
       setActiveSpace(room.id);
       return;
-    }
-    // Share content into this room
-    final shareContent = Matrix.of(context).shareContent;
-    if (shareContent != null) {
-      final shareFile = shareContent.tryGet<XFile>('file');
-      if (shareContent.tryGet<String>('msgtype') == 'chat.fluffy.shared_file' &&
-          shareFile != null) {
-        await showDialog(
-          context: context,
-          useRootNavigator: false,
-          builder: (c) => SendFileDialog(
-            files: [shareFile],
-            room: room,
-            outerContext: context,
-          ),
-        );
-        Matrix.of(context).shareContent = null;
-      } else {
-        final consent = await showOkCancelAlertDialog(
-          context: context,
-          title: L10n.of(context).forward,
-          message: L10n.of(context).forwardMessageTo(
-            room.getLocalizedDisplayname(MatrixLocals(L10n.of(context))),
-          ),
-          okLabel: L10n.of(context).forward,
-          cancelLabel: L10n.of(context).cancel,
-        );
-        if (consent == OkCancelResult.cancel) {
-          Matrix.of(context).shareContent = null;
-          return;
-        }
-        if (consent == OkCancelResult.ok) {
-          room.sendEvent(shareContent);
-          Matrix.of(context).shareContent = null;
-        }
-      }
     }
 
     context.go('/rooms/${room.id}');
@@ -460,53 +420,31 @@ class ChatListController extends State<ChatList>
 
   String? get activeChat => widget.activeChat;
 
-  SelectMode get selectMode => Matrix.of(context).shareContent != null
-      ? SelectMode.share
-      : SelectMode.normal;
-
   void _processIncomingSharedMedia(List<SharedMediaFile> files) {
     if (files.isEmpty) return;
 
-    if (files.length > 1) {
-      Logs().w(
-        'Received ${files.length} incoming shared media but app can only handle the first one',
-      );
-    }
-
-    // We only handle the first file currently
-    final sharedMedia = files.first;
-
-    // Handle URIs and Texts, which are also passed in path
-    if (sharedMedia.type case SharedMediaType.text || SharedMediaType.url) {
-      return _processIncomingSharedText(sharedMedia.path);
-    }
-
-    final file = XFile(
-      sharedMedia.path.replaceFirst('file://', ''),
-      mimeType: sharedMedia.mimeType,
+    showScaffoldDialog(
+      context: context,
+      builder: (context) => ShareScaffoldDialog(
+        items: files.map(
+          (file) {
+            if ({
+              SharedMediaType.image,
+              SharedMediaType.file,
+              SharedMediaType.video,
+            }.contains(file.type)) {
+              return FileShareItem(
+                XFile(
+                  file.path.replaceFirst('file://', ''),
+                  mimeType: file.mimeType,
+                ),
+              );
+            }
+            return TextShareItem(file.path);
+          },
+        ).toList(),
+      ),
     );
-
-    Matrix.of(context).shareContent = {
-      'msgtype': 'chat.fluffy.shared_file',
-      'file': file,
-      if (sharedMedia.message != null) 'body': sharedMedia.message,
-    };
-    context.go('/rooms');
-  }
-
-  void _processIncomingSharedText(String? text) {
-    if (text == null) return;
-    if (text.toLowerCase().startsWith(AppConfig.deepLinkPrefix) ||
-        text.toLowerCase().startsWith(AppConfig.inviteLinkPrefix) ||
-        (text.toLowerCase().startsWith(AppConfig.schemePrefix) &&
-            !RegExp(r'\s').hasMatch(text))) {
-      return _processIncomingUris(text);
-    }
-    Matrix.of(context).shareContent = {
-      'msgtype': 'm.text',
-      'body': text,
-    };
-    context.go('/rooms');
   }
 
   void _processIncomingUris(String? text) async {
@@ -1115,12 +1053,6 @@ class ChatListController extends State<ChatList>
     }
   }
   // Pangea#
-
-  void cancelAction() {
-    if (selectMode == SelectMode.share) {
-      setState(() => Matrix.of(context).shareContent = null);
-    }
-  }
 
   void setActiveFilter(ActiveFilter filter) {
     setState(() {

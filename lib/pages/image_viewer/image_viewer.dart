@@ -1,8 +1,8 @@
 import 'package:fluffychat/pages/image_viewer/image_viewer_view.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:fluffychat/utils/show_scaffold_dialog.dart';
+import 'package:fluffychat/widgets/share_scaffold_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../utils/matrix_sdk_extensions/event_extension.dart';
@@ -19,11 +19,12 @@ class ImageViewer extends StatefulWidget {
 
 class ImageViewerController extends State<ImageViewer> {
   /// Forward this image to another room.
-  void forwardAction() {
-    Matrix.of(widget.outerContext).shareContent = widget.event.content;
-    Navigator.of(context).pop();
-    widget.outerContext.go('/rooms');
-  }
+  void forwardAction() => showScaffoldDialog(
+        context: context,
+        builder: (context) => ShareScaffoldDialog(
+          items: [ContentShareItem(widget.event.content)],
+        ),
+      );
 
   /// Save this file with a system call.
   void saveFileAction(BuildContext context) => widget.event.saveFile(context);
