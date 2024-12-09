@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 
 import 'package:file_picker/file_picker.dart';
@@ -19,12 +20,18 @@ extension MatrixFileExtension on MatrixFile {
       return;
     }
 
-    final downloadPath = await FilePicker.platform.saveFile(
-      dialogTitle: L10n.of(context).saveFile,
-      fileName: name,
-      type: filePickerFileType,
-      bytes: bytes,
-    );
+    final downloadPath = !PlatformInfos.isMobile
+        ? (await getSaveLocation(
+            suggestedName: name,
+            confirmButtonText: L10n.of(context).saveFile,
+          ))
+            ?.path
+        : await FilePicker.platform.saveFile(
+            dialogTitle: L10n.of(context).saveFile,
+            fileName: name,
+            type: filePickerFileType,
+            bytes: bytes,
+          );
     if (downloadPath == null) return;
 
     if (PlatformInfos.isDesktop) {
