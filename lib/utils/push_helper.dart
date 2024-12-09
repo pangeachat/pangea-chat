@@ -199,6 +199,7 @@ Future<void> _tryPushHelper(
 
   final id = notification.roomId.hashCode;
 
+  final senderName = event.senderFromMemoryOrFallback.calcDisplayname();
   // Show notification
 
   final newMessage = Message(
@@ -207,7 +208,7 @@ Future<void> _tryPushHelper(
     Person(
       bot: event.messageType == MessageTypes.Notice,
       key: event.senderId,
-      name: event.senderFromMemoryOrFallback.calcDisplayname(),
+      name: senderName,
       icon: senderAvatarFile == null
           ? null
           : ByteArrayAndroidIcon(senderAvatarFile),
@@ -254,14 +255,14 @@ Future<void> _tryPushHelper(
     styleInformation: messagingStyleInformation ??
         MessagingStyleInformation(
           Person(
-            name: event.senderFromMemoryOrFallback.calcDisplayname(),
+            name: senderName,
             icon: roomAvatarFile == null
                 ? null
                 : ByteArrayAndroidIcon(roomAvatarFile),
             key: event.roomId,
             important: event.room.isFavourite,
           ),
-          conversationTitle: roomName,
+          conversationTitle: event.room.isDirectChat ? null : roomName,
           groupConversation: !event.room.isDirectChat,
           messages: [newMessage],
         ),
