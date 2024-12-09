@@ -213,14 +213,7 @@ class SettingsStyleView extends StatelessWidget {
                                 ),
                                 child: DecoratedBox(
                                   decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        theme.colorScheme.primary,
-                                        theme.colorScheme.onPrimaryFixedVariant,
-                                      ],
-                                      begin: Alignment.centerLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
+                                    color: theme.colorScheme.primary,
                                     borderRadius: BorderRadius.circular(
                                       AppConfig.borderRadius,
                                     ),
@@ -253,10 +246,8 @@ class SettingsStyleView extends StatelessWidget {
                                     bottom: 12,
                                   ),
                                   child: Material(
-                                    color: accountConfig.wallpaperUrl == null
-                                        ? theme
-                                            .colorScheme.surfaceContainerHighest
-                                        : theme.colorScheme.surfaceBright,
+                                    color:
+                                        theme.colorScheme.surfaceContainerHigh,
                                     borderRadius: BorderRadius.circular(
                                       AppConfig.borderRadius,
                                     ),
@@ -282,15 +273,19 @@ class SettingsStyleView extends StatelessWidget {
                         ],
                       ),
                     ),
+                    Divider(
+                      color: theme.dividerColor,
+                    ),
                     ListTile(
-                      title: TextButton(
+                      title: TextButton.icon(
                         style: TextButton.styleFrom(
                           backgroundColor: theme.colorScheme.secondaryContainer,
                           foregroundColor:
                               theme.colorScheme.onSecondaryContainer,
                         ),
                         onPressed: controller.setWallpaper,
-                        child: Text(L10n.of(context).setWallpaper),
+                        icon: const Icon(Icons.edit_outlined),
+                        label: Text(L10n.of(context).setWallpaper),
                       ),
                       trailing: accountConfig.wallpaperUrl == null
                           ? null

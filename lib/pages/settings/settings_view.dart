@@ -185,11 +185,19 @@ class SettingsView extends StatelessWidget {
                   onTap: () => context.go('/rooms/settings/security'),
                 ),
                 Divider(color: theme.dividerColor),
+                // #Pangea
+                // ListTile(
+                //   leading: const Icon(Icons.dns_outlined),
+                //   title: Text(
+                //     L10n.of(context).aboutHomeserver(
+                //       Matrix.of(context).client.userID?.domain ?? 'homeserver',
+                //     ),
+                //   ),
+                //   onTap: () => context.go('/rooms/settings/homeserver'),
+                // ),
                 ListTile(
                   leading: const Icon(Icons.help_outline_outlined),
                   title: Text(L10n.of(context).help),
-                  // #Pangea
-                  // onTap: () => launchUrlString(AppConfig.supportUrl),
                   onTap: () async {
                     await showFutureLoadingDialog(
                       context: context,
@@ -203,9 +211,7 @@ class SettingsView extends StatelessWidget {
                       },
                     );
                   },
-                  // Pangea#
                 ),
-                // #Pangea
                 // ListTile(
                 //   leading: const Icon(Icons.shield_sharp),
                 //   title: Text(L10n.of(context).privacy),

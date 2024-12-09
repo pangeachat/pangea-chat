@@ -131,9 +131,7 @@ class Message extends StatelessWidget {
     final ownMessage = event.senderId == client.userID;
     final alignment = ownMessage ? Alignment.topRight : Alignment.topLeft;
 
-    var color = wallpaperMode
-        ? theme.colorScheme.surfaceBright
-        : theme.colorScheme.surfaceContainerHigh;
+    var color = theme.colorScheme.surfaceContainerHigh;
     final displayTime = event.type == EventTypes.RoomCreate ||
         nextEvent == null ||
         !event.originServerTs.sameEnvironment(nextEvent!.originServerTs);
@@ -338,15 +336,13 @@ class Message extends StatelessWidget {
                                                 shadows: !wallpaperMode
                                                     ? null
                                                     : [
-                                                        Shadow(
-                                                          offset: const Offset(
+                                                        const Shadow(
+                                                          offset: Offset(
                                                             0.0,
                                                             0.0,
                                                           ),
-                                                          blurRadius: 5,
-                                                          color: theme
-                                                              .colorScheme
-                                                              .surface,
+                                                          blurRadius: 3,
+                                                          color: Colors.black,
                                                         ),
                                                       ],
                                               ),
@@ -399,11 +395,9 @@ class Message extends StatelessWidget {
                                           // Pangea#
                                           Container(
                                         decoration: BoxDecoration(
-                                          color: ownMessage
-                                              ? null
-                                              : noBubble
-                                                  ? Colors.transparent
-                                                  : color,
+                                          color: noBubble
+                                              ? Colors.transparent
+                                              : color,
                                           borderRadius: borderRadius,
                                           gradient: ownMessage && !noBubble
                                               ? LinearGradient(
@@ -708,7 +702,8 @@ class Message extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: Divider(color: theme.colorScheme.secondary),
+                  child:
+                      Divider(color: theme.colorScheme.surfaceContainerHighest),
                 ),
                 Container(
                   margin: const EdgeInsets.symmetric(
@@ -717,18 +712,23 @@ class Message extends StatelessWidget {
                   ),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        BorderRadius.circular(AppConfig.borderRadius / 3),
+                    color: theme.colorScheme.surface.withAlpha(128),
                   ),
                   child: Text(
                     L10n.of(context).readUpToHere,
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
                       fontSize: 12 * AppConfig.fontSizeFactor,
-                      color: theme.colorScheme.secondary,
                     ),
                   ),
                 ),
                 Expanded(
-                  child: Divider(color: theme.colorScheme.secondary),
+                  child:
+                      Divider(color: theme.colorScheme.surfaceContainerHighest),
                 ),
               ],
             ),

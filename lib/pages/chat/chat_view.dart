@@ -351,9 +351,7 @@ class ChatView extends StatelessWidget {
                                 alignment: Alignment.center,
                                 child: Material(
                                   clipBehavior: Clip.hardEdge,
-                                  color: accountConfig.wallpaperUrl != null
-                                      ? theme.colorScheme.surfaceBright
-                                      : theme.colorScheme.surfaceContainerHigh,
+                                  color: theme.colorScheme.surfaceContainerHigh,
                                   borderRadius: const BorderRadius.all(
                                     Radius.circular(24),
                                   ),
@@ -411,12 +409,6 @@ class ChatView extends StatelessWidget {
                                   // Pangea#
                                 ),
                               ),
-                            // #Pangea
-                            // Keep messages above minimum input bar height
-                            const SizedBox(
-                              height: 60,
-                            ),
-                            // Pangea#
                           ],
                         ),
                         // #Pangea
