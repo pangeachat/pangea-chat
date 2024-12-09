@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
@@ -27,63 +25,95 @@ class LoginScaffold extends StatelessWidget {
         enforceMobileMode || !FluffyThemes.isColumnMode(context);
     final scaffold = Scaffold(
       key: const Key('LoginScaffold'),
-      appBar: appBar == null
-          ? null
-          : AppBar(
-              titleSpacing: appBar?.titleSpacing,
-              automaticallyImplyLeading:
-                  appBar?.automaticallyImplyLeading ?? true,
-              centerTitle: appBar?.centerTitle,
-              title: appBar?.title,
-              leading: appBar?.leading,
-              actions: appBar?.actions,
-              backgroundColor: isMobileMode ? null : Colors.transparent,
-            ),
-      body: SafeArea(child: body),
-      backgroundColor:
-          isMobileMode ? null : theme.colorScheme.surface.withOpacity(0.8),
-    );
-    if (isMobileMode) return scaffold;
-    return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: AssetImage('assets/login_wallpaper.png'),
-        ),
+      // #Pangea
+      // appBar: appBar == null
+      //     ? null
+      //     :
+      // AppBar(
+      appBar: AppBar(
+        // Pangea#
+        titleSpacing: appBar?.titleSpacing,
+        automaticallyImplyLeading: appBar?.automaticallyImplyLeading ?? true,
+        centerTitle: appBar?.centerTitle,
+        title: appBar?.title,
+        leading: appBar?.leading,
+        actions: appBar?.actions,
+        // #Pangea
+        // backgroundColor: isMobileMode ? null : Colors.transparent,
+        backgroundColor: Colors.transparent,
+        // Pangea#
       ),
-      child: Column(
-        children: [
-          const SizedBox(height: 16),
-          Expanded(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Material(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(AppConfig.borderRadius),
-                  clipBehavior: Clip.hardEdge,
-                  elevation: theme.appBarTheme.scrolledUnderElevation ?? 4,
-                  shadowColor: theme.appBarTheme.shadowColor,
-                  child: ConstrainedBox(
-                    constraints: isMobileMode
-                        ? const BoxConstraints()
-                        : const BoxConstraints(maxWidth: 480, maxHeight: 640),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(
-                        sigmaX: 10.0,
-                        sigmaY: 10.0,
-                      ),
-                      child: scaffold,
-                    ),
-                  ),
-                ),
-              ),
+      // #Pangea
+      extendBodyBehindAppBar: true,
+      // Pangea#
+      body: SafeArea(
+        child:
+            // #Pangea
+            // body
+            Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: AssetImage('assets/login_wallpaper.png'),
             ),
           ),
-          const _PrivacyButtons(mainAxisAlignment: MainAxisAlignment.center),
-        ],
+          alignment: Alignment.center,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 480),
+            child: body,
+          ),
+        ),
+        // Pangea#
       ),
+      // #Pangea
+      // backgroundColor:
+      //     isMobileMode ? null : theme.colorScheme.surface.withOpacity(0.8),
+      // Pangea#
     );
+    // #Pangea
+    return scaffold;
+    // if (isMobileMode) return scaffold;
+    // return Container(
+    //   decoration: const BoxDecoration(
+    //     image: DecorationImage(
+    //       fit: BoxFit.cover,
+    //       image: AssetImage('assets/login_wallpaper.png'),
+    //     ),
+    //   ),
+    //   child: Column(
+    //     children: [
+    //       const SizedBox(height: 16),
+    //       Expanded(
+    //         child: Center(
+    //           child: Padding(
+    //             padding: const EdgeInsets.symmetric(horizontal: 16.0),
+    //             child: Material(
+    //               color: Colors.transparent,
+    //               borderRadius: BorderRadius.circular(AppConfig.borderRadius),
+    //               clipBehavior: Clip.hardEdge,
+    //               elevation: theme.appBarTheme.scrolledUnderElevation ?? 4,
+    //               shadowColor: theme.appBarTheme.shadowColor,
+    //               child: ConstrainedBox(
+    //                 constraints: isMobileMode
+    //                     ? const BoxConstraints()
+    //                     : const BoxConstraints(maxWidth: 480, maxHeight: 640),
+    //                 child: BackdropFilter(
+    //                   filter: ImageFilter.blur(
+    //                     sigmaX: 10.0,
+    //                     sigmaY: 10.0,
+    //                   ),
+    //                   child: scaffold,
+    //                 ),
+    //               ),
+    //             ),
+    //           ),
+    //         ),
+    //       ),
+    //       const _PrivacyButtons(mainAxisAlignment: MainAxisAlignment.center),
+    //     ],
+    //   ),
+    // );
+    // Pangea#
   }
 }
 
