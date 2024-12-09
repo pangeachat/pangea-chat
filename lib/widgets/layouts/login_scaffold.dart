@@ -26,21 +26,41 @@ class LoginScaffold extends StatelessWidget {
       return Scaffold(
         key: const Key('LoginScaffold'),
         appBar: appBar,
-        body: SafeArea(child: body),
+        body: SafeArea(
+          // #Pangea
+          child: Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage('assets/login_wallpaper.png'),
+              ),
+            ),
+            // Pangea#
+            child: body,
+          ),
+        ),
       );
     }
     return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            theme.colorScheme.surfaceContainerLow,
-            theme.colorScheme.surfaceContainer,
-            theme.colorScheme.surfaceContainerHighest,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+      // #Pangea
+      // decoration: BoxDecoration(
+      //   gradient: LinearGradient(
+      //     colors: [
+      //       theme.colorScheme.surfaceContainerLow,
+      //       theme.colorScheme.surfaceContainer,
+      //       theme.colorScheme.surfaceContainerHighest,
+      //     ],
+      //     begin: Alignment.topLeft,
+      //     end: Alignment.bottomRight,
+      //   ),
+      // ),
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          fit: BoxFit.cover,
+          image: AssetImage('assets/login_wallpaper.png'),
         ),
       ),
+      // Pangea#
       child: Column(
         children: [
           const SizedBox(height: 16),
@@ -56,7 +76,13 @@ class LoginScaffold extends StatelessWidget {
                   child: ConstrainedBox(
                     constraints: isMobileMode
                         ? const BoxConstraints()
-                        : const BoxConstraints(maxWidth: 480, maxHeight: 640),
+                        : const BoxConstraints(
+                            maxWidth: 480,
+                            // #Pangea
+                            // maxHeight: 640,
+                            maxHeight: 700,
+                            // Pangea#
+                          ),
                     child: Scaffold(
                       key: const Key('LoginScaffold'),
                       appBar: appBar,

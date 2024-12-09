@@ -399,17 +399,6 @@ class Message extends StatelessWidget {
                                               ? Colors.transparent
                                               : color,
                                           borderRadius: borderRadius,
-                                          gradient: ownMessage && !noBubble
-                                              ? LinearGradient(
-                                                  colors: [
-                                                    theme.colorScheme.primary,
-                                                    theme.colorScheme
-                                                        .onPrimaryFixedVariant,
-                                                  ],
-                                                  begin: Alignment.centerLeft,
-                                                  end: Alignment.bottomRight,
-                                                )
-                                              : null,
                                         ),
                                         clipBehavior: Clip.antiAlias,
                                         // #Pangea
