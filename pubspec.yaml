@@ -69,9 +69,6 @@ dependencies:
   image_picker: ^1.1.0
   intl: any
   just_audio: ^0.9.39
-  # #Pangea
-  # keyboard_shortcuts: ^0.1.4
-  # Pangea#
   latlong2: ^0.9.1
   linkify: ^5.0.0
   # #Pangea
@@ -79,7 +76,7 @@ dependencies:
     git:
       url: https://github.com/pangeachat/matrix-dart-sdk.git # repo
       ref: main # branch
-  # matrix: ^0.34.0
+  # matrix: ^0.35.0
   # Pangea#
   mime: ^1.0.6
   native_imaging: ^0.1.1
@@ -216,12 +213,4 @@ msix_config:
   install_certificate: false
 
 dependency_overrides:
-  # waiting for null safety
-  # Upstream pull request: https://github.com/AntoineMarcel/keyboard_shortcuts/pull/13
-  # #Pangea
-  # keyboard_shortcuts:
-  #   git:
-  #     url: https://github.com/TheOneWithTheBraid/keyboard_shortcuts.git
-  #     ref: null-safety
-  # win32: 5.5.3
-  # Pangea#
+  win32: 5.5.3

@@ -138,33 +138,22 @@ class ChatListView extends StatelessWidget {
                     // body: ChatListViewBody(controller),
                     body: ChatListViewBodyWrapper(controller: controller),
                     // Pangea#
-                    floatingActionButton:
-                        // #Pangea
-                        // KeyBoardShortcuts(
-                        //   keysToPress: {
-                        //     LogicalKeyboardKey.controlLeft,
-                        //     LogicalKeyboardKey.keyN,
-                        //   },
-                        //   onKeysPressed: () => context.go('/rooms/newprivatechat'),
-                        //   helpLabel: L10n.of(context).newChat,
-                        //   child:
-                        // Pangea#
-                        selectMode == SelectMode.normal &&
-                                !controller.isSearchMode &&
-                                controller.activeSpaceId == null
-                            ? FloatingActionButton.extended(
-                                // #Pangea
-                                // onPressed: () =>
-                                //     context.go('/rooms/newprivatechat'),
-                                onPressed: () => context.go('/rooms/newgroup'),
-                                // Pangea#
-                                icon: const Icon(Icons.add_outlined),
-                                label: Text(
-                                  L10n.of(context).chat,
-                                  overflow: TextOverflow.fade,
-                                ),
-                              )
-                            : const SizedBox.shrink(),
+                    floatingActionButton: selectMode == SelectMode.normal &&
+                            !controller.isSearchMode &&
+                            controller.activeSpaceId == null
+                        ? FloatingActionButton.extended(
+                            // #Pangea
+                            // onPressed: () =>
+                            //     context.go('/rooms/newprivatechat'),
+                            onPressed: () => context.go('/rooms/newgroup'),
+                            // Pangea#
+                            icon: const Icon(Icons.add_outlined),
+                            label: Text(
+                              L10n.of(context).chat,
+                              overflow: TextOverflow.fade,
+                            ),
+                          )
+                        : const SizedBox.shrink(),
                   ),
                 ),
               ),

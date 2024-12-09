@@ -5,7 +5,6 @@ import 'package:fluffychat/pangea/utils/space_code.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
@@ -57,16 +56,6 @@ class ClientChooserButton extends StatelessWidget {
       //     ],
       //   ),
       // ),
-      PopupMenuItem(
-        value: SettingsAction.learning,
-        child: Row(
-          children: [
-            const Icon(Icons.psychology_outlined),
-            const SizedBox(width: 18),
-            Expanded(child: Text(L10n.of(context).learningSettings)),
-          ],
-        ),
-      ),
       // PopupMenuItem(
       //   value: SettingsAction.setStatus,
       //   child: Row(
@@ -77,6 +66,16 @@ class ClientChooserButton extends StatelessWidget {
       //     ],
       //   ),
       // ),
+      PopupMenuItem(
+        value: SettingsAction.learning,
+        child: Row(
+          children: [
+            const Icon(Icons.psychology_outlined),
+            const SizedBox(width: 18),
+            Expanded(child: Text(L10n.of(context).learningSettings)),
+          ],
+        ),
+      ),
       // PopupMenuItem(
       //   value: SettingsAction.invite,
       //   child: Row(
@@ -96,7 +95,7 @@ class ClientChooserButton extends StatelessWidget {
           children: [
             const Icon(Icons.archive_outlined),
             const SizedBox(width: 18),
-            Text(L10n.of(context).archive),
+            Text(L10n.of(context)!.archive),
           ],
         ),
       ),*/
@@ -215,89 +214,32 @@ class ClientChooserButton extends StatelessWidget {
             builder: (context, snapshot) => Stack(
               alignment: Alignment.center,
               children: [
-                // #Pangea
-                // ...List.generate(
-                //   clientCount,
-                //   (index) => KeyBoardShortcuts(
-                //     keysToPress: _buildKeyboardShortcut(index + 1),
-                //     helpLabel: L10n.of(context).switchToAccount(index + 1),
-                //     onKeysPressed: () => _handleKeyboardShortcut(
-                //       matrix,
-                //       index,
-                //       context,
-                //     ),
-                //     child: const SizedBox.shrink(),
-                //   ),
-                // ),
-                // KeyBoardShortcuts(
-                //   keysToPress: {
-                //     LogicalKeyboardKey.controlLeft,
-                //     LogicalKeyboardKey.tab,
-                //   },
-                //   helpLabel: L10n.of(context).nextAccount,
-                //   onKeysPressed: () => _nextAccount(matrix, context),
-                //   child: const SizedBox.shrink(),
-                // ),
-                // KeyBoardShortcuts(
-                //   keysToPress: {
-                //     LogicalKeyboardKey.controlLeft,
-                //     LogicalKeyboardKey.shiftLeft,
-                //     LogicalKeyboardKey.tab,
-                //   },
-                //   helpLabel: L10n.of(context).previousAccount,
-                //   onKeysPressed: () => _previousAccount(matrix, context),
-                //   child: const SizedBox.shrink(),
-                // ),
-                // Pangea#
+                ...List.generate(
+                  clientCount,
+                  (index) => const SizedBox.shrink(),
+                ),
+                const SizedBox.shrink(),
+                const SizedBox.shrink(),
                 PopupMenuButton<Object>(
                   onSelected: (o) => _clientSelected(o, context),
                   itemBuilder: _bundleMenuItems,
                   child: Material(
                     color: Colors.transparent,
                     borderRadius: BorderRadius.circular(99),
-                    // #Pangea
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Theme.of(context).colorScheme.primary,
-                            spreadRadius: 1,
-                            blurRadius: 1,
-                            offset: const Offset(
-                              0,
-                              1,
-                            ), // changes position of shadow
-                          ),
-                        ],
-                      ),
+                    child: Avatar(
+                      mxContent: snapshot.data?.avatarUrl,
+                      name: snapshot.data?.displayName ??
+                          matrix.client.userID!.localpart,
+                      // #Pangea
+                      // size: 32,
+                      size: 60,
                       // Pangea#
-                      child: Avatar(
-                        mxContent: snapshot.data?.avatarUrl,
-                        name: snapshot.data?.displayName ??
-                            matrix.client.userID!.localpart,
-                        // #Pangea
-                        // size: 32,
-                        size: 60,
-                        // Pangea#
-                      ),
                     ),
                   ),
                 ),
               ],
             ),
           );
-  }
-
-  Set<LogicalKeyboardKey>? _buildKeyboardShortcut(int index) {
-    if (index > 0 && index < 10) {
-      return {
-        LogicalKeyboardKey.altLeft,
-        LogicalKeyboardKey(0x00000000030 + index),
-      };
-    } else {
-      return null;
-    }
   }
 
   void _clientSelected(
@@ -309,7 +251,7 @@ class ClientChooserButton extends StatelessWidget {
     //   controller.setActiveClient(object);
     // } else if (object is String) {
     //   controller.setActiveBundle(object);
-    // } else if (object is SettingsAction) {
+    // } else
     if (object is SettingsAction) {
       // Pangea#
       switch (object) {
@@ -360,75 +302,6 @@ class ClientChooserButton extends StatelessWidget {
         // Pangea#
       }
     }
-  }
-
-  void _handleKeyboardShortcut(
-    MatrixState matrix,
-    int index,
-    BuildContext context,
-  ) {
-    final bundles = matrix.accountBundles.keys.toList()
-      ..sort(
-        (a, b) => a!.isValidMatrixId == b!.isValidMatrixId
-            ? 0
-            : a.isValidMatrixId && !b.isValidMatrixId
-                ? -1
-                : 1,
-      );
-    // beginning from end if negative
-    if (index < 0) {
-      var clientCount = 0;
-      matrix.accountBundles
-          .forEach((key, value) => clientCount += value.length);
-      _handleKeyboardShortcut(matrix, clientCount, context);
-    }
-    for (final bundleName in bundles) {
-      final bundle = matrix.accountBundles[bundleName];
-      if (bundle != null) {
-        if (index < bundle.length) {
-          return _clientSelected(bundle[index]!, context);
-        } else {
-          index -= bundle.length;
-        }
-      }
-    }
-    // if index too high, restarting from 0
-    _handleKeyboardShortcut(matrix, 0, context);
-  }
-
-  int? _shortcutIndexOfClient(MatrixState matrix, Client client) {
-    var index = 0;
-
-    final bundles = matrix.accountBundles.keys.toList()
-      ..sort(
-        (a, b) => a!.isValidMatrixId == b!.isValidMatrixId
-            ? 0
-            : a.isValidMatrixId && !b.isValidMatrixId
-                ? -1
-                : 1,
-      );
-    for (final bundleName in bundles) {
-      final bundle = matrix.accountBundles[bundleName];
-      if (bundle == null) return null;
-      if (bundle.contains(client)) {
-        return index + bundle.indexOf(client);
-      } else {
-        index += bundle.length;
-      }
-    }
-    return null;
-  }
-
-  void _nextAccount(MatrixState matrix, BuildContext context) {
-    final client = matrix.client;
-    final lastIndex = _shortcutIndexOfClient(matrix, client);
-    _handleKeyboardShortcut(matrix, lastIndex! + 1, context);
-  }
-
-  void _previousAccount(MatrixState matrix, BuildContext context) {
-    final client = matrix.client;
-    final lastIndex = _shortcutIndexOfClient(matrix, client);
-    _handleKeyboardShortcut(matrix, lastIndex! - 1, context);
   }
 }
 
