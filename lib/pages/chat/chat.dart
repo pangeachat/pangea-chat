@@ -275,7 +275,7 @@ class ChatController extends State<ChatPageWithRoom>
     }
   }
 
-  void loadDraft() async {
+  void _loadDraft() async {
     final prefs = await SharedPreferences.getInstance();
     final draft = prefs.getString('draft_$roomId');
     if (draft != null && draft.isNotEmpty) {
@@ -311,7 +311,7 @@ class ChatController extends State<ChatPageWithRoom>
     scrollController.addListener(updateScrollController);
     inputFocus.addListener(inputFocusListener);
 
-    loadDraft();
+    _loadDraft();
     WidgetsBinding.instance.addPostFrameCallback(_shareItems);
     super.initState();
     displayChatDetailsColumn = ValueNotifier(
