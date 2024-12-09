@@ -57,21 +57,6 @@ class ClientChooserButton extends StatelessWidget {
       //     ],
       //   ),
       // ),
-      // Pangea#
-      PopupMenuItem(
-        value: SettingsAction.newSpace,
-        child: Row(
-          children: [
-            const Icon(Icons.workspaces_outlined),
-            const SizedBox(width: 18),
-            // #Pangea
-            Text(L10n.of(context).createNewSpace),
-            // Text(L10n.of(context).createNewSpace),
-            // Pangea#
-          ],
-        ),
-      ),
-      // #Pangea
       PopupMenuItem(
         value: SettingsAction.learning,
         child: Row(
@@ -343,14 +328,6 @@ class ClientChooserButton extends StatelessWidget {
         // case SettingsAction.newGroup:
         //   context.go('/rooms/newgroup');
         //   break;
-        // Pangea#
-        case SettingsAction.newSpace:
-          // #Pangea
-          // controller.createNewSpace();
-          context.push<String?>('/rooms/newspace');
-          // Pangea#
-          break;
-        // #Pangea
         // case SettingsAction.invite:
         //   FluffyShare.shareInviteLink(context);
         //   break;
@@ -459,9 +436,6 @@ enum SettingsAction {
   addAccount,
   // #Pangea
   // newGroup,
-  // Pangea#
-  newSpace,
-  // #Pangea
   // setStatus,
   // invite,
   // Pangea#
