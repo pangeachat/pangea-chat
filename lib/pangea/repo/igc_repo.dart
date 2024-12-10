@@ -156,7 +156,6 @@ class IGCRequestBody {
 
   @override
   bool operator ==(Object other) {
-    // TODO: implement ==
     if (identical(this, other)) return true;
 
     if (other is! IGCRequestBody) return false;

@@ -29,25 +29,12 @@ class IgcController {
   final Map<int, List<PreviousMessage>> _prevMessagesCache = {};
   final Map<int, dynamic> _spaDetailsCache = {};
 
-  // map to track individuall expiration timers
+  // map to track individual expiration timers
   final Map<String, Timer> _cacheTimers = {};
-
-  // Timer for cache clearing
-  //Timer? _cacheClearTimer;
 
   IgcController(this.choreographer) {
     spanDataController = SpanDataController(choreographer);
-    //_startCacheClearTimer();
   }
-
-  // Start the cache clear timer
-  // void _startCacheClearTimer() {
-  //   _cacheClearTimer
-  //       ?.cancel(); // Cancel any existing timer to avoid multiple timers running concurrently
-  //   _cacheClearTimer = Timer(const Duration(minutes: 1), () {
-  //     clearCache(); // Call the cache clearing method after 1 minute
-  //   });
-  // }
 
   // Clear cache method
   void clearCache() {
@@ -125,9 +112,6 @@ class IgcController {
       }
 
       debugPrint("igc text ${igcTextData.toString()}");
-
-      // Reset the cache clearing timer on successful request
-      //_startCacheClearTimer();
     } catch (err, stack) {
       debugger(when: kDebugMode);
       choreographer.errorService.setError(
