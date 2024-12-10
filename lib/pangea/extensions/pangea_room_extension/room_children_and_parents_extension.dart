@@ -91,14 +91,14 @@ extension ChildrenAndParentsRoomExtension on Room {
       .toList();
 
   String _nameIncludingParents(BuildContext context) {
-    String nameSoFar = getLocalizedDisplayname(MatrixLocals(L10n.of(context)!));
+    String nameSoFar = getLocalizedDisplayname(MatrixLocals(L10n.of(context)));
     Room currentRoom = this;
     if (!currentRoom._isSubspace) {
       return nameSoFar;
     }
     currentRoom = currentRoom.pangeaSpaceParents.first;
     var nameToAdd =
-        currentRoom.getLocalizedDisplayname(MatrixLocals(L10n.of(context)!));
+        currentRoom.getLocalizedDisplayname(MatrixLocals(L10n.of(context)));
     nameToAdd =
         nameToAdd.length <= 10 ? nameToAdd : "${nameToAdd.substring(0, 10)}...";
     nameSoFar = '$nameToAdd > $nameSoFar';
@@ -117,6 +117,10 @@ extension ChildrenAndParentsRoomExtension on Room {
   }) async {
     final Room? child = client.getRoomById(roomId);
     if (child == null) return;
+    if (child.isSpace) {
+      throw NestedSpaceError();
+    }
+
     final List<Room> spaceParents = child.pangeaSpaceParents;
     for (final Room parent in spaceParents) {
       try {
@@ -150,4 +154,9 @@ extension ChildrenAndParentsRoomExtension on Room {
     }
     return suggestionStatus;
   }
+}
+
+class NestedSpaceError extends Error {
+  @override
+  String toString() => 'Cannot add a space to another space';
 }

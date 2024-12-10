@@ -33,6 +33,7 @@ class ChatListViewBody extends StatelessWidget {
     final activeSpace = controller.activeSpaceId;
     if (activeSpace != null) {
       return SpaceView(
+        key: ValueKey(activeSpace),
         spaceId: activeSpace,
         onBack: controller.clearActiveSpace,
         onChatTab: (room) => controller.onChatTap(room),
@@ -55,9 +56,11 @@ class ChatListViewBody extends StatelessWidget {
       }
     }
 
-    final publicRooms = controller.roomSearchResult?.chunk
-        .where((room) => room.roomType != 'm.space')
-        .toList();
+    // #Pangea
+    // final publicRooms = controller.roomSearchResult?.chunk
+    //     .where((room) => room.roomType != 'm.space')
+    //     .toList();
+    // Pangea#
     final publicSpaces = controller.roomSearchResult?.chunk
         .where((room) => room.roomType == 'm.space')
         .toList();
@@ -86,18 +89,20 @@ class ChatListViewBody extends StatelessWidget {
                 delegate: SliverChildListDelegate(
                   [
                     if (controller.isSearchMode) ...[
+                      // #Pangea
+                      // SearchTitle(
+                      //   title: L10n.of(context).publicRooms,
+                      //   icon: const Icon(Icons.explore_outlined),
+                      // ),
+                      // PublicRoomsHorizontalList(publicRooms: publicRooms),
+                      // Pangea#
                       SearchTitle(
-                        title: L10n.of(context)!.publicRooms,
-                        icon: const Icon(Icons.explore_outlined),
-                      ),
-                      PublicRoomsHorizontalList(publicRooms: publicRooms),
-                      SearchTitle(
-                        title: L10n.of(context)!.publicSpaces,
+                        title: L10n.of(context).publicSpaces,
                         icon: const Icon(Icons.workspaces_outlined),
                       ),
                       PublicRoomsHorizontalList(publicRooms: publicSpaces),
                       SearchTitle(
-                        title: L10n.of(context)!.users,
+                        title: L10n.of(context).users,
                         icon: const Icon(Icons.group_outlined),
                       ),
                       AnimatedContainer(
@@ -119,7 +124,7 @@ class ChatListViewBody extends StatelessWidget {
                                       userSearchResult.results[i].displayName ??
                                           userSearchResult
                                               .results[i].userId.localpart ??
-                                          L10n.of(context)!.unknownDevice,
+                                          L10n.of(context).unknownDevice,
                                   avatar: userSearchResult.results[i].avatarUrl,
                                   onPressed: () => showAdaptiveBottomSheet(
                                     context: context,
@@ -152,8 +157,8 @@ class ChatListViewBody extends StatelessWidget {
                         color: theme.colorScheme.surface,
                         child: ListTile(
                           leading: const Icon(Icons.vpn_key),
-                          title: Text(L10n.of(context)!.dehydrateTor),
-                          subtitle: Text(L10n.of(context)!.dehydrateTorLong),
+                          title: Text(L10n.of(context).dehydrateTor),
+                          subtitle: Text(L10n.of(context).dehydrateTorLong),
                           trailing: const Icon(Icons.chevron_right_outlined),
                           onTap: controller.dehydrate,
                         ),
@@ -237,7 +242,7 @@ class ChatListViewBody extends StatelessWidget {
                       ),
                     if (controller.isSearchMode)
                       SearchTitle(
-                        title: L10n.of(context)!.chats,
+                        title: L10n.of(context).chats,
                         icon: const Icon(Icons.forum_outlined),
                       ),
                     if (client.prevBatch != null &&
@@ -273,8 +278,8 @@ class ChatListViewBody extends StatelessWidget {
                             padding: const EdgeInsets.all(16.0),
                             child: Text(
                               client.rooms.isEmpty
-                                  ? L10n.of(context)!.noChatsFoundHere
-                                  : L10n.of(context)!.noMoreChatsFound,
+                                  ? L10n.of(context).noChatsFoundHere
+                                  : L10n.of(context).noMoreChatsFound,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 18,
@@ -358,7 +363,7 @@ class PublicRoomsHorizontalList extends StatelessWidget {
               itemBuilder: (context, i) => _SearchItem(
                 title: publicRooms[i].name ??
                     publicRooms[i].canonicalAlias?.localpart ??
-                    L10n.of(context)!.group,
+                    L10n.of(context).group,
                 avatar: publicRooms[i].avatarUrl,
                 onPressed: () => showAdaptiveBottomSheet(
                   context: context,
