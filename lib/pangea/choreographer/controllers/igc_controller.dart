@@ -28,11 +28,20 @@ class IgcController {
   final Map<int, IGCTextData> _igcTextDataCache = {};
   final Map<int, List<PreviousMessage>> _prevMessagesCache = {};
 
-  // map to track individual expiration timers
-  final Map<int, Timer> _cacheTimers = {};
+  Timer? _igcCacheClearTimer;
+  Timer? _prevMessagesCacheClearTimer;
 
   IgcController(this.choreographer) {
     spanDataController = SpanDataController(choreographer);
+    _initializeCacheClearing();
+  }
+
+  void _initializeCacheClearing() {
+    const duration = Duration(minutes: 1);
+    _igcCacheClearTimer =
+        Timer.periodic(duration, (Timer t) => _igcTextDataCache.clear());
+    _prevMessagesCacheClearTimer =
+        Timer.periodic(duration, (Timer t) => _prevMessagesCache.clear());
   }
 
   // Clear cache method
@@ -92,9 +101,6 @@ class IgcController {
       // Cache the fetched data
       _igcTextDataCache[reqBody.hashCode] = igcTextDataResponse;
 
-      // Set a 1-minute timer for the specific cache entry
-      _setCacheExpirationTimer(reqBody.hashCode);
-
       // TODO - for each new match,
       // check if existing igcTextData has one and only one match with the same error text and correction
       // if so, keep the original match and discard the new one
@@ -117,24 +123,6 @@ class IgcController {
       ErrorHandler.logError(e: err, s: stack);
       clear();
     }
-  }
-
-  /// Set a timer to clear the cache for the specific word after 1 minute
-  void _setCacheExpirationTimer(int hashKey) {
-    // If a timer already exists for this word, cancel it before setting a new one
-    _cacheTimers[hashKey]?.cancel();
-
-    // Set a new timer to clear the cache after 1 minute
-    _cacheTimers[hashKey] = Timer(const Duration(minutes: 1), () {
-      _clearCacheForWord(hashKey);
-    });
-  }
-
-  /// Clear the cache for a specific word
-  void _clearCacheForWord(int hashKey) {
-    _igcTextDataCache.remove(hashKey);
-    _cacheTimers.remove(hashKey); // Remove the timer for this word as well
-    debugPrint('Cache cleared for word: $hashKey');
   }
 
   void showFirstMatch(BuildContext context) {
@@ -249,6 +237,11 @@ class IgcController {
   clear() {
     igcTextData = null;
     spanDataController.clearCache();
+    spanDataController.dispose();
+
+    clearCache();
+    _igcCacheClearTimer?.cancel();
+    _prevMessagesCacheClearTimer?.cancel();
     // Not sure why this is here
     // MatrixState.pAnyState.closeOverlay();
   }
