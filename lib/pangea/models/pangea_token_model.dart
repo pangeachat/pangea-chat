@@ -197,6 +197,7 @@ class PangeaToken {
       case ActivityTypeEnum.wordMeaning:
         return canBeDefined;
       case ActivityTypeEnum.wordFocusListening:
+        return false;
       case ActivityTypeEnum.hiddenWordListening:
         return canBeHeard;
     }
@@ -252,9 +253,9 @@ class PangeaToken {
     switch (a) {
       case ActivityTypeEnum.wordMeaning:
         if (isContentWord) {
-          return vocabConstruct.points < 10 || daysSinceLastUseByType(a) > 7;
+          return vocabConstruct.points < 30;
         } else if (canBeDefined) {
-          return !_didActivity(a) && vocabConstruct.points < 5;
+          return vocabConstruct.points < 5;
         } else {
           return false;
         }

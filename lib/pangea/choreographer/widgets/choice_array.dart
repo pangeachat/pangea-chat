@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:math';
 
 import 'package:collection/collection.dart';
+import 'package:fluffychat/pangea/widgets/chat/tts_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
@@ -20,6 +21,12 @@ class ChoicesArray extends StatefulWidget {
   final String originalSpan;
   final String Function(int) uniqueKeyForLayerLink;
 
+  /// If null then should not be used
+  /// We don't want tts in the case of L1 options
+  final TtsController? tts;
+
+  final bool enableAudio;
+
   /// Used to unqiuely identify the keys for choices, in cases where multiple
   /// choices could have identical text, like in back-to-back practice activities
   final String? id;
@@ -35,6 +42,8 @@ class ChoicesArray extends StatefulWidget {
     required this.originalSpan,
     required this.uniqueKeyForLayerLink,
     required this.selectedChoiceIndex,
+    required this.tts,
+    this.enableAudio = true,
     this.isActive = true,
     this.onLongPress,
     this.id,
@@ -54,10 +63,15 @@ class ChoicesArrayState extends State<ChoicesArray> {
   }
 
   void enableInteractions() {
+    if (_hasSelectedCorrectChoice) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) setState(() => interactionDisabled = false);
     });
   }
+
+  bool get _hasSelectedCorrectChoice =>
+      widget.choices?.any((choice) => choice.isGold && choice.color != null) ??
+      false;
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +87,13 @@ class ChoicesArrayState extends State<ChoicesArray> {
                     theme: theme,
                     onLongPress: widget.isActive ? widget.onLongPress : null,
                     onPressed: widget.isActive
-                        ? widget.onPressed
+                        ? (String value, int index) {
+                            widget.onPressed(value, index);
+                            // TODO - what to pass here as eventID?
+                            if (widget.enableAudio && widget.tts != null) {
+                              widget.tts?.tryToSpeak(value, context, null);
+                            }
+                          }
                         : (String value, int index) {
                             debugger(when: kDebugMode);
                           },
@@ -130,7 +150,7 @@ class ChoiceItem extends StatelessWidget {
   Widget build(BuildContext context) {
     try {
       return Tooltip(
-        message: onLongPress != null ? L10n.of(context)!.holdForInfo : "",
+        message: onLongPress != null ? L10n.of(context).holdForInfo : "",
         waitDuration: onLongPress != null
             ? const Duration(milliseconds: 500)
             : const Duration(days: 1),

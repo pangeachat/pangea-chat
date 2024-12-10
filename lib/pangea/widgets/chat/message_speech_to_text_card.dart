@@ -63,12 +63,10 @@ class MessageSpeechToTextCardState extends State<MessageSpeechToTextCard> {
         data: widget.messageEvent.event.content,
       );
     } finally {
-      setState(() => _fetchingTranscription = false);
+      if (mounted) {
+        setState(() => _fetchingTranscription = false);
+      }
     }
-  }
-
-  void closeHint() {
-    setState(() {});
   }
 
   TextSpan _buildTranscriptText(BuildContext context) {
@@ -114,13 +112,15 @@ class MessageSpeechToTextCardState extends State<MessageSpeechToTextCard> {
             ..onTap = () {
               debugPrint('Token tapped');
               debugPrint(token.toJson().toString());
-              setState(() {
-                if (selectedToken == token) {
-                  selectedToken = null;
-                } else {
-                  selectedToken = token;
-                }
-              });
+              if (mounted) {
+                setState(() {
+                  if (selectedToken == token) {
+                    selectedToken = null;
+                  } else {
+                    selectedToken = token;
+                  }
+                });
+              }
             },
         ),
       );
@@ -189,7 +189,7 @@ class MessageSpeechToTextCardState extends State<MessageSpeechToTextCard> {
                       icon: Symbols.target,
                       number:
                           "${selectedToken?.confidence ?? speechToTextResponse!.transcript.confidence}%",
-                      toolTip: L10n.of(context)!.accuracy,
+                      toolTip: L10n.of(context).accuracy,
                     ),
                     const SizedBox(width: 16),
                     IconNumberWidget(
@@ -197,7 +197,7 @@ class MessageSpeechToTextCardState extends State<MessageSpeechToTextCard> {
                       number: wordsPerMinuteString != null
                           ? "$wordsPerMinuteString"
                           : "??",
-                      toolTip: L10n.of(context)!.wordsPerMinute,
+                      toolTip: L10n.of(context).wordsPerMinute,
                     ),
                   ],
                 ),

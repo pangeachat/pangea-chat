@@ -34,8 +34,8 @@ class AnalyticsPopupState extends State<AnalyticsPopup> {
     // Sort the list with custom logic
     entries.sort((a, b) {
       // Check if one of the keys is 'Other'
-      if (a.key == 'Other') return 1;
-      if (b.key == 'Other') return -1;
+      if (a.key.toLowerCase() == 'other') return 1;
+      if (b.key.toLowerCase() == 'other') return -1;
 
       // Sort by the length of the list in descending order
       final aTotalPoints = a.value.fold<int>(
@@ -57,7 +57,7 @@ class AnalyticsPopupState extends State<AnalyticsPopup> {
 
   String categoryCopy(category) {
     if (category.toLowerCase() == "other") {
-      return L10n.of(context)!.other;
+      return L10n.of(context).other;
     }
 
     return widget.type.getDisplayCopy(
@@ -90,7 +90,7 @@ class AnalyticsPopupState extends State<AnalyticsPopup> {
         ],
       );
     } else if (hasNoData) {
-      dialogContent = Center(child: Text(L10n.of(context)!.noDataFound));
+      dialogContent = Center(child: Text(L10n.of(context).noDataFound));
     } else if (hasNoCategories || !widget.showGroups) {
       dialogContent = ConstructsTileList(
         _constructsModel.constructList(type: widget.type),

@@ -24,6 +24,7 @@ class HtmlMessage extends StatelessWidget {
   final bool isOverlay;
   final PangeaMessageEvent? pangeaMessageEvent;
   final ChatController controller;
+  final Event event;
   final Event? nextEvent;
   final Event? prevEvent;
   // Pangea#
@@ -35,6 +36,7 @@ class HtmlMessage extends StatelessWidget {
     this.textColor = Colors.black,
     // #Pangea
     required this.isOverlay,
+    required this.event,
     this.pangeaMessageEvent,
     required this.controller,
     this.nextEvent,
@@ -95,9 +97,10 @@ class HtmlMessage extends StatelessWidget {
     return SelectionArea(
       child: GestureDetector(
         onTap: () {
-          if (pangeaMessageEvent != null && !isOverlay) {
+          if (!isOverlay) {
             controller.showToolbar(
-              pangeaMessageEvent!,
+              event,
+              pangeaMessageEvent: pangeaMessageEvent,
               nextEvent: nextEvent,
               prevEvent: prevEvent,
             );
@@ -302,14 +305,18 @@ class ImageExtension extends HtmlExtension {
     final width = double.tryParse(context.attributes['width'] ?? '');
     final height = double.tryParse(context.attributes['height'] ?? '');
 
+    final actualWidth = width ?? height ?? defaultDimension;
+    final actualHeight = height ?? width ?? defaultDimension;
+
     return WidgetSpan(
       child: SizedBox(
-        width: width ?? height ?? defaultDimension,
-        height: height ?? width ?? defaultDimension,
+        width: actualWidth,
+        height: actualHeight,
         child: MxcImage(
           uri: mxcUrl,
-          width: width ?? height ?? defaultDimension,
-          height: height ?? width ?? defaultDimension,
+          width: actualWidth,
+          height: actualHeight,
+          isThumbnail: (actualWidth * actualHeight) > (256 * 256),
         ),
       ),
     );

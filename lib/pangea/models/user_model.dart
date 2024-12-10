@@ -18,6 +18,7 @@ class UserSettings {
   String? targetLanguage;
   String? sourceLanguage;
   String? country;
+  bool? hasJoinedHelpSpace;
 
   UserSettings({
     this.dateOfBirth,
@@ -29,6 +30,7 @@ class UserSettings {
     this.targetLanguage,
     this.sourceLanguage,
     this.country,
+    this.hasJoinedHelpSpace,
   });
 
   factory UserSettings.fromJson(Map<String, dynamic> json) => UserSettings(
@@ -43,6 +45,7 @@ class UserSettings {
         targetLanguage: json[ModelKey.l2LanguageKey],
         sourceLanguage: json[ModelKey.l1LanguageKey],
         country: json[ModelKey.userCountry],
+        hasJoinedHelpSpace: json[ModelKey.hasJoinedHelpSpace],
       );
 
   Map<String, dynamic> toJson() {
@@ -56,6 +59,7 @@ class UserSettings {
     data[ModelKey.l2LanguageKey] = targetLanguage;
     data[ModelKey.l1LanguageKey] = sourceLanguage;
     data[ModelKey.userCountry] = country;
+    data[ModelKey.hasJoinedHelpSpace] = hasJoinedHelpSpace;
     return data;
   }
 
@@ -137,7 +141,7 @@ class UserToolSettings {
             json[ToolSetting.interactiveTranslator.toString()] ?? true,
         interactiveGrammar:
             json[ToolSetting.interactiveGrammar.toString()] ?? true,
-        immersionMode: json[ToolSetting.immersionMode.toString()] ?? false,
+        immersionMode: false,
         definitions: json[ToolSetting.definitions.toString()] ?? true,
         autoIGC: json[ToolSetting.autoIGC.toString()] ?? true,
       );
@@ -166,9 +170,7 @@ class UserToolSettings {
                       ?.content[ToolSetting.interactiveGrammar.toString()]
                   as bool?) ??
               true,
-      immersionMode: (accountData[ToolSetting.immersionMode.toString()]
-              ?.content[ToolSetting.immersionMode.toString()] as bool?) ??
-          false,
+      immersionMode: false,
       definitions: (accountData[ToolSetting.definitions.toString()]
               ?.content[ToolSetting.definitions.toString()] as bool?) ??
           true,
