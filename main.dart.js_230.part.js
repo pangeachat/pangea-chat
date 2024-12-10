@@ -1152,9 +1152,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     wasDirectChatDisplayName$1(oldDisplayName) {
       return "Discussion vide (\xe9tait " + oldDisplayName + ")";
     },
-    get$newSpaceDescription() {
-      return "Les espaces vous permettent de consolider vos conversations et de construire des communaut\xe9s priv\xe9es ou publiques.";
-    },
     get$reopenChat() {
       return "Rouvrir la discussion";
     },
@@ -3039,9 +3036,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$nothingFound() {
       return "Rien n'a \xe9t\xe9 trouv\xe9...";
     },
-    get$createGroupAndInviteUsers() {
-      return "Cr\xe9er un groupe et inviter des utilisateurs/trices";
-    },
     get$wrongRecoveryKey() {
       return "D\xe9sol\xe9... il ne semble pas s'agir de la bonne cl\xe9 de r\xe9cup\xe9ration.";
     },
@@ -4314,6 +4308,12 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$unableToJoinChat() {
       return "Unable to join chat. Maybe the other party has already closed the conversation.";
     },
+    get$createChatAndInviteUsers() {
+      return "Create chat and invite users";
+    },
+    get$updatedNewSpaceDescription() {
+      return "Spaces allow you to consolidate your chats and build private or public communities.";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4329,6 +4329,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_230", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "arnxK/IPnNaXTCJ6GGkODfIYAbw=");
+})($__dart_deferred_initializers__, "0EIhplQJFJXyloHrGhSye4CvkdU=");
 ;
 //# sourceMappingURL=main.dart.js_230.part.js.map

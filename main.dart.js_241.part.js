@@ -1152,9 +1152,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     wasDirectChatDisplayName$1(oldDisplayName) {
       return "Prazan razgovor (zvao se " + oldDisplayName + ")";
     },
-    get$newSpaceDescription() {
-      return "Prostori omogu\u0107uju konsolidiranje tvojih razgovora i izgradnju privatne ili javne zajednice.";
-    },
     get$reopenChat() {
       return "Ponovo otvori razgovor";
     },
@@ -3039,9 +3036,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$nothingFound() {
       return "Ni\u0161ta nije prona\u0111eno...";
     },
-    get$createGroupAndInviteUsers() {
-      return "Stvori grupu i pozovi korisnike";
-    },
     get$wrongRecoveryKey() {
       return "Oprosti \u2026 \u010dini se da ovo nije ispravan klju\u010d za obnavljanje.";
     },
@@ -4314,6 +4308,12 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$unableToJoinChat() {
       return "Unable to join chat. Maybe the other party has already closed the conversation.";
     },
+    get$createChatAndInviteUsers() {
+      return "Create chat and invite users";
+    },
+    get$updatedNewSpaceDescription() {
+      return "Spaces allow you to consolidate your chats and build private or public communities.";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4329,6 +4329,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_241", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "5LFlMzP3oJXRba5L+k9sWmpV7Yg=");
+})($__dart_deferred_initializers__, "O9NUpLCnr1JlbM4pwC7J+p4p0Bg=");
 ;
 //# sourceMappingURL=main.dart.js_241.part.js.map

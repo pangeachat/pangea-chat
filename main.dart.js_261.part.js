@@ -1152,9 +1152,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     wasDirectChatDisplayName$1(oldDisplayName) {
       return "\ube48 \ucc44\ud305 (\uc804 " + oldDisplayName + ")";
     },
-    get$newSpaceDescription() {
-      return "\uc2a4\ud398\uc774\uc2a4\ub97c \uc0ac\uc6a9\ud558\uba74 \ucc44\ud305\uc744 \ud1b5\ud569\ud558\uace0 \ube44\uacf5\uac1c \ub610\ub294 \uacf5\uac1c \ucee4\ubba4\ub2c8\ud2f0\ub97c \uad6c\ucd95\ud560 \uc218 \uc788\uc2b5\ub2c8\ub2e4.";
-    },
     get$reopenChat() {
       return "\ucc44\ud305 \ub2e4\uc2dc \uc5f4\uae30";
     },
@@ -3039,9 +3036,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$nothingFound() {
       return "\uc544\ubb34\uac83\ub3c4 \ucc3e\uc9c0 \ubabb\ud588\uc2b5\ub2c8\ub2e4...";
     },
-    get$createGroupAndInviteUsers() {
-      return "\uadf8\ub8f9 \ucc44\ud305\uc744 \uc0dd\uc131\ud558\uace0 \uc720\uc800\ub97c \ucd08\ub300";
-    },
     get$wrongRecoveryKey() {
       return "\uc8c4\uc1a1\ud569\ub2c8\ub2e4... \uc62c\ubc14\ub978 \ubcf5\uad6c\ud0a4\uac00 \uc544\ub2cc\uac83 \uac19\uc2b5\ub2c8\ub2e4.";
     },
@@ -4314,6 +4308,12 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$unableToJoinChat() {
       return "Unable to join chat. Maybe the other party has already closed the conversation.";
     },
+    get$createChatAndInviteUsers() {
+      return "Create chat and invite users";
+    },
+    get$updatedNewSpaceDescription() {
+      return "Spaces allow you to consolidate your chats and build private or public communities.";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4329,6 +4329,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_261", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "imeUeTxcBVJGtls3BHzqzswmAUk=");
+})($__dart_deferred_initializers__, "CKh/BxB/NMJ2ZvjpCtyjPhdO2as=");
 ;
 //# sourceMappingURL=main.dart.js_261.part.js.map

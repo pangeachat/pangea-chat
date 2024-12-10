@@ -1152,9 +1152,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     wasDirectChatDisplayName$1(oldDisplayName) {
       return "Comhr\xe1 folamh (bh\xed " + oldDisplayName + ")";
     },
-    get$newSpaceDescription() {
-      return "Ligeann sp\xe1sanna duit do chomhr\xe1ite a chomhdhl\xfath\xfa agus pobail phr\xedobh\xe1ideacha n\xf3 phoibl\xed a th\xf3g\xe1il.";
-    },
     get$reopenChat() {
       return "Comhr\xe1 a athoscailt";
     },
@@ -3039,9 +3036,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$nothingFound() {
       return "N\xedor aims\xedodh aon rud...";
     },
-    get$createGroupAndInviteUsers() {
-      return "Cruthaigh gr\xfapa agus tabhair cuireadh d'\xfas\xe1ideoir\xed";
-    },
     get$wrongRecoveryKey() {
       return "T\xe1 br\xf3n orm... N\xed cos\xfail gurb \xe9 seo an eochair aisghabh\xe1la ceart.";
     },
@@ -4314,6 +4308,12 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$unableToJoinChat() {
       return "N\xed f\xe9idir p\xe1irt a ghlacadh sa chomhr\xe1. B\u2019fh\xe9idir go bhfuil an comhr\xe1 d\xfanta cheana f\xe9in ag an bp\xe1irt\xed eile.";
     },
+    get$createChatAndInviteUsers() {
+      return "Create chat and invite users";
+    },
+    get$updatedNewSpaceDescription() {
+      return "Spaces allow you to consolidate your chats and build private or public communities.";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4332,6 +4332,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_233", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "Nf9UggG7uQDub6kNocyvL0ouoDY=");
+})($__dart_deferred_initializers__, "XrCTf/Y6snBOblbGS4OMCaftLKI=");
 ;
 //# sourceMappingURL=main.dart.js_233.part.js.map

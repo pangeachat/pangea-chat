@@ -1152,9 +1152,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     wasDirectChatDisplayName$1(oldDisplayName) {
       return "\xdcres cseveg\xe9s (kor\xe1bban " + oldDisplayName + ")";
     },
-    get$newSpaceDescription() {
-      return "A terek lehet\u0151v\xe9 teszik a cseveg\xe9sek konszolid\xe1ci\xf3j\xe1t, ez\xe1ltal l\xe9trehozva publikus vagy priv\xe1t k\xf6z\xf6ss\xe9geket.";
-    },
     get$reopenChat() {
       return "Cseveg\xe9s \xfajranyit\xe1sa";
     },
@@ -3039,9 +3036,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$nothingFound() {
       return "Nincs tal\xe1lat...";
     },
-    get$createGroupAndInviteUsers() {
-      return "Hozzon l\xe9tre egy csoportot \xe9s h\xedvjon meg felhaszn\xe1l\xf3kat";
-    },
     get$wrongRecoveryKey() {
       return "Sajnos, \xfagy t\u0171nik hib\xe1san adta meg a vissza\xe1ll\xedt\xe1si kulcsot.";
     },
@@ -4314,6 +4308,12 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$unableToJoinChat() {
       return "Unable to join chat. Maybe the other party has already closed the conversation.";
     },
+    get$createChatAndInviteUsers() {
+      return "Create chat and invite users";
+    },
+    get$updatedNewSpaceDescription() {
+      return "Spaces allow you to consolidate your chats and build private or public communities.";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4329,6 +4329,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_247", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "tsU66NtZZHOhLB2iliUlV/fS0BE=");
+})($__dart_deferred_initializers__, "MP7XOGgO8FbPBwQnKhqneA1FBEQ=");
 ;
 //# sourceMappingURL=main.dart.js_247.part.js.map

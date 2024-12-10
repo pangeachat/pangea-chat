@@ -1153,9 +1153,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     wasDirectChatDisplayName$1(oldDisplayName) {
       return "\u0645\u062d\u0627\u062f\u062b\u0629 \u0641\u0627\u0631\u063a\u0629 (\u0643\u0627\u0646\u062a " + oldDisplayName + ")";
     },
-    get$newSpaceDescription() {
-      return "\u064a\u0633\u0645\u062d \u0644\u0643 \u062a\u0637\u0628\u064a\u0642 \u0627\u0644\u0645\u0633\u0627\u062d\u0627\u062a \u0628\u062a\u0648\u062d\u064a\u062f \u062f\u0631\u062f\u0634\u0627\u062a\u0643 \u0648\u0628\u0646\u0627\u0621 \u0645\u062c\u062a\u0645\u0639\u0627\u062a \u062e\u0627\u0635\u0629 \u0623\u0648 \u0639\u0627\u0645\u0629.";
-    },
     get$reopenChat() {
       return "\u0625\u0639\u0627\u062f\u0629 \u0641\u062a\u062d \u0627\u0644\u0645\u062d\u0627\u062f\u062b\u0629";
     },
@@ -3040,9 +3037,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$nothingFound() {
       return "\u0644\u0645 \u0646\u062c\u062f \u0634\u064a\u0626\u0627\u064b.";
     },
-    get$createGroupAndInviteUsers() {
-      return "\u0625\u0646\u0634\u0627\u0621 \u0645\u062c\u0645\u0648\u0639\u0629 \u0648\u062f\u0639\u0648\u0629 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645\u064a\u0646";
-    },
     get$wrongRecoveryKey() {
       return "\u0639\u0630\u0631\u064b\u0627... \u0644\u0627 \u064a\u0628\u062f\u0648 \u0623\u0646 \u0647\u0630\u0627 \u0647\u0648 \u0645\u0641\u062a\u0627\u062d \u0627\u0644\u0627\u0633\u062a\u0631\u062f\u0627\u062f \u0627\u0644\u0635\u062d\u064a\u062d.";
     },
@@ -4315,6 +4309,12 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$unableToJoinChat() {
       return "\u064a\u062a\u0639\u0630\u0631 \u0627\u0644\u0627\u0646\u0636\u0645\u0627\u0645 \u0625\u0644\u0649 \u0627\u0644\u062f\u0631\u062f\u0634\u0629. \u0631\u0628\u0645\u0627 \u064a\u0643\u0648\u0646 \u0627\u0644\u0637\u0631\u0641 \u0627\u0644\u0622\u062e\u0631 \u0642\u062f \u0623\u063a\u0644\u0642 \u0627\u0644\u0645\u062d\u0627\u062f\u062b\u0629 \u0628\u0627\u0644\u0641\u0639\u0644.";
     },
+    get$createChatAndInviteUsers() {
+      return "Create chat and invite users";
+    },
+    get$updatedNewSpaceDescription() {
+      return "Spaces allow you to consolidate your chats and build private or public communities.";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4330,6 +4330,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_183", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "6XSqIX+1kTGvR9BYvM32k/ItQJI=");
+})($__dart_deferred_initializers__, "imzsXoCTaTeEEwLvnoK9PrvtKBU=");
 ;
 //# sourceMappingURL=main.dart.js_183.part.js.map

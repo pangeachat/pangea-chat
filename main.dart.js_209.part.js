@@ -1152,9 +1152,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     wasDirectChatDisplayName$1(oldDisplayName) {
       return "Leerer Chat (war " + oldDisplayName + ")";
     },
-    get$newSpaceDescription() {
-      return "Mit Spaces kannst du deine Chats zusammenfassen und private oder \xf6ffentliche Communities aufbauen.";
-    },
     get$reopenChat() {
       return "Chat wieder er\xf6ffnen";
     },
@@ -3039,9 +3036,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$nothingFound() {
       return "Nichts gefunden ...";
     },
-    get$createGroupAndInviteUsers() {
-      return "Gruppe erstellen und Nutzer einladen";
-    },
     get$wrongRecoveryKey() {
       return "Entschuldigung ... das scheint nicht der richtige Wiederherstellungsschl\xfcssel zu sein.";
     },
@@ -4314,6 +4308,12 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$unableToJoinChat() {
       return "Chat kann nicht beigetreten werden. M\xf6glicherweise hat die Gegenseite das Gespr\xe4ch bereits beendet.";
     },
+    get$createChatAndInviteUsers() {
+      return "Create chat and invite users";
+    },
+    get$updatedNewSpaceDescription() {
+      return "Spaces allow you to consolidate your chats and build private or public communities.";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4332,6 +4332,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_209", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "zoKdqcoRFUFlpb/CLtarH2CrToY=");
+})($__dart_deferred_initializers__, "1YfN6UKn4QWHCxd35D/t+iaSCBc=");
 ;
 //# sourceMappingURL=main.dart.js_209.part.js.map

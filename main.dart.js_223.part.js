@@ -1152,9 +1152,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     wasDirectChatDisplayName$1(oldDisplayName) {
       return "S\xf5numiteta vestlus (vana nimega " + oldDisplayName + ")";
     },
-    get$newSpaceDescription() {
-      return "Kogukonnad v\xf5imaldavad sul koondada erinevaid vestlusi ning korraldada avalikku v\xf5i privaatset \xfchistegevust.";
-    },
     get$reopenChat() {
       return "Alusta vestlust uuesti";
     },
@@ -3039,9 +3036,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$nothingFound() {
       return "Ei leidnud mitte midagi...";
     },
-    get$createGroupAndInviteUsers() {
-      return "Lisavestlusr\xfchm ja kutsu sinna kasutajaid";
-    },
     get$wrongRecoveryKey() {
       return "Vabandust..., see ei tundu olema korrektne taastev\xf5ti.";
     },
@@ -4314,6 +4308,12 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$unableToJoinChat() {
       return "Vestlusega liitumine ei \xf5nnestu. V\xf5ib-olla on teine osapool juba vestluse sulgenud.";
     },
+    get$createChatAndInviteUsers() {
+      return "Create chat and invite users";
+    },
+    get$updatedNewSpaceDescription() {
+      return "Spaces allow you to consolidate your chats and build private or public communities.";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4329,6 +4329,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_223", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "AHVOV2CFNzojL1FH7bhDWtYFnms=");
+})($__dart_deferred_initializers__, "uLNKQePKWZpV09hU4x6UZrhNvhk=");
 ;
 //# sourceMappingURL=main.dart.js_223.part.js.map

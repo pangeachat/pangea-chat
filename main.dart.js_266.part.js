@@ -1152,9 +1152,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     wasDirectChatDisplayName$1(oldDisplayName) {
       return "Lege chat (was " + oldDisplayName + ")";
     },
-    get$newSpaceDescription() {
-      return "Met spaces kun je je chats samenvoegen en priv\xe9- of openbare community's bouwen.";
-    },
     get$reopenChat() {
       return "Chat heropenen";
     },
@@ -3039,9 +3036,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$nothingFound() {
       return "Niets gevonden...";
     },
-    get$createGroupAndInviteUsers() {
-      return "Create a group and invite users";
-    },
     get$wrongRecoveryKey() {
       return "Sorry... this does not seem to be the correct recovery key.";
     },
@@ -4314,6 +4308,12 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$unableToJoinChat() {
       return "Unable to join chat. Maybe the other party has already closed the conversation.";
     },
+    get$createChatAndInviteUsers() {
+      return "Create chat and invite users";
+    },
+    get$updatedNewSpaceDescription() {
+      return "Spaces allow you to consolidate your chats and build private or public communities.";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4329,6 +4329,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_266", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "pBUYABshb4bx3A8vak9MFpS+5gM=");
+})($__dart_deferred_initializers__, "0n+8S8H6v8leEZWxu2F51w5+HZo=");
 ;
 //# sourceMappingURL=main.dart.js_266.part.js.map

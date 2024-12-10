@@ -1152,9 +1152,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     wasDirectChatDisplayName$1(oldDisplayName) {
       return "Chat vuota (era " + oldDisplayName + ")";
     },
-    get$newSpaceDescription() {
-      return "Gli spazi ti permettono di consolidare le tue chat e di creare comunit\xe0 private o pubbliche.";
-    },
     get$reopenChat() {
       return "Riapri la chat";
     },
@@ -3039,9 +3036,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$nothingFound() {
       return "Non \xe8 stato trovato nulla...";
     },
-    get$createGroupAndInviteUsers() {
-      return "Crea un gruppo e invita gli utenti";
-    },
     get$wrongRecoveryKey() {
       return "Mi dispiace... questa non sembra essere la chiave di recupero corretta.";
     },
@@ -4314,6 +4308,12 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$unableToJoinChat() {
       return "Impossibile partecipare alla chat. Forse l'altra parte ha gi\xe0 chiuso la conversazione.";
     },
+    get$createChatAndInviteUsers() {
+      return "Create chat and invite users";
+    },
+    get$updatedNewSpaceDescription() {
+      return "Spaces allow you to consolidate your chats and build private or public communities.";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4329,6 +4329,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_257", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "h41M+GbRikI2216FeL58Tevf2QE=");
+})($__dart_deferred_initializers__, "pUN3jueh+j/7H5ZBDIlU0VxZVLs=");
 ;
 //# sourceMappingURL=main.dart.js_257.part.js.map
