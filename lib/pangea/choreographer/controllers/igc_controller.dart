@@ -25,11 +25,11 @@ class IgcController {
   late SpanDataController spanDataController;
 
   // cache for IGC data and prev message
-  final Map<String, IGCTextData> _igcTextDataCache = {};
+  final Map<int, IGCTextData> _igcTextDataCache = {};
   final Map<int, List<PreviousMessage>> _prevMessagesCache = {};
 
   // map to track individual expiration timers
-  final Map<String, Timer> _cacheTimers = {};
+  final Map<int, Timer> _cacheTimers = {};
 
   IgcController(this.choreographer) {
     spanDataController = SpanDataController(choreographer);
@@ -48,17 +48,10 @@ class IgcController {
     try {
       if (choreographer.currentText.isEmpty) return clear();
 
-      final trimmedText = choreographer.currentText.trim();
       debugPrint('getIGCTextData called with ${choreographer.currentText}');
       debugPrint(
         'getIGCTextData called with tokensOnly = $onlyTokensAndLanguageDetection',
       );
-
-      // Check if cached data exists
-      if (_igcTextDataCache.containsKey(trimmedText)) {
-        igcTextData = _igcTextDataCache[trimmedText];
-        return;
-      }
 
       final IGCRequestBody reqBody = IGCRequestBody(
         fullText: choreographer.currentText,
@@ -69,6 +62,12 @@ class IgcController {
         enableIT: choreographer.itEnabled && !onlyTokensAndLanguageDetection,
         prevMessages: prevMessages(),
       );
+
+      // Check if cached data exists
+      if (_igcTextDataCache.containsKey(reqBody.hashCode)) {
+        igcTextData = _igcTextDataCache[reqBody.hashCode];
+        return;
+      }
 
       final IGCTextData igcTextDataResponse = await IgcRepo.getIGC(
         choreographer.accessToken,
@@ -91,10 +90,10 @@ class IgcController {
       igcTextData = igcTextDataResponse;
 
       // Cache the fetched data
-      _igcTextDataCache[trimmedText] = igcTextDataResponse;
+      _igcTextDataCache[reqBody.hashCode] = igcTextDataResponse;
 
       // Set a 1-minute timer for the specific cache entry
-      _setCacheExpirationTimer(trimmedText);
+      _setCacheExpirationTimer(reqBody.hashCode);
 
       // TODO - for each new match,
       // check if existing igcTextData has one and only one match with the same error text and correction
@@ -121,21 +120,21 @@ class IgcController {
   }
 
   /// Set a timer to clear the cache for the specific word after 1 minute
-  void _setCacheExpirationTimer(String word) {
+  void _setCacheExpirationTimer(int hashKey) {
     // If a timer already exists for this word, cancel it before setting a new one
-    _cacheTimers[word]?.cancel();
+    _cacheTimers[hashKey]?.cancel();
 
     // Set a new timer to clear the cache after 1 minute
-    _cacheTimers[word] = Timer(const Duration(minutes: 1), () {
-      _clearCacheForWord(word);
+    _cacheTimers[hashKey] = Timer(const Duration(minutes: 1), () {
+      _clearCacheForWord(hashKey);
     });
   }
 
   /// Clear the cache for a specific word
-  void _clearCacheForWord(String word) {
-    _igcTextDataCache.remove(word);
-    _cacheTimers.remove(word); // Remove the timer for this word as well
-    debugPrint('Cache cleared for word: $word');
+  void _clearCacheForWord(int hashKey) {
+    _igcTextDataCache.remove(hashKey);
+    _cacheTimers.remove(hashKey); // Remove the timer for this word as well
+    debugPrint('Cache cleared for word: $hashKey');
   }
 
   void showFirstMatch(BuildContext context) {

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:fluffychat/pangea/config/environment.dart';
 import 'package:fluffychat/pangea/controllers/language_detection_controller.dart';
@@ -122,6 +121,26 @@ class PreviousMessage {
         ModelKey.prevSender: sender,
         ModelKey.prevTimestamp: timestamp.toIso8601String(),
       };
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    if (other is! PreviousMessage) return false;
+
+    return content == other.content &&
+        sender == other.sender &&
+        timestamp == other.timestamp;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      content,
+      sender,
+      timestamp,
+    );
+  }
 }
 
 class IGCRequestBody {
@@ -160,18 +179,14 @@ class IGCRequestBody {
 
     if (other is! IGCRequestBody) return false;
 
-    debugger();
-
     return fullText.trim() == other.fullText.trim() &&
         fullText == other.fullText &&
         userL1 == other.userL1 &&
         userL2 == other.userL2 &&
         enableIT == other.enableIT &&
-        userId == other.userId &&
-        prevMessages.toString() == other.prevMessages.toString();
+        userId == other.userId;
   }
 
-  // hash code for caaching purposes
   @override
   int get hashCode => Object.hash(
         fullText.trim(),
@@ -180,6 +195,6 @@ class IGCRequestBody {
         enableIT,
         enableIGC,
         userId,
-        prevMessages.toString(),
+        Object.hashAll(prevMessages),
       );
 }
