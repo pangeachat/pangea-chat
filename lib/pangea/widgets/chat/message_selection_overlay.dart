@@ -74,7 +74,8 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
 
   int get activitiesLeftToComplete => messageAnalyticsEntry?.numActivities ?? 0;
 
-  bool get isPracticeComplete => activitiesLeftToComplete <= 0;
+  bool get isPracticeComplete =>
+      activitiesLeftToComplete <= 0 || !messageInUserL2;
 
   /// Decides whether an _initialSelectedToken should be used
   /// for a first practice activity on the word meaning
@@ -602,7 +603,6 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
             ToolbarButtons(
               event: widget._event,
               overlayController: this,
-              width: 250,
             ),
           ],
         ),
