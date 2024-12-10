@@ -4269,6 +4269,15 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$noContactInformationProvided() {
       return "O servidor non proporciona informaci\xf3n de contacto v\xe1lida";
     },
+    get$contactServerAdmin() {
+      return "Contacto con Admin do servidor";
+    },
+    get$contactServerSecurity() {
+      return "Contacto con Seguridade do servidor";
+    },
+    get$supportPage() {
+      return "P\xe1xina de axuda";
+    },
     get$serverInformation() {
       return "Informaci\xf3n do servidor:";
     },
@@ -4320,6 +4329,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_235", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "YcsG/EERaQ46nEmvS9+0+Iw537E=");
+})($__dart_deferred_initializers__, "UGZHqfXSvGsI2noHKPWXdFIpcUo=");
 ;
 //# sourceMappingURL=main.dart.js_235.part.js.map

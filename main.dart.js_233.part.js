@@ -4269,6 +4269,15 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$noContactInformationProvided() {
       return "N\xed shol\xe1thra\xedonn an freastala\xed aon fhaisn\xe9is teagmh\xe1la bhail\xed";
     },
+    get$contactServerAdmin() {
+      return "D\xe9an teagmh\xe1il le admin an fhreastala\xed";
+    },
+    get$contactServerSecurity() {
+      return "D\xe9an teagmh\xe1il le sl\xe1nd\xe1il an fhreastala\xed";
+    },
+    get$supportPage() {
+      return "Leathanach taca\xedochta";
+    },
     get$serverInformation() {
       return "Eolas freastala\xed:";
     },
@@ -4323,6 +4332,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_233", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "qoy87OswmfL6UvOmEkg0/Uj8jgU=");
+})($__dart_deferred_initializers__, "Nf9UggG7uQDub6kNocyvL0ouoDY=");
 ;
 //# sourceMappingURL=main.dart.js_233.part.js.map

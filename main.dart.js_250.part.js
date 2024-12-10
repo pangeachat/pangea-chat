@@ -4269,6 +4269,15 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$noContactInformationProvided() {
       return "Server tidak menyediakan informasi kontak valid apa pun";
     },
+    get$contactServerAdmin() {
+      return "Hubungi admin server";
+    },
+    get$contactServerSecurity() {
+      return "Hubungi keamanan server";
+    },
+    get$supportPage() {
+      return "Laman dukungan";
+    },
     get$serverInformation() {
       return "Informasi server:";
     },
@@ -4320,6 +4329,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_250", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "gb+JaTjqJa28CTrrWZpdUD63kR8=");
+})($__dart_deferred_initializers__, "TR5LmVFizO1tD3Z4Q87OuwMdqpQ=");
 ;
 //# sourceMappingURL=main.dart.js_250.part.js.map

@@ -4269,6 +4269,15 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$noContactInformationProvided() {
       return "Zerbitzariak ez du harremanetarako informaziorik zehaztu";
     },
+    get$contactServerAdmin() {
+      return "Jarri harremanetan zerbitzariaren administratzailearekin";
+    },
+    get$contactServerSecurity() {
+      return "Jakinarazi segurtasun arazo bat";
+    },
+    get$supportPage() {
+      return "Laguntza orria";
+    },
     get$serverInformation() {
       return "Zerbitzariaren informazioa:";
     },
@@ -4323,6 +4332,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_225", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "oy3XoP9V0VOgZ7Jb1cNl7+PsS6M=");
+})($__dart_deferred_initializers__, "7Kwl4qzGaM95rpcpAGM4bfD2yWQ=");
 ;
 //# sourceMappingURL=main.dart.js_225.part.js.map

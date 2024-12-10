@@ -4269,6 +4269,15 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$noContactInformationProvided() {
       return "\uc11c\ubc84\uac00 \uc720\ud6a8\ud55c \uc5f0\ub77d\ucc98 \uc815\ubcf4\ub97c \uc81c\uacf5\ud558\uc9c0 \uc54a\uc2b5\ub2c8\ub2e4";
     },
+    get$contactServerAdmin() {
+      return "\uc11c\ubc84 \uad00\ub9ac\uc790 \uc5f0\ub77d\ud558\uae30";
+    },
+    get$contactServerSecurity() {
+      return "\uc11c\ubc84 \ubcf4\uc548\uad00 \uc5f0\ub77d\ud558\uae30";
+    },
+    get$supportPage() {
+      return "\ud398\uc774\uc9c0 \ub3d5\uae30";
+    },
     get$serverInformation() {
       return "\uc11c\ubc84 \uc815\ubcf4:";
     },
@@ -4320,6 +4329,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_261", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "zeK4e0R/YTvL1ZdZsjUdxvAb8RI=");
+})($__dart_deferred_initializers__, "imeUeTxcBVJGtls3BHzqzswmAUk=");
 ;
 //# sourceMappingURL=main.dart.js_261.part.js.map

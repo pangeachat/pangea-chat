@@ -4269,6 +4269,15 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$noContactInformationProvided() {
       return "Serveris nesniedz nek\u0101du der\u012bgu sazi\u0146as inform\u0101ciju";
     },
+    get$contactServerAdmin() {
+      return "Sazin\u0101ties ar servera p\u0101rvald\u012bt\u0101ju";
+    },
+    get$contactServerSecurity() {
+      return "Sazin\u0101ties ar servera dro\u0161\u012bbas uztur\u0113t\u0101jiem";
+    },
+    get$supportPage() {
+      return "Atbalsta lapa";
+    },
     get$serverInformation() {
       return "Inform\u0101cija par serveri:";
     },
@@ -4320,6 +4329,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_263", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "PY0H3MfSzDpJD8+POcHiVy4cpGE=");
+})($__dart_deferred_initializers__, "vEu9W540cd0cJJegzxDPmlb1qPY=");
 ;
 //# sourceMappingURL=main.dart.js_263.part.js.map

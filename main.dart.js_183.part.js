@@ -4270,6 +4270,15 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$noContactInformationProvided() {
       return "\u0644\u0627 \u064a\u0642\u062f\u0645 \u0627\u0644\u0633\u064a\u0631\u0641\u0631 \u0623\u064a \u0645\u0639\u0644\u0648\u0645\u0627\u062a \u0627\u062a\u0635\u0627\u0644 \u0635\u062d\u064a\u062d\u0629";
     },
+    get$contactServerAdmin() {
+      return "\u0627\u062a\u0635\u0644 \u0628\u0645\u0633\u0624\u0648\u0644 \u0627\u0644\u062e\u0627\u062f\u0645";
+    },
+    get$contactServerSecurity() {
+      return "\u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u0628\u0645\u0633\u0624\u0648\u0644 \u0623\u0645\u0627\u0646 \u0627\u0627\u062e\u0627\u062f\u0645";
+    },
+    get$supportPage() {
+      return "\u0635\u0641\u062d\u0629 \u0627\u0644\u062f\u0639\u0645";
+    },
     get$serverInformation() {
       return "\u0645\u0639\u0644\u0648\u0645\u0627\u062a \u0627\u0644\u062e\u0627\u062f\u0645:";
     },
@@ -4321,6 +4330,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_183", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "V4w2vLM2knquhmY4u1+uJrLSXIU=");
+})($__dart_deferred_initializers__, "6XSqIX+1kTGvR9BYvM32k/ItQJI=");
 ;
 //# sourceMappingURL=main.dart.js_183.part.js.map

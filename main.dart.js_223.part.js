@@ -4269,6 +4269,15 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$noContactInformationProvided() {
       return "Server ei jaga asjakohast kontaktteavet";
     },
+    get$contactServerAdmin() {
+      return "V\xf5ta \xfchendust serveri haldajaga";
+    },
+    get$contactServerSecurity() {
+      return "V\xf5ta \xfchendust serveri andmeturbe eest vastutajaga";
+    },
+    get$supportPage() {
+      return "Kasutajatugi";
+    },
     get$serverInformation() {
       return "Serveri teave:";
     },
@@ -4320,6 +4329,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_223", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "/bHe1FjMsEvLq/24NWH0d6Ur+PA=");
+})($__dart_deferred_initializers__, "AHVOV2CFNzojL1FH7bhDWtYFnms=");
 ;
 //# sourceMappingURL=main.dart.js_223.part.js.map
