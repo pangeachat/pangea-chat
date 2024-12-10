@@ -27,7 +27,6 @@ class IgcController {
   // cache for IGC data and prev message
   final Map<String, IGCTextData> _igcTextDataCache = {};
   final Map<int, List<PreviousMessage>> _prevMessagesCache = {};
-  final Map<int, dynamic> _spaDetailsCache = {};
 
   // map to track individual expiration timers
   final Map<String, Timer> _cacheTimers = {};
@@ -40,7 +39,6 @@ class IgcController {
   void clearCache() {
     _igcTextDataCache.clear();
     _prevMessagesCache.clear();
-    _spaDetailsCache.clear();
     debugPrint("Cache cleared after 1 minute.");
   }
 
