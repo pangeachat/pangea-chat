@@ -4321,6 +4321,12 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$updatedNewSpaceDescription() {
       return "Spaces allow you to consolidate your chats and build private or public communities.";
     },
+    get$joinWithCode() {
+      return "Join with code";
+    },
+    get$enterCodeToJoin() {
+      return "Enter code to join";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -5689,6 +5695,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_1", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "oy0luVNc9QOl9Qta8TNrXyTF/8Q=");
+})($__dart_deferred_initializers__, "UGEammgNoURHc9N+fiRRUJMkNwo=");
 ;
 //# sourceMappingURL=main.dart.js_1.part.js.map
