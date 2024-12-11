@@ -4320,6 +4320,24 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$enterCodeToJoin() {
       return "Enter code to join";
     },
+    get$mandatoryUpdateRequired() {
+      return "Mandatory Update Required";
+    },
+    get$updateAvailable() {
+      return "Actualizaci\xf3n de FluffyChat disponible";
+    },
+    get$mandatoryUpdateRequiredDesc() {
+      return "A new version of the app is required to continue. Please update now to proceed.";
+    },
+    get$updateAvailableDesc() {
+      return "A new version of the app is available. Update now for the latest features and improvements!";
+    },
+    get$updateNow() {
+      return "Comenzar actualizaci\xf3n en segundo plano.";
+    },
+    get$updateLater() {
+      return "Later";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4335,6 +4353,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_219", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "13q31LywWL4YKdmWceJ33gu8968=");
+})($__dart_deferred_initializers__, "6jKewEFUIJSq0dBpX+gFvUc79CY=");
 ;
 //# sourceMappingURL=main.dart.js_219.part.js.map

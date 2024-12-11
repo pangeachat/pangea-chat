@@ -4320,6 +4320,24 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$enterCodeToJoin() {
       return "Enter code to join";
     },
+    get$mandatoryUpdateRequired() {
+      return "Mandatory Update Required";
+    },
+    get$updateAvailable() {
+      return "Update Available";
+    },
+    get$mandatoryUpdateRequiredDesc() {
+      return "A new version of the app is required to continue. Please update now to proceed.";
+    },
+    get$updateAvailableDesc() {
+      return "A new version of the app is available. Update now for the latest features and improvements!";
+    },
+    get$updateNow() {
+      return "Update Now";
+    },
+    get$updateLater() {
+      return "Later";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4335,6 +4353,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_260", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "GvEHKtZ9ryR2Kh2a7x98xhCywXI=");
+})($__dart_deferred_initializers__, "cAM6IIpP6IP93LxJ6nc4E8N/gdM=");
 ;
 //# sourceMappingURL=main.dart.js_260.part.js.map
