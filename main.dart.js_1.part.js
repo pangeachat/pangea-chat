@@ -4345,6 +4345,66 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$updateLater() {
       return "Later";
     },
+    get$constructUseWaDesc() {
+      return "Used without help";
+    },
+    get$constructUseGaDesc() {
+      return "Grammar mistake";
+    },
+    get$constructUseUnkDesc() {
+      return "Unknown";
+    },
+    get$constructUseCorITDesc() {
+      return "Correct in translation";
+    },
+    get$constructUseIgnITDesc() {
+      return "Ignored in translation";
+    },
+    get$constructUseIncITDesc() {
+      return "Incorrect in translation";
+    },
+    get$constructUseIgnIGCDesc() {
+      return "Ignored in grammar correction";
+    },
+    get$constructUseCorIGCDesc() {
+      return "Correct in grammar correction";
+    },
+    get$constructUseIncIGCDesc() {
+      return "Incorrect in grammar correction";
+    },
+    get$constructUseCorPADesc() {
+      return "Correct in word meaning activity";
+    },
+    get$constructUseIgnPADesc() {
+      return "Ignored in word meaning activity";
+    },
+    get$constructUseIncPADesc() {
+      return "Incorrect in word meaning activity";
+    },
+    get$constructUseCorWLDesc() {
+      return "Correct in word listening activity";
+    },
+    get$constructUseIncWLDesc() {
+      return "Incorrect in word listening activity";
+    },
+    get$constructUseIngWLDesc() {
+      return "Ignored in word listening activity";
+    },
+    get$constructUseCorHWLDesc() {
+      return "Correct in hidden word activity";
+    },
+    get$constructUseIncHWLDesc() {
+      return "Incorrect in hidden word activity";
+    },
+    get$constructUseIgnHWLDesc() {
+      return "Ignored in hidden word activity";
+    },
+    get$constructUseNanDesc() {
+      return "Not applicable";
+    },
+    xpIntoLevel$2(currentXP, maxXP) {
+      return "" + currentXP + " / " + maxXP + " XP";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -5713,6 +5773,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_1", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "dVfdv/cLX0ai839scO1X+djBI6A=");
+})($__dart_deferred_initializers__, "mqOvdf18bQIZpXlk++JpIR3B43Q=");
 ;
 //# sourceMappingURL=main.dart.js_1.part.js.map
