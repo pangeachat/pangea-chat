@@ -35,7 +35,7 @@ class MessageToolbar extends StatelessWidget {
   TtsController get ttsController =>
       overLayController.widget.chatController.choreographer.tts;
 
-  Widget toolbarContent(BuildContext context) {
+  Widget? toolbarContent(BuildContext context) {
     final bool subscribed =
         MatrixState.pangeaController.subscriptionController.isSubscribed;
 
@@ -74,6 +74,9 @@ class MessageToolbar extends StatelessWidget {
             displayText: L10n.of(context)
                 .messageNotInTargetLang, // Pass the display text,
           );
+        }
+        if (overLayController.selectedSpan == null) {
+          return null;
         }
         return PracticeActivityCard(
           pangeaMessageEvent: pangeaMessageEvent,
