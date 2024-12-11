@@ -71,5 +71,5 @@ class PApiUrls {
 
   static String rcSubscription = "$rcApiV1/subscribers";
 
-  static String appVersion = "${Environment.choreoApi}/api/version";
+  static String appVersion = "${PApiUrls.choreoEndpoint}/version";
 }
