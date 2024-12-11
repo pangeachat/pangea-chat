@@ -572,9 +572,7 @@ class ChatListController extends State<ChatList>
         Matrix.of(context).backgroundPush?.setupPush();
         UpdateNotifier.showUpdateSnackBar(context);
 
-        AppVersionController.getAppVersion(
-          MatrixState.pangeaController.userController.accessToken,
-        ).then((resp) {}).catchError((err, s) {});
+        AppVersionController.showAppVersionDialog(context);
       }
 
       // Workaround for system UI overlay style not applied on app start
