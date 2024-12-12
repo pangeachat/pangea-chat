@@ -3236,7 +3236,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Words per minute";
     },
     get$autoIGCToolName() {
-      return "Run Language Assistance Automatically";
+      return "Run language assistance automatically";
     },
     get$autoIGCToolDescription() {
       return "Automatically run language assistance after typing messages";
@@ -4399,6 +4399,18 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     xpIntoLevel$2(currentXP, maxXP) {
       return "" + currentXP + " / " + maxXP + " XP";
     },
+    get$enableTTSToolName() {
+      return "Enabled text-to-speech";
+    },
+    get$enableTTSToolDescription() {
+      return "Allow the app to generate text-to-speech output for portions of text in your target language";
+    },
+    get$couldNotFindTTS() {
+      return "We couldn't find a text-to-speech engine for your current target language. ";
+    },
+    get$ttsInstructionsHyperlink() {
+      return "Click here to view instructions for downloading a new voice on your device.";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4414,6 +4426,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_197", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "RwW5v9KgLJP7vO40mvEJd2bhMSA=");
+})($__dart_deferred_initializers__, "Qyrt8obLaN0/ffyIGL8AiT0kG04=");
 ;
 //# sourceMappingURL=main.dart.js_197.part.js.map

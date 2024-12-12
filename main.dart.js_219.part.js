@@ -4398,6 +4398,18 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     xpIntoLevel$2(currentXP, maxXP) {
       return "" + currentXP + " / " + maxXP + " XP";
     },
+    get$enableTTSToolName() {
+      return "Enabled text-to-speech";
+    },
+    get$enableTTSToolDescription() {
+      return "Allow the app to generate text-to-speech output for portions of text in your target language";
+    },
+    get$couldNotFindTTS() {
+      return "We couldn't find a text-to-speech engine for your current target language. ";
+    },
+    get$ttsInstructionsHyperlink() {
+      return "Click here to view instructions for downloading a new voice on your device.";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4413,6 +4425,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_219", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "spv9ECPQDkUf+0GUJ+EDkF/o63Y=");
+})($__dart_deferred_initializers__, "Hxakbi/+Jf6kAfN6SU8AUKTiGo0=");
 ;
 //# sourceMappingURL=main.dart.js_219.part.js.map
