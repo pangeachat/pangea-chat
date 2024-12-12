@@ -34,7 +34,6 @@ class IgcController {
   final Map<int, _IGCTextDataCacheItem> _igcTextDataCache = {};
 
   Timer? _igcCacheClearTimer;
-  Timer? _prevMessagesCacheClearTimer;
 
   IgcController(this.choreographer) {
     spanDataController = SpanDataController(choreographer);
@@ -45,12 +44,6 @@ class IgcController {
     const duration = Duration(minutes: 1);
     _igcCacheClearTimer =
         Timer.periodic(duration, (Timer t) => _igcTextDataCache.clear());
-  }
-
-  // Clear cache method
-  void clearCache() {
-    _igcTextDataCache.clear();
-    debugPrint("Cache cleared after 1 minute.");
   }
 
   Future<void> getIGCTextData({
@@ -73,6 +66,10 @@ class IgcController {
         enableIT: choreographer.itEnabled && !onlyTokensAndLanguageDetection,
         prevMessages: prevMessages(),
       );
+
+      if (_igcCacheClearTimer == null || !_igcCacheClearTimer!.isActive) {
+        _initializeCacheClearing();
+      }
 
       // Check if cached data exists
       if (_igcTextDataCache.containsKey(reqBody.hashCode)) {
@@ -234,11 +231,11 @@ class IgcController {
     igcTextData = null;
     spanDataController.clearCache();
     spanDataController.dispose();
+  }
 
-    clearCache();
+  dispose() {
+    clear();
+    _igcTextDataCache.clear();
     _igcCacheClearTimer?.cancel();
-    _prevMessagesCacheClearTimer?.cancel();
-    // Not sure why this is here
-    // MatrixState.pAnyState.closeOverlay();
   }
 }
