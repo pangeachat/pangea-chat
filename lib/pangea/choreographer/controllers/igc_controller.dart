@@ -17,6 +17,12 @@ import '../../models/span_card_model.dart';
 import '../../utils/error_handler.dart';
 import '../../utils/overlay.dart';
 
+class _IGCTextDataCacheItem {
+  Future<IGCTextData> data;
+
+  _IGCTextDataCacheItem({required this.data});
+}
+
 class IgcController {
   Choreographer choreographer;
   IGCTextData? igcTextData;
@@ -25,8 +31,7 @@ class IgcController {
   late SpanDataController spanDataController;
 
   // cache for IGC data and prev message
-  final Map<int, IGCTextData> _igcTextDataCache = {};
-  final Map<int, List<PreviousMessage>> _prevMessagesCache = {};
+  final Map<int, _IGCTextDataCacheItem> _igcTextDataCache = {};
 
   Timer? _igcCacheClearTimer;
   Timer? _prevMessagesCacheClearTimer;
@@ -40,14 +45,11 @@ class IgcController {
     const duration = Duration(minutes: 1);
     _igcCacheClearTimer =
         Timer.periodic(duration, (Timer t) => _igcTextDataCache.clear());
-    _prevMessagesCacheClearTimer =
-        Timer.periodic(duration, (Timer t) => _prevMessagesCache.clear());
   }
 
   // Clear cache method
   void clearCache() {
     _igcTextDataCache.clear();
-    _prevMessagesCache.clear();
     debugPrint("Cache cleared after 1 minute.");
   }
 
@@ -74,14 +76,18 @@ class IgcController {
 
       // Check if cached data exists
       if (_igcTextDataCache.containsKey(reqBody.hashCode)) {
-        igcTextData = _igcTextDataCache[reqBody.hashCode];
+        igcTextData = await _igcTextDataCache[reqBody.hashCode]!.data;
         return;
       }
 
-      final IGCTextData igcTextDataResponse = await IgcRepo.getIGC(
+      final igcFuture = IgcRepo.getIGC(
         choreographer.accessToken,
         igcRequest: reqBody,
       );
+      _igcTextDataCache[reqBody.hashCode] =
+          _IGCTextDataCacheItem(data: igcFuture);
+      final IGCTextData igcTextDataResponse =
+          await _igcTextDataCache[reqBody.hashCode]!.data;
 
       // this will happen when the user changes the input while igc is fetching results
       if (igcTextDataResponse.originalInput != choreographer.currentText) {
@@ -97,9 +103,6 @@ class IgcController {
       // checks for duplicate input
 
       igcTextData = igcTextDataResponse;
-
-      // Cache the fetched data
-      _igcTextDataCache[reqBody.hashCode] = igcTextDataResponse;
 
       // TODO - for each new match,
       // check if existing igcTextData has one and only one match with the same error text and correction
@@ -174,11 +177,6 @@ class IgcController {
   /// Get the content of previous text and audio messages in chat.
   /// Passed to IGC request to add context.
   List<PreviousMessage> prevMessages({int numMessages = 5}) {
-    // Check cache
-    if (_prevMessagesCache.containsKey(numMessages)) {
-      return _prevMessagesCache[numMessages]!;
-    }
-
     final List<Event> events = choreographer.chatController.visibleEvents
         .where(
           (e) =>
@@ -214,8 +212,6 @@ class IgcController {
         ),
       );
       if (messages.length >= numMessages) {
-        // Cache the results
-        _prevMessagesCache[numMessages] = messages;
         return messages;
       }
     }
