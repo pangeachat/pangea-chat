@@ -255,7 +255,7 @@ packages:
     source: hosted
     version: "1.11.0"
   cross_file:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: cross_file
       sha256: "7caf6a750a0c04effbb52a676dce9a4a592e10ad35c34d6d2d0e4811160d5670"
@@ -354,10 +354,10 @@ packages:
     dependency: "direct main"
     description:
       name: emoji_picker_flutter
-      sha256: "7c6681783e06710608df27be0e38aa4ba73ca1ccac370bb0e7a1320723ae4bca"
+      sha256: "08567e6f914d36c32091a96cf2f51d2558c47aa2bd47a590dc4f50e42e0965f6"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.1"
+    version: "3.1.0"
   emojis:
     dependency: "direct main"
     description:
@@ -1486,10 +1486,10 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: cbba79b42dba2a6f5b17880a95906a2602b9a0ff
+      resolved-ref: "53737bd566f5a430369589081ced4ee1cf4df51a"
       url: "https://github.com/pangeachat/matrix-dart-sdk.git"
     source: git
-    version: "0.32.4"
+    version: "0.35.0"
   meta:
     dependency: transitive
     description:
@@ -1507,7 +1507,7 @@ packages:
     source: hosted
     version: "2.0.0"
   mime:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: mime
       sha256: "801fd0b26f14a4a58ccb09d5892c3fbdeff209594300a542492cf13fba9d247a"
@@ -1966,10 +1966,10 @@ packages:
     dependency: "direct main"
     description:
       name: receive_sharing_intent
-      sha256: "912bebb551bce75a14098891fd750305b30d53eba0d61cc70cd9973be9866e8d"
+      sha256: ec76056e4d258ad708e76d85591d933678625318e411564dcb9059048ca3a593
       url: "https://pub.dev"
     source: hosted
-    version: "1.4.5"
+    version: "1.8.1"
   record:
     dependency: "direct main"
     description:
@@ -2591,6 +2591,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.2"
+  unifiedpush_ui:
+    dependency: "direct main"
+    description:
+      name: unifiedpush_ui
+      sha256: cf86f0214f37debd41f25c0425c8489df85e27f9f8784fed571eb7a86d39ba11
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   universal_html:
     dependency: "direct main"
     description:
@@ -2848,13 +2856,13 @@ packages:
     source: hosted
     version: "1.2.0"
   win32:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       name: win32
-      sha256: "84ba388638ed7a8cb3445a320c8273136ab2631cd5f2c57888335504ddab1bc2"
+      sha256: "015002c060f1ae9f41a818f2d5640389cc05283e368be19dc8d77cecb43c40c9"
       url: "https://pub.dev"
     source: hosted
-    version: "5.8.0"
+    version: "5.5.3"
   win32_registry:
     dependency: transitive
     description:

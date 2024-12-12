@@ -35,7 +35,7 @@ abstract class AppConfig {
 
     return TextStyle(
       color: textColor,
-      fontSize: bigEmotes ? fontSize * 3 : fontSize,
+      fontSize: bigEmotes ? fontSize * 5 : fontSize,
       decoration: event.redacted ? TextDecoration.lineThrough : null,
       height: 1.3,
     );
@@ -57,6 +57,10 @@ abstract class AppConfig {
   static String _privacyUrl = "https://www.pangeachat.com/privacy";
   //Pangea#
   static String get privacyUrl => _privacyUrl;
+  // #Pangea
+  // static const String website = 'https://fluffychat.im';
+  static const String website = "https://pangea.chat/";
+  // Pangea#
   static const String enablePushTutorial =
       'https://github.com/krille-chan/fluffychat/wiki/Push-Notifications-without-Google-Services';
   static const String encryptionTutorial =
@@ -152,6 +156,9 @@ abstract class AppConfig {
   static String iosPromoCode =
       "https://apps.apple.com/redeem?ctx=offercodes&id=1445118630&code=";
   static String trialSubscriptionId = "pangea_new_user_trial";
+  static String androidUpdateURL =
+      "https://play.google.com/store/apps/details?id=com.talktolearn.chat";
+  static String iosUpdateURL = "itms-apps://itunes.apple.com/app/id1445118630";
   // Pangea#
 
   static void loadFromJson(Map<String, dynamic> json) {

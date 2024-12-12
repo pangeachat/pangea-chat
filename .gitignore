@@ -18,7 +18,6 @@ keys.json
 !/public/.env
 *.env.local_choreo
 *.env.prod
-
 # libolm package
 /assets/js/package
 

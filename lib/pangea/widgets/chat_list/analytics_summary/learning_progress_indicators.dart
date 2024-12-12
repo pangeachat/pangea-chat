@@ -9,6 +9,7 @@ import 'package:fluffychat/pangea/widgets/chat_list/analytics_summary/analytics_
 import 'package:fluffychat/pangea/widgets/chat_list/analytics_summary/learning_progress_bar.dart';
 import 'package:fluffychat/pangea/widgets/chat_list/analytics_summary/learning_settings_button.dart';
 import 'package:fluffychat/pangea/widgets/chat_list/analytics_summary/level_badge.dart';
+import 'package:fluffychat/pangea/widgets/chat_list/analytics_summary/level_bar_popup.dart';
 import 'package:fluffychat/pangea/widgets/chat_list/analytics_summary/progress_indicator.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
@@ -88,7 +89,7 @@ class LearningProgressIndicatorsState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                Matrix.of(context).client.userID ?? L10n.of(context)!.user,
+                Matrix.of(context).client.userID ?? L10n.of(context).user,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontSize: 12,
@@ -131,23 +132,35 @@ class LearningProgressIndicatorsState
                 ],
               ),
               const SizedBox(height: 6),
-              SizedBox(
-                height: 26,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Positioned(
-                      left: 16,
-                      right: 0,
-                      child: LearningProgressBar(
-                        totalXP: _constructsModel.totalXP,
-                      ),
+              MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  onTap: () {
+                    showDialog<LevelBarPopup>(
+                      context: context,
+                      builder: (c) => const LevelBarPopup(),
+                    );
+                  },
+                  child: SizedBox(
+                    height: 26,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Positioned(
+                          left: 16,
+                          right: 0,
+                          child: LearningProgressBar(
+                            level: _constructsModel.level,
+                            totalXP: _constructsModel.totalXP,
+                          ),
+                        ),
+                        Positioned(
+                          left: 0,
+                          child: LevelBadge(level: _constructsModel.level),
+                        ),
+                      ],
                     ),
-                    Positioned(
-                      left: 0,
-                      child: LevelBadge(level: _constructsModel.level),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ],

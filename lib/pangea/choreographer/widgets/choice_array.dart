@@ -25,6 +25,8 @@ class ChoicesArray extends StatefulWidget {
   /// We don't want tts in the case of L1 options
   final TtsController? tts;
 
+  final bool enableAudio;
+
   /// Used to unqiuely identify the keys for choices, in cases where multiple
   /// choices could have identical text, like in back-to-back practice activities
   final String? id;
@@ -41,6 +43,7 @@ class ChoicesArray extends StatefulWidget {
     required this.uniqueKeyForLayerLink,
     required this.selectedChoiceIndex,
     required this.tts,
+    this.enableAudio = true,
     this.isActive = true,
     this.onLongPress,
     this.id,
@@ -60,10 +63,15 @@ class ChoicesArrayState extends State<ChoicesArray> {
   }
 
   void enableInteractions() {
+    if (_hasSelectedCorrectChoice) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) setState(() => interactionDisabled = false);
     });
   }
+
+  bool get _hasSelectedCorrectChoice =>
+      widget.choices?.any((choice) => choice.isGold && choice.color != null) ??
+      false;
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +90,9 @@ class ChoicesArrayState extends State<ChoicesArray> {
                         ? (String value, int index) {
                             widget.onPressed(value, index);
                             // TODO - what to pass here as eventID?
-                            widget.tts?.tryToSpeak(value, context, null);
+                            if (widget.enableAudio && widget.tts != null) {
+                              widget.tts?.tryToSpeak(value, context, null);
+                            }
                           }
                         : (String value, int index) {
                             debugger(when: kDebugMode);
@@ -140,7 +150,7 @@ class ChoiceItem extends StatelessWidget {
   Widget build(BuildContext context) {
     try {
       return Tooltip(
-        message: onLongPress != null ? L10n.of(context)!.holdForInfo : "",
+        message: onLongPress != null ? L10n.of(context).holdForInfo : "",
         waitDuration: onLongPress != null
             ? const Duration(milliseconds: 500)
             : const Duration(days: 1),

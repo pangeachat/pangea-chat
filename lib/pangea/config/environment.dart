@@ -10,10 +10,6 @@ class Environment {
 
   static bool get isStaging => synapsURL.contains("staging");
 
-  static String get baseAPI {
-    return dotenv.env["BASE_API"] ?? 'BASE API not found';
-  }
-
   static String get frontendURL {
     return dotenv.env["FRONTEND_URL"] ?? "Frontend URL NOT FOUND";
   }
@@ -27,7 +23,17 @@ class Environment {
   }
 
   static String get choreoApi {
-    return dotenv.env['CHOREO_API'] ?? 'Not found';
+    final envEntry = dotenv.env['CHOREO_API'];
+    if (envEntry == null) {
+      return "Not found";
+    }
+    if (envEntry.endsWith("/choreo")) {
+      return envEntry.replaceAll("/choreo", "");
+    }
+    if (envEntry.endsWith("/choreo/")) {
+      return envEntry.replaceAll("/choreo/", "");
+    }
+    return envEntry;
   }
 
   static String get choreoApiKey {
@@ -63,8 +69,9 @@ class Environment {
   }
 
   static String get supportSpaceId {
-    return dotenv.env["SUPPORT_SPACE_ID"] ??
-        '!gqSNSkvwTpgumyjLsV:staging.pangea.chat';
+    return isStaging
+        ? '!gqSNSkvwTpgumyjLsV:staging.pangea.chat'
+        : '!MvJoWwKJErvFuTYOdq:pangea.chat';
   }
 
   static String get supportUserId {
