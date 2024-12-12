@@ -3219,11 +3219,14 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$conversationBotCustomZone_customSystemPromptPlaceholder() {
       return "Establecer mensaje del sistema personalizado";
     },
-    get$conversationBotCustomZone_customTriggerReactionEnabledLabel() {
-      return "Responde a la reacci\xf3n \u23e9";
-    },
     get$botConfig() {
       return "Configuraci\xf3n de bots y actividades";
+    },
+    get$botConfigNoPermissionTitle() {
+      return "No permission";
+    },
+    get$botConfigNoPermissionMessage() {
+      return "Contact room admin to change bot configuration";
     },
     get$conversationBotStatus() {
       return "Estado del Bot";
@@ -4425,6 +4428,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_219", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "Hxakbi/+Jf6kAfN6SU8AUKTiGo0=");
+})($__dart_deferred_initializers__, "mP67IoIG+GxvTZMR/Ic9ezdNyZ4=");
 ;
 //# sourceMappingURL=main.dart.js_219.part.js.map
