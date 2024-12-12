@@ -20,20 +20,22 @@ import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:matrix/matrix_api_lite/model/message_types.dart';
 
 const double minCardHeight = 70;
 
 class MessageToolbar extends StatelessWidget {
   final PangeaMessageEvent pangeaMessageEvent;
   final MessageOverlayController overLayController;
-  final TtsController ttsController;
 
   const MessageToolbar({
     super.key,
     required this.pangeaMessageEvent,
     required this.overLayController,
-    required this.ttsController,
   });
+
+  TtsController get ttsController =>
+      overLayController.widget.chatController.choreographer.tts;
 
   Widget toolbarContent(BuildContext context) {
     final bool subscribed =
@@ -48,10 +50,6 @@ class MessageToolbar extends StatelessWidget {
     if (!overLayController.initialized) {
       return const ToolbarContentLoadingIndicator();
     }
-
-    // Check if the message is in the user's second language
-    final bool messageInUserL2 = pangeaMessageEvent.messageDisplayLangCode ==
-        MatrixState.pangeaController.languageController.userL2?.langCode;
 
     switch (overLayController.toolbarMode) {
       case MessageMode.translation:
@@ -93,7 +91,7 @@ class MessageToolbar extends StatelessWidget {
                 );
               } else {
                 return MessageDisplayCard(
-                  displayText: L10n.of(context)!.selectToDefine,
+                  displayText: L10n.of(context).selectToDefine,
                 );
               }
             },
@@ -125,16 +123,15 @@ class MessageToolbar extends StatelessWidget {
         }
       case MessageMode.practiceActivity:
         // If not in the target language show specific messsage
-        if (!messageInUserL2) {
+        if (!overLayController.messageInUserL2) {
           return MessageDisplayCard(
-            displayText: L10n.of(context)!
+            displayText: L10n.of(context)
                 .messageNotInTargetLang, // Pass the display text,
           );
         }
         return PracticeActivityCard(
           pangeaMessageEvent: pangeaMessageEvent,
           overlayController: overLayController,
-          ttsController: ttsController,
         );
       default:
         debugger(when: kDebugMode);
@@ -149,6 +146,12 @@ class MessageToolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (![MessageTypes.Text, MessageTypes.Audio].contains(
+      pangeaMessageEvent.event.messageType,
+    )) {
+      return const SizedBox();
+    }
+
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,

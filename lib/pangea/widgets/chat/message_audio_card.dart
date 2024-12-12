@@ -59,11 +59,11 @@ class MessageAudioCardState extends State<MessageAudioCard> {
 
   @override
   void didUpdateWidget(covariant oldWidget) {
-    if (oldWidget.selection != widget.selection && widget.selection != null) {
-      debugPrint('selection changed');
-      setSectionStartAndEndFromSelection();
-      playSelectionAudio();
-    }
+    // if (oldWidget.selection != widget.selection && widget.selection != null) {
+    //   debugPrint('selection changed');
+    //   setSectionStartAndEndFromSelection();
+    //   playSelectionAudio();
+    // }
     super.didUpdateWidget(oldWidget);
   }
 
@@ -197,6 +197,8 @@ class MessageAudioCardState extends State<MessageAudioCard> {
                       sectionEndMS: sectionEndMS,
                       color: Theme.of(context).colorScheme.onPrimaryContainer,
                       setIsPlayingAudio: widget.setIsPlayingAudio,
+                      fontSize:
+                          AppConfig.messageFontSize * AppConfig.fontSizeFactor,
                     )
                   : const CardErrorWidget(
                       error: "Null audio file in message_audio_card",

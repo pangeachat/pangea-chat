@@ -15,9 +15,12 @@
   "exportEmotePack": "Export Emote pack as .zip",
   "replace": "Replace",
   "about": "About",
-  "@about": {
+  "aboutHomeserver": "About {homeserver}",
+  "@aboutHomeserver": {
     "type": "text",
-    "placeholders": {}
+    "placeholders": {
+      "homeserver": {}
+    }
   },
   "accept": "Accept",
   "@accept": {
@@ -1725,6 +1728,13 @@
     "type": "text",
     "placeholders": {}
   },
+  "sendImages": "Send {count} image",
+  "@sendImages": {
+    "type": "text",
+    "placeholders": {
+      "count": {}
+    }
+  },
   "sendMessages": "Send messages",
   "@sendMessages": {
     "type": "text",
@@ -2452,7 +2462,14 @@
   "reopenChat": "Reopen chat",
   "noBackupWarning": "Don't forget your password!",
   "noOtherDevicesFound": "No other devices found",
-  "fileIsTooBigForServer": "The server reports that the file is too large to be sent.",
+  "@noOtherDevicesFound": {},
+  "fileIsTooBigForServer": "Unable to send! The server only supports attachments up to {max}.",
+  "@fileIsTooBigForServer": {
+    "type": "text",
+    "placeholders": {
+      "max": {}
+    }
+  },
   "fileHasBeenSavedAt": "File has been saved at {path}",
   "@fileHasBeenSavedAt": {
     "type": "text",
@@ -4519,5 +4536,91 @@
   "notificationsOn": "Notifications on",
   "notificationsOff": "Notifications off",
   "spaceCanBeFoundViaSearch": "Space can be found via search",
-  "chatCanBeFoundViaSearch": "Chat can be found via search"
+  "chatCanBeFoundViaSearch": "Chat can be found via search",
+  "calculatingFileSize": "Calculating file size...",
+  "prepareSendingAttachment": "Prepare sending attachment...",
+  "sendingAttachment": "Sending attachment...",
+  "generatingVideoThumbnail": "Generating video thumbnail...",
+  "compressVideo": "Compressing video...",
+  "sendingAttachmentCountOfCount": "Sending attachment {index} of {length}...",
+  "@sendingAttachmentCountOfCount": {
+    "type": "integer",
+    "placeholders": {
+      "index": {},
+      "length": {}
+    }
+  },
+  "serverLimitReached": "Server limit reached! Waiting {seconds} seconds...",
+  "@serverLimitReached": {
+    "type": "integer",
+    "placeholders": {
+      "seconds": {}
+    }
+  },
+  "oneOfYourDevicesIsNotVerified": "One of your devices is not verified",
+  "noticeChatBackupDeviceVerification": "Note: When you connect all your devices to the chat backup, they are automatically verified.",
+  "requireCodeToJoin": "Require code to join",
+  "canFindInSearch": "Can find in search",
+  "addSubspaceWarning": "Once you add this, it will not appear in public search results, and it will be visible to all members of the parent space.",
+  "nestedSpaceError": "Spaces should not be added as children of other spaces",
+  "addChatToSpace": "Add chat",
+  "continueText": "Continue",
+  "welcomeText": "Hey Hey 👋 This is FluffyChat. You can sign in to any homeserver, which is compatible with https://matrix.org. And then chat with anyone. It's a huge decentralized messaging network!",
+  "blur": "Blur:",
+  "opacity": "Opacity:",
+  "setWallpaper": "Set wallpaper",
+  "manageAccount": "Manage account",
+  "noContactInformationProvided": "Server does not provide any valid contact information",
+  "contactServerAdmin": "Contact server admin",
+  "contactServerSecurity": "Contact server security",
+  "supportPage": "Support page",
+  "serverInformation": "Server information:",
+  "name": "Name",
+  "version": "Version",
+  "website": "Website",
+  "compress": "Compress",
+  "boldText": "Bold text",
+  "italicText": "Italic text",
+  "strikeThrough": "Strikethrough",
+  "pleaseFillOut": "Please fill out",
+  "invalidUrl": "Invalid url",
+  "addLink": "Add link",
+  "unableToJoinChat": "Unable to join chat. Maybe the other party has already closed the conversation.",
+  "createChatAndInviteUsers": "Create chat and invite users",
+  "updatedNewSpaceDescription": "Spaces allow you to consolidate your chats and build private or public communities.",
+  "joinWithCode": "Join with code",
+  "enterCodeToJoin": "Enter code to join",
+  "mandatoryUpdateRequired": "Mandatory Update Required",
+  "updateAvailable": "Update Available",
+  "mandatoryUpdateRequiredDesc": "A new version of the app is required to continue. Please update now to proceed.",
+  "updateAvailableDesc": "A new version of the app is available. Update now for the latest features and improvements!",
+  "updateNow": "Update Now",
+  "updateLater": "Later",
+  "constructUseWaDesc": "Used without help",
+  "constructUseGaDesc": "Grammar mistake",
+  "constructUseUnkDesc": "Unknown",
+  "constructUseCorITDesc": "Correct in translation",
+  "constructUseIgnITDesc": "Ignored in translation",
+  "constructUseIncITDesc": "Incorrect in translation",
+  "constructUseIgnIGCDesc": "Ignored in grammar correction",
+  "constructUseCorIGCDesc": "Correct in grammar correction",
+  "constructUseIncIGCDesc": "Incorrect in grammar correction",
+  "constructUseCorPADesc": "Correct in word meaning activity",
+  "constructUseIgnPADesc": "Ignored in word meaning activity",
+  "constructUseIncPADesc": "Incorrect in word meaning activity",
+  "constructUseCorWLDesc": "Correct in word listening activity",
+  "constructUseIncWLDesc": "Incorrect in word listening activity",
+  "constructUseIngWLDesc": "Ignored in word listening activity",
+  "constructUseCorHWLDesc": "Correct in hidden word activity",
+  "constructUseIncHWLDesc": "Incorrect in hidden word activity",
+  "constructUseIgnHWLDesc": "Ignored in hidden word activity",
+  "constructUseNanDesc": "Not applicable",
+  "xpIntoLevel": "{currentXP} / {maxXP} XP",
+  "@xpIntoLevel": {
+    "type": "text",
+    "placeholders": {
+      "currentXP": {},
+      "maxXP": {}
+    }
+  }
 }

@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:fluffychat/pangea/enum/activity_display_instructions_enum.dart';
 import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
 import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
+import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/multiple_choice_activity_model.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:flutter/foundation.dart';
@@ -12,13 +13,13 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 class ConstructIdentifier {
   final String lemma;
   final ConstructTypeEnum type;
-  final String category;
+  final String _category;
 
   ConstructIdentifier({
     required this.lemma,
     required this.type,
-    required this.category,
-  });
+    category,
+  }) : _category = category;
 
   factory ConstructIdentifier.fromJson(Map<String, dynamic> json) {
     final categoryEntry = json['cat'] ?? json['categories'];
@@ -54,6 +55,11 @@ class ConstructIdentifier {
     }
   }
 
+  String get category {
+    if (_category.isEmpty) return "other";
+    return _category.toLowerCase();
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'lemma': lemma,
@@ -80,8 +86,9 @@ class ConstructIdentifier {
     return lemma.hashCode ^ type.hashCode;
   }
 
-  String get string =>
-      "$lemma-${type.string}${category != "" ? "-$category" : "-other"}";
+  String get string {
+    return "$lemma:${type.string}-$category".toLowerCase();
+  }
 
   String get partialKey => "$lemma-${type.string}";
 }
@@ -200,19 +207,30 @@ class PracticeActivityRequest {
 }
 
 class PracticeActivityModel {
+  // deprecated in favor of targetTokens
   final List<ConstructIdentifier> tgtConstructs;
+
+  // being added after creation from request info
+  // TODO - replace tgtConstructs with targetTokens in server return
+  List<PangeaToken>? targetTokens;
+
   final String langCode;
   final ActivityTypeEnum activityType;
   final ActivityContent content;
 
   PracticeActivityModel({
     required this.tgtConstructs,
+    required this.targetTokens,
     required this.langCode,
     required this.activityType,
     required this.content,
   });
 
   String get question => content.question;
+
+  bool get shouldPlayTargetTokens =>
+      targetTokens != null &&
+      activityType != ActivityTypeEnum.hiddenWordListening;
 
   factory PracticeActivityModel.fromJson(Map<String, dynamic> json) {
     // moving from multiple_choice to content as the key
@@ -244,6 +262,11 @@ class PracticeActivityModel {
       activityType:
           ActivityTypeEnum.wordMeaning.fromString(json['activity_type']),
       content: ActivityContent.fromJson(contentMap),
+      targetTokens: json['target_tokens'] is List
+          ? (json['target_tokens'] as List)
+              .map((e) => PangeaToken.fromJson(e as Map<String, dynamic>))
+              .toList()
+          : null,
     );
   }
 
@@ -256,6 +279,7 @@ class PracticeActivityModel {
       'lang_code': langCode,
       'activity_type': activityType.string,
       'content': content.toJson(),
+      'target_tokens': targetTokens?.map((e) => e.toJson()).toList(),
     };
   }
 

@@ -23,6 +23,7 @@ import 'package:fluffychat/pangea/widgets/practice_activity/no_more_practice_car
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
 
 /// The wrapper for practice activity content.
 /// Handles the activities associated with a message,
@@ -30,13 +31,11 @@ import 'package:flutter/material.dart';
 class PracticeActivityCard extends StatefulWidget {
   final PangeaMessageEvent pangeaMessageEvent;
   final MessageOverlayController overlayController;
-  final TtsController ttsController;
 
   const PracticeActivityCard({
     super.key,
     required this.pangeaMessageEvent,
     required this.overlayController,
-    required this.ttsController,
   });
 
   @override
@@ -56,8 +55,11 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
   // Used to show an animation when the user completes an activity
   // while simultaneously fetching a new activity and not showing the loading spinner
   // until the appropriate time has passed to 'savor the joy'
-  Duration appropriateTimeForJoy = const Duration(milliseconds: 1500);
+  Duration appropriateTimeForJoy = const Duration(milliseconds: 2500);
   bool savoringTheJoy = false;
+
+  TtsController get tts =>
+      widget.overlayController.widget.chatController.choreographer.tts;
 
   @override
   void initState() {
@@ -100,76 +102,97 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
   Future<PracticeActivityModel?> _fetchActivity({
     ActivityQualityFeedback? activityFeedback,
   }) async {
-    // try {
-    debugPrint('Fetching activity');
-    _updateFetchingActivity(true);
+    try {
+      debugPrint('Fetching activity');
+      _updateFetchingActivity(true);
 
-    // target tokens can be empty if activities have been completed for each
-    // it's set on initialization and then removed when each activity is completed
-    if (!mounted ||
-        !pangeaController.languageController.languagesSet ||
-        widget.overlayController.messageAnalyticsEntry == null) {
+      // target tokens can be empty if activities have been completed for each
+      // it's set on initialization and then removed when each activity is completed
+      if (!mounted ||
+          !pangeaController.languageController.languagesSet ||
+          widget.overlayController.messageAnalyticsEntry == null) {
+        debugger(when: kDebugMode);
+        _updateFetchingActivity(false);
+        return null;
+      }
+
+      final nextActivitySpecs =
+          widget.overlayController.messageAnalyticsEntry?.nextActivity;
+      // the client is going to be choosing the next activity now
+      // if nothing is set then it must be done with practice
+      if (nextActivitySpecs == null) {
+        debugPrint("No next activity set, exiting practice flow");
+        _updateFetchingActivity(false);
+        return null;
+      }
+
+      // check if we already have an activity matching the specs
+      final existingActivity = practiceActivities.firstWhereOrNull(
+        (activity) =>
+            nextActivitySpecs.matchesActivity(activity.practiceActivity),
+      );
+      if (existingActivity != null) {
+        debugPrint('found existing activity');
+        _updateFetchingActivity(false);
+        existingActivity.practiceActivity.targetTokens =
+            nextActivitySpecs.tokens;
+        currentActivityCompleter = Completer();
+        currentActivityCompleter!.complete(existingActivity);
+        return existingActivity.practiceActivity;
+      }
+
+      debugPrint(
+        "client requesting ${nextActivitySpecs.activityType.string} for: ${nextActivitySpecs.tokens.map((t) => "construct: ${t.lemma.text}:${t.pos} points: ${t.vocabConstruct.points}").join(' ')}",
+      );
+
+      // debugger(
+      //   when: kDebugMode &&
+      //       nextActivitySpecs.tokens
+      //               .map((a) => a.vocabConstruct.points)
+      //               .reduce((a, b) => a + b) >
+      //           30 &&
+      //       nextActivitySpecs.activityType == ActivityTypeEnum.wordMeaning,
+      // );
+
+      final PracticeActivityModelResponse? activityResponse =
+          await pangeaController.practiceGenerationController
+              .getPracticeActivity(
+        MessageActivityRequest(
+          userL1: pangeaController.languageController.userL1!.langCode,
+          userL2: pangeaController.languageController.userL2!.langCode,
+          messageText: widget.pangeaMessageEvent.messageDisplayText,
+          messageTokens: widget.overlayController.tokens!,
+          activityQualityFeedback: activityFeedback,
+          targetTokens: nextActivitySpecs.tokens,
+          targetType: nextActivitySpecs.activityType,
+        ),
+        widget.pangeaMessageEvent,
+      );
+
+      currentActivityCompleter = activityResponse?.eventCompleter;
+      _updateFetchingActivity(false);
+
+      if (activityResponse == null || activityResponse.activity == null) {
+        debugPrint('No activity found');
+        return null;
+      }
+
+      activityResponse.activity!.targetTokens = nextActivitySpecs.tokens;
+
+      return activityResponse.activity;
+    } catch (e, s) {
       debugger(when: kDebugMode);
-      _updateFetchingActivity(false);
+      ErrorHandler.logError(
+        e: e,
+        s: s,
+        m: 'Failed to get new activity',
+        data: {
+          'activity': currentActivity,
+          'record': currentCompletionRecord,
+        },
+      );
       return null;
     }
-
-    final nextActivitySpecs =
-        widget.overlayController.messageAnalyticsEntry?.nextActivity;
-    // the client is going to be choosing the next activity now
-    // if nothing is set then it must be done with practice
-    if (nextActivitySpecs == null) {
-      debugPrint("No next activity set, exiting practice flow");
-      _updateFetchingActivity(false);
-      return null;
-    }
-
-    // check if we already have an activity matching the specs
-    final existingActivity = practiceActivities.firstWhereOrNull(
-      (activity) =>
-          nextActivitySpecs.matchesActivity(activity.practiceActivity),
-    );
-    if (existingActivity != null) {
-      debugPrint('found existing activity');
-      _updateFetchingActivity(false);
-      return existingActivity.practiceActivity;
-    }
-
-    debugPrint(
-      "client requesting ${nextActivitySpecs.activityType.string} for: ${nextActivitySpecs.tokens.map((t) => "word: ${t.text.content} xp: ${t.xp}").join(' ')}",
-    );
-
-    final PracticeActivityModelResponse? activityResponse =
-        await pangeaController.practiceGenerationController.getPracticeActivity(
-      MessageActivityRequest(
-        userL1: pangeaController.languageController.userL1!.langCode,
-        userL2: pangeaController.languageController.userL2!.langCode,
-        messageText: widget.pangeaMessageEvent.messageDisplayText,
-        messageTokens: widget.overlayController.tokens!,
-        activityQualityFeedback: activityFeedback,
-        targetTokens: nextActivitySpecs.tokens,
-        targetType: nextActivitySpecs.activityType,
-      ),
-      widget.pangeaMessageEvent,
-    );
-
-    currentActivityCompleter = activityResponse?.eventCompleter;
-    _updateFetchingActivity(false);
-
-    return activityResponse?.activity;
-    // } catch (e, s) {
-    //   debugger(when: kDebugMode);
-    //   ErrorHandler.logError(
-    //     e: e,
-    //     s: s,
-    //     m: 'Failed to get new activity',
-    //     data: {
-    //       'activity': currentActivity,
-    //       'record': currentCompletionRecord,
-    //     },
-    //   );
-    //   return null;
-    // }
   }
 
   ConstructUseMetaData get metadata => ConstructUseMetaData(
@@ -248,6 +271,13 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
     _setPracticeActivity(null);
   }
 
+  bool _isActivityRedaction(EventUpdate update, String activityId) {
+    return update.content.containsKey('type') &&
+        update.content['type'] == 'm.room.redaction' &&
+        update.content.containsKey('content') &&
+        update.content['content']['redacts'] == activityId;
+  }
+
   /// clear the current activity, record, and selection
   /// fetch a new activity, including the offending activity in the request
   Future<void> submitFeedback(String feedback) async {
@@ -258,7 +288,15 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
 
     if (currentActivityCompleter != null) {
       final activityEvent = await currentActivityCompleter!.future;
-      await activityEvent?.event.redactEvent(reason: feedback);
+      if (activityEvent != null) {
+        await activityEvent.event.redactEvent(reason: feedback);
+        final eventID = activityEvent.event.eventId;
+        await activityEvent.event.room.client.onEvent.stream
+            .firstWhere(
+              (update) => _isActivityRedaction(update, eventID),
+            )
+            .timeout(const Duration(milliseconds: 2500));
+      }
     } else {
       debugger(when: kDebugMode);
       ErrorHandler.logError(
@@ -313,7 +351,6 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
         return MultipleChoiceActivity(
           practiceCardController: this,
           currentActivity: currentActivity!,
-          tts: widget.ttsController,
           event: widget.pangeaMessageEvent.event,
           onError: _onError,
         );

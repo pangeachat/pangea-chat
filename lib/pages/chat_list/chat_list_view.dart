@@ -2,6 +2,7 @@ import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat_list/chat_list.dart';
 import 'package:fluffychat/pages/chat_list/navi_rail_item.dart';
+import 'package:fluffychat/pangea/widgets/chat/chat_list_view_body_wrapper.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/utils/stream_extension.dart';
 import 'package:fluffychat/widgets/avatar.dart';
@@ -11,7 +12,6 @@ import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../widgets/matrix.dart';
-import 'chat_list_body.dart';
 
 class ChatListView extends StatelessWidget {
   final ChatListController controller;
@@ -82,7 +82,7 @@ class ChatListView extends StatelessWidget {
                               onTap: controller.clearActiveSpace,
                               icon: const Icon(Icons.forum_outlined),
                               selectedIcon: const Icon(Icons.forum),
-                              toolTip: L10n.of(context)!.chats,
+                              toolTip: L10n.of(context).chats,
                               unreadBadgeFilter: (room) => true,
                             );
                           }
@@ -92,13 +92,13 @@ class ChatListView extends StatelessWidget {
                               isSelected: false,
                               onTap: () => context.go('/rooms/newspace'),
                               icon: const Icon(Icons.add),
-                              toolTip: L10n.of(context)!.createNewSpace,
+                              toolTip: L10n.of(context).createNewSpace,
                             );
                           }
                           final space = rootSpaces[i];
                           final displayname =
                               rootSpaces[i].getLocalizedDisplayname(
-                            MatrixLocals(L10n.of(context)!),
+                            MatrixLocals(L10n.of(context)),
                           );
                           final spaceChildrenIds =
                               space.spaceChildren.map((c) => c.roomId).toSet();
@@ -134,34 +134,26 @@ class ChatListView extends StatelessWidget {
                   excludeFromSemantics: true,
                   behavior: HitTestBehavior.translucent,
                   child: Scaffold(
-                    body: ChatListViewBody(controller),
-                    floatingActionButton:
-                        // #Pangea
-                        // KeyBoardShortcuts(
-                        //   keysToPress: {
-                        //     LogicalKeyboardKey.controlLeft,
-                        //     LogicalKeyboardKey.keyN,
-                        //   },
-                        //   onKeysPressed: () => context.go('/rooms/newprivatechat'),
-                        //   helpLabel: L10n.of(context)!.newChat,
-                        //   child:
-                        // Pangea#
-                        selectMode == SelectMode.normal &&
-                                !controller.isSearchMode &&
-                                controller.activeSpaceId == null
-                            ? FloatingActionButton.extended(
-                                // #Pangea
-                                // onPressed: () =>
-                                //     context.go('/rooms/newprivatechat'),
-                                onPressed: () => context.go('/rooms/newgroup'),
-                                // Pangea#
-                                icon: const Icon(Icons.add_outlined),
-                                label: Text(
-                                  L10n.of(context)!.chat,
-                                  overflow: TextOverflow.fade,
-                                ),
-                              )
-                            : const SizedBox.shrink(),
+                    // #Pangea
+                    // body: ChatListViewBody(controller),
+                    body: ChatListViewBodyWrapper(controller: controller),
+                    // Pangea#
+                    floatingActionButton: selectMode == SelectMode.normal &&
+                            !controller.isSearchMode &&
+                            controller.activeSpaceId == null
+                        ? FloatingActionButton.extended(
+                            // #Pangea
+                            // onPressed: () =>
+                            //     context.go('/rooms/newprivatechat'),
+                            onPressed: () => context.go('/rooms/newgroup'),
+                            // Pangea#
+                            icon: const Icon(Icons.add_outlined),
+                            label: Text(
+                              L10n.of(context).chat,
+                              overflow: TextOverflow.fade,
+                            ),
+                          )
+                        : const SizedBox.shrink(),
                   ),
                 ),
               ),

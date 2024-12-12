@@ -63,23 +63,20 @@ class MessageSpeechToTextCardState extends State<MessageSpeechToTextCard> {
         data: widget.messageEvent.event.content,
       );
     } finally {
-      setState(() => _fetchingTranscription = false);
+      if (mounted) {
+        setState(() => _fetchingTranscription = false);
+      }
     }
-  }
-
-  void closeHint() {
-    setState(() {});
   }
 
   TextSpan _buildTranscriptText(BuildContext context) {
     final Transcript transcript = speechToTextResponse!.transcript;
     final List<InlineSpan> spans = [];
-    final String fullText = transcript.text;
-    int lastEnd = 0;
+    String remainingFullText = transcript.text;
 
     if (transcript.sttTokens.isEmpty) {
       return TextSpan(
-        text: fullText,
+        text: remainingFullText,
         style: BotStyle.text(
           context,
           existingStyle: TextStyle(
@@ -91,19 +88,26 @@ class MessageSpeechToTextCardState extends State<MessageSpeechToTextCard> {
     }
 
     for (final token in transcript.sttTokens) {
-      if (token.offset > lastEnd) {
+      final offset = remainingFullText.indexOf(token.token.text.content);
+      final length = token.length;
+
+      if (remainingFullText.substring(0, offset).trim().isNotEmpty) {
+        continue;
+      }
+
+      if (offset > 0) {
         // Add any plain text before the token
         spans.add(
-          TextSpan(
-            text: fullText.substring(lastEnd, token.offset),
-          ),
+          TextSpan(text: remainingFullText.substring(0, offset)),
         );
-        // debugPrint('Pre: ${fullText.substring(lastEnd, token.offset)}');
       }
 
       spans.add(
         TextSpan(
-          text: fullText.substring(token.offset, token.offset + token.length),
+          text: remainingFullText.substring(
+            offset,
+            offset + token.length,
+          ),
           style: BotStyle.text(
             context,
             existingStyle: TextStyle(color: token.color(context)),
@@ -114,32 +118,25 @@ class MessageSpeechToTextCardState extends State<MessageSpeechToTextCard> {
             ..onTap = () {
               debugPrint('Token tapped');
               debugPrint(token.toJson().toString());
-              setState(() {
-                if (selectedToken == token) {
-                  selectedToken = null;
-                } else {
-                  selectedToken = token;
-                }
-              });
+              if (mounted) {
+                setState(() {
+                  if (selectedToken == token) {
+                    selectedToken = null;
+                  } else {
+                    selectedToken = token;
+                  }
+                });
+              }
             },
         ),
       );
 
-      // debugPrint(
-      //   'Main: ${fullText.substring(token.offset, token.offset + token.length)}',
-      // );
-
-      lastEnd = token.offset + token.length;
+      remainingFullText = remainingFullText.substring(offset + length);
     }
 
-    if (lastEnd < fullText.length) {
+    if (remainingFullText.isNotEmpty) {
       // Add any remaining text after the last token
-      spans.add(
-        TextSpan(
-          text: fullText.substring(lastEnd),
-        ),
-      );
-      // debugPrint('Post: ${fullText.substring(lastEnd)}');
+      spans.add(TextSpan(text: remainingFullText));
     }
 
     return TextSpan(children: spans);
@@ -189,7 +186,7 @@ class MessageSpeechToTextCardState extends State<MessageSpeechToTextCard> {
                       icon: Symbols.target,
                       number:
                           "${selectedToken?.confidence ?? speechToTextResponse!.transcript.confidence}%",
-                      toolTip: L10n.of(context)!.accuracy,
+                      toolTip: L10n.of(context).accuracy,
                     ),
                     const SizedBox(width: 16),
                     IconNumberWidget(
@@ -197,7 +194,7 @@ class MessageSpeechToTextCardState extends State<MessageSpeechToTextCard> {
                       number: wordsPerMinuteString != null
                           ? "$wordsPerMinuteString"
                           : "??",
-                      toolTip: L10n.of(context)!.wordsPerMinute,
+                      toolTip: L10n.of(context).wordsPerMinute,
                     ),
                   ],
                 ),

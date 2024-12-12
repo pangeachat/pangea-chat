@@ -1,15 +1,10 @@
-import 'package:fluffychat/pages/chat_list/space_view.dart';
-import 'package:fluffychat/pangea/widgets/chat/visibility_toggle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart' as matrix;
 import 'package:matrix/matrix.dart';
 
 class AddRoomDialog extends StatefulWidget {
-  final AddRoomType? roomType;
-
   const AddRoomDialog({
-    required this.roomType,
     super.key,
   });
 
@@ -22,17 +17,6 @@ class AddRoomDialogState extends State<AddRoomDialog> {
   final TextEditingController _roomNameController = TextEditingController();
   final TextEditingController _roomDescriptionController =
       TextEditingController();
-
-  matrix.Visibility visibility = matrix.Visibility.public;
-  JoinRules joinRules = JoinRules.public;
-
-  Future<void> _setJoinRules(JoinRules newJoinRules) async {
-    setState(() => joinRules = newJoinRules);
-  }
-
-  Future<void> _setVisibility(matrix.Visibility newVisibility) async {
-    setState(() => visibility = newVisibility);
-  }
 
   @override
   void dispose() {
@@ -59,24 +43,20 @@ class AddRoomDialogState extends State<AddRoomDialog> {
                   children: [
                     Text(
                       style: Theme.of(context).textTheme.headlineSmall,
-                      widget.roomType == AddRoomType.subspace
-                          ? L10n.of(context)!.createNewSpace
-                          : L10n.of(context)!.createChat,
+                      L10n.of(context).createChat,
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: _roomNameController,
                       decoration: InputDecoration(
-                        hintText: widget.roomType == AddRoomType.subspace
-                            ? L10n.of(context)!.spaceName
-                            : L10n.of(context)!.chatName,
+                        hintText: L10n.of(context).chatName,
                       ),
                       minLines: 1,
                       maxLines: 1,
                       maxLength: 64,
                       validator: (text) {
                         if (text == null || text.isEmpty) {
-                          return L10n.of(context)!.pleaseChoose;
+                          return L10n.of(context).pleaseChoose;
                         }
                         return null;
                       },
@@ -87,7 +67,7 @@ class AddRoomDialogState extends State<AddRoomDialog> {
                     TextFormField(
                       controller: _roomDescriptionController,
                       decoration: InputDecoration(
-                        hintText: L10n.of(context)!.chatDescription,
+                        hintText: L10n.of(context).chatDescription,
                       ),
                       minLines: 4,
                       maxLines: 8,
@@ -98,13 +78,6 @@ class AddRoomDialogState extends State<AddRoomDialog> {
                   ],
                 ),
               ),
-              VisibilityToggle(
-                setJoinRules: _setJoinRules,
-                setVisibility: _setVisibility,
-                spaceMode: widget.roomType == AddRoomType.subspace,
-                visibility: visibility,
-                joinRules: joinRules,
-              ),
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Row(
@@ -114,24 +87,23 @@ class AddRoomDialogState extends State<AddRoomDialog> {
                       onPressed: () {
                         Navigator.of(context).pop(null);
                       },
-                      child: Text(L10n.of(context)!.cancel),
+                      child: Text(L10n.of(context).cancel),
                     ),
                     const SizedBox(width: 20),
                     TextButton(
                       onPressed: () async {
                         final isValid = _formKey.currentState!.validate();
                         if (!isValid) return;
-
                         Navigator.of(context).pop(
                           RoomResponse(
                             roomName: _roomNameController.text,
                             roomDescription: _roomDescriptionController.text,
-                            joinRules: joinRules,
-                            visibility: visibility,
+                            joinRules: JoinRules.public,
+                            visibility: matrix.Visibility.private,
                           ),
                         );
                       },
-                      child: Text(L10n.of(context)!.confirm),
+                      child: Text(L10n.of(context).confirm),
                     ),
                   ],
                 ),

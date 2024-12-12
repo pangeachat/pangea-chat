@@ -60,7 +60,7 @@ class MessageContent extends StatelessWidget {
   });
 
   void _verifyOrRequestKey(BuildContext context) async {
-    final l10n = L10n.of(context)!;
+    final l10n = L10n.of(context);
     if (event.content['can_request_session'] != true) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -135,7 +135,7 @@ class MessageContent extends StatelessWidget {
           textColor: buttonTextColor,
           onPressed: () {},
           icon: '🔒',
-          label: L10n.of(context)!.encrypted,
+          label: L10n.of(context).encrypted,
           fontSize: fontSize,
         );
       case EventTypes.Message:
@@ -187,6 +187,7 @@ class MessageContent extends StatelessWidget {
               return AudioPlayerWidget(
                 event,
                 color: textColor,
+                fontSize: fontSize,
               );
             }
             return MessageDownloadContent(event, textColor);
@@ -210,6 +211,7 @@ class MessageContent extends StatelessWidget {
                 textColor: textColor,
                 room: event.room,
                 // #Pangea
+                event: event,
                 isOverlay: overlayController != null,
                 controller: controller,
                 pangeaMessageEvent: pangeaMessageEvent,
@@ -227,7 +229,7 @@ class MessageContent extends StatelessWidget {
           //     textColor: buttonTextColor,
           //     onPressed: () => _verifyOrRequestKey(context),
           //     icon: '🔒',
-          //     label: L10n.of(context)!.encrypted,
+          //     label: L10n.of(context).encrypted,
           //     fontSize: fontSize,
           //   );
           // Pangea#
@@ -257,7 +259,7 @@ class MessageContent extends StatelessWidget {
                       onPressed:
                           UrlLauncher(context, geoUri.toString()).launchUrl,
                       label: Text(
-                        L10n.of(context)!.openInMaps,
+                        L10n.of(context).openInMaps,
                         style: TextStyle(color: textColor),
                       ),
                     ),
@@ -277,16 +279,16 @@ class MessageContent extends StatelessWidget {
                       event.redactedBecause?.content.tryGet<String>('reason');
                   final redactedBy = snapshot.data?.calcDisplayname() ??
                       event.redactedBecause?.senderId.localpart ??
-                      L10n.of(context)!.user;
+                      L10n.of(context).user;
                   return _ButtonContent(
                     label: reason == null
-                        ? L10n.of(context)!.redactedBy(redactedBy)
-                        : L10n.of(context)!.redactedByBecause(
+                        ? L10n.of(context).redactedBy(redactedBy)
+                        : L10n.of(context).redactedByBecause(
                             redactedBy,
                             reason,
                           ),
                     icon: '🗑️',
-                    textColor: buttonTextColor,
+                    textColor: buttonTextColor.withAlpha(128),
                     onPressed: () => onInfoTab!(event),
                     fontSize: fontSize,
                   );
@@ -295,7 +297,7 @@ class MessageContent extends StatelessWidget {
             }
             final bigEmotes = event.onlyEmotes &&
                 event.numberEmotes > 0 &&
-                event.numberEmotes <= 10;
+                event.numberEmotes <= 3;
 
             // #Pangea
             final messageTextStyle =
@@ -319,11 +321,22 @@ class MessageContent extends StatelessWidget {
                 tokens:
                     pangeaMessageEvent!.messageDisplayRepresentation?.tokens,
                 style: messageTextStyle,
-                onClick: overlayController?.onClickOverlayMessageToken ??
-                    (token) => controller.showToolbar(
-                          pangeaMessageEvent!,
-                          selectedToken: token,
-                        ),
+                onClick: (token) {
+                  token = pangeaMessageEvent?.messageDisplayRepresentation
+                          ?.getClosestNonPunctToken(token) ??
+                      token;
+
+                  if (overlayController != null) {
+                    overlayController?.onClickOverlayMessageToken(token);
+                    return;
+                  }
+
+                  controller.showToolbar(
+                    event,
+                    pangeaMessageEvent: pangeaMessageEvent,
+                    selectedToken: token,
+                  );
+                },
                 isSelected: overlayController?.isTokenSelected,
               );
             }
@@ -333,6 +346,7 @@ class MessageContent extends StatelessWidget {
             return
                 // #Pangea
                 ToolbarSelectionArea(
+              event: event,
               controller: controller,
               pangeaMessageEvent: pangeaMessageEvent,
               isOverlay: overlayController != null,
@@ -340,15 +354,16 @@ class MessageContent extends StatelessWidget {
               prevEvent: prevEvent,
               child:
                   // Pangea#
+
                   Linkify(
                 text: event.calcLocalizedBodyFallback(
-                  MatrixLocals(L10n.of(context)!),
+                  MatrixLocals(L10n.of(context)),
                   hideReply: true,
                 ),
                 // #Pangea
                 // style: TextStyle(
                 //   color: textColor,
-                //   fontSize: bigEmotes ? fontSize * 3 : fontSize,
+                //   fontSize: bigEmotes ? fontSize * 5 : fontSize,
                 //   decoration:
                 //       event.redacted ? TextDecoration.lineThrough : null,
                 // ),
@@ -357,7 +372,7 @@ class MessageContent extends StatelessWidget {
                 options: const LinkifyOptions(humanize: false),
                 linkStyle: TextStyle(
                   color: textColor.withAlpha(150),
-                  fontSize: bigEmotes ? fontSize * 3 : fontSize,
+                  fontSize: fontSize,
                   decoration: TextDecoration.underline,
                   decorationColor: textColor.withAlpha(150),
                 ),
@@ -370,7 +385,7 @@ class MessageContent extends StatelessWidget {
           future: event.fetchSenderUser(),
           builder: (context, snapshot) {
             return _ButtonContent(
-              label: L10n.of(context)!.startedACall(
+              label: L10n.of(context).startedACall(
                 snapshot.data?.calcDisplayname() ??
                     event.senderFromMemoryOrFallback.calcDisplayname(),
               ),
@@ -386,7 +401,7 @@ class MessageContent extends StatelessWidget {
           future: event.fetchSenderUser(),
           builder: (context, snapshot) {
             return _ButtonContent(
-              label: L10n.of(context)!.userSentUnknownEvent(
+              label: L10n.of(context).userSentUnknownEvent(
                 snapshot.data?.calcDisplayname() ??
                     event.senderFromMemoryOrFallback.calcDisplayname(),
                 event.type,

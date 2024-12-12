@@ -280,6 +280,7 @@ class WordMatchContent extends StatelessWidget {
                           uniqueKeyForLayerLink: (int index) =>
                               "wordMatch$index",
                           selectedChoiceIndex: controller.selectedChoiceIndex,
+                          tts: controller.widget.scm.choreographer.tts,
                         ),
                       const SizedBox(height: 12),
                       PromptAndFeedback(controller: controller),
@@ -302,7 +303,7 @@ class WordMatchContent extends StatelessWidget {
                         ),
                         onPressed: controller.onIgnoreMatch,
                         child: Center(
-                          child: Text(L10n.of(context)!.ignoreInThisText),
+                          child: Text(L10n.of(context).ignoreInThisText),
                         ),
                       ),
                     ),
@@ -335,7 +336,7 @@ class WordMatchContent extends StatelessWidget {
                                   )
                                 : null,
                           ),
-                          child: Text(L10n.of(context)!.replace),
+                          child: Text(L10n.of(context).replace),
                         ),
                       ),
                     ),
@@ -355,7 +356,7 @@ class WordMatchContent extends StatelessWidget {
                             (AppConfig.primaryColor).withOpacity(0.1),
                           ),
                         ),
-                        child: Text(L10n.of(context)!.helpMeTranslate),
+                        child: Text(L10n.of(context).helpMeTranslate),
                       ),
                     ),
                 ],
@@ -463,7 +464,7 @@ class _LoadingTextState extends State<LoadingText>
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          L10n.of(context)!.makingActivity,
+          L10n.of(context).makingActivity,
           style: BotStyle.text(context),
         ),
         AnimatedBuilder(
@@ -500,7 +501,7 @@ class StartITButton extends StatelessWidget {
       type: MaterialType.transparency,
       child: ListTile(
         leading: const Icon(Icons.translate_outlined),
-        title: Text(L10n.of(context)!.helpMeTranslate),
+        title: Text(L10n.of(context).helpMeTranslate),
         onTap: () {
           MatrixState.pAnyState.closeOverlay();
           Future.delayed(Duration.zero, () => onITStart());
@@ -536,7 +537,7 @@ class DontShowSwitchListTileState extends State<DontShowSwitchListTile> {
   Widget build(BuildContext context) {
     return SwitchListTile.adaptive(
       activeColor: AppConfig.activeToggleColor,
-      title: Text(L10n.of(context)!.interactiveTranslatorAutoPlaySliderHeader),
+      title: Text(L10n.of(context).interactiveTranslatorAutoPlaySliderHeader),
       value: switchValue,
       onChanged: (value) {
         widget.onSwitch(value);
