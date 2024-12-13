@@ -4622,5 +4622,6 @@
       "currentXP": {},
       "maxXP": {}
     }
-  }
+  },
+  "signInWithUsername": "Sign in with username and password"
 }
