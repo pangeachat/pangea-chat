@@ -6,7 +6,7 @@ FLUFFYCHAT_ORIG_TEAM="4NXF6Z997G"
 #FLUFFYCHAT_NEW_TEAM="ABCDE12345"
 
 # In some cases (ie: running beta XCode releases) some pods haven't updated their minimum version
-# but XCode will reject the package for using too old of a minimum version. 
+# but XCode will reject the package for using too old of a minimum version.
 # This will fix that, but. Well. Use at your own risk.
 # export I_PROMISE_IM_REALLY_SMART=1
 
@@ -15,19 +15,19 @@ FLUFFYCHAT_ORIG_TEAM="4NXF6Z997G"
 
 ### Rotate IDs ###
 [ -n "${FLUFFYCHAT_NEW_GROUP}" ] && {
-	# App group IDs
-	sed -i "" "s/group.${FLUFFYCHAT_ORIG_GROUP}.app/group.${FLUFFYCHAT_NEW_GROUP}.app/g" "ios/FluffyChat Share/FluffyChat Share.entitlements"
-	sed -i "" "s/group.${FLUFFYCHAT_ORIG_GROUP}.app/group.${FLUFFYCHAT_NEW_GROUP}.app/g" "ios/Runner/Runner.entitlements"
-	sed -i "" "s/group.${FLUFFYCHAT_ORIG_GROUP}.app/group.${FLUFFYCHAT_NEW_GROUP}.app/g" "ios/Runner.xcodeproj/project.pbxproj"
-	# Bundle identifiers
-	sed -i "" "s/${FLUFFYCHAT_ORIG_GROUP}.app/${FLUFFYCHAT_NEW_GROUP}.app/g" "ios/Runner.xcodeproj/project.pbxproj"
+  # App group IDs
+  sed -i "" "s/group.${FLUFFYCHAT_ORIG_GROUP}.app/group.${FLUFFYCHAT_NEW_GROUP}.app/g" "ios/FluffyChat Share/FluffyChat Share.entitlements"
+  sed -i "" "s/group.${FLUFFYCHAT_ORIG_GROUP}.app/group.${FLUFFYCHAT_NEW_GROUP}.app/g" "ios/Runner/Runner.entitlements"
+  sed -i "" "s/group.${FLUFFYCHAT_ORIG_GROUP}.app/group.${FLUFFYCHAT_NEW_GROUP}.app/g" "ios/Runner.xcodeproj/project.pbxproj"
+  # Bundle identifiers
+  sed -i "" "s/${FLUFFYCHAT_ORIG_GROUP}.app/${FLUFFYCHAT_NEW_GROUP}.app/g" "ios/Runner.xcodeproj/project.pbxproj"
 }
 
 [ -n "${FLUFFYCHAT_NEW_TEAM}" ] && {
-	# Code signing team
-	sed -i "" "s/${FLUFFYCHAT_ORIG_TEAM}/${FLUFFYCHAT_NEW_TEAM}/g" "ios/Runner.xcodeproj/project.pbxproj"
+  # Code signing team
+  sed -i "" "s/${FLUFFYCHAT_ORIG_TEAM}/${FLUFFYCHAT_NEW_TEAM}/g" "ios/Runner.xcodeproj/project.pbxproj"
 }
-cat << EOHELP
+cat <<EOHELP
 If something later in the build explodes, and looks possibly related to App IDs:
 1. Ask Xcode nicely
     - Open ios/Runner.xcodeproj in Xcode
@@ -42,10 +42,10 @@ EOHELP
 
 ### [optional] override pods minimum iphoneos deployment target ###
 [ -n "${I_PROMISE_IM_REALLY_SMART}" ] && {
-# 1. I'm sorry about the indentation't ;_; heredocs are weird about it
-# 2. The patch basically just removes any preference on target iOS version
-#    This lets our default from ios/Flutter/AppFrameworkInfo.plist take precendence
-cat << EOPATCH | patch --forward --reject-file=apple_please_fix_your_coreutils --silent ios/Podfile
+  # 1. I'm sorry about the indentation't ;_; heredocs are weird about it
+  # 2. The patch basically just removes any preference on target iOS version
+  #    This lets our default from ios/Flutter/AppFrameworkInfo.plist take precendence
+  cat <<EOPATCH | patch --forward --reject-file=apple_please_fix_your_coreutils --silent ios/Podfile
 diff --git a/ios/Podfile b/ios/Podfile
 index 9411102b..0446120a 100644
 --- a/ios/Podfile
@@ -60,7 +60,7 @@ index 9411102b..0446120a 100644
    end
  end
 EOPATCH
-rm -f apple_please_fix_your_coreutils
+  rm -f apple_please_fix_your_coreutils
 }
 
 ### Make release build ###

@@ -19,6 +19,17 @@ jobs:
 
   #   - name: Checkout different branch
   #     run: git checkout development
+  deploy_ios_testflight:
+    runs-on: macos-latest
+    environment: staging
+    env:
+      FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD}}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Make release script executable
+        run: chmod +x ./scripts/release-ios-testflight.sh
+      - name: Deploy to TestFlight
+        run: ./scripts/release-ios-testflight.sh
 
   build_web:
     runs-on: ubuntu-latest

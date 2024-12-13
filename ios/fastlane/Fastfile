@@ -31,6 +31,7 @@ platform :ios do
       distribute_external: true,
       groups: "Pangea Chat Beta Test",
       changelog: "This is a release candidate for Pangea Chat. Please test if the app is overall in a good condition before we push this to production.",
+      beta_app_description: "This is a release candidate for Pangea Chat. Please test if the app is overall in a good condition before we push this to production."
     )
   end
 end
