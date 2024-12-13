@@ -4414,6 +4414,12 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$ttsInstructionsHyperlink() {
       return "Click here to view instructions for downloading a new voice on your device.";
     },
+    get$currentVersion() {
+      return "Current Version";
+    },
+    get$latestVersion() {
+      return "Latest Version";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4429,6 +4435,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_197", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "Us+khE0up++1Msn8HemrPRBPX4U=");
+})($__dart_deferred_initializers__, "S4kxGR5OXNc5F2xQqI95pe1ss3k=");
 ;
 //# sourceMappingURL=main.dart.js_197.part.js.map
