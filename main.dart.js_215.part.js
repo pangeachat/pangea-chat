@@ -4401,6 +4401,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     xpIntoLevel$2(currentXP, maxXP) {
       return "" + currentXP + " / " + maxXP + " XP";
     },
+    get$signInWithUsername() {
+      return "Sign in with username and password";
+    },
     get$enableTTSToolName() {
       return "Enabled text-to-speech";
     },
@@ -4434,6 +4437,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_215", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "YxQZ0ZF81VN7laFqNjeH+qy5o+w=");
+})($__dart_deferred_initializers__, "CY+Yr2ROBQGMhHfPmSp8uTQ0biM=");
 ;
 //# sourceMappingURL=main.dart.js_215.part.js.map
