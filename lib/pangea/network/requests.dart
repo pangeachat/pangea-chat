@@ -132,7 +132,7 @@ class Requests {
     };
     if (accessToken != null) {
       headers["Authorization"] = 'Bearer ${accessToken!}';
-      headers["Matrix-Access-Token"] = accessToken!;
+      //headers["Matrix-Access-Token"] = accessToken!;
     }
     if (choreoApiKey != null) {
       headers['api_key'] = choreoApiKey!;
