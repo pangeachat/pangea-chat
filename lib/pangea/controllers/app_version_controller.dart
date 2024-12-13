@@ -70,8 +70,18 @@ class AppVersionController {
     final currentBuildNumberInt = int.parse(currentBuildNumber);
     final remoteBuildNumberInt = int.parse(remoteBuildNumber);
 
+    if (currentVersionParts[0] > remoteVersionParts[0]) {
+      return;
+    }
+
+    if (currentVersionParts[0] == remoteVersionParts[0] &&
+        currentVersionParts[1] > remoteVersionParts[1]) {
+      return;
+    }
+
     // indicates if the current version is older than the remote version
-    bool isOlderVersion = false;
+    bool isOlderCurrentVersion = false;
+    bool isDifferentVersion = false;
 
     // Loop through the remote and current version parts
     // and compare them. If a part of the current version
@@ -84,10 +94,12 @@ class AppVersionController {
         i < min(currentVersionParts.length, remoteVersionParts.length);
         i++) {
       if (currentVersionParts[i] < remoteVersionParts[i]) {
-        isOlderVersion = true;
+        isOlderCurrentVersion = true;
+        isDifferentVersion = true;
         break;
       } else if (currentVersionParts[i] > remoteVersionParts[i]) {
-        isOlderVersion = false;
+        isOlderCurrentVersion = false;
+        isDifferentVersion = true;
         break;
       }
     }
@@ -101,11 +113,11 @@ class AppVersionController {
     }
 
     // also compare the build numbers
-    if (!isOlderVersion && currentBuildNumberInt < remoteBuildNumberInt) {
-      isOlderVersion = true;
+    if (!isDifferentVersion && currentBuildNumberInt < remoteBuildNumberInt) {
+      isOlderCurrentVersion = true;
     }
 
-    if (!isOlderVersion && !mandatoryUpdate) {
+    if (!isOlderCurrentVersion && !mandatoryUpdate) {
       return;
     }
 
@@ -116,8 +128,14 @@ class AppVersionController {
       return;
     }
 
-    final OkCancelResult dialogResponse =
-        await _showDialog(context, mandatoryUpdate);
+    final OkCancelResult dialogResponse = await _showDialog(
+      context,
+      mandatoryUpdate,
+      currentVersion,
+      remoteVersion,
+      currentBuildNumber,
+      remoteBuildNumber,
+    );
 
     if (!mandatoryUpdate && dialogResponse != OkCancelResult.ok) {
       await MatrixState.pangeaController.pStoreService.save(
@@ -134,13 +152,21 @@ class AppVersionController {
   static Future<OkCancelResult> _showDialog(
     BuildContext context,
     bool mandatoryUpdate,
+    String currentVersion,
+    String remoteVersion,
+    String currentBuildNumber,
+    String remoteBuildNumber,
   ) async {
     final title = mandatoryUpdate
         ? L10n.of(context).mandatoryUpdateRequired
         : L10n.of(context).updateAvailable;
     final message = mandatoryUpdate
-        ? L10n.of(context).mandatoryUpdateRequiredDesc
-        : L10n.of(context).updateAvailableDesc;
+        ? "${L10n.of(context).mandatoryUpdateRequiredDesc}\n\n"
+            "${L10n.of(context).currentVersion}: $currentVersion+$currentBuildNumber\n"
+            "${L10n.of(context).latestVersion}: $remoteVersion+$remoteBuildNumber"
+        : "${L10n.of(context).updateAvailableDesc}\n\n"
+            "${L10n.of(context).currentVersion}: $currentVersion+$currentBuildNumber\n"
+            "${L10n.of(context).latestVersion}: $remoteVersion+$remoteBuildNumber";
     return mandatoryUpdate
         ? showOkAlertDialog(
             context: context,
