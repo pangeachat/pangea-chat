@@ -49,12 +49,6 @@ jobs:
         run: |
           echo "Installing Homebrew tools"
           brew install yq cocoapods
-      # Install CocoaPods dependencies
-      - name: Setup CocoaPods
-        run: |
-          cd ios
-          arch -x86_64 pod install
-          cd ..
       - name: Deploy to TestFlight
         run: ./scripts/release-ios-testflight.sh
 
