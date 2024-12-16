@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
 
@@ -45,11 +48,12 @@ class BotFaceState extends State<BotFace> {
   }
 
   Future<void> _loadRiveFile() async {
-    final riveFile = await RiveFile.asset('assets/pangea/bot_faces/pangea_bot.riv');
+    final riveFile =
+        await RiveFile.asset('assets/pangea/bot_faces/pangea_bot.riv');
 
     final artboard = riveFile.mainArtboard;
-    _controller = StateMachineController
-        .fromArtboard(artboard, 'BotIconStateMachine');
+    _controller =
+        StateMachineController.fromArtboard(artboard, 'BotIconStateMachine');
 
     if (_controller != null) {
       artboard.addController(_controller!);
@@ -66,16 +70,24 @@ class BotFaceState extends State<BotFace> {
 
   @override
   Widget build(BuildContext context) {
+    // Timer for randomly resetting animation
+    // Animation restart triggered between 20 and 30 seconds in
+    Timer(
+      Duration(seconds: 20 + Random().nextInt(10)),
+      () {
+        _loadRiveFile();
+      },
+    );
 
     return SizedBox(
       width: widget.width,
       height: widget.width,
       child: _artboard != null
-        ? Rive(
-          artboard: _artboard!,
-          fit: BoxFit.cover,
-        )
-        : Container(),
+          ? Rive(
+              artboard: _artboard!,
+              fit: BoxFit.cover,
+            )
+          : Container(),
     );
   }
 
