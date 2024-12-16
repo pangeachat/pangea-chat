@@ -1,5 +1,4 @@
 #!/bin/sh -ve
-brew install yq
 rm -rf fonts/NotoEmoji
 yq -i 'del( .flutter.fonts[] | select(.family == "NotoEmoji") )' pubspec.yaml
 flutter clean
