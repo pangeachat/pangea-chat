@@ -1,13 +1,11 @@
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/utils/fluffy_share.dart';
-import 'package:fluffychat/utils/show_scaffold_dialog.dart';
 import 'package:fluffychat/utils/url_launcher.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:fluffychat/widgets/qr_code_viewer.dart';
-import 'package:fluffychat/widgets/share_scaffold_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
@@ -144,24 +142,9 @@ class PublicRoomBottomSheetState extends State<PublicRoomBottomSheet> {
               ? null
               : [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        showScaffoldDialog(
-                          context: context,
-                          builder: (context) => ShareScaffoldDialog(
-                            items: [TextShareItem(roomAlias)],
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.forward_outlined),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: IconButton(
-                      icon: Icon(Icons.adaptive.share_outlined),
+                      icon: const Icon(Icons.qr_code_rounded),
                       onPressed: () => showQrCodeViewer(
                         context,
                         roomAlias,

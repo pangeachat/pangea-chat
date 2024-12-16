@@ -5,16 +5,10 @@ import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pages/chat/chat_app_bar_list_tile.dart';
 import 'package:fluffychat/pages/chat/chat_app_bar_title.dart';
-import 'package:fluffychat/pages/chat/chat_emoji_picker.dart';
 import 'package:fluffychat/pages/chat/chat_event_list.dart';
 import 'package:fluffychat/pages/chat/pinned_events.dart';
 import 'package:fluffychat/pages/chat/reply_display.dart';
-import 'package:fluffychat/pangea/choreographer/widgets/it_bar.dart';
-import 'package:fluffychat/pangea/controllers/put_analytics_controller.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
-import 'package:fluffychat/pangea/widgets/animations/gain_points.dart';
-import 'package:fluffychat/pangea/widgets/chat/chat_floating_action_button.dart';
-import 'package:fluffychat/pangea/widgets/chat/chat_view_background.dart';
 import 'package:fluffychat/pangea/widgets/chat/input_bar_wrapper.dart';
 import 'package:fluffychat/utils/account_config.dart';
 import 'package:fluffychat/utils/localized_exception_extension.dart';
@@ -29,6 +23,7 @@ import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../utils/stream_extension.dart';
+import 'chat_emoji_picker.dart';
 
 enum _EventContextAction { info, report }
 
@@ -396,127 +391,33 @@ class ChatView extends StatelessWidget {
                                             ),
                                           ],
                                         )
-                                      // #Pangea
-                                      : null,
-                                  // : Column(
-                                  //     mainAxisSize: MainAxisSize.min,
-                                  //     children: [
-                                  //       const ConnectionStatusHeader(),
-                                  //       ReactionsPicker(controller),
-                                  //       ReplyDisplay(controller),
-                                  //       ChatInputRow(controller),
-                                  //       ChatEmojiPicker(controller),
-                                  //     ],
-                                  //   ),
-                                  // Pangea#
-                                ),
-                              ),
-                            // #Pangea
-                            // Keep messages above minimum input bar height
-                            const SizedBox(
-                              height: 60,
-                            ),
-                            // Pangea#
-                          ],
-                        ),
-                        // #Pangea
-                        ChatViewBackground(
-                          choreographer: controller.choreographer,
-                        ),
-                        Positioned(
-                          left: 0,
-                          right: 0,
-                          bottom: 16,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              if (!controller.selectMode)
-                                Container(
-                                  margin: EdgeInsets.only(
-                                    bottom: 10,
-                                    left: bottomSheetPadding,
-                                    right: bottomSheetPadding,
-                                  ),
-                                  constraints: const BoxConstraints(
-                                    maxWidth: FluffyThemes.columnWidth * 2.4,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      PointsGainedAnimation(
-                                        gainColor: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
-                                        origin:
-                                            AnalyticsUpdateOrigin.sendMessage,
-                                      ),
-                                      const SizedBox(width: 100),
-                                      ChatFloatingActionButton(
-                                        controller: controller,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              Container(
-                                margin: EdgeInsets.only(
-                                  bottom: bottomSheetPadding,
-                                  left: bottomSheetPadding,
-                                  right: bottomSheetPadding,
-                                ),
-                                constraints: const BoxConstraints(
-                                  maxWidth: FluffyThemes.columnWidth * 2.5,
-                                ),
-                                alignment: Alignment.center,
-                                child: Material(
-                                  clipBehavior: Clip.hardEdge,
-                                  // #Pangea
-                                  // color: Theme.of(context)
-                                  //     .colorScheme
-                                  //     .surfaceContainerHighest,
-                                  type: MaterialType.transparency,
-                                  // Pangea#
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(24),
-                                  ),
-
-                                  child: Column(
-                                    children: [
-                                      const ConnectionStatusHeader(),
-                                      ITBar(
-                                        choreographer: controller.choreographer,
-                                      ),
-                                      DecoratedBox(
-                                        decoration: BoxDecoration(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .surfaceContainerHighest,
-                                        ),
-                                        child: Column(
+                                      : Column(
+                                          mainAxisSize: MainAxisSize.min,
                                           children: [
+                                            const ConnectionStatusHeader(),
+                                            // #Pangea
+                                            // ReactionsPicker(controller),
+                                            // Pangea#
                                             ReplyDisplay(controller),
+                                            // #Pangea
                                             ChatInputRowWrapper(
                                               controller: controller,
                                             ),
+                                            // Pangea#
                                             ChatEmojiPicker(controller),
                                           ],
                                         ),
-                                      ),
-                                    ],
-                                  ),
                                 ),
                               ),
-                            ],
-                          ),
+                          ],
                         ),
-                        // Pangea#
                       ],
                     ),
                   ),
                   // #Pangea
                   // if (controller.dragging)
                   //   Container(
-                  //     color: theme.scaffoldBackgroundColor.withOpacity(0.9),
+                  //     color: theme.scaffoldBackgroundColor.withAlpha(230),
                   //     alignment: Alignment.center,
                   //     child: const Icon(
                   //       Icons.upload_outlined,

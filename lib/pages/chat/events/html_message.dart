@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_highlighter/flutter_highlighter.dart';
 import 'package:flutter_highlighter/themes/shades-of-purple.dart';
 import 'package:flutter_html/flutter_html.dart';
-// import 'package:flutter_html_table/flutter_html_table.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:linkify/linkify.dart';
 import 'package:matrix/matrix.dart';

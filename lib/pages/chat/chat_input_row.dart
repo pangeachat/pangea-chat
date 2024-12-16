@@ -154,7 +154,7 @@ class ChatInputRow extends StatelessWidget {
                           // Pangea#
                           : const SizedBox.shrink(),
                     // #Pangea
-                    PangeaReactionsPicker(controller),
+                    if (isOverlay) PangeaReactionsPicker(controller),
                     if (controller.selectedEvents.length == 1 &&
                         !controller.selectedEvents.first
                             .getDisplayEvent(controller.timeline!)

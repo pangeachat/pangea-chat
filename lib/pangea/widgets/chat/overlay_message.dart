@@ -79,7 +79,9 @@ class OverlayMessage extends StatelessWidget {
     if (ownMessage) {
       color = displayEvent.status.isError
           ? Colors.redAccent
-          : theme.colorScheme.primary;
+          : theme.brightness == Brightness.light
+              ? theme.colorScheme.primary
+              : theme.colorScheme.primaryContainer;
     }
 
     final noBubble = {
@@ -116,7 +118,9 @@ class OverlayMessage extends StatelessWidget {
           child: MessageContent(
             event,
             textColor: ownMessage
-                ? theme.colorScheme.onPrimary
+                ? theme.brightness == Brightness.light
+                    ? theme.colorScheme.onPrimary
+                    : theme.colorScheme.onPrimaryContainer
                 : theme.colorScheme.onSurface,
             pangeaMessageEvent: pangeaMessageEvent,
             immersionMode: immersionMode,

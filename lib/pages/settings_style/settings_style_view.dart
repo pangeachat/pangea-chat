@@ -10,6 +10,7 @@ import 'package:fluffychat/config/setting_keys.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/events/state_message.dart';
 import 'package:fluffychat/utils/account_config.dart';
+import 'package:fluffychat/utils/color_value.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
 import 'package:fluffychat/widgets/matrix.dart';
@@ -100,7 +101,7 @@ class SettingsStyleView extends StatelessWidget {
                       child: Tooltip(
                         message: color == null
                             ? L10n.of(context).systemTheme
-                            : '#${color.value.toRadixString(16).toUpperCase()}',
+                            : '#${color.hexValue.toRadixString(16).toUpperCase()}',
                         child: InkWell(
                           borderRadius: BorderRadius.circular(colorPickerSize),
                           onTap: () => controller.setChatColor(color),
@@ -213,7 +214,9 @@ class SettingsStyleView extends StatelessWidget {
                                 ),
                                 child: DecoratedBox(
                                   decoration: BoxDecoration(
-                                    color: theme.colorScheme.primary,
+                                    color: theme.brightness == Brightness.light
+                                        ? theme.colorScheme.primary
+                                        : theme.colorScheme.primaryContainer,
                                     borderRadius: BorderRadius.circular(
                                       AppConfig.borderRadius,
                                     ),
@@ -226,7 +229,11 @@ class SettingsStyleView extends StatelessWidget {
                                     child: Text(
                                       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor',
                                       style: TextStyle(
-                                        color: theme.colorScheme.onPrimary,
+                                        color:
+                                            theme.brightness == Brightness.light
+                                                ? theme.colorScheme.onPrimary
+                                                : theme.colorScheme
+                                                    .onPrimaryContainer,
                                         fontSize: AppConfig.messageFontSize *
                                             AppConfig.fontSizeFactor,
                                       ),
