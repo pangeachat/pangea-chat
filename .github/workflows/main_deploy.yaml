@@ -28,12 +28,14 @@ jobs:
       - uses: actions/checkout@v4
       - name: Make release script executable
         run: chmod +x ./scripts/release-ios-testflight.sh
-      # Ensure Flutter is installed with correct architecture
+      # Install Flutter
       - name: Install Flutter
         run: |
-          echo "Installing Flutter for arm64 architecture"
+          echo "Installing Flutter"
           git clone https://github.com/flutter/flutter.git -b stable --depth 1
-          export PATH="$PATH:`pwd`/flutter/bin"
+          echo "Adding Flutter to PATH"
+          echo "$(pwd)/flutter/bin" >> $GITHUB_ENV
+          export PATH="$PATH:$(pwd)/flutter/bin"
           flutter doctor -v
       # Set up Ruby for Fastlane
       - name: Set up Ruby
