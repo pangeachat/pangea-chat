@@ -34,8 +34,8 @@ jobs:
           echo "Installing Flutter"
           git clone https://github.com/flutter/flutter.git -b stable --depth 1
           echo "Adding Flutter to PATH"
-          echo "$(pwd)/flutter/bin" >> $GITHUB_ENV
-          export PATH="$PATH:$(pwd)/flutter/bin"
+          echo "FLUTTER_HOME=$(pwd)/flutter" >> $GITHUB_ENV
+          echo "$FLUTTER_HOME/bin" >> $GITHUB_PATH
           flutter doctor -v
       # Set up Ruby for Fastlane
       - name: Set up Ruby
