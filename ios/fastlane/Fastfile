@@ -28,7 +28,7 @@ platform :ios do
     increment_version_number(version_number: version_name)
     build_app(workspace: "Runner.xcworkspace", scheme: "Runner")
     upload_to_testflight(
-      distribute_external: true,
+      distribute_external: false,
       groups: "Pangea Chat Beta Test",
       changelog: "This is a release candidate for Pangea Chat. Please test if the app is overall in a good condition before we push this to production.",
       beta_app_description: "This is a release candidate for Pangea Chat. Please test if the app is overall in a good condition before we push this to production."
