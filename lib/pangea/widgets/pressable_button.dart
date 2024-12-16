@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:fluffychat/pangea/utils/play_click_sound.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,12 +8,13 @@ import 'package:flutter/services.dart';
 class PressableButton extends StatefulWidget {
   final BorderRadius borderRadius;
   final double buttonHeight;
-  final bool enabled;
   final bool depressed;
   final Color color;
   final Widget child;
+
   final void Function()? onPressed;
   final Stream? triggerAnimation;
+  final ClickPlayer? clickPlayer;
 
   const PressableButton({
     required this.borderRadius,
@@ -20,9 +22,9 @@ class PressableButton extends StatefulWidget {
     required this.onPressed,
     required this.color,
     this.buttonHeight = 5,
-    this.enabled = true,
     this.depressed = false,
     this.triggerAnimation,
+    this.clickPlayer,
     super.key,
   });
 
@@ -45,8 +47,8 @@ class PressableButtonState extends State<PressableButton>
       vsync: this,
     );
     _tweenAnimation =
-        Tween<double>(begin: widget.buttonHeight, end: 0).animate(_controller);
-    if (widget.enabled) {
+        Tween<double>(begin: 0, end: widget.buttonHeight).animate(_controller);
+    if (!widget.depressed) {
       _triggerAnimationSubscription = widget.triggerAnimation?.listen((_) {
         _animationCompleter = Completer<void>();
         _animateUp();
@@ -56,14 +58,14 @@ class PressableButtonState extends State<PressableButton>
   }
 
   void _onTapDown(TapDownDetails? details) {
-    if (!widget.enabled) return;
+    if (widget.depressed) return;
     _animationCompleter = Completer<void>();
     if (!mounted) return;
     _animateUp();
   }
 
   void _animateUp() {
-    if (!mounted) return;
+    if (widget.depressed || !mounted) return;
     _controller.forward().then((_) {
       _animationCompleter?.complete();
       _animationCompleter = null;
@@ -71,8 +73,8 @@ class PressableButtonState extends State<PressableButton>
   }
 
   Future<void> _onTapUp(TapUpDetails? details) async {
-    if (!widget.enabled || widget.depressed) return;
     widget.onPressed?.call();
+    if (widget.depressed) return;
     await _animateDown();
   }
 
@@ -80,14 +82,15 @@ class PressableButtonState extends State<PressableButton>
     if (_animationCompleter != null) {
       await _animationCompleter!.future;
     }
-    if (mounted) _controller.reverse();
+    widget.clickPlayer?.play();
     if (!kIsWeb) {
       HapticFeedback.mediumImpact();
     }
+    if (mounted) _controller.reverse();
   }
 
   void _onTapCancel() {
-    if (!widget.enabled) return;
+    if (widget.depressed) return;
     if (mounted) _controller.reverse();
   }
 
@@ -104,37 +107,32 @@ class PressableButtonState extends State<PressableButton>
       onTapDown: _onTapDown,
       onTapUp: _onTapUp,
       onTapCancel: _onTapCancel,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AnimatedBuilder(
-                animation: _tweenAnimation,
-                builder: (context, _) {
-                  return Container(
-                    padding: EdgeInsets.only(
-                      bottom: widget.enabled && !widget.depressed
-                          ? _tweenAnimation.value
-                          : 0,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Color.alphaBlend(
-                        Colors.black.withOpacity(0.25),
-                        widget.color,
-                      ),
-                      borderRadius: widget.borderRadius,
-                    ),
-                    child: widget.child,
-                  );
-                },
+      child: AnimatedBuilder(
+        animation: _tweenAnimation,
+        builder: (context, child) {
+          return Container(
+            decoration: BoxDecoration(
+              color: Color.alphaBlend(
+                Colors.black.withOpacity(0.25),
+                widget.color,
               ),
-            ],
+              borderRadius: widget.borderRadius,
+            ),
+            padding: EdgeInsets.only(
+              bottom: !widget.depressed
+                  ? widget.buttonHeight - _tweenAnimation.value
+                  : 0,
+            ),
+            child: child,
+          );
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: widget.color,
+            borderRadius: widget.borderRadius,
           ),
-        ],
+          child: widget.child,
+        ),
       ),
     );
   }

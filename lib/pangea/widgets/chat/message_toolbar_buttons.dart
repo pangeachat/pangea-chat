@@ -103,13 +103,14 @@ class ToolbarButtons extends StatelessWidget {
                   children: [
                     PressableButton(
                       borderRadius: BorderRadius.circular(20),
-                      enabled: enabled,
                       depressed:
                           !enabled || mode == overlayController.toolbarMode,
                       color: color,
                       onPressed: enabled
                           ? () => overlayController.updateToolbarMode(mode)
                           : null,
+                      clickPlayer: overlayController
+                          .widget.chatController.choreographer.clickPlayer,
                       child: AnimatedContainer(
                         duration: FluffyThemes.animationDuration,
                         height: buttonSize,

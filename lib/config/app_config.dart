@@ -156,6 +156,14 @@ abstract class AppConfig {
   static String iosPromoCode =
       "https://apps.apple.com/redeem?ctx=offercodes&id=1445118630&code=";
   static String trialSubscriptionId = "pangea_new_user_trial";
+  static String androidUpdateURL =
+      "https://play.google.com/store/apps/details?id=com.talktolearn.chat";
+  static String iosUpdateURL = "itms-apps://itunes.apple.com/app/id1445118630";
+
+  static String windowsTTSDownloadInstructions =
+      "https://support.microsoft.com/en-us/topic/download-languages-and-voices-for-immersive-reader-read-mode-and-read-aloud-4c83a8d8-7486-42f7-8e46-2b0fdf753130";
+  static String androidTTSDownloadInstructions =
+      "https://support.google.com/accessibility/android/answer/6006983?hl=en";
   // Pangea#
 
   static void loadFromJson(Map<String, dynamic> json) {

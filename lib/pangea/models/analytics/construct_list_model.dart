@@ -19,7 +19,11 @@ class ConstructListModel {
     level = 0;
     vocabLemmas = 0;
     grammarLemmas = 0;
+    _uses.clear();
   }
+
+  List<OneConstructUse> _uses = [];
+  List<OneConstructUse> get uses => _uses;
 
   /// A map of lemmas to ConstructUses, each of which contains a lemma
   /// key = lemmma + constructType.string, value = ConstructUses
@@ -49,6 +53,7 @@ class ConstructListModel {
   /// IDs to ConstructUses and re-sort the list of ConstructUses
   void updateConstructs(List<OneConstructUse> newUses) {
     try {
+      _updateUsesList(newUses);
       _updateConstructMap(newUses);
       _updateConstructList();
       _updateCategoriesToUses();
@@ -62,6 +67,12 @@ class ConstructListModel {
     final comp = b.points.compareTo(a.points);
     if (comp != 0) return comp;
     return a.lemma.compareTo(b.lemma);
+  }
+
+  void _updateUsesList(List<OneConstructUse> newUses) {
+    newUses.sort((a, b) => b.timeStamp.compareTo(a.timeStamp));
+    _uses.insertAll(0, newUses);
+    _uses = _uses.take(100).toList();
   }
 
   /// A map of lemmas to ConstructUses, each of which contains a lemma

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
 
 enum ConstructUseTypeEnum {
   /// produced in chat by user, igc was run, and we've judged it to be a correct use
@@ -64,32 +65,90 @@ enum ConstructUseTypeEnum {
 extension ConstructUseTypeExtension on ConstructUseTypeEnum {
   String get string => toString().split('.').last;
 
-  IconData get icon {
+  String description(BuildContext context) {
     switch (this) {
       case ConstructUseTypeEnum.wa:
-        return Icons.thumb_up_sharp;
-
+        return L10n.of(context).constructUseWaDesc;
+      case ConstructUseTypeEnum.ga:
+        return L10n.of(context).constructUseGaDesc;
+      case ConstructUseTypeEnum.unk:
+        return L10n.of(context).constructUseUnkDesc;
       case ConstructUseTypeEnum.corIt:
-      case ConstructUseTypeEnum.incIt:
+        return L10n.of(context).constructUseCorITDesc;
       case ConstructUseTypeEnum.ignIt:
-        return Icons.translate;
-
+        return L10n.of(context).constructUseIgnITDesc;
+      case ConstructUseTypeEnum.incIt:
+        return L10n.of(context).constructUseIncITDesc;
       case ConstructUseTypeEnum.ignIGC:
+        return L10n.of(context).constructUseIgnIGCDesc;
+      case ConstructUseTypeEnum.corIGC:
+        return L10n.of(context).constructUseCorIGCDesc;
+      case ConstructUseTypeEnum.incIGC:
+        return L10n.of(context).constructUseIncIGCDesc;
+      case ConstructUseTypeEnum.corPA:
+        return L10n.of(context).constructUseCorPADesc;
+      case ConstructUseTypeEnum.ignPA:
+        return L10n.of(context).constructUseIgnPADesc;
+      case ConstructUseTypeEnum.incPA:
+        return L10n.of(context).constructUseIncPADesc;
+      case ConstructUseTypeEnum.corWL:
+        return L10n.of(context).constructUseCorWLDesc;
+      case ConstructUseTypeEnum.incWL:
+        return L10n.of(context).constructUseIncWLDesc;
+      case ConstructUseTypeEnum.ignWL:
+        return L10n.of(context).constructUseIngWLDesc;
+      case ConstructUseTypeEnum.corHWL:
+        return L10n.of(context).constructUseCorHWLDesc;
+      case ConstructUseTypeEnum.incHWL:
+        return L10n.of(context).constructUseIncHWLDesc;
+      case ConstructUseTypeEnum.ignHWL:
+        return L10n.of(context).constructUseIgnHWLDesc;
+      case ConstructUseTypeEnum.nan:
+        return L10n.of(context).constructUseNanDesc;
+    }
+  }
+
+  IconData get icon {
+    switch (this) {
+      // all minus for wrong answer
+      case ConstructUseTypeEnum.incIt:
       case ConstructUseTypeEnum.incIGC:
       case ConstructUseTypeEnum.incPA:
-      case ConstructUseTypeEnum.ignPA:
-      case ConstructUseTypeEnum.ignWL:
       case ConstructUseTypeEnum.incWL:
       case ConstructUseTypeEnum.incHWL:
-      case ConstructUseTypeEnum.ignHWL:
-        return Icons.close;
+        return Icons.dangerous_outlined;
 
-      case ConstructUseTypeEnum.ga:
-      case ConstructUseTypeEnum.corIGC:
+      // correct in word meaning
       case ConstructUseTypeEnum.corPA:
+        return Icons.add_task_outlined;
+
+      // correct in audio practice
       case ConstructUseTypeEnum.corWL:
       case ConstructUseTypeEnum.corHWL:
-        return Icons.check;
+        return Icons.volume_up_outlined;
+
+      // correct in translation
+      case ConstructUseTypeEnum.corIt:
+        return Icons.translate_outlined;
+
+      // written correctly without help
+      case ConstructUseTypeEnum.wa:
+        return Icons.thumb_up_outlined;
+
+      // correct in grammar correction
+      case ConstructUseTypeEnum.corIGC:
+        return Icons.spellcheck_outlined;
+
+      // ignored
+      case ConstructUseTypeEnum.ignIt:
+      case ConstructUseTypeEnum.ignIGC:
+      case ConstructUseTypeEnum.ignPA:
+      case ConstructUseTypeEnum.ignWL:
+      case ConstructUseTypeEnum.ignHWL:
+        return Icons.block_outlined;
+
+      case ConstructUseTypeEnum.ga:
+        return Icons.edit_outlined;
 
       case ConstructUseTypeEnum.unk:
       case ConstructUseTypeEnum.nan:

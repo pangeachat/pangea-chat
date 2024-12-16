@@ -23,10 +23,10 @@ Future<void> pLanguageDialog(
   //PTODO: if source language not set by user, default to languge from device settings
   final LanguageModel? userL1 = pangeaController.languageController.userL1;
   final LanguageModel? userL2 = pangeaController.languageController.userL2;
-  final String systemLang = Localizations.localeOf(parentContext).languageCode;
-  final LanguageModel systemLanguage = PangeaLanguage.byLangCode(systemLang);
+  final LanguageModel? systemLanguage =
+      pangeaController.languageController.systemLanguage;
 
-  LanguageModel selectedSourceLanguage = systemLanguage;
+  LanguageModel? selectedSourceLanguage = systemLanguage;
   if (userL1 != null && userL1.langCode != LanguageKeys.unknownLanguage) {
     selectedSourceLanguage = userL1;
   }
@@ -35,9 +35,9 @@ Future<void> pLanguageDialog(
   if (userL2 != null && userL2.langCode != LanguageKeys.unknownLanguage) {
     selectedTargetLanguage = userL2;
   } else {
-    selectedTargetLanguage = selectedSourceLanguage.langCode != 'en'
-        ? PangeaLanguage.byLangCode('en')
-        : PangeaLanguage.byLangCode('es');
+    selectedTargetLanguage = selectedSourceLanguage?.langCode != 'en'
+        ? PangeaLanguage.byLangCode('en')!
+        : PangeaLanguage.byLangCode('es')!;
   }
 
   return showDialog(
@@ -49,24 +49,25 @@ Future<void> pLanguageDialog(
           return Scaffold(
             backgroundColor: Colors.transparent,
             body: AlertDialog(
-              title: Text(L10n.of(parentContext).updateLanguage),
+              title: Text(L10n.of(context).updateLanguage),
               content: SizedBox(
                 width: FluffyThemes.columnWidth,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     PQuestionContainer(
-                      title: L10n.of(parentContext).whatIsYourBaseLanguage,
+                      title: L10n.of(context).whatIsYourBaseLanguage,
                     ),
                     PLanguageDropdown(
                       onChange: (p0) =>
                           setState(() => selectedSourceLanguage = p0),
-                      initialLanguage: selectedSourceLanguage,
+                      initialLanguage:
+                          selectedSourceLanguage ?? LanguageModel.unknown,
                       languages: pangeaController.pLanguageStore.baseOptions,
                       isL2List: false,
                     ),
                     PQuestionContainer(
-                      title: L10n.of(parentContext).whatLanguageYouWantToLearn,
+                      title: L10n.of(context).whatLanguageYouWantToLearn,
                     ),
                     PLanguageDropdown(
                       onChange: (p0) =>
@@ -80,14 +81,14 @@ Future<void> pLanguageDialog(
               ),
               actions: [
                 TextButton(
-                  child: Text(L10n.of(parentContext).cancel),
+                  child: Text(L10n.of(context).cancel),
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
                 TextButton(
                   onPressed: () {
-                    selectedSourceLanguage.langCode !=
+                    selectedSourceLanguage?.langCode !=
                             selectedTargetLanguage.langCode
                         ? showFutureLoadingDialog(
                             context: context,
@@ -97,7 +98,7 @@ Future<void> pLanguageDialog(
                                     .updateProfile(
                                   (profile) {
                                     profile.userSettings.sourceLanguage =
-                                        selectedSourceLanguage.langCode;
+                                        selectedSourceLanguage?.langCode;
                                     profile.userSettings.targetLanguage =
                                         selectedTargetLanguage.langCode;
                                     return profile;
@@ -117,14 +118,14 @@ Future<void> pLanguageDialog(
                         : ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
-                                L10n.of(parentContext).noIdenticalLanguages,
+                                L10n.of(context).noIdenticalLanguages,
                               ),
                               backgroundColor:
                                   Theme.of(context).colorScheme.primary,
                             ),
                           );
                   },
-                  child: Text(L10n.of(parentContext).saveChanges),
+                  child: Text(L10n.of(context).saveChanges),
                 ),
               ],
             ),
