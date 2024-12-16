@@ -7,6 +7,7 @@ import 'package:fluffychat/utils/url_launcher.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:fluffychat/widgets/qr_code_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:go_router/go_router.dart';
@@ -23,6 +24,7 @@ class NewPrivateChatView extends StatelessWidget {
     final theme = Theme.of(context);
 
     final searchResponse = controller.searchResponse;
+    final userId = Matrix.of(context).client.userID!;
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
@@ -158,26 +160,35 @@ class NewPrivateChatView extends StatelessWidget {
                       ),
                     Center(
                       child: Padding(
-                        padding: const EdgeInsets.all(64.0),
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxHeight: 256),
-                          child: Material(
-                            borderRadius: BorderRadius.circular(12),
-                            elevation: 10,
-                            color: Colors.white,
-                            shadowColor: theme.appBarTheme.shadowColor,
-                            clipBehavior: Clip.hardEdge,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 64.0,
+                          vertical: 24.0,
+                        ),
+                        child: Material(
+                          borderRadius:
+                              BorderRadius.circular(AppConfig.borderRadius),
+                          color: theme.colorScheme.primaryContainer,
+                          clipBehavior: Clip.hardEdge,
+                          child: InkWell(
+                            borderRadius:
+                                BorderRadius.circular(AppConfig.borderRadius),
+                            onTap: () => showQrCodeViewer(
+                              context,
+                              userId,
+                            ),
                             child: Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: PrettyQrView.data(
-                                data:
-                                    'https://matrix.to/#/${Matrix.of(context).client.userID}',
-                                decoration: PrettyQrDecoration(
-                                  shape: PrettyQrSmoothSymbol(
-                                    roundFactor: 1,
-                                    color: theme.brightness == Brightness.light
-                                        ? theme.colorScheme.primary
-                                        : theme.colorScheme.onPrimary,
+                              padding: const EdgeInsets.all(32.0),
+                              child: ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 256),
+                                child: PrettyQrView.data(
+                                  data: 'https://matrix.to/#/$userId',
+                                  decoration: PrettyQrDecoration(
+                                    shape: PrettyQrSmoothSymbol(
+                                      roundFactor: 1,
+                                      color:
+                                          theme.colorScheme.onPrimaryContainer,
+                                    ),
                                   ),
                                 ),
                               ),
