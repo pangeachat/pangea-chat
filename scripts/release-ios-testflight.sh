@@ -3,6 +3,7 @@ rm -rf fonts/NotoEmoji
 yq -i 'del( .flutter.fonts[] | select(.family == "NotoEmoji") )' pubspec.yaml
 flutter clean
 flutter pub get
+flutter precache --ios
 cd ios
 rm -rf Pods
 rm -f Podfile.lock
