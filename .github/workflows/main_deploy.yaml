@@ -28,11 +28,13 @@ jobs:
       - uses: actions/checkout@v4
       - name: Make release script executable
         run: chmod +x ./scripts/release-ios-testflight.sh
-      # Ensure Flutter is installed
+      # Ensure Flutter is installed with correct architecture
       - name: Install Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: 'stable' # Use the stable channel
+        run: |
+          echo "Installing Flutter for arm64 architecture"
+          git clone https://github.com/flutter/flutter.git -b stable --depth 1
+          export PATH="$PATH:`pwd`/flutter/bin"
+          flutter doctor -v
       # Set up Ruby for Fastlane
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
