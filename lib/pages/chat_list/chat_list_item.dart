@@ -1,8 +1,8 @@
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/utils/get_chat_list_item_subtitle.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/utils/room_status_extension.dart';
+import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/hover_builder.dart';
 import 'package:fluffychat/widgets/matrix.dart';
@@ -52,7 +52,7 @@ class ChatListItem extends StatelessWidget {
         okLabel: L10n.of(context).leave,
         cancelLabel: L10n.of(context).cancel,
         message: L10n.of(context).archiveRoomDescription,
-        isDestructiveAction: true,
+        isDestructive: true,
       );
       if (confirmed != OkCancelResult.ok) return false;
       final leaveResult = await showFutureLoadingDialog(

@@ -1,4 +1,3 @@
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:fluffychat/pages/chat_details/chat_details.dart';
 import 'package:fluffychat/pages/chat_details/participant_list_item.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
@@ -11,6 +10,8 @@ import 'package:fluffychat/pangea/widgets/conversation_bot/conversation_bot_sett
 import 'package:fluffychat/utils/fluffy_share.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/utils/url_launcher.dart';
+import 'package:fluffychat/widgets/adaptive_dialogs/show_modal_action_popup.dart';
+import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
@@ -32,20 +33,20 @@ class PangeaChatDetailsView extends StatelessWidget {
         Matrix.of(context).client.getRoomById(controller.roomId!);
     if (room == null) return;
 
-    final type = await showConfirmationDialog(
+    final type = await showModalActionPopup(
       context: context,
       title: L10n.of(context).downloadGroupText,
       actions: [
-        AlertDialogAction(
-          key: DownloadType.csv,
+        AdaptiveModalAction(
+          value: DownloadType.csv,
           label: L10n.of(context).downloadCSVFile,
         ),
-        AlertDialogAction(
-          key: DownloadType.txt,
+        AdaptiveModalAction(
+          value: DownloadType.txt,
           label: L10n.of(context).downloadTxtFile,
         ),
-        AlertDialogAction(
-          key: DownloadType.xlsx,
+        AdaptiveModalAction(
+          value: DownloadType.xlsx,
           label: L10n.of(context).downloadXLSXFile,
         ),
       ],
@@ -394,7 +395,7 @@ class PangeaChatDetailsView extends StatelessWidget {
                             ),
                           ),
                           onTap: () async {
-                            var confirmed = OkCancelResult.ok;
+                            OkCancelResult? confirmed = OkCancelResult.ok;
                             var shouldGo = false;
                             // If user is only admin, room will be archived
                             final onlyAdmin = await room.isOnlyAdmin();

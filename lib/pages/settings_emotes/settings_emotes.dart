@@ -1,10 +1,10 @@
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:archive/archive.dart'
     if (dart.library.io) 'package:archive/archive_io.dart';
 import 'package:collection/collection.dart';
 import 'package:fluffychat/utils/client_manager.dart';
 import 'package:fluffychat/utils/file_selector.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_file_extension.dart';
+import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -135,7 +135,7 @@ class EmotesSettingsController extends State<EmotesSettings> {
       showOkAlertDialog(
         useRootNavigator: false,
         context: context,
-        message: L10n.of(context).emoteExists,
+        title: L10n.of(context).emoteExists,
         okLabel: L10n.of(context).ok,
       );
       return;
@@ -145,7 +145,7 @@ class EmotesSettingsController extends State<EmotesSettings> {
       showOkAlertDialog(
         useRootNavigator: false,
         context: context,
-        message: L10n.of(context).emoteInvalid,
+        title: L10n.of(context).emoteInvalid,
         okLabel: L10n.of(context).ok,
       );
       return;
@@ -181,7 +181,7 @@ class EmotesSettingsController extends State<EmotesSettings> {
       await showOkAlertDialog(
         useRootNavigator: false,
         context: context,
-        message: L10n.of(context).emoteWarnNeedToPick,
+        title: L10n.of(context).emoteWarnNeedToPick,
         okLabel: L10n.of(context).ok,
       );
       return;
@@ -191,7 +191,7 @@ class EmotesSettingsController extends State<EmotesSettings> {
       await showOkAlertDialog(
         useRootNavigator: false,
         context: context,
-        message: L10n.of(context).emoteExists,
+        title: L10n.of(context).emoteExists,
         okLabel: L10n.of(context).ok,
       );
       return;
@@ -200,7 +200,7 @@ class EmotesSettingsController extends State<EmotesSettings> {
       await showOkAlertDialog(
         useRootNavigator: false,
         context: context,
-        message: L10n.of(context).emoteInvalid,
+        title: L10n.of(context).emoteInvalid,
         okLabel: L10n.of(context).ok,
       );
       return;

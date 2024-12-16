@@ -3,7 +3,6 @@ import 'dart:core';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:collection/collection.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -28,7 +27,6 @@ import 'package:fluffychat/pangea/models/tokens_event_content_model.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/utils/firebase_analytics.dart';
 import 'package:fluffychat/pangea/utils/overlay.dart';
-import 'package:fluffychat/pangea/utils/report_message.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
 import 'package:fluffychat/pangea/widgets/igc/pangea_text_controller.dart';
 import 'package:fluffychat/pangea/widgets/user_settings/p_language_dialog.dart';
@@ -39,6 +37,9 @@ import 'package:fluffychat/utils/matrix_sdk_extensions/filtered_timeline_extensi
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/utils/show_scaffold_dialog.dart';
+import 'package:fluffychat/widgets/adaptive_dialogs/show_modal_action_popup.dart';
+import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:fluffychat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:fluffychat/widgets/share_scaffold_dialog.dart';
@@ -950,23 +951,22 @@ class ChatController extends State<ChatPageWithRoom>
     // #Pangea
     clearSelectedEvents();
     // Pangea#
-    final score = await showConfirmationDialog<int>(
+    final score = await showModalActionPopup<int>(
       context: context,
       title: L10n.of(context).reportMessage,
       message: L10n.of(context).howOffensiveIsThisContent,
       cancelLabel: L10n.of(context).cancel,
-      okLabel: L10n.of(context).ok,
       actions: [
-        AlertDialogAction(
-          key: -100,
+        AdaptiveModalAction(
+          value: -100,
           label: L10n.of(context).extremeOffensive,
         ),
-        AlertDialogAction(
-          key: -50,
+        AdaptiveModalAction(
+          value: -50,
           label: L10n.of(context).offensive,
         ),
-        AlertDialogAction(
-          key: 0,
+        AdaptiveModalAction(
+          value: 0,
           label: L10n.of(context).inoffensive,
         ),
       ],
@@ -977,38 +977,21 @@ class ChatController extends State<ChatPageWithRoom>
       title: L10n.of(context).whyDoYouWantToReportThis,
       okLabel: L10n.of(context).ok,
       cancelLabel: L10n.of(context).cancel,
-      textFields: [DialogTextField(hintText: L10n.of(context).reason)],
+      hintText: L10n.of(context).reason,
     );
-    if (reason == null || reason.single.isEmpty) return;
+    // if (reason == null || reason.single.isEmpty) return;
     // #Pangea
-    try {
-      await reportMessage(
-        context,
-        roomId,
-        reason.single,
-        event.senderId,
-        event.content['body'].toString(),
-      );
-    } catch (err) {
-      ErrorHandler.logError(e: err, s: StackTrace.current);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            L10n.of(context).oopsSomethingWentWrong,
+    if (reason == null || reason.isEmpty) return;
+    final result = await showFutureLoadingDialog(
+      context: context,
+      future: () => Matrix.of(context).client.reportContent(
+            event.roomId!,
+            event.eventId,
+            reason: reason,
+            score: score,
           ),
-        ),
-      );
-    }
-    // final result = await showFutureLoadingDialog(
-    //   context: context,
-    //   future: () => Matrix.of(context).client.reportContent(
-    //         event.roomId!,
-    //         event.eventId,
-    //         reason: reason.single,
-    //         score: score,
-    //       ),
-    // );
-    // if (result.error != null) return;
+    );
+
     // Pangea#
     setState(() {
       showEmojiPicker = false;
@@ -1044,23 +1027,19 @@ class ChatController extends State<ChatPageWithRoom>
             context: context,
             title: L10n.of(context).redactMessage,
             message: L10n.of(context).redactMessageDescription,
-            isDestructiveAction: true,
-            textFields: [
-              DialogTextField(
-                hintText: L10n.of(context).optionalRedactReason,
-              ),
-            ],
+            isDestructive: true,
+            hintText: L10n.of(context).optionalRedactReason,
             okLabel: L10n.of(context).remove,
             cancelLabel: L10n.of(context).cancel,
           )
-        : <String>[];
+        : null;
     if (reasonInput == null) {
       // #Pangea
       clearSelectedEvents();
       // Pangea#
       return;
     }
-    final reason = reasonInput.single.isEmpty ? null : reasonInput.single;
+    final reason = reasonInput.isEmpty ? null : reasonInput;
     for (final event in selectedEvents) {
       await showFutureLoadingDialog(
         context: context,
@@ -1601,21 +1580,21 @@ class ChatController extends State<ChatPageWithRoom>
         }
       });
     }
-    final callType = await showModalActionSheet<CallType>(
+    final callType = await showModalActionPopup<CallType>(
       context: context,
       title: L10n.of(context).warning,
       message: L10n.of(context).videoCallsBetaWarning,
       cancelLabel: L10n.of(context).cancel,
       actions: [
-        SheetAction(
+        AdaptiveModalAction(
           label: L10n.of(context).voiceCall,
-          icon: Icons.phone_outlined,
-          key: CallType.kVoice,
+          icon: const Icon(Icons.phone_outlined),
+          value: CallType.kVoice,
         ),
-        SheetAction(
+        AdaptiveModalAction(
           label: L10n.of(context).videoCall,
-          icon: Icons.video_call_outlined,
-          key: CallType.kVideo,
+          icon: const Icon(Icons.video_call_outlined),
+          value: CallType.kVideo,
         ),
       ],
     );

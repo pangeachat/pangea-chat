@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/widgets/common/pangea_logo_svg.dart';
 import 'package:fluffychat/utils/localized_exception_extension.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
+import 'package:fluffychat/widgets/adaptive_dialogs/show_modal_action_popup.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
@@ -25,20 +25,18 @@ class SignupButtonsState extends State<SignupButtons> {
   void pickAvatar() async {
     final source = !PlatformInfos.isMobile
         ? ImageSource.gallery
-        : await showModalActionSheet<ImageSource>(
+        : await showModalActionPopup<ImageSource>(
             context: context,
             title: L10n.of(context).changeYourAvatar,
             actions: [
-              SheetAction(
-                key: ImageSource.camera,
+              AdaptiveModalAction(
+                value: ImageSource.camera,
                 label: L10n.of(context).openCamera,
                 isDefaultAction: true,
-                icon: Icons.camera_alt_outlined,
               ),
-              SheetAction(
-                key: ImageSource.gallery,
+              AdaptiveModalAction(
+                value: ImageSource.gallery,
                 label: L10n.of(context).openGallery,
-                icon: Icons.photo_outlined,
               ),
             ],
           );
@@ -105,7 +103,7 @@ class SignupButtonsState extends State<SignupButtons> {
                           10,
                   color: Colors.transparent,
                   shadowColor:
-                      Theme.of(context).colorScheme.onBackground.withAlpha(64),
+                      Theme.of(context).colorScheme.onSurface.withAlpha(64),
                   clipBehavior: Clip.hardEdge,
                   child: CircleAvatar(
                     radius: 64,
@@ -163,7 +161,7 @@ class SignupButtonsState extends State<SignupButtons> {
                 fontSize: 14,
               ),
               fillColor:
-                  Theme.of(context).colorScheme.background.withOpacity(0.75),
+                  Theme.of(context).colorScheme.surface.withOpacity(0.75),
             ),
           ),
         ),

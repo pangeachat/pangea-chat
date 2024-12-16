@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:fluffychat/pangea/pages/settings_learning/settings_learning.dart';
 import 'package:fluffychat/pangea/utils/download_chat.dart';
+import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
@@ -75,7 +75,7 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
                   okLabel: L10n.of(context).ok,
                   cancelLabel: L10n.of(context).cancel,
                   message: L10n.of(context).archiveRoomDescription,
-                  isDestructiveAction: true,
+                  isDestructive: true,
                 );
                 if (confirmed == OkCancelResult.ok) {
                   final success = await showFutureLoadingDialog(
