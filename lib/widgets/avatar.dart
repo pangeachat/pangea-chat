@@ -80,7 +80,7 @@ class Avatar extends StatelessWidget {
             clipBehavior: Clip.hardEdge,
             child:
                 // #Pangea
-                BotName.isBotName(name)
+                BotName.isBotName(presenceUserId)
                     ? BotFace(width: size, expression: BotExpression.idle)
                     :
                     // Pangea#
