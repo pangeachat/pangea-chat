@@ -1,5 +1,5 @@
 app_identifier("com.talktolearn.chat") # The bundle identifier of your app
-apple_id("wilsonle.services@gmail.com") # Your Apple email address
+apple_id("ggurdin@gmail.com") # Your Apple email address
 
 itc_team_id("118720606") # App Store Connect Team ID
 team_id("PJ8L5H7L7H") # Developer Portal Team ID
