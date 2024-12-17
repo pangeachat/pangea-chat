@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
+import 'package:fluffychat/pangea/pages/sign_up/pangea_login_view.dart';
 import 'package:fluffychat/pangea/utils/firebase_analytics.dart';
 import 'package:fluffychat/utils/localized_exception_extension.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
@@ -11,7 +12,6 @@ import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../utils/platform_infos.dart';
-import 'login_view.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -30,6 +30,8 @@ class LoginController extends State<Login> {
 
   // #Pangea
   final PangeaController pangeaController = MatrixState.pangeaController;
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -53,6 +55,11 @@ class LoginController extends State<Login> {
       setState(() => showPassword = !loading && !showPassword);
 
   void login() async {
+    // #Pangea
+    final valid = formKey.currentState!.validate();
+    if (!valid) return;
+    // Pangea#
+
     final matrix = Matrix.of(context);
     if (usernameController.text.isEmpty) {
       setState(() => usernameError = L10n.of(context).pleaseEnterYourUsername);
@@ -113,10 +120,22 @@ class LoginController extends State<Login> {
       GoogleAnalytics.login("pangea", loginRes.userId);
       // Pangea#
     } on MatrixException catch (exception) {
-      setState(() => passwordError = exception.errorMessage);
+      // #Pangea
+      // setState(() => passwordError = exception.errorMessage);
+      setState(() {
+        passwordError = exception.errorMessage;
+        usernameError = exception.errorMessage;
+      });
+      // Pangea#
       return setState(() => loading = false);
     } catch (exception) {
-      setState(() => passwordError = exception.toString());
+      // #Pangea
+      // setState(() => passwordError = exception.toString());
+      setState(() {
+        passwordError = exception.toString();
+        usernameError = exception.toString();
+      });
+      // Pangea#
       return setState(() => loading = false);
     }
 
@@ -279,7 +298,10 @@ class LoginController extends State<Login> {
   static int sendAttempt = 0;
 
   @override
-  Widget build(BuildContext context) => LoginView(this);
+  // #Pangea
+  // Widget build(BuildContext context) => LoginView(this);
+  Widget build(BuildContext context) => PangeaLoginView(this);
+  // Pangea#
 }
 
 extension on String {

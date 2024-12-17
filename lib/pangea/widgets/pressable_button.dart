@@ -73,6 +73,9 @@ class PressableButtonState extends State<PressableButton>
   }
 
   Future<void> _onTapUp(TapUpDetails? details) async {
+    if (_animationCompleter != null) {
+      await _animationCompleter!.future;
+    }
     widget.onPressed?.call();
     if (widget.depressed) return;
     await _animateDown();
@@ -103,37 +106,49 @@ class PressableButtonState extends State<PressableButton>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: _onTapDown,
-      onTapUp: _onTapUp,
-      onTapCancel: _onTapCancel,
-      child: AnimatedBuilder(
-        animation: _tweenAnimation,
-        builder: (context, child) {
-          return Container(
-            decoration: BoxDecoration(
-              color: Color.alphaBlend(
-                Colors.black.withOpacity(0.25),
-                widget.color,
+    return NotificationListener<ButtonPressedNotification>(
+      onNotification: (notification) {
+        if (!widget.depressed) {
+          _animationCompleter = Completer<void>();
+          _onTapDown(null);
+          _onTapUp(null);
+        }
+        return true; // Stop the notification from bubbling further
+      },
+      child: GestureDetector(
+        onTapDown: _onTapDown,
+        onTapUp: _onTapUp,
+        onTapCancel: _onTapCancel,
+        child: AnimatedBuilder(
+          animation: _tweenAnimation,
+          builder: (context, child) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Color.alphaBlend(
+                  Colors.black.withOpacity(0.25),
+                  widget.color,
+                ),
+                borderRadius: widget.borderRadius,
               ),
+              padding: EdgeInsets.only(
+                bottom: !widget.depressed
+                    ? widget.buttonHeight - _tweenAnimation.value
+                    : 0,
+              ),
+              child: child,
+            );
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: widget.color,
               borderRadius: widget.borderRadius,
             ),
-            padding: EdgeInsets.only(
-              bottom: !widget.depressed
-                  ? widget.buttonHeight - _tweenAnimation.value
-                  : 0,
-            ),
-            child: child,
-          );
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            color: widget.color,
-            borderRadius: widget.borderRadius,
+            child: widget.child,
           ),
-          child: widget.child,
         ),
       ),
     );
   }
 }
+
+class ButtonPressedNotification extends Notification {}
