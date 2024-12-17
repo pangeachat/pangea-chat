@@ -64,6 +64,7 @@ jobs:
           cp public/.env public/assets/.env
           mkdir -p public/.well-known
           echo "$APPLE_APP_SITE_ASSOCIATION" >> public/.well-known/apple-app-site-association
+          cp public/.well-known/apple-app-site-association public/assets/.well-known/apple-app-site-association
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
