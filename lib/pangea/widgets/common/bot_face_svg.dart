@@ -63,9 +63,11 @@ class BotFaceState extends State<BotFace> {
       );
     }
 
-    setState(() {
-      _artboard = artboard;
-    });
+    if (mounted) {
+      setState(() {
+        _artboard = artboard;
+      });
+    }
   }
 
   @override
@@ -75,7 +77,9 @@ class BotFaceState extends State<BotFace> {
     Timer(
       Duration(seconds: 20 + Random().nextInt(10)),
       () {
-        _loadRiveFile();
+        if (mounted) {
+          _loadRiveFile();
+        }
       },
     );
 
