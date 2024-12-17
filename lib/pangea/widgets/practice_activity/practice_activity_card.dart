@@ -11,6 +11,7 @@ import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dar
 import 'package:fluffychat/pangea/matrix_event_wrappers/practice_activity_event.dart';
 import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
+import 'package:fluffychat/pangea/models/pangea_token_text_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/message_activity_request.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_record_model.dart';
@@ -19,12 +20,12 @@ import 'package:fluffychat/pangea/widgets/animations/gain_points.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
 import 'package:fluffychat/pangea/widgets/chat/toolbar_content_loading_indicator.dart';
 import 'package:fluffychat/pangea/widgets/chat/tts_controller.dart';
-import 'package:fluffychat/pangea/widgets/chat/word_details_card.dart';
 import 'package:fluffychat/pangea/widgets/content_issue_button.dart';
 import 'package:fluffychat/pangea/widgets/practice_activity/multiple_choice_activity.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:matrix/matrix.dart';
 
 /// The wrapper for practice activity content.
@@ -212,7 +213,7 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
       //       nextActivitySpecs.activityType == ActivityTypeEnum.wordMeaning,
       // );
 
-      final PracticeActivityModelResponse? activityResponse =
+      final PracticeActivityModelResponse activityResponse =
           await pangeaController.practiceGenerationController
               .getPracticeActivity(
         MessageActivityRequest(
@@ -227,10 +228,10 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
         widget.pangeaMessageEvent,
       );
 
-      currentActivityCompleter = activityResponse?.eventCompleter;
+      currentActivityCompleter = activityResponse.eventCompleter;
       _updateFetchingActivity(false);
 
-      if (activityResponse == null || activityResponse.activity == null) {
+      if (activityResponse.activity == null) {
         debugPrint('No activity found');
         return null;
       }
@@ -407,6 +408,9 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
       case ActivityTypeEnum.wordFocusListening:
       case ActivityTypeEnum.hiddenWordListening:
       case ActivityTypeEnum.wordMeaning:
+      case ActivityTypeEnum.lemmaId:
+      case ActivityTypeEnum.emoji:
+      case ActivityTypeEnum.morphId:
         return MultipleChoiceActivity(
           practiceCardController: this,
           currentActivity: currentActivity!,
@@ -419,14 +423,8 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
   @override
   Widget build(BuildContext context) {
     if (!fetchingActivity && currentActivity == null) {
-      return widget.overlayController.selectedSpan != null &&
-              widget.overlayController.pangeaMessageEvent != null
-          ? WordDetailsCard(
-              selectedSpan: widget.overlayController.selectedSpan!,
-              pangeaMessageEvent: widget.overlayController.pangeaMessageEvent!,
-              tts: tts,
-            )
-          : const SizedBox.shrink();
+      print("don't think we should be here");
+      debugger(when: kDebugMode);
     }
 
     return Stack(

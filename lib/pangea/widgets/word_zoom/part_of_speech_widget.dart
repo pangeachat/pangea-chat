@@ -4,7 +4,7 @@ import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 class PartOfSpeechWidget extends StatefulWidget {
   final PangeaToken token;
 
-  const PartOfSpeechWidget({Key? key, required this.token}) : super(key: key);
+  const PartOfSpeechWidget({super.key, required this.token});
 
   @override
   _PartOfSpeechWidgetState createState() => _PartOfSpeechWidgetState();
@@ -20,25 +20,10 @@ class _PartOfSpeechWidgetState extends State<PartOfSpeechWidget> {
   }
 
   Future<String> _fetchPartOfSpeech() async {
-    if (widget.token.shouldDoPosActivity()) {
+    if (widget.token.shouldDoPosActivity) {
       return '?';
     } else {
       return widget.token.pos;
-    }
-  }
-
-  IconData _getIconForPartOfSpeech(String pos) {
-    switch (pos) {
-      case 'NOUN':
-        return Icons.nouns;
-      case 'VERB':
-        return Icons.verbs;
-      case 'ADJ':
-        return Icons.adjectives;
-      case 'ADV':
-        return Icons.adverbs;
-      default:
-        return Icons.help_outline;
     }
   }
 
@@ -48,12 +33,12 @@ class _PartOfSpeechWidgetState extends State<PartOfSpeechWidget> {
       future: _partOfSpeech,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
           return ActionChip(
-            avatar: Icon(_getIconForPartOfSpeech(widget.token.pos)),
+            avatar: const Icon(Icons.label),
             label: Text(snapshot.data ?? 'No part of speech found'),
             onPressed: () {
               // Handle chip click

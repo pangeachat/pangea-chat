@@ -1,15 +1,19 @@
-import 'package:flutter/material.dart';
+import 'dart:developer';
+
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class MorphologicalWidget extends StatefulWidget {
   final PangeaToken token;
   final String morphFeature;
 
   const MorphologicalWidget({
-    Key? key,
+    super.key,
     required this.token,
     required this.morphFeature,
-  }) : super(key: key);
+  });
 
   @override
   _MorphologicalWidgetState createState() => _MorphologicalWidgetState();
@@ -32,16 +36,47 @@ class _MorphologicalWidgetState extends State<MorphologicalWidget> {
     }
   }
 
-  IconData _getIconForMorphFeature(String feature) {
+  // TODO Maybe move this to a separate file
+  IconData get _getIconForMorphFeature {
     // Define a function to get the icon based on the universal dependency morphological feature (key)
-    switch (feature) {
+    switch (widget.morphFeature) {
       case 'Number':
+        // google material 123 icon
         return Icons.format_list_numbered;
       case 'Gender':
         return Icons.wc;
       case 'Tense':
         return Icons.access_time;
+      case 'Mood':
+        return Icons.mood;
+      case 'Person':
+        return Icons.person;
+      case 'Case':
+        return Icons.format_list_bulleted;
+      case 'Degree':
+        return Icons.trending_up;
+      case 'VerbForm':
+        return Icons.text_format;
+      case 'Voice':
+        return Icons.record_voice_over;
+      case 'Aspect':
+        return Icons.aspect_ratio;
+      case 'PronType':
+        return Icons.text_fields;
+      case 'NumType':
+        return Icons.format_list_numbered;
+      case 'Poss':
+        return Icons.account_balance;
+      case 'Reflex':
+        return Icons.refresh;
+      case 'Foreign':
+        return Icons.language;
+      case 'Abbr':
+        return Icons.text_format;
+      case 'NounType':
+        return Symbols.abc;
       default:
+        debugger(when: kDebugMode);
         return Icons.help_outline;
     }
   }
@@ -52,12 +87,12 @@ class _MorphologicalWidgetState extends State<MorphologicalWidget> {
       future: _morphValue,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
           return ActionChip(
-            avatar: Icon(_getIconForMorphFeature(widget.morphFeature)),
+            avatar: Icon(_getIconForMorphFeature),
             label: Text(snapshot.data ?? 'No value found'),
             onPressed: () {
               // Handle chip click

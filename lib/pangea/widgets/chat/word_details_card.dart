@@ -1,6 +1,6 @@
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
-import 'package:fluffychat/pangea/models/pangea_token_model.dart';
+import 'package:fluffychat/pangea/models/pangea_token_text_model.dart';
 import 'package:fluffychat/pangea/repo/full_text_translation_repo.dart';
 import 'package:fluffychat/pangea/widgets/chat/tts_controller.dart';
 import 'package:fluffychat/pangea/widgets/igc/word_data_card.dart';

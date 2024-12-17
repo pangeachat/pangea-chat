@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/setting_keys.dart';
 import 'package:fluffychat/config/themes.dart';
@@ -10,6 +11,7 @@ import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
 import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
+import 'package:fluffychat/pangea/models/pangea_token_text_model.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_toolbar_buttons.dart';
@@ -55,7 +57,7 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
   StreamSubscription? _reactionSubscription;
   Animation<double>? _overlayPositionAnimation;
 
-  MessageMode toolbarMode = MessageMode.translation;
+  MessageMode toolbarMode = MessageMode.noneSelected;
   PangeaTokenText? _selectedSpan;
 
   List<PangeaToken>? tokens;
@@ -108,9 +110,21 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
     _setupSubscriptions();
   }
 
-  void _updateSelectedSpan(PangeaTokenText? selectedSpan) {
+  void _updateSelectedSpan(PangeaTokenText selectedSpan) {
     _selectedSpan = selectedSpan;
     selectedSpanStream.add(selectedSpan);
+
+    widget.chatController.choreographer.tts.tryToSpeak(
+      selectedSpan.content,
+      context,
+      widget._pangeaMessageEvent?.eventId,
+    );
+
+    // if a token is selected, then the toolbar should be in wordZoom mode
+    if (toolbarMode != MessageMode.wordZoom) {
+      debugPrint("_updateSelectedSpan: setting toolbarMode to wordZoom");
+      updateToolbarMode(MessageMode.wordZoom);
+    }
     setState(() {});
   }
 
@@ -179,25 +193,24 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
       return setState(() {});
     }
 
-    // 1) we're only going to do activities if we have tokens for the message
-    // 2) if the user selects a span on initialization, then we want to give
-    // them a practice activity on that word
-    // 3) if the user has activities left to complete, then we want to give them
-    if (tokens != null
-        // && activitiesLeftToComplete > 0
-        &&
-        messageInUserL2) {
+    // 1) if we have a hidden word activity, then we should start with that
+    if (messageAnalyticsEntry?.nextActivity?.activityType ==
+        ActivityTypeEnum.hiddenWordListening) {
       return setState(() => toolbarMode = MessageMode.practiceActivity);
+    }
+
+    if (selectedToken != null) {
+      return setState(() => toolbarMode = MessageMode.wordZoom);
     }
 
     // Note: this setting is now hidden so this will always be false
     // leaving this here in case we want to bring it back
-    if (MatrixState.pangeaController.userController.profile.userSettings
-        .autoPlayMessages) {
-      return setState(() => toolbarMode = MessageMode.textToSpeech);
-    }
+    // if (MatrixState.pangeaController.userController.profile.userSettings
+    //     .autoPlayMessages) {
+    //   return setState(() => toolbarMode = MessageMode.textToSpeech);
+    // }
 
-    setState(() => toolbarMode = MessageMode.translation);
+    // defaults to noneSelected
   }
 
   /// We need to check if the setState call is safe to call immediately
@@ -250,6 +263,12 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
 
   void updateToolbarMode(MessageMode mode) {
     setState(() {
+      // only practiceActivity and wordZoom make sense with selectedSpan
+      if (![MessageMode.practiceActivity, MessageMode.wordZoom]
+          .contains(mode)) {
+        debugPrint("updateToolbarMode: $mode - clearing selectedSpan");
+        _selectedSpan = null;
+      }
       toolbarMode = mode;
     });
   }
@@ -279,23 +298,23 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
     }
 
     // if there's no selected span, then select the token
-    PangeaTokenText? newSelectedSpan;
-    if (_selectedSpan == null) {
-      newSelectedSpan = token.text;
-    } else {
-      // if there is a selected span, then deselect the token if it's the same
-      if (isTokenSelected(token)) {
-        newSelectedSpan = null;
-      } else {
-        // if there is a selected span but it is not the same, then select the token
-        newSelectedSpan = token.text;
-      }
-    }
+    // PangeaTokenText? newSelectedSpan;
+    // if (_selectedSpan == null) {
+    //   newSelectedSpan = token.text;
+    // } else {
+    //   // if there is a selected span, then deselect the token if it's the same
+    //   if (isTokenSelected(token)) {
+    //     newSelectedSpan = null;
+    //   } else {
+    //     // if there is a selected span but it is not the same, then select the token
+    //     newSelectedSpan = token.text;
+    //   }
+    // }
 
-    if (newSelectedSpan != null) {
-      updateToolbarMode(MessageMode.practiceActivity);
-    }
-    _updateSelectedSpan(newSelectedSpan);
+    // if (newSelectedSpan != null) {
+    //   updateToolbarMode(MessageMode.practiceActivity);
+    // }
+    _updateSelectedSpan(token.text);
     setState(() {});
   }
 
@@ -306,7 +325,7 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
     return isSelected;
   }
 
-  PangeaToken? get selectedToken => tokens?.firstWhere(isTokenSelected);
+  PangeaToken? get selectedToken => tokens?.firstWhereOrNull(isTokenSelected);
 
   /// Whether the overlay is currently displaying a selection
   bool get isSelection => _selectedSpan != null;
@@ -539,7 +558,7 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
             if (pangeaMessageEvent != null)
               MessageToolbar(
                 pangeaMessageEvent: pangeaMessageEvent!,
-                overLayController: this,
+                overlayController: this,
               ),
             const SizedBox(height: 8),
             SizedBox(
@@ -642,7 +661,10 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      OverlayFooter(controller: widget.chatController),
+                      OverlayFooter(
+                        controller: widget.chatController,
+                        overlayController: this,
+                      ),
                       SizedBox(height: _mediaQuery?.padding.bottom ?? 0),
                     ],
                   ),

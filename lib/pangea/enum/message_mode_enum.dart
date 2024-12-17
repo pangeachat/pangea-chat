@@ -8,6 +8,8 @@ enum MessageMode {
   textToSpeech,
   translation,
   speechToText,
+  wordZoom,
+  noneSelected,
 }
 
 extension MessageModeExtension on MessageMode {
@@ -21,7 +23,9 @@ extension MessageModeExtension on MessageMode {
         return Symbols.speech_to_text;
       case MessageMode.practiceActivity:
         return Symbols.fitness_center;
-      default:
+      case MessageMode.wordZoom:
+        return Symbols.dictionary;
+      case MessageMode.noneSelected:
         return Icons.error;
     }
   }
@@ -36,9 +40,10 @@ extension MessageModeExtension on MessageMode {
         return L10n.of(context).speechToTextTooltip;
       case MessageMode.practiceActivity:
         return L10n.of(context).practice;
-      default:
-        return L10n.of(context)
-            .oopsSomethingWentWrong; // Title to indicate an error or unsupported mode
+      case MessageMode.wordZoom:
+        return L10n.of(context).vocab;
+      case MessageMode.noneSelected:
+        return '';
     }
   }
 
@@ -52,9 +57,10 @@ extension MessageModeExtension on MessageMode {
         return L10n.of(context).speechToTextTooltip;
       case MessageMode.practiceActivity:
         return L10n.of(context).practice;
-      default:
-        return L10n.of(context)
-            .oopsSomethingWentWrong; // Title to indicate an error or unsupported mode
+      case MessageMode.wordZoom:
+        return L10n.of(context).vocab;
+      case MessageMode.noneSelected:
+        return '';
     }
   }
 
@@ -67,6 +73,9 @@ extension MessageModeExtension on MessageMode {
         return event.messageType == MessageTypes.Audio;
       case MessageMode.practiceActivity:
         return true;
+      case MessageMode.wordZoom:
+      case MessageMode.noneSelected:
+        return false;
     }
   }
 

@@ -119,51 +119,6 @@ class MessageAnalyticsEntry {
   void setActivityQueue() {
     final List<TargetTokensAndActivityType> queue = [];
 
-    // for each token in the message
-    // pick a random activity type from the eligible types
-    for (final token in _tokens) {
-      // get all the eligible activity types for the token
-      // based on the context of the message
-      final eligibleTypesBasedOnContext = token.eligibleActivityTypes
-          // we want to filter hidden word types from this part of the process
-          .where((type) => type != ActivityTypeEnum.hiddenWordListening)
-          // there have to be at least 4 tokens in the message that can be heard for word focus listening
-          .where(
-            (type) =>
-                // canDoWordFocusListening ||
-                type != ActivityTypeEnum.wordFocusListening,
-          )
-          .toList();
-
-      // if there are no eligible types, continue to the next token
-      if (eligibleTypesBasedOnContext.isEmpty) continue;
-
-      // chose a random activity type from the eligible types for that token
-      queue.add(
-        TargetTokensAndActivityType(
-          tokens: [token],
-          activityType: eligibleTypesBasedOnContext[
-              Random().nextInt(eligibleTypesBasedOnContext.length)],
-        ),
-      );
-    }
-
-    // sort the queue by the total xp of the tokens, heightest to lowest
-    queue.sort(
-      (a, b) => b.tokens
-          .map((t) => t.vocabConstruct.points)
-          .reduce((aPoints1, aPoints2) => aPoints1 + aPoints2)
-          .compareTo(
-            a.tokens
-                .map((t) => t.vocabConstruct.points)
-                .reduce((bPoints1, bPoints2) => bPoints1 + bPoints2),
-          ),
-    );
-
-    for (final entry in queue) {
-      _pushQueue(entry);
-    }
-
     // if applicable, add a hidden word activity to the front of the queue
     final hiddenWordActivity = getHiddenWordActivity(queue.length);
     if (hiddenWordActivity != null) {

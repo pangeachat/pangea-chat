@@ -1,11 +1,19 @@
-import 'package:flutter/material.dart';
-import 'package:fluffychat/pangea/models/pangea_token_model.dart';
+import 'package:fluffychat/pangea/constants/language_constants.dart';
 import 'package:fluffychat/pangea/controllers/contextual_definition_controller.dart';
+import 'package:fluffychat/pangea/models/pangea_token_model.dart';
+import 'package:fluffychat/pangea/repo/lemma_definition_repo.dart';
+import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/material.dart';
 
 class LemmaDefinitionWidget extends StatefulWidget {
   final PangeaToken token;
+  final String tokenLang;
 
-  const LemmaDefinitionWidget({Key? key, required this.token}) : super(key: key);
+  const LemmaDefinitionWidget({
+    super.key,
+    required this.token,
+    required this.tokenLang,
+  });
 
   @override
   _LemmaDefinitionWidgetState createState() => _LemmaDefinitionWidgetState();
@@ -21,12 +29,20 @@ class _LemmaDefinitionWidgetState extends State<LemmaDefinitionWidget> {
   }
 
   Future<String> _fetchDefinition() async {
-    if (widget.token.shouldDoPosActivity()) {
+    if (widget.token.shouldDoPosActivity) {
       return '?';
     } else {
-      final controller = ContextualDefinitionController(/* Pass necessary parameters */);
-      final response = await controller.get(/* Pass necessary request model */);
-      return response?.text ?? 'No definition found';
+      final res = await LemmaDictionaryRepo.get(
+        LemmaDefinitionRequest(
+          lemma: widget.token.lemma.text,
+          partOfSpeech: widget.token.pos,
+          lemmaLang: widget.tokenLang,
+          userL1: MatrixState
+                  .pangeaController.languageController.userL1?.langCode ??
+              LanguageKeys.defaultLanguage,
+        ),
+      );
+      return res.definition;
     }
   }
 
@@ -36,12 +52,12 @@ class _LemmaDefinitionWidgetState extends State<LemmaDefinitionWidget> {
       future: _definition,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
           return ActionChip(
-            avatar: Icon(Icons.book),
+            avatar: const Icon(Icons.book),
             label: Text(snapshot.data ?? 'No definition found'),
             onPressed: () {
               // Handle chip click
