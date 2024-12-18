@@ -63,7 +63,6 @@ enum ConstructUseTypeEnum {
 extension ConstructUseTypeExtension on ConstructUseTypeEnum {
   String get string => toString().split('.').last;
 
-<<<<<<< Updated upstream
   String description(BuildContext context) {
     switch (this) {
       case ConstructUseTypeEnum.wa:
@@ -102,11 +101,25 @@ extension ConstructUseTypeExtension on ConstructUseTypeEnum {
         return L10n.of(context).constructUseIncHWLDesc;
       case ConstructUseTypeEnum.ignHWL:
         return L10n.of(context).constructUseIgnHWLDesc;
+      case ConstructUseTypeEnum.corL:
+        return L10n.of(context).constructUseCorLDesc;
+      case ConstructUseTypeEnum.incL:
+        return L10n.of(context).constructUseIncLDesc;
+      case ConstructUseTypeEnum.ignL:
+        return L10n.of(context).constructUseIgnLDesc;
+      case ConstructUseTypeEnum.corM:
+        return L10n.of(context).constructUseCorMDesc;
+      case ConstructUseTypeEnum.incM:
+        return L10n.of(context).constructUseIncMDesc;
+      case ConstructUseTypeEnum.ignM:
+        return L10n.of(context).constructUseIgnMDesc;
+      case ConstructUseTypeEnum.em:
+        return L10n.of(context).constructUseEmojiDesc;
       case ConstructUseTypeEnum.nan:
         return L10n.of(context).constructUseNanDesc;
     }
   }
-=======
+
   ActivityTypeEnum get activityType => ActivityTypeEnum.values.firstWhere(
         (e) => e.associatedUseTypes.contains(this),
         orElse: () {
@@ -114,7 +127,6 @@ extension ConstructUseTypeExtension on ConstructUseTypeEnum {
           return ActivityTypeEnum.wordMeaning;
         },
       );
->>>>>>> Stashed changes
 
   IconData get icon {
     switch (this) {

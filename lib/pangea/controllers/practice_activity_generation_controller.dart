@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'package:fluffychat/pangea/config/environment.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
+import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/practice_activity_event.dart';
@@ -97,8 +98,25 @@ class PracticeGenerationController {
     }
   }
 
-  //TODO - allow return of activity content before sending the event
-  // this requires some downstream changes to the way the event is handled
+  Future<MessageActivityResponse> _routePracticeActivity({
+    required String accessToken,
+    required MessageActivityRequest req,
+  }) async {
+    // some activities we'll get from the server and others we'll generate locally
+    switch (req.targetType) {
+      case ActivityTypeEnum.lemmaId:
+      case ActivityTypeEnum.emoji:
+      case ActivityTypeEnum.morphId:
+      case ActivityTypeEnum.wordFocusListening:
+      case ActivityTypeEnum.wordMeaning:
+      case ActivityTypeEnum.hiddenWordListening:
+        return _fetch(
+          accessToken: accessToken,
+          requestModel: req,
+        );
+    }
+  }
+
   Future<PracticeActivityModelResponse> getPracticeActivity(
     MessageActivityRequest req,
     PangeaMessageEvent event,
@@ -111,9 +129,9 @@ class PracticeGenerationController {
       return _cache[cacheKey]!.practiceActivity;
     }
 
-    final MessageActivityResponse res = await _fetch(
+    final MessageActivityResponse res = await _routePracticeActivity(
       accessToken: _pangeaController.userController.accessToken,
-      requestModel: req,
+      req: req,
     );
 
     final eventCompleter = Completer<PracticeActivityEvent?>();
