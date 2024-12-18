@@ -37,8 +37,6 @@ Future<void> pangeaSSOLoginAction(
       ? Uri.parse(redirectUrl).scheme
       : "http://localhost:3001";
 
-  debugPrint("url is: $url, redirect URL is: $redirectUrl");
-
   String result;
   try {
     result = await FlutterWebAuth2.authenticate(
