@@ -523,6 +523,9 @@ class _SpaceViewState extends State<SpaceView> {
           leading: Avatar(
             mxContent: room?.avatar,
             name: displayname,
+            // #Pangea
+            presenceUserId: room?.directChatMatrixID,
+            // Pangea#
             borderRadius: BorderRadius.circular(AppConfig.borderRadius / 2),
           ),
           title: Text(
@@ -690,6 +693,10 @@ class _SpaceViewState extends State<SpaceView> {
                                   Avatar(
                                     mxContent: joinedParents[i].avatar,
                                     name: displayname,
+                                    // #Pangea
+                                    presenceUserId:
+                                        joinedParents[i].directChatMatrixID,
+                                    // Pangea#
                                     size: Avatar.defaultSize / 2,
                                     borderRadius: BorderRadius.circular(
                                       AppConfig.borderRadius / 4,
@@ -786,6 +793,12 @@ class _SpaceViewState extends State<SpaceView> {
                               leading: Avatar(
                                 mxContent: item.avatarUrl,
                                 name: displayname,
+                                // #Pangea
+                                presenceUserId: Matrix.of(context)
+                                    .client
+                                    .getRoomById(item.roomId)
+                                    ?.directChatMatrixID,
+                                // Pangea#
                                 borderRadius: item.roomType == 'm.space'
                                     ? BorderRadius.circular(
                                         AppConfig.borderRadius / 2,

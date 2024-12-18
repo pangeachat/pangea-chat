@@ -122,6 +122,9 @@ class PangeaChatDetailsView extends StatelessWidget {
                                     child: Avatar(
                                       mxContent: room.avatar,
                                       name: displayname,
+                                      // #Pangea
+                                      presenceUserId: room.directChatMatrixID,
+                                      // Pangea#
                                       size: Avatar.defaultSize * 2.5,
                                     ),
                                   ),

@@ -100,6 +100,9 @@ class ChatListView extends StatelessWidget {
                         icon: Avatar(
                           mxContent: rootSpaces[i].avatar,
                           name: displayname,
+                          // #Pangea
+                          presenceUserId: space.directChatMatrixID,
+                          // Pangea#
                           size: 32,
                           borderRadius: BorderRadius.circular(
                             AppConfig.borderRadius / 4,
@@ -130,8 +133,7 @@ class ChatListView extends StatelessWidget {
                     !controller.isSearchMode && controller.activeSpaceId == null
                         ? FloatingActionButton.extended(
                             // #Pangea
-                            // onPressed: () =>
-                            //     context.go('/rooms/newprivatechat'),
+                            // onPressed: () => context.go('/rooms/newprivatechat'),
                             onPressed: () => context.go('/rooms/newgroup'),
                             // Pangea#
                             icon: const Icon(Icons.add_outlined),
