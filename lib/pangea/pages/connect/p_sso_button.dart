@@ -88,26 +88,23 @@ class PangeaSsoButtonState extends State<PangeaSsoButton> {
     return FullWidthButton(
       depressed: _loading,
       error: _error,
-      title: _loading
-          ? const Expanded(
-              child: LinearProgressIndicator(),
-            )
-          : Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset(
-                  widget.provider.asset,
-                  height: 20,
-                  width: 20,
-                  colorFilter: ColorFilter.mode(
-                    Theme.of(context).colorScheme.onPrimary,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Text(widget.title),
-              ],
+      loading: _loading,
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            widget.provider.asset,
+            height: 20,
+            width: 20,
+            colorFilter: ColorFilter.mode(
+              Theme.of(context).colorScheme.onPrimary,
+              BlendMode.srcIn,
             ),
+          ),
+          const SizedBox(width: 10),
+          Text(widget.title),
+        ],
+      ),
       onPressed: _runSSOLogin,
     );
   }

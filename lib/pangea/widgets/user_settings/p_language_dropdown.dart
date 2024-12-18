@@ -1,5 +1,6 @@
 // Flutter imports:
 
+import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pangea/enum/l2_support_enum.dart';
 import 'package:fluffychat/pangea/models/language_model.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ class PLanguageDropdown extends StatefulWidget {
   final Function(LanguageModel) onChange;
   final bool showMultilingual;
   final bool isL2List;
+  final String? error;
 
   const PLanguageDropdown({
     super.key,
@@ -21,6 +23,7 @@ class PLanguageDropdown extends StatefulWidget {
     required this.initialLanguage,
     this.showMultilingual = false,
     required this.isL2List,
+    this.error,
   });
 
   @override
@@ -56,48 +59,71 @@ class _PLanguageDropdownState extends State<PLanguageDropdown> {
 
     sortedLanguages.sort((a, b) => sortLanguages(a, b));
 
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Theme.of(context).colorScheme.secondary,
-          width: 1,
-        ),
-        borderRadius: const BorderRadius.all(Radius.circular(36)),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: DropdownButton<LanguageModel>(
-        hint: Row(
-          children: [
-            const Icon(Icons.language_outlined),
-            const SizedBox(width: 10),
-            Text(L10n.of(context).iWantToLearn),
-          ],
-        ),
-        isExpanded: true,
-        icon: const Icon(Icons.keyboard_arrow_down),
-        underline: Container(),
-        items: [
-          if (widget.showMultilingual)
-            DropdownMenuItem(
-              value: LanguageModel.multiLingual(context),
-              child: LanguageDropDownEntry(
-                languageModel: LanguageModel.multiLingual(context),
-                isL2List: widget.isL2List,
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Theme.of(context).colorScheme.secondary,
+              width: 1,
             ),
-          ...sortedLanguages.map(
-            (languageModel) => DropdownMenuItem(
-              value: languageModel,
-              child: LanguageDropDownEntry(
-                languageModel: languageModel,
-                isL2List: widget.isL2List,
-              ),
-            ),
+            borderRadius: const BorderRadius.all(Radius.circular(36)),
           ),
-        ],
-        onChanged: (value) => widget.onChange(value!),
-        value: widget.initialLanguage,
-      ),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: DropdownButton<LanguageModel>(
+            hint: Row(
+              children: [
+                const Icon(Icons.language_outlined),
+                const SizedBox(width: 10),
+                Text(L10n.of(context).iWantToLearn),
+              ],
+            ),
+            isExpanded: true,
+            icon: const Icon(Icons.keyboard_arrow_down),
+            underline: Container(),
+            items: [
+              if (widget.showMultilingual)
+                DropdownMenuItem(
+                  value: LanguageModel.multiLingual(context),
+                  child: LanguageDropDownEntry(
+                    languageModel: LanguageModel.multiLingual(context),
+                    isL2List: widget.isL2List,
+                  ),
+                ),
+              ...sortedLanguages.map(
+                (languageModel) => DropdownMenuItem(
+                  value: languageModel,
+                  child: LanguageDropDownEntry(
+                    languageModel: languageModel,
+                    isL2List: widget.isL2List,
+                  ),
+                ),
+              ),
+            ],
+            onChanged: (value) => widget.onChange(value!),
+            value: widget.initialLanguage,
+          ),
+        ),
+        AnimatedSize(
+          duration: FluffyThemes.animationDuration,
+          child: widget.error == null
+              ? const SizedBox.shrink()
+              : Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30,
+                    vertical: 5,
+                  ),
+                  child: Text(
+                    widget.error!,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+        ),
+      ],
     );
   }
 }

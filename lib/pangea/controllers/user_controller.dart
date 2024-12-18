@@ -84,7 +84,7 @@ class UserController extends BaseController {
   }
 
   /// Creates a new profile for the user with the given date of birth.
-  Future<void> createProfile({required DateTime dob}) async {
+  Future<void> createProfile({DateTime? dob}) async {
     final userSettings = UserSettings(
       dateOfBirth: dob,
       createdAt: DateTime.now(),

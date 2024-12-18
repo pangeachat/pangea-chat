@@ -44,22 +44,20 @@ class PangeaLoginView extends StatelessWidget {
             errorText: controller.passwordError,
           ),
           FullWidthButton(
-            title: controller.loading
-                ? const Expanded(
-                    child: LinearProgressIndicator(),
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      PangeaLogoSvg(
-                        width: 20,
-                        forceColor: Theme.of(context).colorScheme.onPrimary,
-                      ),
-                      const SizedBox(width: 10),
-                      Text(L10n.of(context).signIn),
-                    ],
-                  ),
-            onPressed: controller.login,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                PangeaLogoSvg(
+                  width: 20,
+                  forceColor: Theme.of(context).colorScheme.onPrimary,
+                ),
+                const SizedBox(width: 10),
+                Text(L10n.of(context).signIn),
+              ],
+            ),
+            onPressed: controller.enabledSignIn ? controller.login : null,
+            loading: controller.loading,
+            enabled: controller.enabledSignIn,
           ),
           Padding(
             padding: const EdgeInsets.all(20),

@@ -24,11 +24,52 @@ class SignupPageController extends State<SignupPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+
+  String? usernameText;
+  String? passwordText;
+  String? emailText;
+
   String? error;
   bool loading = false;
   bool showPassword = false;
   bool noEmailWarningConfirmed = false;
   bool displaySecondPasswordField = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    usernameController.addListener(() {
+      _setStateOnTextChange(usernameText, usernameController.text);
+      usernameText = usernameController.text;
+    });
+
+    passwordController.addListener(() {
+      _setStateOnTextChange(passwordText, passwordController.text);
+      passwordText = passwordController.text;
+    });
+
+    emailController.addListener(() {
+      _setStateOnTextChange(emailText, emailController.text);
+      emailText = emailController.text;
+    });
+  }
+
+  bool get enableSignUp =>
+      !loading &&
+      isTnCChecked &&
+      emailController.text.isNotEmpty &&
+      usernameController.text.isNotEmpty &&
+      passwordController.text.isNotEmpty;
+
+  void _setStateOnTextChange(String? oldText, String newText) {
+    if ((oldText == null || oldText.isEmpty) && (newText.isNotEmpty)) {
+      setState(() {});
+    }
+    if ((oldText != null && oldText.isNotEmpty) && (newText.isEmpty)) {
+      setState(() {});
+    }
+  }
 
   static const int minPassLength = 8;
 

@@ -60,7 +60,7 @@ class TosCheckboxState extends State<TosCheckbox>
                   child: widget.controller.signupError == null
                       ? const SizedBox.shrink()
                       : Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
+                          padding: const EdgeInsets.only(top: 4, left: 30),
                           child: Text(
                             widget.controller.signupError!,
                             style: TextStyle(

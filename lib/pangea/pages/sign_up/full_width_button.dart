@@ -4,15 +4,19 @@ import 'package:flutter/material.dart';
 
 class FullWidthButton extends StatefulWidget {
   final Widget title;
-  final VoidCallback onPressed;
+  final void Function()? onPressed;
   final bool depressed;
   final String? error;
+  final bool loading;
+  final bool enabled;
 
   const FullWidthButton({
     required this.title,
     required this.onPressed,
     this.depressed = false,
     this.error,
+    this.loading = false,
+    this.enabled = true,
     super.key,
   });
 
@@ -28,33 +32,43 @@ class FullWidthButtonState extends State<FullWidthButton> {
       children: [
         Padding(
           padding: EdgeInsets.fromLTRB(8, 8, 8, widget.error == null ? 8 : 0),
-          child: PressableButton(
-            depressed: widget.depressed,
-            onPressed: widget.onPressed,
-            borderRadius: BorderRadius.circular(36),
-            color: Theme.of(context).colorScheme.primary,
-            child: Builder(
-              builder: (context) {
-                return ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                    textStyle: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
+          child: AnimatedOpacity(
+            duration: FluffyThemes.animationDuration,
+            opacity: widget.enabled ? 1 : 0.5,
+            child: PressableButton(
+              depressed: widget.depressed || !widget.enabled,
+              onPressed: widget.onPressed,
+              borderRadius: BorderRadius.circular(36),
+              color: Theme.of(context).colorScheme.primary,
+              child: Builder(
+                builder: (context) {
+                  return ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: widget.enabled
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).disabledColor,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                      disabledForegroundColor:
+                          Theme.of(context).colorScheme.onPrimary,
+                      textStyle: const TextStyle(fontSize: 18),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(36),
+                      ),
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(36),
+                    onPressed: widget.enabled
+                        ? () => ButtonPressedNotification().dispatch(context)
+                        : null,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        widget.loading
+                            ? const Expanded(child: LinearProgressIndicator())
+                            : widget.title,
+                      ],
                     ),
-                  ),
-                  onPressed: () =>
-                      ButtonPressedNotification().dispatch(context),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [widget.title],
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ),

@@ -39,16 +39,21 @@ class PressableButtonState extends State<PressableButton>
   Completer<void>? _animationCompleter;
   StreamSubscription? _triggerAnimationSubscription;
 
+  // seperate the widget's depressed state from the internal
+  // state to enable animations when this changes
+  bool _depressed = false;
+
   @override
   void initState() {
     super.initState();
+    _depressed = widget.depressed;
     _controller = AnimationController(
       duration: const Duration(milliseconds: 100),
       vsync: this,
     );
     _tweenAnimation =
         Tween<double>(begin: 0, end: widget.buttonHeight).animate(_controller);
-    if (!widget.depressed) {
+    if (!_depressed) {
       _triggerAnimationSubscription = widget.triggerAnimation?.listen((_) {
         _animationCompleter = Completer<void>();
         _animateUp();
@@ -57,15 +62,30 @@ class PressableButtonState extends State<PressableButton>
     }
   }
 
+  @override
+  void didUpdateWidget(PressableButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_depressed && !widget.depressed) {
+      _controller.forward().then((_) {
+        _depressed = widget.depressed;
+        _controller.reverse();
+      });
+    } else if (!_depressed && widget.depressed) {
+      _controller.forward().then((_) {
+        _depressed = widget.depressed;
+      });
+    }
+  }
+
   void _onTapDown(TapDownDetails? details) {
-    if (widget.depressed) return;
+    if (_depressed) return;
     _animationCompleter = Completer<void>();
     if (!mounted) return;
     _animateUp();
   }
 
   void _animateUp() {
-    if (widget.depressed || !mounted) return;
+    if (_depressed || !mounted) return;
     _controller.forward().then((_) {
       _animationCompleter?.complete();
       _animationCompleter = null;
@@ -77,7 +97,7 @@ class PressableButtonState extends State<PressableButton>
       await _animationCompleter!.future;
     }
     widget.onPressed?.call();
-    if (widget.depressed) return;
+    if (_depressed) return;
     await _animateDown();
   }
 
@@ -93,7 +113,7 @@ class PressableButtonState extends State<PressableButton>
   }
 
   void _onTapCancel() {
-    if (widget.depressed) return;
+    if (_depressed) return;
     if (mounted) _controller.reverse();
   }
 
@@ -108,11 +128,8 @@ class PressableButtonState extends State<PressableButton>
   Widget build(BuildContext context) {
     return NotificationListener<ButtonPressedNotification>(
       onNotification: (notification) {
-        if (!widget.depressed) {
-          _animationCompleter = Completer<void>();
-          _onTapDown(null);
-          _onTapUp(null);
-        }
+        _onTapDown(null);
+        _onTapUp(null);
         return true; // Stop the notification from bubbling further
       },
       child: GestureDetector(
@@ -131,7 +148,7 @@ class PressableButtonState extends State<PressableButton>
                 borderRadius: widget.borderRadius,
               ),
               padding: EdgeInsets.only(
-                bottom: !widget.depressed
+                bottom: !_depressed
                     ? widget.buttonHeight - _tweenAnimation.value
                     : 0,
               ),

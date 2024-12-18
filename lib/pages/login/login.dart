@@ -23,14 +23,25 @@ class Login extends StatefulWidget {
 class LoginController extends State<Login> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  String? usernameText;
+  String? passwordText;
+
   String? usernameError;
   String? passwordError;
+
   bool loading = false;
   bool showPassword = false;
 
   // #Pangea
   final PangeaController pangeaController = MatrixState.pangeaController;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  bool get enabledSignIn =>
+      !loading &&
+      usernameText != null &&
+      usernameText!.isNotEmpty &&
+      passwordText != null &&
+      passwordText!.isNotEmpty;
 
   @override
   void initState() {
@@ -48,6 +59,25 @@ class LoginController extends State<Login> {
         passwordError = err.toLocalizedString(context);
       });
     });
+
+    usernameController.addListener(() {
+      _setStateOnTextChange(usernameText, usernameController.text);
+      usernameText = usernameController.text;
+    });
+
+    passwordController.addListener(() {
+      _setStateOnTextChange(passwordText, passwordController.text);
+      passwordText = passwordController.text;
+    });
+  }
+
+  void _setStateOnTextChange(String? oldText, String newText) {
+    if ((oldText == null || oldText.isEmpty) && (newText.isNotEmpty)) {
+      setState(() {});
+    }
+    if ((oldText != null && oldText.isNotEmpty) && (newText.isEmpty)) {
+      setState(() {});
+    }
   }
   // Pangea#
 

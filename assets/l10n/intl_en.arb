@@ -4646,5 +4646,6 @@
   "iWantToLearn": "I want to learn",
   "letsStart": "Let's start",
   "pleaseAgreeToTOS": "Please agree to the Terms and Conditions",
-  "pleaseEnterEmail": "Please enter a valid email address."
+  "pleaseEnterEmail": "Please enter a valid email address.",
+  "pleaseSelectALanguage": "Please select a language"
 }
