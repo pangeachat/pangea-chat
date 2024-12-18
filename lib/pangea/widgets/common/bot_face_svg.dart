@@ -25,11 +25,41 @@ class BotFace extends StatefulWidget {
 class BotFaceState extends State<BotFace> {
   Artboard? _artboard;
   StateMachineController? _controller;
+  final Random _random = Random();
 
   @override
   void initState() {
     super.initState();
-    _loadRiveFile();
+    _loadRiveFile().then((_) => _scheduleNextRun());
+  }
+
+  @override
+  void didUpdateWidget(BotFace oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.expression != widget.expression) {
+      _controller!.setInputValue(
+        _controller!.stateMachine.inputs[0].id,
+        mapExpressionToInput(widget.expression),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  void _scheduleNextRun() {
+    final int nextInterval =
+        _random.nextInt(21) + 20; // Random interval between 20-40 seconds
+
+    Future.delayed(Duration(seconds: nextInterval), () {
+      if (mounted) {
+        _loadRiveFile();
+        _scheduleNextRun();
+      }
+    });
   }
 
   double mapExpressionToInput(BotExpression expression) {
@@ -72,17 +102,6 @@ class BotFaceState extends State<BotFace> {
 
   @override
   Widget build(BuildContext context) {
-    // Timer for randomly resetting animation
-    // Animation restart triggered between 20 and 30 seconds in
-    Timer(
-      Duration(seconds: 20 + Random().nextInt(10)),
-      () {
-        if (mounted) {
-          _loadRiveFile();
-        }
-      },
-    );
-
     return SizedBox(
       width: widget.width,
       height: widget.width,
@@ -94,21 +113,4 @@ class BotFaceState extends State<BotFace> {
           : Container(),
     );
   }
-
-  @override
-  void didUpdateWidget(BotFace oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.expression != widget.expression) {
-      _controller!.setInputValue(
-        _controller!.stateMachine.inputs[0].id,
-        mapExpressionToInput(widget.expression),
-      );
-    }
-  }
 }
-
-// extension ParseToString on BotExpressions {
-//   String toShortString() {
-//     return toString().split('.').last;
-//   }
-// }

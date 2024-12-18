@@ -4,8 +4,4 @@ class BotName {
   static String get byEnvironment =>
       Environment.isStaging ? "@bot:staging.pangea.chat" : "@bot:pangea.chat";
   static String get localBot => "@matrix-bot-test:staging.pangea.chat";
-  // Check whether a given username belongs to the bot
-  static bool isBotName(String? name) {
-    return name == byEnvironment;
-  }
 }
