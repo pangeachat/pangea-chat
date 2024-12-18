@@ -627,9 +627,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$locationPermissionDeniedNotice() {
       return "\u0420\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u0438\u0435 \u043d\u0430 \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0435\u043d\u0438\u0435 \u043c\u0435\u0441\u0442\u043e\u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u044f \u043e\u0442\u043a\u043b\u043e\u043d\u0435\u043d\u043e. \u041f\u043e\u0436\u0430\u043b\u0443\u0439\u0441\u0442\u0430, \u043f\u0440\u0435\u0434\u043e\u0441\u0442\u0430\u0432\u044c\u0442\u0435 \u044d\u0442\u043e \u0440\u0430\u0437\u0440\u0435\u0448\u0435\u043d\u0438\u0435, \u0447\u0442\u043e\u0431\u044b \u0438\u043c\u0435\u0442\u044c \u0432\u043e\u0437\u043c\u043e\u0436\u043d\u043e\u0441\u0442\u044c \u0434\u0435\u043b\u0438\u0442\u044c\u0441\u044f \u0441\u0432\u043e\u0438\u043c \u043c\u0435\u0441\u0442\u043e\u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435\u043c.";
     },
-    get$login() {
-      return "\u0412\u043e\u0439\u0442\u0438";
-    },
     get$logout() {
       return "\u0412\u044b\u0439\u0442\u0438";
     },
@@ -725,9 +722,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$password(_) {
       return "\u041f\u0430\u0440\u043e\u043b\u044c";
-    },
-    get$passwordForgotten() {
-      return "\u0417\u0430\u0431\u044b\u043b\u0438 \u043f\u0430\u0440\u043e\u043b\u044c";
     },
     get$passwordHasBeenChanged() {
       return "\u041f\u0430\u0440\u043e\u043b\u044c \u0431\u044b\u043b \u0438\u0437\u043c\u0435\u043d\u0451\u043d";
@@ -891,9 +885,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$shareLocation() {
       return "\u041f\u043e\u0434\u0435\u043b\u0438\u0442\u044c\u0441\u044f \u043c\u0435\u0441\u0442\u043e\u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435\u043c";
     },
-    get$showPassword() {
-      return "\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u044c \u043f\u0430\u0440\u043e\u043b\u044c";
-    },
     get$presencesToggle() {
       return "\u041f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u044f \u0432 \u0441\u0442\u0430\u0442\u0443\u0441\u0430\u0445 \u0434\u0440\u0443\u0433\u0438\u0445 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0435\u0439";
     },
@@ -962,6 +953,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     userLeftTheChat$1(username) {
       return "\ud83d\udeaa " + username + " \u043f\u043e\u043a\u0438\u043d\u0443\u043b(\u0430) \u0447\u0430\u0442";
+    },
+    get$username(_) {
+      return "\u0418\u043c\u044f \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f";
     },
     userSentUnknownEvent$2(username, type) {
       return username + ' \u043e\u0442\u043f\u0440\u0430\u0432\u0438\u043b(\u0430) \u0441\u043e\u0431\u044b\u0442\u0438\u0435 \u0442\u0438\u043f\u0430 "' + type + '"';
@@ -1076,15 +1070,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$emojis() {
       return "\u042d\u043c\u043e\u0434\u0437\u0438";
-    },
-    get$emailOrUsername() {
-      return "\u0410\u0434\u0440\u0435\u0441 \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u043d\u043d\u043e\u0439 \u043f\u043e\u0447\u0442\u044b \u0438\u043b\u0438 \u0438\u043c\u044f \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f";
-    },
-    get$indexedDbErrorTitle() {
-      return "\u041f\u0440\u043e\u0431\u043b\u0435\u043c\u044b \u0441 \u043f\u0440\u0438\u0432\u0430\u0442\u043d\u044b\u043c \u0440\u0435\u0436\u0438\u043c\u043e\u043c";
-    },
-    get$indexedDbErrorLong() {
-      return "\u041a \u0441\u043e\u0436\u0430\u043b\u0435\u043d\u0438\u044e, \u043f\u043e \u0443\u043c\u043e\u043b\u0447\u0430\u043d\u0438\u044e \u0445\u0440\u0430\u043d\u0438\u043b\u0438\u0449\u0435 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0439 \u043d\u0435 \u0432\u043a\u043b\u044e\u0447\u0435\u043d\u043e \u0432 \u043f\u0440\u0438\u0432\u0430\u0442\u043d\u043e\u043c \u0440\u0435\u0436\u0438\u043c\u0435.\n\u041f\u043e\u0436\u0430\u043b\u0443\u0439\u0441\u0442\u0430, \u043f\u043e\u0441\u0435\u0442\u0438\u0442\u0435\n- about:config\n- \u0443\u0441\u0442\u0430\u043d\u043e\u0432\u0438\u0442\u0435 \u0434\u043b\u044f dom.indexedDB.privateBrowsing.enabled \u0437\u043d\u0430\u0447\u0435\u043d\u0438\u0435 true\n\u0412 \u043f\u0440\u043e\u0442\u0438\u0432\u043d\u043e\u043c \u0441\u043b\u0443\u0447\u0430\u0435 \u0437\u0430\u043f\u0443\u0441\u043a FluffyChat \u0431\u0443\u0434\u0435\u0442 \u043d\u0435\u0432\u043e\u0437\u043c\u043e\u0436\u0435\u043d.";
     },
     get$youRejectedTheInvitation() {
       return "\u0412\u044b \u043e\u0442\u043a\u043b\u043e\u043d\u0438\u043b\u0438 \u043f\u0440\u0438\u0433\u043b\u0430\u0448\u0435\u043d\u0438\u0435";
@@ -1281,21 +1266,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$iWantALanguagePartnerWhoIsLearning() {
       return "Is learning:";
     },
-    get$yourBirthdayPlease() {
-      return "Pangea Chat serves schools and other learning communities, ages 13 and up, around the world.\n\nIn order to protect our young learners, we ask our users to verify their age before connecting to our community.\n\nBefore you can search Pangea Chat for classes, rooms, and new friends, you must verify you are 18 or older.";
-    },
-    get$invalidDob() {
-      return "Invalid Date of Birth";
-    },
-    get$getStarted() {
-      return "Get Started";
-    },
-    get$mustBe13() {
-      return "User should be 13 years old";
-    },
-    get$yourBirthdayPleaseShort() {
-      return "Please selected your age group";
-    },
     get$joinWithClassCode() {
       return "Join space";
     },
@@ -1416,17 +1386,11 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$error405Desc() {
       return "Please set your languages in Main Menu > Learning Settings.";
     },
-    get$loginOrSignup() {
-      return "Sign in with";
-    },
     get$iAgreeToThe() {
       return "I agree to the ";
     },
     get$termsAndConditions() {
       return "Terms and Conditions";
-    },
-    get$andCertifyIAmAtLeast13YearsOfAge() {
-      return " and certify I am at least 13 years of age.";
     },
     get$error502504Title() {
       return "Wow, there are a lot of students online!";
@@ -3114,17 +3078,11 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     pleaseChooseAtLeastChars$1(min) {
       return "Please choose at least " + min + " characters.";
     },
-    get$noEmailWarning() {
-      return "Please enter a valid email address. Otherwise you won't be able to reset your password. If you don't want to, tap again on the button to continue.";
-    },
     get$pleaseEnterValidEmail() {
       return "Please enter a valid email address.";
     },
     get$pleaseChooseAUsername() {
       return "Please choose a username";
-    },
-    get$chooseAUsername() {
-      return "Choose a username";
     },
     get$define(_) {
       return "Define";
@@ -3179,9 +3137,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$speechToTextTooltip() {
       return "Transcript";
-    },
-    certifyAge$1(age) {
-      return "I certify that I am over " + age + " years of age";
     },
     get$kickBotWarning() {
       return "Kicking Pangea Bot will remove the conversation bot from this chat.";
@@ -4284,9 +4239,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$version(_) {
       return "\u0412\u0435\u0440\u0441\u0438\u044f";
     },
-    get$website() {
-      return "\u0421\u0430\u0439\u0442";
-    },
     get$compress() {
       return "Compress";
     },
@@ -4401,9 +4353,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     xpIntoLevel$2(currentXP, maxXP) {
       return "" + currentXP + " / " + maxXP + " XP";
     },
-    get$signInWithUsername() {
-      return "Sign in with username and password";
-    },
     get$enableTTSToolName() {
       return "Enabled text-to-speech";
     },
@@ -4422,6 +4371,51 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$latestVersion() {
       return "Latest Version";
     },
+    get$createAnAccount() {
+      return "Create an account";
+    },
+    get$signIn() {
+      return "Sign in";
+    },
+    get$signUpWithEmail() {
+      return "Sign up with Email";
+    },
+    get$signUpWithGoogle() {
+      return "Sign up with Google";
+    },
+    get$signUpWithApple() {
+      return "Sign up with Apple";
+    },
+    get$yourUsername() {
+      return "Your username";
+    },
+    get$yourEmail() {
+      return "Your email";
+    },
+    get$signInWithGoogle() {
+      return "Sign in with Google";
+    },
+    get$signInWithApple() {
+      return "Sign in with Apple";
+    },
+    get$chooseYourAvatar() {
+      return "Choose your avatar";
+    },
+    get$iWantToLearn() {
+      return "I want to learn";
+    },
+    get$letsStart() {
+      return "Let's start";
+    },
+    get$pleaseAgreeToTOS() {
+      return "Please agree to the Terms and Conditions";
+    },
+    get$pleaseEnterEmail() {
+      return "Please enter a valid email address.";
+    },
+    get$pleaseSelectALanguage() {
+      return "Please select a language";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4437,6 +4431,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_269", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "aMAfNyZqm1amydtzzpcIyyI86oU=");
+})($__dart_deferred_initializers__, "fdYKlFGtD3GPt07EdVqQQ9aqsgA=");
 ;
 //# sourceMappingURL=main.dart.js_269.part.js.map

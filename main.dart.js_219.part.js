@@ -627,9 +627,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$locationPermissionDeniedNotice() {
       return "Permiso de ubicaci\xf3n denegado. Conc\xe9deles que puedan compartir tu ubicaci\xf3n.";
     },
-    get$login() {
-      return "Acceso";
-    },
     get$logout() {
       return "Cerrar sesi\xf3n";
     },
@@ -725,9 +722,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$password(_) {
       return "Contrase\xf1a";
-    },
-    get$passwordForgotten() {
-      return "Contrase\xf1a olvidada";
     },
     get$passwordHasBeenChanged() {
       return "La contrase\xf1a ha sido cambiada";
@@ -891,9 +885,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$shareLocation() {
       return "Compartir ubicaci\xf3n";
     },
-    get$showPassword() {
-      return "Mostrar contrase\xf1a";
-    },
     get$presencesToggle() {
       return "Mostrar mensajes de estado de otros usuarios";
     },
@@ -962,6 +953,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     userLeftTheChat$1(username) {
       return username + " abandon\xf3 el chat";
+    },
+    get$username(_) {
+      return "Nombre de usuario";
     },
     userSentUnknownEvent$2(username, type) {
       return username + " envi\xf3 un evento " + type;
@@ -1076,15 +1070,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$emojis() {
       return "Emojis";
-    },
-    get$emailOrUsername() {
-      return "Correo electr\xf3nico o nombre de usuario";
-    },
-    get$indexedDbErrorTitle() {
-      return "Problemas con el modo privado";
-    },
-    get$indexedDbErrorLong() {
-      return "El almacenamiento de mensajes, por desgracia, no est\xe1 habilitado en el modo privado por defecto.\nPor favor, visite\n - about:config\n - Establezca dom.indexedDB.privateBrowsing.enabled a true\nDe otra forma, no es posible usar FluffyChat.";
     },
     get$youRejectedTheInvitation() {
       return "Rechazaste la invitaci\xf3n";
@@ -1281,21 +1266,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$iWantALanguagePartnerWhoIsLearning() {
       return "Est\xe1 aprendiendo:";
     },
-    get$yourBirthdayPlease() {
-      return "Pangea Chat est\xe1 al servicio de escuelas y otras comunidades de aprendizaje que atienden a estudiantes de 13 a\xf1os en adelante alrededor del mundo. Para proteger a nuestra poblaci\xf3n menor de edad, les pedimos a todos nuestros usuarios que verifiquen su edad antes de unirse a nuestra comunidad. Para poder encontrar clases, chats y nuevos amigos en Pangea Chat, debe verificar que tiene 18 a\xf1os o m\xe1s de edad.";
-    },
-    get$invalidDob() {
-      return "Fecha de nacimiento inv\xe1lida";
-    },
-    get$getStarted() {
-      return "Comience";
-    },
-    get$mustBe13() {
-      return "Los usuarios deben tener 13 a\xf1os o m\xe1s de edad.";
-    },
-    get$yourBirthdayPleaseShort() {
-      return "Seleccione su grupo de edad";
-    },
     get$joinWithClassCode() {
       return "\xdanete a una clase o a un intercambio";
     },
@@ -1416,17 +1386,11 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$error405Desc() {
       return "Por favor, seleccione sus idiomas en Ajustes de cuenta > Ajustes de aprendizaje.";
     },
-    get$loginOrSignup() {
-      return "Iniciar / Registrarse";
-    },
     get$iAgreeToThe() {
       return "Acepto los ";
     },
     get$termsAndConditions() {
       return "T\xe9rminos y condiciones";
-    },
-    get$andCertifyIAmAtLeast13YearsOfAge() {
-      return " y certifico que tengo al menos 13 a\xf1os.";
     },
     get$error502504Title() {
       return "\xa1Vaya! Hay muchos estudiantes conectados.";
@@ -3114,17 +3078,11 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     pleaseChooseAtLeastChars$1(min) {
       return "Por favor elegir al menos " + min + " car\xe1cteres";
     },
-    get$noEmailWarning() {
-      return "";
-    },
     get$pleaseEnterValidEmail() {
       return "Por favor ingrese un correo electr\xf3nico v\xe1lido.";
     },
     get$pleaseChooseAUsername() {
       return "Por favor, elija un nombre de usuario";
-    },
-    get$chooseAUsername() {
-      return "Elija un nombre de usuario";
     },
     get$define(_) {
       return "Defina";
@@ -3179,9 +3137,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$speechToTextTooltip() {
       return "Transcripci\xf3n";
-    },
-    certifyAge$1(age) {
-      return "Certifico que soy mayor de " + age + " a\xf1os";
     },
     get$kickBotWarning() {
       return "Patear Pangea Bot eliminar\xe1 el bot de conversaci\xf3n de este chat.";
@@ -4284,9 +4239,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$version(_) {
       return "Version";
     },
-    get$website() {
-      return "Website";
-    },
     get$compress() {
       return "Compress";
     },
@@ -4401,9 +4353,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     xpIntoLevel$2(currentXP, maxXP) {
       return "" + currentXP + " / " + maxXP + " XP";
     },
-    get$signInWithUsername() {
-      return "Sign in with username and password";
-    },
     get$enableTTSToolName() {
       return "Enabled text-to-speech";
     },
@@ -4422,6 +4371,51 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$latestVersion() {
       return "Latest Version";
     },
+    get$createAnAccount() {
+      return "Create an account";
+    },
+    get$signIn() {
+      return "Sign in";
+    },
+    get$signUpWithEmail() {
+      return "Sign up with Email";
+    },
+    get$signUpWithGoogle() {
+      return "Sign up with Google";
+    },
+    get$signUpWithApple() {
+      return "Sign up with Apple";
+    },
+    get$yourUsername() {
+      return "Your username";
+    },
+    get$yourEmail() {
+      return "Your email";
+    },
+    get$signInWithGoogle() {
+      return "Sign in with Google";
+    },
+    get$signInWithApple() {
+      return "Sign in with Apple";
+    },
+    get$chooseYourAvatar() {
+      return "Choose your avatar";
+    },
+    get$iWantToLearn() {
+      return "I want to learn";
+    },
+    get$letsStart() {
+      return "";
+    },
+    get$pleaseAgreeToTOS() {
+      return "Please agree to the Terms and Conditions";
+    },
+    get$pleaseEnterEmail() {
+      return "Please enter a valid email address.";
+    },
+    get$pleaseSelectALanguage() {
+      return "Please select a language";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4437,6 +4431,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_219", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "kvf9zvVQFcE+FT0JpRqmzoAHWYM=");
+})($__dart_deferred_initializers__, "jGqtgxNg2kxwyjrCepES3yVPcPo=");
 ;
 //# sourceMappingURL=main.dart.js_219.part.js.map
