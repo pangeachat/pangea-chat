@@ -65,7 +65,7 @@ class UserSettingsView extends StatelessWidget {
       mainAssetBytes: controller.avatar,
       children: [
         Opacity(
-          opacity: 0.75,
+          opacity: 0.9,
           child: Text(
             L10n.of(context).chooseYourAvatar,
             style: const TextStyle(

@@ -11,7 +11,7 @@ class PangeaLoginScaffold extends StatelessWidget {
 
   const PangeaLoginScaffold({
     required this.children,
-    this.mainAssetPath = "pangea/PangeaChat_Glow_Logo.png",
+    this.mainAssetPath = "assets/pangea/PangeaChat_Glow_Logo.png",
     this.mainAssetBytes,
     this.showAppName = true,
     super.key,
@@ -21,56 +21,56 @@ class PangeaLoginScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: SizedBox.expand(
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-            child: Center(
+        appBar: AppBar(),
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
               child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: 450,
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight,
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 250,
-                      height: 250,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.transparent,
-                      ),
-                      child: ClipOval(
-                        child: mainAssetBytes != null
-                            ? Image.memory(
-                                mainAssetBytes!,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, _, s) {
-                                  return Container(color: Colors.white);
-                                }, // scale properly without warping
-                              )
-                            : Image.asset(
-                                mainAssetPath,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, _, s) {
-                                  return Container(color: Colors.white);
-                                }, // scale properly without warping
-                              ),
-                      ),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: 450,
                     ),
-                    if (showAppName)
-                      Text(
-                        AppConfig.applicationName,
-                        style: Theme.of(context).textTheme.displaySmall,
-                      ),
-                    const SizedBox(height: 24),
-                    ...children,
-                  ],
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 200,
+                          height: 200,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.transparent,
+                          ),
+                          child: ClipOval(
+                            child: mainAssetBytes != null
+                                ? Image.memory(
+                                    mainAssetBytes!,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.asset(
+                                    mainAssetPath,
+                                    fit: BoxFit.cover,
+                                  ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        if (showAppName)
+                          Text(
+                            AppConfig.applicationName,
+                            style: Theme.of(context).textTheme.displaySmall,
+                          ),
+                        const SizedBox(height: 16),
+                        ...children,
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );

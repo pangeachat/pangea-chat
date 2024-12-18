@@ -33,11 +33,11 @@ class UserSettingsState extends State<UserSettingsPage> {
   String? _selectedFilePath;
 
   List<String> avatarPaths = const [
-    "pangea/Avatar_1.png",
-    "pangea/Avatar_2.png",
-    "pangea/Avatar_3.png",
-    "pangea/Avatar_4.png",
-    "pangea/Avatar_5.png",
+    "assets/pangea/Avatar_1.png",
+    "assets/pangea/Avatar_2.png",
+    "assets/pangea/Avatar_3.png",
+    "assets/pangea/Avatar_4.png",
+    "assets/pangea/Avatar_5.png",
   ];
   String? selectedAvatarPath;
 

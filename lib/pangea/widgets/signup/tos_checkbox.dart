@@ -36,21 +36,23 @@ class TosCheckboxState extends State<TosCheckbox>
                 InkWell(
                   onTap: () => UrlLauncher(context, AppConfig.termsOfServiceUrl)
                       .launchUrl(),
-                  child: RichText(
-                    text: TextSpan(
-                      text: L10n.of(context).iAgreeToThe,
-                      children: [
-                        TextSpan(
-                          text: L10n.of(context).termsAndConditions,
-                          style: const TextStyle(
-                            decoration: TextDecoration.underline,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15),
+                    child: RichText(
+                      text: TextSpan(
+                        text: L10n.of(context).iAgreeToThe,
+                        children: [
+                          TextSpan(
+                            text: L10n.of(context).termsAndConditions,
+                            style: const TextStyle(
+                              decoration: TextDecoration.underline,
+                            ),
                           ),
+                        ],
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
-                      ],
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w100,
                       ),
                     ),
                   ),

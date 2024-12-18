@@ -31,7 +31,7 @@ class FullWidthButtonState extends State<FullWidthButton> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.fromLTRB(8, 8, 8, widget.error == null ? 8 : 0),
+          padding: EdgeInsets.fromLTRB(4, 4, 4, widget.error == null ? 4 : 0),
           child: AnimatedOpacity(
             duration: FluffyThemes.animationDuration,
             opacity: widget.enabled ? 1 : 0.5,
@@ -122,7 +122,7 @@ class FullWidthTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(4.0),
       child: TextFormField(
         obscureText: obscureText,
         autocorrect: autocorrect,
@@ -135,11 +135,8 @@ class FullWidthTextField extends StatelessWidget {
             borderRadius: BorderRadius.circular(36.0),
           ),
           contentPadding: const EdgeInsets.symmetric(horizontal: 30),
-          filled: true,
-          fillColor: Colors.white,
           errorText: errorText,
         ),
-        style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
         validator: validator,
         onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
         controller: controller,
