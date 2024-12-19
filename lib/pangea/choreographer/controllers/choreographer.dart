@@ -17,6 +17,7 @@ import 'package:fluffychat/pangea/models/tokens_event_content_model.dart';
 import 'package:fluffychat/pangea/utils/any_state_holder.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/utils/overlay.dart';
+import 'package:fluffychat/pangea/utils/play_click_sound.dart';
 import 'package:fluffychat/pangea/widgets/chat/tts_controller.dart';
 import 'package:fluffychat/pangea/widgets/igc/paywall_card.dart';
 import 'package:flutter/foundation.dart';
@@ -42,6 +43,7 @@ class Choreographer {
   late AlternativeTranslator altTranslator;
   late ErrorService errorService;
   final tts = TtsController();
+  final clickPlayer = ClickPlayer();
 
   bool isFetching = false;
   int _timesClicked = 0;
@@ -76,7 +78,7 @@ class Choreographer {
   void send(BuildContext context) {
     debugPrint("can send message: $canSendMessage");
     if (!canSendMessage) {
-      if (igc.igcTextData != null) {
+      if (igc.igcTextData != null && igc.igcTextData!.matches.isNotEmpty) {
         igc.showFirstMatch(context);
       }
       return;
@@ -457,7 +459,7 @@ class Choreographer {
     isFetching = false;
     choreoRecord = ChoreoRecord.newRecord;
     itController.clear();
-    igc.clear();
+    igc.dispose();
     //@ggurdin - why is this commented out?
     // errorService.clear();
     _resetDebounceTimer();
@@ -483,6 +485,7 @@ class Choreographer {
     _textController.dispose();
     trialStream?.cancel();
     tts.dispose();
+    clickPlayer.dispose();
   }
 
   LanguageModel? get l2Lang {

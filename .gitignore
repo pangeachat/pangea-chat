@@ -11,6 +11,10 @@
 .history
 .svn/
 prime
+# act; local github actions
+*.secrets
+# Android keys file
+keys.json
 !/public/.env
 *.env.local_choreo
 *.env.prod
@@ -50,6 +54,7 @@ docs/tailwind.css
 
 /key.jks
 /android/key.properties
+/android/app/build/
 **/android/app/.cxx
 android/key.jks
 android/keys.json

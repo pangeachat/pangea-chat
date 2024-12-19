@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:fluffychat/config/app_config.dart';
@@ -53,10 +54,70 @@ class AppVersionController {
 
     final remoteVersion = resp.latestVersion;
     final remoteBuildNumber = resp.latestBuildNumber;
-    final mandatoryUpdate = resp.mandatoryUpdate;
+    bool mandatoryUpdate = resp.mandatoryUpdate;
 
     if (currentVersion == remoteVersion &&
         currentBuildNumber == remoteBuildNumber) {
+      return;
+    }
+
+    // convert the version number string into a list of ints
+    // and the build number string into an int
+    final currentVersionParts =
+        currentVersion.split(".").map((e) => int.parse(e)).toList();
+    final remoteVersionParts =
+        remoteVersion.split(".").map((e) => int.parse(e)).toList();
+    final currentBuildNumberInt = int.parse(currentBuildNumber);
+    final remoteBuildNumberInt = int.parse(remoteBuildNumber);
+
+    if (currentVersionParts[0] > remoteVersionParts[0]) {
+      return;
+    }
+
+    if (currentVersionParts[0] == remoteVersionParts[0] &&
+        currentVersionParts[1] > remoteVersionParts[1]) {
+      return;
+    }
+
+    // indicates if the current version is older than the remote version
+    bool isOlderCurrentVersion = false;
+    bool isDifferentVersion = false;
+
+    // Loop through the remote and current version parts
+    // and compare them. If a part of the current version
+    // if less than the remote version, then the current
+    // version is older than the remote version.
+    // If a part of the current version is greater than the
+    // remote version, then the current version is newer than
+    // the remote version.
+    for (int i = 0;
+        i < min(currentVersionParts.length, remoteVersionParts.length);
+        i++) {
+      if (currentVersionParts[i] < remoteVersionParts[i]) {
+        isOlderCurrentVersion = true;
+        isDifferentVersion = true;
+        break;
+      } else if (currentVersionParts[i] > remoteVersionParts[i]) {
+        isOlderCurrentVersion = false;
+        isDifferentVersion = true;
+        break;
+      }
+    }
+
+    // if the first or second number in the remote version is greater than
+    // the first or second number in the current version, then the current
+    // then this is a mandatory update
+    if (remoteVersionParts[0] > currentVersionParts[0] ||
+        remoteVersionParts[1] > currentVersionParts[1]) {
+      mandatoryUpdate = true;
+    }
+
+    // also compare the build numbers
+    if (!isDifferentVersion && currentBuildNumberInt < remoteBuildNumberInt) {
+      isOlderCurrentVersion = true;
+    }
+
+    if (!isOlderCurrentVersion && !mandatoryUpdate) {
       return;
     }
 
@@ -67,8 +128,14 @@ class AppVersionController {
       return;
     }
 
-    final OkCancelResult dialogResponse =
-        await _showDialog(context, mandatoryUpdate);
+    final OkCancelResult dialogResponse = await _showDialog(
+      context,
+      mandatoryUpdate,
+      currentVersion,
+      remoteVersion,
+      currentBuildNumber,
+      remoteBuildNumber,
+    );
 
     if (!mandatoryUpdate && dialogResponse != OkCancelResult.ok) {
       await MatrixState.pangeaController.pStoreService.save(
@@ -85,13 +152,21 @@ class AppVersionController {
   static Future<OkCancelResult> _showDialog(
     BuildContext context,
     bool mandatoryUpdate,
+    String currentVersion,
+    String remoteVersion,
+    String currentBuildNumber,
+    String remoteBuildNumber,
   ) async {
     final title = mandatoryUpdate
         ? L10n.of(context).mandatoryUpdateRequired
         : L10n.of(context).updateAvailable;
     final message = mandatoryUpdate
-        ? L10n.of(context).mandatoryUpdateRequiredDesc
-        : L10n.of(context).updateAvailableDesc;
+        ? "${L10n.of(context).mandatoryUpdateRequiredDesc}\n\n"
+            "${L10n.of(context).currentVersion}: $currentVersion+$currentBuildNumber\n"
+            "${L10n.of(context).latestVersion}: $remoteVersion+$remoteBuildNumber"
+        : "${L10n.of(context).updateAvailableDesc}\n\n"
+            "${L10n.of(context).currentVersion}: $currentVersion+$currentBuildNumber\n"
+            "${L10n.of(context).latestVersion}: $remoteVersion+$remoteBuildNumber";
     return mandatoryUpdate
         ? showOkAlertDialog(
             context: context,

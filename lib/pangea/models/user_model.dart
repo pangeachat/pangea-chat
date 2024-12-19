@@ -34,7 +34,9 @@ class UserSettings {
   });
 
   factory UserSettings.fromJson(Map<String, dynamic> json) => UserSettings(
-        dateOfBirth: DateTime.parse(json[ModelKey.userDateOfBirth]),
+        dateOfBirth: json[ModelKey.userDateOfBirth] != null
+            ? DateTime.parse(json[ModelKey.userDateOfBirth])
+            : null,
         createdAt: json[ModelKey.userCreatedAt] != null
             ? DateTime.parse(json[ModelKey.userCreatedAt])
             : null,
@@ -126,6 +128,7 @@ class UserToolSettings {
   bool immersionMode;
   bool definitions;
   bool autoIGC;
+  bool enableTTS;
 
   UserToolSettings({
     this.interactiveTranslator = true,
@@ -133,6 +136,7 @@ class UserToolSettings {
     this.immersionMode = false,
     this.definitions = true,
     this.autoIGC = true,
+    this.enableTTS = true,
   });
 
   factory UserToolSettings.fromJson(Map<String, dynamic> json) =>
@@ -144,6 +148,7 @@ class UserToolSettings {
         immersionMode: false,
         definitions: json[ToolSetting.definitions.toString()] ?? true,
         autoIGC: json[ToolSetting.autoIGC.toString()] ?? true,
+        enableTTS: json[ToolSetting.enableTTS.toString()] ?? true,
       );
 
   Map<String, dynamic> toJson() {
@@ -153,6 +158,7 @@ class UserToolSettings {
     data[ToolSetting.immersionMode.toString()] = immersionMode;
     data[ToolSetting.definitions.toString()] = definitions;
     data[ToolSetting.autoIGC.toString()] = autoIGC;
+    data[ToolSetting.enableTTS.toString()] = enableTTS;
     return data;
   }
 
