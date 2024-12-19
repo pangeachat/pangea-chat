@@ -111,7 +111,6 @@ class FullWidthButtonState extends State<FullWidthButton> {
 class FullWidthTextField extends StatelessWidget {
   final String hintText;
   final bool autocorrect;
-  final bool autofocus;
   final bool obscureText;
   final TextInputAction? textInputAction;
   final TextInputType? keyboardType;
@@ -122,7 +121,6 @@ class FullWidthTextField extends StatelessWidget {
   const FullWidthTextField({
     required this.hintText,
     this.autocorrect = false,
-    this.autofocus = false,
     this.obscureText = false,
     this.textInputAction,
     this.keyboardType,
@@ -139,7 +137,6 @@ class FullWidthTextField extends StatelessWidget {
       child: TextFormField(
         obscureText: obscureText,
         autocorrect: autocorrect,
-        autofocus: autofocus,
         textInputAction: textInputAction,
         keyboardType: keyboardType,
         decoration: InputDecoration(

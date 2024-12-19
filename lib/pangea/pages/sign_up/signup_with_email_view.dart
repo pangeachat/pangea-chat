@@ -21,7 +21,6 @@ class SignupWithEmailView extends StatelessWidget {
         children: [
           FullWidthTextField(
             hintText: L10n.of(context).yourUsername,
-            autofocus: true,
             textInputAction: TextInputAction.next,
             validator: (text) {
               if (text == null || text.isEmpty) {

@@ -19,7 +19,6 @@ class PangeaLoginView extends StatelessWidget {
         children: [
           FullWidthTextField(
             hintText: L10n.of(context).username,
-            autofocus: true,
             textInputAction: TextInputAction.next,
             validator: (value) {
               if (value == null || value.isEmpty) {
