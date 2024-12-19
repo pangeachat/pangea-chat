@@ -7,12 +7,9 @@ import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
 import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
 import 'package:fluffychat/pangea/enum/construct_use_type_enum.dart';
 import 'package:fluffychat/pangea/extensions/client_extension/client_extension.dart';
-import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/analytics/construct_use_model.dart';
 import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
 import 'package:fluffychat/pangea/models/pangea_token_text_model.dart';
-import 'package:fluffychat/pangea/models/practice_activities.dart/message_activity_request.dart';
-import 'package:fluffychat/pangea/models/practice_activities.dart/multiple_choice_activity_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
 import 'package:fluffychat/pangea/repo/lemma_definition_repo.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
@@ -218,7 +215,16 @@ class PangeaToken {
     }
   }
 
-  bool _didActivity(ActivityTypeEnum a) {
+  bool _didActivity(
+    ActivityTypeEnum a, [
+    String? morphFeature,
+    String? morphTag,
+  ]) {
+    if ((morphFeature == null || morphTag == null) &&
+        a == ActivityTypeEnum.morphId) {
+      debugger(when: kDebugMode);
+      return true;
+    }
     switch (a) {
       case ActivityTypeEnum.wordMeaning:
       case ActivityTypeEnum.wordFocusListening:
@@ -230,15 +236,26 @@ class PangeaToken {
             .any((u) => a.associatedUseTypes.contains(u));
       case ActivityTypeEnum.morphId:
         return morph.entries
-            .map((e) => morphConstruct(e.key, e.value).uses)
+            .map((e) => morphConstruct(morphFeature!, morphTag!).uses)
             .expand((e) => e)
-            .map((u) => u.useType)
-            .any((u) => a.associatedUseTypes.contains(u));
+            .any(
+              (u) =>
+                  a.associatedUseTypes.contains(u.useType) &&
+                  u.form == text.content,
+            );
     }
   }
 
-  bool _didActivitySuccessfully(ActivityTypeEnum a,
-      [String? morphFeature, String? morphTag]) {
+  bool _didActivitySuccessfully(
+    ActivityTypeEnum a, [
+    String? morphFeature,
+    String? morphTag,
+  ]) {
+    if ((morphFeature == null || morphTag == null) &&
+        a == ActivityTypeEnum.morphId) {
+      debugger(when: kDebugMode);
+      return true;
+    }
     switch (a) {
       case ActivityTypeEnum.wordMeaning:
       case ActivityTypeEnum.wordFocusListening:
@@ -248,6 +265,7 @@ class PangeaToken {
         return vocabConstruct.uses
             .map((u) => u.useType)
             .any((u) => u == a.correctUse);
+      // Note that it matters less if they did morphId in general, than if they did it with the particular feature
       case ActivityTypeEnum.morphId:
         if (morphFeature == null || morphTag == null) {
           debugger(when: kDebugMode);
@@ -255,13 +273,15 @@ class PangeaToken {
         }
         return morphConstruct(morphFeature, morphTag)
             .uses
-            .map((u) => u.useType)
-            .any((u) => u == a.correctUse);
+            .any((u) => u.useType == a.correctUse && u.form == text.content);
     }
   }
 
-  bool _isActivityProbablyLevelAppropriate(ActivityTypeEnum a,
-      [String? morphFeature, String? morphTag]) {
+  bool _isActivityProbablyLevelAppropriate(
+    ActivityTypeEnum a, [
+    String? morphFeature,
+    String? morphTag,
+  ]) {
     switch (a) {
       case ActivityTypeEnum.wordMeaning:
         debugPrint(
@@ -295,11 +315,23 @@ class PangeaToken {
     }
   }
 
+  bool get shouldDoPosActivity => shouldDoMorphActivity("Pos");
+
+  bool shouldDoMorphActivity(String feature) => shouldDoActivity(
+        a: ActivityTypeEnum.morphId,
+        feature: feature,
+        tag: morph[feature],
+      );
+
   // maybe for every 5 points of xp for a particular activity, increment the days between uses by 2
-  bool shouldDoActivity(ActivityTypeEnum a) =>
+  bool shouldDoActivity({
+    required ActivityTypeEnum a,
+    required String? feature,
+    required String? tag,
+  }) =>
       lemma.saveVocab &&
       _isActivityBasicallyEligible(a) &&
-      _isActivityProbablyLevelAppropriate(a);
+      _isActivityProbablyLevelAppropriate(a, feature, tag);
 
   List<ActivityTypeEnum> get eligibleActivityTypes {
     final List<ActivityTypeEnum> eligibleActivityTypes = [];
@@ -309,7 +341,7 @@ class PangeaToken {
     }
 
     for (final type in ActivityTypeEnum.values) {
-      if (shouldDoActivity(type)) {
+      if (shouldDoActivity(a: type, feature: null, tag: null)) {
         eligibleActivityTypes.add(type);
       }
     }
@@ -319,10 +351,13 @@ class PangeaToken {
 
   ConstructUses get vocabConstruct =>
       MatrixState.pangeaController.getAnalytics.constructListModel
-          .getConstructUses(ConstructIdentifier(
-              lemma: lemma.text,
-              type: ConstructTypeEnum.morph,
-              category: pos)) ??
+          .getConstructUses(
+        ConstructIdentifier(
+          lemma: lemma.text,
+          type: ConstructTypeEnum.morph,
+          category: pos,
+        ),
+      ) ??
       ConstructUses(
         lemma: lemma.text,
         constructType: ConstructTypeEnum.morph,
@@ -332,10 +367,13 @@ class PangeaToken {
 
   ConstructUses morphConstruct(String morphFeature, String morphTag) =>
       MatrixState.pangeaController.getAnalytics.constructListModel
-          .getConstructUses(ConstructIdentifier(
-              lemma: morphTag,
-              type: ConstructTypeEnum.morph,
-              category: morphFeature)) ??
+          .getConstructUses(
+        ConstructIdentifier(
+          lemma: morphTag,
+          type: ConstructTypeEnum.morph,
+          category: morphFeature,
+        ),
+      ) ??
       ConstructUses(
         lemma: morphTag,
         constructType: ConstructTypeEnum.morph,
@@ -400,27 +438,12 @@ class PangeaToken {
       .cast<ConstructUses>()
       .toList();
 
-  bool get shouldDoPosActivity {
-    print("warning: shouldDoPosActivity is not implemented");
-    return true;
-  }
-
-  bool get shouldDoLemmaActivity {
-    print("warning: shouldDoLemmaActivity is not implemented");
-    return false;
-  }
-
   Map<String, dynamic> toServerChoiceTokenWithXP() {
     return {
       'token': toJson(),
       'constructs_with_xp': constructs.map((e) => e.toJson()).toList(),
       'target_types': eligibleActivityTypes.map((e) => e.string).toList(),
     };
-  }
-
-  bool shouldDoMorphActivity(String morphFeature) {
-    print("Warning: shouldDoMorphActivity is not implemented");
-    return false;
   }
 
   Future<List<String>> getEmojiChoices() => LemmaDictionaryRepo.get(
@@ -489,86 +512,4 @@ class PangeaToken {
       ?.getState(PangeaEventTypes.userChosenEmoji, vocabConstructID.string)
       ?.content
       .tryGet<String>(ModelKey.emoji);
-
-  Future<PracticeActivityModel?> get emojiActivity async {
-    final String? l2 =
-        MatrixState.pangeaController.languageController.userL2?.langCode;
-
-    if (l2 == null) {
-      debugger(when: kDebugMode);
-      return null;
-    }
-
-    final List<String> emojis = await getEmojiChoices();
-
-    // TODO - modify MultipleChoiceActivity flow to allow no correct answer
-    return PracticeActivityModel(
-      activityType: ActivityTypeEnum.emoji,
-      targetTokens: [this],
-      tgtConstructs: [vocabConstructID],
-      langCode:
-          MatrixState.pangeaController.languageController.userL2!.langCode,
-      content: ActivityContent(
-          question: "", choices: emojis, answer: "", spanDisplayDetails: null),
-    );
-  }
-
-  //TODO probably move this to a context in which the event is defined
-  Future<PracticeActivityModel?> wordMeaningActivity(
-      PangeaMessageEvent event) async {
-    final String? l2 =
-        MatrixState.pangeaController.languageController.userL2?.langCode;
-    final String? l1 =
-        MatrixState.pangeaController.languageController.userL1?.langCode;
-
-    if (l2 == null || l1 == null) {
-      debugger(when: kDebugMode);
-      return null;
-    }
-
-    final res = await MatrixState.pangeaController.practiceGenerationController
-        .getPracticeActivity(
-      MessageActivityRequest(
-        userL1: l1,
-        userL2: l2,
-        messageText: event.messageDisplayText,
-        messageTokens: event.messageDisplayRepresentation!.tokens!,
-        activityQualityFeedback: null,
-        targetTokens: [this],
-        targetType: ActivityTypeEnum.wordMeaning,
-      ),
-      event,
-    );
-
-    return res.activity;
-  }
-
-  Future<PracticeActivityModel?> wordFocusListeningActivity(
-      PangeaMessageEvent event) async {
-    final String? l2 =
-        MatrixState.pangeaController.languageController.userL2?.langCode;
-    final String? l1 =
-        MatrixState.pangeaController.languageController.userL1?.langCode;
-
-    if (l2 == null || l1 == null) {
-      debugger(when: kDebugMode);
-      return null;
-    }
-
-    final res = await MatrixState.pangeaController.practiceGenerationController
-        .getPracticeActivity(
-      MessageActivityRequest(
-        userL1: l1,
-        userL2: l2,
-        messageText: event.messageDisplayText,
-        messageTokens: event.messageDisplayRepresentation!.tokens!,
-        activityQualityFeedback: null,
-        targetTokens: [this],
-        targetType: ActivityTypeEnum.wordFocusListening,
-      ),
-      event,
-    );
-
-    return res.activity;
-  }
 }

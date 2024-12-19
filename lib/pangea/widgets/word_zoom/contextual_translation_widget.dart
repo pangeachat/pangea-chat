@@ -26,6 +26,8 @@ class _ContextualTranslationWidgetState
     extends State<ContextualTranslationWidget> {
   late Future<String> _definition;
 
+  // TODO - if shouldDoActivity is true, show translation icon and onClick, show practice activity
+
   // if token has changed, update the definition
   @override
   void didUpdateWidget(covariant ContextualTranslationWidget oldWidget) {
@@ -44,7 +46,11 @@ class _ContextualTranslationWidgetState
   }
 
   Future<String> _fetchDefinition() async {
-    if (widget.token.shouldDoActivity(ActivityTypeEnum.wordMeaning)) {
+    if (widget.token.shouldDoActivity(
+      a: ActivityTypeEnum.wordMeaning,
+      feature: null,
+      tag: null,
+    )) {
       return '?';
     } else {
       final FullTextTranslationResponseModel response =

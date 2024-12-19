@@ -156,8 +156,8 @@ class MessageAnalyticsEntry {
     final List<List<PangeaToken>> sequences = [];
     List<PangeaToken> currentSequence = [];
     for (final token in _tokens) {
-      if (token.eligibleActivityTypes
-          .contains(ActivityTypeEnum.hiddenWordListening)) {
+      if (token.shouldDoActivity(
+          a: ActivityTypeEnum.hiddenWordListening, feature: null, tag: null)) {
         currentSequence.add(token);
       } else {
         if (currentSequence.isNotEmpty) {

@@ -1,14 +1,18 @@
+import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/widgets/chat/tts_controller.dart';
-import 'package:fluffychat/pangea/widgets/practice_activity/multiple_choice_activity.dart';
 import 'package:fluffychat/pangea/widgets/practice_activity/word_text_with_audio_button.dart';
 import 'package:fluffychat/pangea/widgets/word_zoom/contextual_translation_widget.dart';
 import 'package:fluffychat/pangea/widgets/word_zoom/lemma_definition_widget.dart';
 import 'package:fluffychat/pangea/widgets/word_zoom/lemma_widget.dart';
 import 'package:fluffychat/pangea/widgets/word_zoom/morphological_widget.dart';
-import 'package:fluffychat/pangea/widgets/word_zoom/part_of_speech_widget.dart';
 import 'package:flutter/material.dart';
+
+enum WordZoomSelection {
+  translation,
+  emoji,
+}
 
 class WordZoomWidget extends StatefulWidget {
   final PangeaToken token;
@@ -27,22 +31,12 @@ class WordZoomWidget extends StatefulWidget {
 }
 
 class _WordZoomWidgetState extends State<WordZoomWidget> {
-  MultipleChoiceActivity? multipleChoiceActivity;
+  ActivityTypeEnum? activityType;
 
   @override
   void initState() {
-    // setMode();
     super.initState();
   }
-
-  // void setMode() {
-  //   if (widget.token.shouldDoActivity(ActivityTypeEnum.wordMeaning)) {
-  //     multipleChoiceActivity = MultipleChoiceActivity(
-  //       practiceCardController: widget.practiceCardController,
-  //       currentActivity: widget.messageEvent.messageActivity!,
-  //     );
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -50,35 +44,26 @@ class _WordZoomWidgetState extends State<WordZoomWidget> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          WordTextWithAudioButton(
-            text: widget.token.text.content,
-            ttsController: widget.tts,
-            eventID: widget.messageEvent.eventId,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              //TODO create and insert emoji widget
+              WordTextWithAudioButton(
+                text: widget.token.text.content,
+                ttsController: widget.tts,
+                eventID: widget.messageEvent.eventId,
+              ),
+              LemmaWidget(token: widget.token),
+            ],
           ),
           ContextualTranslationWidget(
             token: widget.token,
             fullText: widget.messageEvent.messageDisplayText,
             langCode: widget.messageEvent.messageDisplayLangCode,
           ),
-          Wrap(
-            children: widget.token.morph.entries
-                .map(
-                  (entry) => MorphologicalWidget(
-                    token: widget.token,
-                    morphFeature: entry.key,
-                  ),
-                )
-                .toList(),
-          ),
-          const Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              LemmaWidget(token: widget.token),
-              PartOfSpeechWidget(token: widget.token),
-              // TODO - make this widget
-              // LemmaProgressWidget(token: widget.token),
-            ],
+          //TODO modify and insert container with modified practice activity card OR translation OR Phonetic based on mode
+          MorphologicalListWidget(
+            token: widget.token,
           ),
           LemmaDefinitionWidget(
             token: widget.token,

@@ -4,17 +4,16 @@ import 'dart:developer';
 import 'package:collection/collection.dart';
 import 'package:fluffychat/pangea/controllers/message_analytics_controller.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
-import 'package:fluffychat/pangea/controllers/practice_activity_generation_controller.dart';
 import 'package:fluffychat/pangea/controllers/put_analytics_controller.dart';
 import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/practice_activity_event.dart';
 import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
-import 'package:fluffychat/pangea/models/pangea_token_text_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/message_activity_request.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_record_model.dart';
+import 'package:fluffychat/pangea/repo/practice/practice_repo.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/widgets/animations/gain_points.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
@@ -25,7 +24,6 @@ import 'package:fluffychat/pangea/widgets/practice_activity/multiple_choice_acti
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:matrix/matrix.dart';
 
 /// The wrapper for practice activity content.
@@ -34,6 +32,11 @@ import 'package:matrix/matrix.dart';
 class PracticeActivityCard extends StatefulWidget {
   final PangeaMessageEvent pangeaMessageEvent;
   final MessageOverlayController overlayController;
+
+  //TODO - modifications
+  // 1) Future<PracticeActivityEvent> and Future<PracticeActivityModel> as parameters
+  // 2) onFinish callback as parameter
+  // 3) take out logic fetching activity
 
   const PracticeActivityCard({
     super.key,
@@ -52,6 +55,9 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
   PracticeActivityRecordModel? currentCompletionRecord;
   bool fetchingActivity = false;
 
+  PracticeGenerationController practiceGenerationController =
+      PracticeGenerationController();
+
   List<PracticeActivityEvent> get practiceActivities =>
       widget.pangeaMessageEvent.practiceActivities;
 
@@ -69,47 +75,47 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
   @override
   void initState() {
     super.initState();
-    _onSelectedSpanUpdate(widget.overlayController.selectedSpan);
-    _selectedSpanSubscription = widget
-        .overlayController.selectedSpanStream.stream
-        .listen(_onSelectedSpanUpdate);
+    // _onSelectedSpanUpdate(widget.overlayController.selectedSpan);
+    // _selectedSpanSubscription = widget
+    //     .overlayController.selectedSpanStream.stream
+    //     .listen(_onSelectedSpanUpdate);
   }
 
-  void _onSelectedSpanUpdate(PangeaTokenText? span) {
-    final doingHiddenWord = widget.overlayController.messageAnalyticsEntry
-            ?.nextActivity?.activityType ==
-        ActivityTypeEnum.hiddenWordListening;
-    if (doingHiddenWord) {
-      _resetPracticeActivity();
-      return;
-    }
+  // void _onSelectedSpanUpdate(PangeaTokenText? span) {
+  //   final doingHiddenWord = widget.overlayController.messageAnalyticsEntry
+  //           ?.nextActivity?.activityType ==
+  //       ActivityTypeEnum.hiddenWordListening;
+  //   if (doingHiddenWord) {
+  //     _resetPracticeActivity();
+  //     return;
+  //   }
 
-    if (span == null) {
-      _setPracticeActivity(null);
-      return;
-    }
+  //   if (span == null) {
+  //     _setPracticeActivity(null);
+  //     return;
+  //   }
 
-    final selectedToken = widget.overlayController.tokens
-        ?.firstWhereOrNull((t) => t.text == span);
-    final shouldDoActivity = selectedToken != null &&
-        selectedToken.shouldDoActivity(ActivityTypeEnum.wordMeaning);
+  //   final selectedToken = widget.overlayController.tokens
+  //       ?.firstWhereOrNull((t) => t.text == span);
+  //   final shouldDoActivity = selectedToken != null &&
+  //       selectedToken.shouldDoActivity(a: ActivityTypeEnum.wordMeaning);
 
-    debugPrint("SHOULD DO ACTIVITY: $shouldDoActivity");
+  //   debugPrint("SHOULD DO ACTIVITY: $shouldDoActivity");
 
-    if (shouldDoActivity) {
-      _resetPracticeActivity(
-        token: selectedToken,
-        type: ActivityTypeEnum.wordMeaning,
-      );
-      return;
-    }
+  //   if (shouldDoActivity) {
+  //     _resetPracticeActivity(
+  //       token: selectedToken,
+  //       type: ActivityTypeEnum.wordMeaning,
+  //     );
+  //     return;
+  //   }
 
-    _setPracticeActivity(null);
-  }
+  //   _setPracticeActivity(null);
+  // }
 
   @override
   void dispose() {
-    _selectedSpanSubscription?.cancel();
+    // _selectedSpanSubscription?.cancel();
     super.dispose();
   }
 
@@ -213,32 +219,32 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
       //       nextActivitySpecs.activityType == ActivityTypeEnum.wordMeaning,
       // );
 
-      final PracticeActivityModelResponse activityResponse =
-          await pangeaController.practiceGenerationController
-              .getPracticeActivity(
-        MessageActivityRequest(
-          userL1: pangeaController.languageController.userL1!.langCode,
-          userL2: pangeaController.languageController.userL2!.langCode,
-          messageText: widget.pangeaMessageEvent.messageDisplayText,
-          messageTokens: widget.overlayController.tokens!,
-          activityQualityFeedback: activityFeedback,
-          targetTokens: nextActivitySpecs.tokens,
-          targetType: nextActivitySpecs.activityType,
-        ),
-        widget.pangeaMessageEvent,
-      );
+      // final PracticeActivityModelResponse activityResponse =
+      //     await practiceGenerationController.getPracticeActivity(
+      //   MessageActivityRequest(
+      //     userL1: pangeaController.languageController.userL1!.langCode,
+      //     userL2: pangeaController.languageController.userL2!.langCode,
+      //     messageText: widget.pangeaMessageEvent.messageDisplayText,
+      //     messageTokens: widget.overlayController.tokens!,
+      //     activityQualityFeedback: activityFeedback,
+      //     targetTokens: nextActivitySpecs.tokens,
+      //     targetType: nextActivitySpecs.activityType,
+      //   ),
+      //   widget.pangeaMessageEvent,
+      // );
 
-      currentActivityCompleter = activityResponse.eventCompleter;
-      _updateFetchingActivity(false);
+      // currentActivityCompleter = activityResponse.eventCompleter;
+      // _updateFetchingActivity(false);
 
-      if (activityResponse.activity == null) {
-        debugPrint('No activity found');
-        return null;
-      }
+      // if (activityResponse.activity == null) {
+      //   debugPrint('No activity found');
+      //   return null;
+      // }
 
-      activityResponse.activity!.targetTokens = nextActivitySpecs.tokens;
+      // activityResponse.activity!.targetTokens = nextActivitySpecs.tokens;
 
-      return activityResponse.activity;
+      // return activityResponse.activity;
+      return null;
     } catch (e, s) {
       debugger(when: kDebugMode);
       ErrorHandler.logError(

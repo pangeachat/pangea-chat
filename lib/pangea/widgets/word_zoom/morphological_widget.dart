@@ -5,41 +5,42 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-class MorphologicalWidget extends StatefulWidget {
+class MorphologicalListWidget extends StatefulWidget {
   final PangeaToken token;
-  final String morphFeature;
 
-  const MorphologicalWidget({
+  const MorphologicalListWidget({
     super.key,
     required this.token,
-    required this.morphFeature,
   });
 
   @override
-  _MorphologicalWidgetState createState() => _MorphologicalWidgetState();
+  _MorphologicalListWidgetState createState() =>
+      _MorphologicalListWidgetState();
 }
 
-class _MorphologicalWidgetState extends State<MorphologicalWidget> {
-  late Future<String> _morphValue;
+class _MorphologicalListWidgetState extends State<MorphologicalListWidget> {
+  // TODO: make this is a list of morphological features icons based on MorphActivityGenerator.getSequence
+  // For each item in the sequence,
+  //    if shouldDoActivity is true, show the template icon then stop
+  //    if shouldDoActivity is false, show the actual icon and value then go to the next item
 
   @override
   void initState() {
     super.initState();
-    _morphValue = _fetchMorphValue();
   }
 
-  Future<String> _fetchMorphValue() async {
-    if (widget.token.shouldDoMorphActivity(widget.morphFeature)) {
+  Future<String> _fetchMorphValue(String feature) async {
+    if (widget.token.shouldDoMorphActivity(feature)) {
       return '?';
     } else {
-      return widget.token.morph[widget.morphFeature] ?? 'No value found';
+      return widget.token.morph[feature] ?? 'No value found';
     }
   }
 
-  // TODO Maybe move this to a separate file
-  IconData get _getIconForMorphFeature {
+  // TODO Use the icons that Khue is creating
+  IconData _getIconForMorphFeature(String feature) {
     // Define a function to get the icon based on the universal dependency morphological feature (key)
-    switch (widget.morphFeature) {
+    switch (feature) {
       case 'Number':
         // google material 123 icon
         return Icons.format_list_numbered;
@@ -83,23 +84,6 @@ class _MorphologicalWidgetState extends State<MorphologicalWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<String>(
-      future: _morphValue,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          return ActionChip(
-            avatar: Icon(_getIconForMorphFeature),
-            label: Text(snapshot.data ?? 'No value found'),
-            onPressed: () {
-              // Handle chip click
-            },
-          );
-        }
-      },
-    );
+    return const SizedBox();
   }
 }
