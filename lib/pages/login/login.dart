@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:fluffychat/pangea/constants/local.key.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
+import 'package:fluffychat/pangea/pages/sign_up/pangea_login_view.dart';
 import 'package:fluffychat/pangea/utils/firebase_analytics.dart';
 import 'package:fluffychat/utils/localized_exception_extension.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
@@ -12,7 +14,6 @@ import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
 
 import '../../utils/platform_infos.dart';
-import 'login_view.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -24,13 +25,26 @@ class Login extends StatefulWidget {
 class LoginController extends State<Login> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  String? usernameText;
+  String? passwordText;
+
   String? usernameError;
   String? passwordError;
+
   bool loading = false;
   bool showPassword = false;
 
   // #Pangea
   final PangeaController pangeaController = MatrixState.pangeaController;
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  bool get enabledSignIn =>
+      !loading &&
+      usernameText != null &&
+      usernameText!.isNotEmpty &&
+      passwordText != null &&
+      passwordText!.isNotEmpty;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -47,6 +61,25 @@ class LoginController extends State<Login> {
         passwordError = err.toLocalizedString(context);
       });
     });
+
+    usernameController.addListener(() {
+      _setStateOnTextChange(usernameText, usernameController.text);
+      usernameText = usernameController.text;
+    });
+
+    passwordController.addListener(() {
+      _setStateOnTextChange(passwordText, passwordController.text);
+      passwordText = passwordController.text;
+    });
+  }
+
+  void _setStateOnTextChange(String? oldText, String newText) {
+    if ((oldText == null || oldText.isEmpty) && (newText.isNotEmpty)) {
+      setState(() {});
+    }
+    if ((oldText != null && oldText.isNotEmpty) && (newText.isEmpty)) {
+      setState(() {});
+    }
   }
   // Pangea#
 
@@ -54,6 +87,11 @@ class LoginController extends State<Login> {
       setState(() => showPassword = !loading && !showPassword);
 
   void login() async {
+    // #Pangea
+    final valid = formKey.currentState!.validate();
+    if (!valid) return;
+    // Pangea#
+
     final matrix = Matrix.of(context);
     if (usernameController.text.isEmpty) {
       setState(() => usernameError = L10n.of(context).pleaseEnterYourUsername);
@@ -110,14 +148,28 @@ class LoginController extends State<Login> {
             password: passwordController.text,
             initialDeviceDisplayName: PlatformInfos.clientName,
           );
+      MatrixState.pangeaController.pStoreService
+          .save(PLocalKey.loginType, 'password');
       // #Pangea
       GoogleAnalytics.login("pangea", loginRes.userId);
       // Pangea#
     } on MatrixException catch (exception) {
-      setState(() => passwordError = exception.errorMessage);
+      // #Pangea
+      // setState(() => passwordError = exception.errorMessage);
+      setState(() {
+        passwordError = exception.errorMessage;
+        usernameError = exception.errorMessage;
+      });
+      // Pangea#
       return setState(() => loading = false);
     } catch (exception) {
-      setState(() => passwordError = exception.toString());
+      // #Pangea
+      // setState(() => passwordError = exception.toString());
+      setState(() {
+        passwordError = exception.toString();
+        usernameError = exception.toString();
+      });
+      // Pangea#
       return setState(() => loading = false);
     }
 
@@ -269,7 +321,10 @@ class LoginController extends State<Login> {
   static int sendAttempt = 0;
 
   @override
-  Widget build(BuildContext context) => LoginView(this);
+  // #Pangea
+  // Widget build(BuildContext context) => LoginView(this);
+  Widget build(BuildContext context) => PangeaLoginView(this);
+  // Pangea#
 }
 
 extension on String {
