@@ -4416,6 +4416,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$pleaseSelectALanguage() {
       return "Please select a language";
     },
+    get$myBaseLanguage() {
+      return "My base language";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4431,6 +4434,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_267", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "Ywhzg1Yi+RsuBtjhLtt38FuUXW8=");
+})($__dart_deferred_initializers__, "GYjln6iKvHHsAS2qA+YopF9zRnY=");
 ;
 //# sourceMappingURL=main.dart.js_267.part.js.map
