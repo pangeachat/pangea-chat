@@ -1,5 +1,5 @@
 import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/widgets/adaptive_dialog_action.dart';
+import 'package:fluffychat/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
 import 'package:fluffychat/widgets/layouts/login_scaffold.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
