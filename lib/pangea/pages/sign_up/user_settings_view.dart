@@ -15,6 +15,8 @@ class UserSettingsView extends StatelessWidget {
     super.key,
   });
 
+  final double avatarSize = 55.0;
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> avatarOptions = controller.avatarPaths
@@ -25,6 +27,7 @@ class UserSettingsView extends StatelessWidget {
               onTap: () => controller.setSelectedAvatarPath(index),
               path: path,
               selected: controller.selectedAvatarIndex == index,
+              size: avatarSize,
             ),
           );
         })
@@ -37,8 +40,8 @@ class UserSettingsView extends StatelessWidget {
         child: InkWell(
           onTap: controller.uploadAvatar,
           child: Container(
-            width: 50,
-            height: 50,
+            width: avatarSize,
+            height: avatarSize,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.white,
@@ -74,8 +77,8 @@ class UserSettingsView extends StatelessWidget {
             ),
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        Wrap(
+          alignment: WrapAlignment.center,
           children: avatarOptions,
         ),
         Padding(
@@ -89,10 +92,7 @@ class UserSettingsView extends StatelessWidget {
           ),
         ),
         FullWidthButton(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [Text(L10n.of(context).letsStart)],
-          ),
+          title: L10n.of(context).letsStart,
           onPressed: controller.selectedTargetLanguage != null
               ? controller.createUserInPangea
               : null,
@@ -115,7 +115,7 @@ class AvatarOption extends StatelessWidget {
     super.key,
     required this.onTap,
     required this.path,
-    this.size = 50.0,
+    this.size = 40.0,
     this.selected = false,
   });
 

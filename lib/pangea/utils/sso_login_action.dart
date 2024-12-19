@@ -42,7 +42,6 @@ Future<void> pangeaSSOLoginAction(
     result = await FlutterWebAuth2.authenticate(
       url: url.toString(),
       callbackUrlScheme: urlScheme,
-      options: const FlutterWebAuth2Options(),
     );
   } catch (err) {
     if (err is PlatformException && err.code == 'CANCELED') {

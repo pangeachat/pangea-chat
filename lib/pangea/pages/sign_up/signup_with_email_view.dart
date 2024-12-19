@@ -47,16 +47,10 @@ class SignupWithEmailView extends StatelessWidget {
           ),
           TosCheckbox(controller),
           FullWidthButton(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                PangeaLogoSvg(
-                  width: 20,
-                  forceColor: Theme.of(context).colorScheme.onPrimary,
-                ),
-                const SizedBox(width: 10),
-                Text(L10n.of(context).signUp),
-              ],
+            title: L10n.of(context).signUp,
+            icon: PangeaLogoSvg(
+              width: 20,
+              forceColor: Theme.of(context).colorScheme.onPrimary,
             ),
             onPressed: controller.enableSignUp ? controller.signup : null,
             error: controller.error,
