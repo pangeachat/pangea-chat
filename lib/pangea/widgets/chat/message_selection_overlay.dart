@@ -63,9 +63,6 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
   List<PangeaToken>? tokens;
   bool initialized = false;
 
-  StreamController<PangeaTokenText?> selectedSpanStream =
-      StreamController<PangeaTokenText?>.broadcast();
-
   PangeaMessageEvent? get pangeaMessageEvent => widget._pangeaMessageEvent;
 
   bool isPlayingAudio = false;
@@ -112,7 +109,6 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
 
   void _updateSelectedSpan(PangeaTokenText selectedSpan) {
     _selectedSpan = selectedSpan;
-    selectedSpanStream.add(selectedSpan);
 
     widget.chatController.choreographer.tts.tryToSpeak(
       selectedSpan.content,
@@ -446,7 +442,6 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
   void dispose() {
     _animationController.dispose();
     _reactionSubscription?.cancel();
-    selectedSpanStream.close();
 
     super.dispose();
   }

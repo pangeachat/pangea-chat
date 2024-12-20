@@ -27,7 +27,7 @@ class EmojiActivityGenerator {
         content: ActivityContent(
           question: "",
           choices: emojis,
-          answer: "",
+          answers: emojis,
           spanDisplayDetails: null,
         ),
       ),

@@ -7,18 +7,20 @@ import 'package:flutter/material.dart';
 class LemmaDefinitionWidget extends StatefulWidget {
   final PangeaToken token;
   final String tokenLang;
+  final VoidCallback onPressed;
 
   const LemmaDefinitionWidget({
     super.key,
     required this.token,
     required this.tokenLang,
+    required this.onPressed,
   });
 
   @override
-  _LemmaDefinitionWidgetState createState() => _LemmaDefinitionWidgetState();
+  LemmaDefinitionWidgetState createState() => LemmaDefinitionWidgetState();
 }
 
-class _LemmaDefinitionWidgetState extends State<LemmaDefinitionWidget> {
+class LemmaDefinitionWidgetState extends State<LemmaDefinitionWidget> {
   late Future<String> _definition;
 
   @override
@@ -53,14 +55,13 @@ class _LemmaDefinitionWidgetState extends State<LemmaDefinitionWidget> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
+          // TODO better error widget
           return Text('Error: ${snapshot.error}');
         } else {
           return ActionChip(
             avatar: const Icon(Icons.book),
             label: Text(snapshot.data ?? 'No definition found'),
-            onPressed: () {
-              // Handle chip click
-            },
+            onPressed: widget.onPressed,
           );
         }
       },

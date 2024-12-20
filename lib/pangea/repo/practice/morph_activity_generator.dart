@@ -64,17 +64,9 @@ class MorphActivityGenerator {
     final String morphFeature = req.targetMorphFeature!;
     final String morphTag = token.morph[morphFeature];
 
-    // get all the tags for the feature
-    final List<String> possibleDistractors = MatrixState
+    final List<String> distractors = MatrixState
         .pangeaController.getAnalytics.constructListModel
-        .constructList(type: ConstructTypeEnum.morph)
-        .where((c) => c.category == morphFeature && c.lemma != morphTag)
-        .map((c) => c.lemma)
-        .toList();
-
-    // get a random set of 3 for distractors
-    possibleDistractors.shuffle();
-    final List<String> distractors = possibleDistractors.sublist(0, 3);
+        .morphActivityDistractors(morphFeature, morphTag);
 
     return MessageActivityResponse(
       activity: PracticeActivityModel(
@@ -91,7 +83,7 @@ class MorphActivityGenerator {
         content: ActivityContent(
           question: "",
           choices: distractors + [morphTag],
-          answer: morphTag,
+          answers: [morphTag],
           spanDisplayDetails: null,
         ),
       ),

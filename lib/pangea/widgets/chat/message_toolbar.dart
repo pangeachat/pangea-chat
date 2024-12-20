@@ -40,10 +40,13 @@ class MessageToolbar extends StatelessWidget {
       );
     }
 
-    if (overlayController.messageAnalyticsEntry!.nextActivity != null) {
+    if (overlayController.messageAnalyticsEntry?.hasHiddenWordActivity ??
+        false) {
       return PracticeActivityCard(
         pangeaMessageEvent: pangeaMessageEvent,
         overlayController: overlayController,
+        targetTokensAndActivityType:
+            overlayController.messageAnalyticsEntry!.nextActivity!,
       );
     }
 
@@ -69,18 +72,18 @@ class MessageToolbar extends StatelessWidget {
         return MessageSpeechToTextCard(
           messageEvent: pangeaMessageEvent,
         );
-      case MessageMode.practiceActivity:
-        return PracticeActivityCard(
-          pangeaMessageEvent: pangeaMessageEvent,
-          overlayController: overlayController,
-        );
       case MessageMode.noneSelected:
         return const SizedBox();
+      case MessageMode.practiceActivity:
       case MessageMode.wordZoom:
+        if (overlayController.selectedToken == null) {
+          return const SizedBox();
+        }
         return WordZoomWidget(
           token: overlayController.selectedToken!,
           messageEvent: overlayController.pangeaMessageEvent!,
           tts: ttsController,
+          overlayController: overlayController,
         );
     }
   }

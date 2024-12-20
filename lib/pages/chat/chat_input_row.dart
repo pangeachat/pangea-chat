@@ -69,7 +69,7 @@ class ChatInputRow extends StatelessWidget {
         CompositedTransformTarget(
           link: controller.choreographer.inputLayerLinkAndKey.link,
           child: Row(
-            key: overlayController == null
+            key: overlayController != null
                 ? null
                 : controller.choreographer.inputLayerLinkAndKey.key,
             // crossAxisAlignment: CrossAxisAlignment.end,

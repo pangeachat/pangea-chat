@@ -18,13 +18,8 @@ class PangeaReactionsPicker extends StatelessWidget {
 
   PangeaToken? get token => overlayController?.selectedToken;
 
-  Future<List<String>> get emojiForToken =>
-      token?.getEmojiChoices() ?? Future.value(AppEmojis.emojis);
-
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     if (controller.showEmojiPicker) return const SizedBox.shrink();
     final display = controller.editEvent == null &&
         controller.replyEvent == null &&
@@ -51,65 +46,41 @@ class PangeaReactionsPicker extends StatelessWidget {
         emojis.remove(event.content.tryGetMap('m.relates_to')!['key']);
       } catch (_) {}
     }
+
+    for (final event in allReactionEvents) {
+      try {
+        emojis.remove(
+          event.content.tryGetMap('m.relates_to')!['key'],
+        );
+      } catch (_) {}
+    }
+
     return Flexible(
       child: Row(
         children: [
           Flexible(
-            child: FutureBuilder<List<String>>(
-              future: emojiForToken,
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const CircularProgressIndicator();
-                }
-
-                final emojis = List<String>.from(snapshot.data!);
-
-                for (final event in allReactionEvents) {
-                  try {
-                    emojis.remove(
-                      event.content.tryGetMap('m.relates_to')!['key'],
-                    );
-                  } catch (_) {}
-                }
-
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: emojis
-                        .map(
-                          (emoji) => InkWell(
-                            borderRadius: BorderRadius.circular(8),
-                            onTap: () => controller.sendEmojiAction(emoji),
-                            child: Container(
-                              width: kIsWeb ? 56 : 48,
-                              alignment: Alignment.center,
-                              child: Text(
-                                emoji,
-                                style: const TextStyle(fontSize: 24),
-                              ),
-                            ),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: emojis
+                    .map(
+                      (emoji) => InkWell(
+                        borderRadius: BorderRadius.circular(8),
+                        onTap: () => controller.sendEmojiAction(emoji),
+                        child: Container(
+                          width: kIsWeb ? 56 : 48,
+                          alignment: Alignment.center,
+                          child: Text(
+                            emoji,
+                            style: const TextStyle(fontSize: 24),
                           ),
-                        )
-                        .toList(),
-                  ),
-                );
-              },
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
             ),
           ),
-          // InkWell(
-          //   borderRadius: BorderRadius.circular(8),
-          //   child: Container(
-          //     margin: const EdgeInsets.symmetric(horizontal: 8),
-          //     width: 36,
-          //     height: 56,
-          //     decoration: BoxDecoration(
-          //       color: theme.colorScheme.onInverseSurface,
-          //       shape: BoxShape.circle,
-          //     ),
-          //     child: const Icon(Icons.add_outlined),
-          //   ),
-          //   onTap: () => controller.pickEmojiReactionAction(allReactionEvents),
-          // ),
         ],
       ),
     );

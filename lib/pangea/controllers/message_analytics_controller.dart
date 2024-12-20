@@ -102,7 +102,9 @@ class MessageAnalyticsEntry {
   }
 
   void _popQueue() {
-    _activityQueue.removeAt(0);
+    if (hasHiddenWordActivity) {
+      _activityQueue.removeAt(0);
+    }
   }
 
   void _filterQueue(ActivityTypeEnum activityType) {
@@ -115,6 +117,9 @@ class MessageAnalyticsEntry {
 
   TargetTokensAndActivityType? get nextActivity =>
       _activityQueue.isNotEmpty ? _activityQueue.first : null;
+
+  bool get hasHiddenWordActivity =>
+      nextActivity?.activityType.hiddenType ?? false;
 
   int get numActivities => _activityQueue.length;
 
@@ -165,7 +170,10 @@ class MessageAnalyticsEntry {
     List<PangeaToken> currentSequence = [];
     for (final token in _tokens) {
       if (token.shouldDoActivity(
-          a: ActivityTypeEnum.hiddenWordListening, feature: null, tag: null)) {
+        a: ActivityTypeEnum.hiddenWordListening,
+        feature: null,
+        tag: null,
+      )) {
         currentSequence.add(token);
       } else {
         if (currentSequence.isNotEmpty) {
@@ -192,7 +200,9 @@ class MessageAnalyticsEntry {
     );
   }
 
-  void onActivityComplete() => _popQueue();
+  void onActivityComplete() {
+    _popQueue();
+  }
 
   void exitPracticeFlow() => _clearQueue();
 
