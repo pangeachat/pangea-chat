@@ -256,9 +256,7 @@ class PutAnalyticsController extends BaseController<AnalyticsStream> {
         s: s,
         m: 'Failed to add message since update for eventId: $cacheKey',
         data: {
-          "currentCache": _pangeaController.getAnalytics.messagesSinceUpdate,
           "cacheKey": cacheKey,
-          "constructs": constructs,
         },
       );
     }
@@ -376,7 +374,6 @@ class PutAnalyticsController extends BaseController<AnalyticsStream> {
         s: s,
         data: {
           "l2Override": l2Override,
-          "onLogout": onLogout,
         },
       );
     } finally {

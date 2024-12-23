@@ -195,7 +195,7 @@ class PangeaMessageEvent {
           ErrorHandler.logError(
             e: e,
             s: s,
-            data: event.content.tryGetMap(ModelKey.transcription) ?? {},
+            data: {},
             m: "error parsing data in getTextToSpeechLocal",
           );
           return false;

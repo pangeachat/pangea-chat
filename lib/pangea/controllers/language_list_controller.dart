@@ -48,7 +48,7 @@ class PangeaLanguage {
         e: err,
         s: stack,
         data: {
-          "langList": _langList,
+          "langList": _langList.map((e) => e.toJson()),
         },
       );
     }

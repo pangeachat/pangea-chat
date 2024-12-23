@@ -134,7 +134,7 @@ class UserSettingsState extends State<UserSettingsPage> {
         e: err,
         s: s,
         data: {
-          "avatar": avatar,
+          "avatar": avatar.toString(),
         },
       );
     }

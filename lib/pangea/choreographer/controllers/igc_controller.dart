@@ -126,13 +126,11 @@ class IgcController {
         data: {
           "onlyTokensAndLanguageDetection": onlyTokensAndLanguageDetection,
           "currentText": choreographer.currentText,
-          "userId": choreographer.pangeaController.userController.userId,
           "userL1": choreographer.l1LangCode,
           "userL2": choreographer.l2LangCode,
           "igcEnabled": choreographer.igcEnabled,
           "itEnabled": choreographer.itEnabled,
-          "igcTextDataCache": _igcTextDataCache,
-          "matches": igcTextData?.matches,
+          "matches": igcTextData?.matches.map((e) => e.toJson()),
         },
       );
       clear();

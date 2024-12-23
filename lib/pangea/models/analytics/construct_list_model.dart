@@ -62,7 +62,7 @@ class ConstructListModel {
         e: "Failed to update analytics: $err",
         s: s,
         data: {
-          "newUses": newUses,
+          "newUses": newUses.map((e) => e.toJson()),
         },
       );
     }

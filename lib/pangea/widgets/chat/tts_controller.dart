@@ -80,9 +80,7 @@ class TtsController {
       ErrorHandler.logError(
         e: e,
         s: s,
-        data: {
-          "languages": _availableLangCodes,
-        },
+        data: {},
       );
     } finally {
       debugPrint("availableLangCodes: $_availableLangCodes");
@@ -123,9 +121,7 @@ class TtsController {
       ErrorHandler.logError(
         e: e,
         s: s,
-        data: {
-          "languages": _availableLangCodes,
-        },
+        data: {},
       );
     }
   }
@@ -193,7 +189,6 @@ class TtsController {
         e: 'Language not supported by TTS engine',
         data: {
           'targetLanguage': targetLanguage,
-          'availableLangCodes': _availableLangCodes,
         },
       );
       if (eventID != null) {

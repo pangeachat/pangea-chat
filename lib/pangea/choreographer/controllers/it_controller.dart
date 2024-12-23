@@ -181,9 +181,7 @@ class ITController {
           data: {
             "currentText": choreographer.currentText,
             "sourceText": sourceText,
-            "completedITSteps": completedITSteps,
-            "currentITStep": currentITStep,
-            "nextITStep": nextITStep,
+            "currentITStepPayloadID": currentITStep?.payloadId,
           },
         );
       }
@@ -201,9 +199,8 @@ class ITController {
         e: Exception("sourceText is null in getNextTranslationData"),
         data: {
           "sourceText": sourceText,
-          "currentITStep": currentITStep,
-          "nextITStep": nextITStep,
-          "continuances": goldRouteTracker.continuances,
+          "currentITStepPayloadID": currentITStep?.payloadId,
+          "continuances": goldRouteTracker.continuances.map((e) => e.toJson()),
         },
       );
       return;
@@ -236,10 +233,9 @@ class ITController {
           s: s,
           data: {
             "sourceText": sourceText,
-            "completedITSteps": completedITSteps,
-            "currentITStep": currentITStep,
-            "nextITStep": nextITStep,
-            "continuances": goldRouteTracker.continuances,
+            "currentITStepPayloadID": currentITStep?.payloadId,
+            "continuances":
+                goldRouteTracker.continuances.map((e) => e.toJson()),
           },
         );
       }

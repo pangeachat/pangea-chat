@@ -117,8 +117,8 @@ class SpeechToTextController {
           e: error,
           s: stackTrace,
           data: {
-            "response": response,
-            "requestModel": requestModel,
+            "response": response.toJson(),
+            "requestModel": requestModel.toJson(),
           },
         ),
       );

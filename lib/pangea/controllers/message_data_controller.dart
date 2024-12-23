@@ -82,7 +82,7 @@ class MessageDataController extends BaseController {
         ),
         data: {
           "accessToken": accessToken,
-          "request": request,
+          "request": request.toJson(),
         },
       );
     }

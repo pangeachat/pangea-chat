@@ -293,8 +293,8 @@ class Choreographer {
         e: err,
         s: stack,
         data: {
-          "l2Lang": l2Lang,
-          "l1Lang": l1Lang,
+          "l2Lang": l2Lang?.toJson(),
+          "l1Lang": l1Lang?.toJson(),
           "choreoMode": choreoMode,
           "igcEnabled": igcEnabled,
           "itEnabled": itEnabled,
