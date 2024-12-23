@@ -165,9 +165,28 @@ class ActivityRecordResponse {
     PracticeActivityModel practiceActivity,
     ConstructUseMetaData metadata,
   ) {
+    if (practiceActivity.activityType == ActivityTypeEnum.emoji) {
+      if (practiceActivity.targetTokens != null &&
+          practiceActivity.targetTokens!.isNotEmpty) {
+        final token = practiceActivity.targetTokens!.first;
+        return [
+          OneConstructUse(
+            lemma: token.lemma.text,
+            form: token.text.content,
+            constructType: ConstructTypeEnum.vocab,
+            useType: useType(practiceActivity.activityType),
+            metadata: metadata,
+            category: token.pos,
+          ),
+        ];
+      }
+      return [];
+    }
+
     if (practiceActivity.targetTokens == null) {
       return [];
     }
+
     final uses = practiceActivity.targetTokens!
         .map(
           (token) => OneConstructUse(

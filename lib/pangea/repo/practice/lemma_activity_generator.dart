@@ -17,7 +17,6 @@ class LemmaActivityGenerator {
     final List<String> choices = await MatrixState
         .pangeaController.getAnalytics.constructListModel
         .lemmaActivityDistractors(token);
-    choices.add(token.lemma.text);
 
     // TODO - modify MultipleChoiceActivity flow to allow no correct answer
     return MessageActivityResponse(
