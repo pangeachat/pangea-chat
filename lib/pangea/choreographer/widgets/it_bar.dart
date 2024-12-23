@@ -394,7 +394,10 @@ class ITChoices extends StatelessWidget {
   Widget build(BuildContext context) {
     try {
       if (controller.isEditingSourceText || controller.currentITStep == null) {
-        return const SizedBox();
+        return CircularProgressIndicator(
+          strokeWidth: 2.0,
+          color: Theme.of(context).colorScheme.primary,
+        );
       }
       return ChoicesArray(
         isLoading: controller.isLoading ||
