@@ -293,9 +293,6 @@ class PangeaToken {
   ]) {
     switch (a) {
       case ActivityTypeEnum.wordMeaning:
-        debugPrint(
-          "token: ${text.content}, vocabConstruct.points: ${vocabConstruct.points}, is content word: $isContentWord, can be defined: $canBeDefined, days since last used: ${daysSinceLastUseByType(ActivityTypeEnum.wordMeaning)}",
-        );
         if (daysSinceLastUseByType(ActivityTypeEnum.wordMeaning) < 1) {
           return false;
         }

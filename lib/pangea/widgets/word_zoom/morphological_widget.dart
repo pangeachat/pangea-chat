@@ -76,19 +76,6 @@ class MorphologicalListWidgetState extends State<MorphologicalListWidget> {
           widget.setMorphFeature(null);
         }
       }
-
-      // The previous morph activity has been completed, so move on to the next one
-      // if it's available. If not, de-selected the completed activity.
-      // if (widget.selectedMorphFeature == null) return;
-      // final nextSelectedIndex = _morphEnabledStatus.length - _revealedMorphs;
-
-      // if (nextSelectedIndex <=
-      //         _sortedMorphFeatures.indexOf(widget.selectedMorphFeature!) ||
-      //     nextSelectedIndex >= _morphEnabledStatus.length) {
-      //   widget.setMorphFeature(null);
-      // } else {
-      //   widget.setMorphFeature(_sortedMorphFeatures[nextSelectedIndex]);
-      // }
     }
   }
 
@@ -132,7 +119,6 @@ class MorphologicalListWidgetState extends State<MorphologicalListWidget> {
 
   List<ActivityMorph> get _visibleMorphs {
     final lastRevealedIndex = _morphs.lastIndexWhere((morph) => morph.revealed);
-    debugPrint("last revealed index: $lastRevealedIndex");
 
     // if none of the morphs are revealed, show only the first one
     if (lastRevealedIndex == -1) {
@@ -142,21 +128,6 @@ class MorphologicalListWidgetState extends State<MorphologicalListWidget> {
     // show all the revealed morphs + the first one with an activity
     return _morphs.take(lastRevealedIndex + 2).toList();
   }
-
-  // Future<void> _setMorphEnabledStatus() async {
-  //   _morphEnabledStatus.clear();
-  //   for (final entry in widget.token.morph.entries) {
-  // final shouldDoActivity = widget.token.shouldDoMorphActivity(entry.key);
-  // final canGenerateDistractors = await widget.token.canGenerateDistractors(
-  //   ActivityTypeEnum.morphId,
-  //   morphFeature: entry.key,
-  //   morphTag: entry.value,
-  // );
-  //     _morphEnabledStatus[entry.key] =
-  //         shouldDoActivity && canGenerateDistractors;
-  //   }
-  //   if (mounted) setState(() {});
-  // }
 
   // TODO Use the icons that Khue is creating
   IconData _getIconForMorphFeature(String feature) {
