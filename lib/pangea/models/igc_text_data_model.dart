@@ -270,15 +270,6 @@ class IGCTextData {
       final spaceBetween = tokens[tokenIndex + 1].text.offset - endOfToken;
 
       if (spaceBetween < 0) {
-        // .logError method will send breadcrumbs of data field
-        // Sentry.addBreadcrumb(
-        //   Breadcrumb.fromJson(
-        //     {
-        //       "fullText": originalInput,
-        //       "tokens": tokens.map((e) => e.toJson()).toString(),
-        //     },
-        //   ),
-        // );
         ErrorHandler.logError(
           m: "weird token lengths for ${tokens[tokenIndex].text.content} and ${tokens[tokenIndex + 1].text.content}",
           data: {

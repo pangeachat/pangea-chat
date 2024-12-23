@@ -164,16 +164,6 @@ class ConstructListModel {
       level = levelCalculation.floor();
     } else {
       level = 1;
-      // .logError method will send breadcrumbs of data field
-      // Sentry.addBreadcrumb(
-      //   Breadcrumb(
-      //     data: {
-      //       "totalXP": totalXP,
-      //       "prevXP": prevXP,
-      //       "level": levelCalculation,
-      //     },
-      //   ),
-      // );
       ErrorHandler.logError(
         e: "Calculated level in Nan or Infinity",
         data: {

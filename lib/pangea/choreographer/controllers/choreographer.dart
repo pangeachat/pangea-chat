@@ -386,16 +386,6 @@ class Choreographer {
       setState();
     } catch (err, stack) {
       debugger(when: kDebugMode);
-      // .logError method will send breadcrumbs of data field
-      // Sentry.addBreadcrumb(
-      //   Breadcrumb.fromJson(
-      //     {
-      //       "igctextData": igc.igcTextData?.toJson(),
-      //       "matchIndex": matchIndex,
-      //       "choiceIndex": choiceIndex,
-      //     },
-      //   ),
-      // );
       ErrorHandler.logError(
         e: err,
         s: stack,

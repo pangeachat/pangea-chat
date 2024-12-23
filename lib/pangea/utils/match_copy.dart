@@ -64,15 +64,6 @@ class MatchCopy {
       }
     } catch (err, stack) {
       debugger(when: kDebugMode);
-      // .logError method will send breadcrumbs of data field
-      // Sentry.addBreadcrumb(
-      //   Breadcrumb(
-      //     message: "match",
-      //     data: {
-      //       "match": match.toJson(),
-      //     },
-      //   ),
-      // );
       ErrorHandler.logError(
         e: err,
         s: stack,
@@ -223,15 +214,6 @@ class MatchCopy {
       }
     } catch (err, stack) {
       debugger(when: kDebugMode);
-      // .logError method will send breadcrumbs of data field
-      // Sentry.addBreadcrumb(
-      //   Breadcrumb(
-      //     message: "match",
-      //     data: {
-      //       "match": match.toJson(),
-      //     },
-      //   ),
-      // );
       ErrorHandler.logError(
         e: err,
         s: stack,
