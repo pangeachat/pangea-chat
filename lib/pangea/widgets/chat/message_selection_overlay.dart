@@ -170,7 +170,13 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
         );
       }
     } catch (e, s) {
-      ErrorHandler.logError(e: e, s: s);
+      ErrorHandler.logError(
+        e: e,
+        s: s,
+        data: {
+          "eventID": pangeaMessageEvent?.eventId,
+        },
+      );
     } finally {
       _initializeSelectedToken();
       _setInitialToolbarMode();
@@ -225,6 +231,7 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
         ErrorHandler.logError(
           e: "Error calling setState in MessageSelectionOverlay: $e",
           s: s,
+          data: {},
         );
       }
     } else {
@@ -236,6 +243,7 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
           ErrorHandler.logError(
             e: "Error calling setState in MessageSelectionOverlay after postframeCallback: $e",
             s: s,
+            data: {},
           );
         }
       });
@@ -452,7 +460,13 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
         widget._event.eventId,
       );
     } catch (e, s) {
-      ErrorHandler.logError(e: "Error getting message render box: $e", s: s);
+      ErrorHandler.logError(
+        e: "Error getting message render box: $e",
+        s: s,
+        data: {
+          "eventID": widget._event.eventId,
+        },
+      );
       return null;
     }
   }
@@ -465,7 +479,11 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
     try {
       return _messageRenderBox?.size;
     } catch (e, s) {
-      ErrorHandler.logError(e: "Error getting message size: $e", s: s);
+      ErrorHandler.logError(
+        e: "Error getting message size: $e",
+        s: s,
+        data: {},
+      );
       return null;
     }
   }
@@ -497,7 +515,11 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
     try {
       return MediaQuery.of(context);
     } catch (e, s) {
-      ErrorHandler.logError(e: "Error getting media query: $e", s: s);
+      ErrorHandler.logError(
+        e: "Error getting media query: $e",
+        s: s,
+        data: {},
+      );
       return null;
     }
   }

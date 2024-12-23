@@ -8,7 +8,6 @@ import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:flutter/foundation.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 /// A wrapper around a list of [OneConstructUse]s, used to simplify
 /// the process of filtering / sorting / displaying the events.
@@ -61,7 +60,13 @@ class ConstructListModel {
       _updateCategoriesToUses();
       _updateMetrics();
     } catch (err, s) {
-      ErrorHandler.logError(e: "Failed to update analytics: $err", s: s);
+      ErrorHandler.logError(
+        e: "Failed to update analytics: $err",
+        s: s,
+        data: {
+          "newUses": newUses.map((e) => e.toJson()),
+        },
+      );
     }
   }
 
@@ -161,16 +166,14 @@ class ConstructListModel {
       level = levelCalculation.floor();
     } else {
       level = 1;
-      Sentry.addBreadcrumb(
-        Breadcrumb(
-          data: {
-            "totalXP": totalXP,
-            "prevXP": prevXP,
-            "level": levelCalculation,
-          },
-        ),
+      ErrorHandler.logError(
+        e: "Calculated level in Nan or Infinity",
+        data: {
+          "totalXP": totalXP,
+          "prevXP": prevXP,
+          "level": levelCalculation,
+        },
       );
-      ErrorHandler.logError(e: "Calculated level in Nan or Infinity");
     }
   }
 
