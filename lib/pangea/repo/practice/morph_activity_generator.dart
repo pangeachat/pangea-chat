@@ -62,7 +62,12 @@ class MorphActivityGenerator {
     final PangeaToken token = req.targetTokens.first;
 
     final String morphFeature = req.targetMorphFeature!;
-    final String morphTag = token.morph[morphFeature];
+    final String? morphTag = token.getMorphTag(morphFeature);
+
+    if (morphTag == null) {
+      debugger(when: kDebugMode);
+      throw "No morph tag found for morph feature";
+    }
 
     final List<String> distractors = MatrixState
         .pangeaController.getAnalytics.constructListModel

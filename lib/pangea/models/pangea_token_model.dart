@@ -31,16 +31,16 @@ class PangeaToken {
   /// https://universaldependencies.org/u/pos/
   final String pos;
 
-  /// [morph] ex {} - morphological features of the token
+  /// [_morph] ex {} - morphological features of the token
   /// https://universaldependencies.org/u/feat/
-  final Map<String, dynamic> morph;
+  final Map<String, dynamic> _morph;
 
   PangeaToken({
     required this.text,
     required this.lemma,
     required this.pos,
-    required this.morph,
-  });
+    required Map<String, dynamic> morph,
+  }) : _morph = morph;
 
   @override
   bool operator ==(Object other) {
@@ -53,6 +53,15 @@ class PangeaToken {
 
   @override
   int get hashCode => text.content.hashCode ^ text.offset.hashCode;
+
+  Map<String, dynamic> get morph {
+    if (_morph.keys.map((key) => key.toLowerCase()).contains("pos")) {
+      return _morph;
+    }
+    final morphWithPos = Map<String, dynamic>.from(_morph);
+    morphWithPos["pos"] = pos;
+    return morphWithPos;
+  }
 
   /// reconstructs the text from the tokens
   /// [tokens] - the tokens to reconstruct
@@ -318,11 +327,29 @@ class PangeaToken {
 
   bool get shouldDoPosActivity => shouldDoMorphActivity("Pos");
 
-  bool shouldDoMorphActivity(String feature) => shouldDoActivity(
-        a: ActivityTypeEnum.morphId,
-        feature: feature,
-        tag: morph[feature],
-      );
+  bool shouldDoMorphActivity(String feature) {
+    return shouldDoActivity(
+      a: ActivityTypeEnum.morphId,
+      feature: feature,
+      tag: getMorphTag(feature),
+    );
+  }
+
+  /// Safely get morph tag for a given feature without regard for case
+  String? getMorphTag(String feature) {
+    if (morph.containsKey(feature)) return morph[feature];
+    if (morph.containsKey(feature.toLowerCase())) {
+      return morph[feature.toLowerCase()];
+    }
+    final lowerCaseEntries = morph.entries.map(
+      (e) => MapEntry(e.key.toLowerCase(), e.value),
+    );
+    return lowerCaseEntries
+        .firstWhereOrNull(
+          (e) => e.key == feature.toLowerCase(),
+        )
+        ?.value;
+  }
 
   Future<bool> canGenerateDistractors(
     ActivityTypeEnum type, {
@@ -356,12 +383,6 @@ class PangeaToken {
     required String? feature,
     required String? tag,
   }) {
-    debugPrint("show do activity: ${text.content}, $a");
-    debugPrint("save vocab: ${lemma.saveVocab}");
-    debugPrint("eligible: ${_isActivityBasicallyEligible(a)}");
-    debugPrint(
-      "level appropriate: ${_isActivityProbablyLevelAppropriate(a, feature, tag)}",
-    );
     return lemma.saveVocab &&
         _isActivityBasicallyEligible(a) &&
         _isActivityProbablyLevelAppropriate(a, feature, tag);
