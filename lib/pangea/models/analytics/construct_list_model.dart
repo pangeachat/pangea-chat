@@ -243,6 +243,7 @@ class ConstructListModel {
   Future<List<String>> lemmaActivityDistractors(PangeaToken token) async {
     final List<String> lemmas = constructList(type: ConstructTypeEnum.vocab)
         .map((c) => c.lemma)
+        .toSet()
         .toList();
 
     // Offload computation to an isolate
@@ -257,7 +258,12 @@ class ConstructListModel {
       ..sort((a, b) => distances[a]!.compareTo(distances[b]!));
 
     // Take the shortest 4
-    return sortedLemmas.take(4).toList();
+    final choices = sortedLemmas.take(4).toList();
+    if (!choices.contains(token.lemma.text)) {
+      final random = Random();
+      choices[random.nextInt(4)] = token.lemma.text;
+    }
+    return choices;
   }
 
   // isolate helper function
