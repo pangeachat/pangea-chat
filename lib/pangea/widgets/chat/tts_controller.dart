@@ -10,6 +10,7 @@ import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart' as flutter_tts;
+import 'package:matrix/matrix_api_lite/utils/logs.dart';
 import 'package:text_to_speech/text_to_speech.dart';
 
 class TtsController {
@@ -188,22 +189,22 @@ class TtsController {
     try {
       stop();
 
-      // Logs().i('Speaking: $text');
-      // final result = await Future(
-      //   () => (_useAlternativeTTS
-      //           ? _alternativeTTS.speak(text)
-      //           : _tts.speak(text))
-      //       .timeout(
-      //     const Duration(seconds: 5),
-      //     onTimeout: () {
-      //       ErrorHandler.logError(
-      //         e: "Timeout on tts.speak",
-      //         data: {"text": text},
-      //       );
-      //     },
-      //   ),
-      // );
-      // Logs().i('Finished speaking: $text, result: $result');
+      Logs().i('Speaking: $text');
+      final result = await Future(
+        () => (_useAlternativeTTS
+                ? _alternativeTTS.speak(text)
+                : _tts.speak(text))
+            .timeout(
+          const Duration(seconds: 5),
+          onTimeout: () {
+            ErrorHandler.logError(
+              e: "Timeout on tts.speak",
+              data: {"text": text},
+            );
+          },
+        ),
+      );
+      Logs().i('Finished speaking: $text, result: $result');
 
       // return type is dynamic but apparent its supposed to be 1
       // https://pub.dev/packages/flutter_tts
