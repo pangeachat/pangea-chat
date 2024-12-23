@@ -1,9 +1,9 @@
-import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/constants/language_constants.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/repo/full_text_translation_repo.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class ContextualTranslationWidget extends StatefulWidget {
   final PangeaToken token;
@@ -39,6 +39,14 @@ class ContextualTranslationWidgetState
     }
   }
 
+  @override
+  void didUpdateWidget(covariant ContextualTranslationWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.token != widget.token && widget.definition == null) {
+      _fetchDefinition();
+    }
+  }
+
   Future<void> _fetchDefinition() async {
     final FullTextTranslationResponseModel response =
         await FullTextTranslationRepo.translate(
@@ -64,18 +72,14 @@ class ContextualTranslationWidgetState
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: widget.onPressed,
-        child: Container(
-          width: 30,
-          height: 30,
-          decoration: const BoxDecoration(
-            color: Colors.grey,
-            borderRadius:
-                BorderRadius.all(Radius.circular(AppConfig.borderRadius / 2)),
-          ),
+    return Center(
+      child: SizedBox(
+        height: 60,
+        width: 60,
+        child: IconButton(
+          iconSize: 30,
+          onPressed: widget.onPressed,
+          icon: const Icon(Symbols.dictionary),
         ),
       ),
     );

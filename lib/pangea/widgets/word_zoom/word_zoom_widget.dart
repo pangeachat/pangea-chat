@@ -42,6 +42,9 @@ class WordZoomWidgetState extends State<WordZoomWidget> {
 
   // morphological activities
   String? _selectedMorphFeature;
+
+  /// used to trigger a rebuild of the morph activity
+  /// button when a morph activity is completed
   int completedMorphActivities = 0;
 
   // defintion activities
@@ -210,7 +213,11 @@ class WordZoomWidgetState extends State<WordZoomWidget> {
                     EmojiPracticeButton(
                       emoji: _emoji,
                       token: widget.token,
-                      onPressed: () => _setActivityType(ActivityTypeEnum.emoji),
+                      onPressed: () => _setActivityType(
+                        _activityType == ActivityTypeEnum.emoji
+                            ? null
+                            : ActivityTypeEnum.emoji,
+                      ),
                       setEmoji: _setEmoji,
                     ),
                     WordTextWithAudioButton(
@@ -220,8 +227,11 @@ class WordZoomWidgetState extends State<WordZoomWidget> {
                     ),
                     LemmaWidget(
                       token: widget.token,
-                      onPressed: () =>
-                          _setActivityType(ActivityTypeEnum.lemmaId),
+                      onPressed: () => _setActivityType(
+                        _activityType == ActivityTypeEnum.lemmaId
+                            ? null
+                            : ActivityTypeEnum.lemmaId,
+                      ),
                       lemma: _lemma,
                       setLemma: _setLemma,
                     ),
@@ -248,22 +258,23 @@ class WordZoomWidgetState extends State<WordZoomWidget> {
                     else
                       _activityAnswer,
                   ],
+                )
+              else
+                ContextualTranslationWidget(
+                  token: widget.token,
+                  fullText: widget.messageEvent.messageDisplayText,
+                  langCode: widget.messageEvent.messageDisplayLangCode,
+                  onPressed: () =>
+                      _setActivityType(ActivityTypeEnum.wordMeaning),
+                  definition: _definition,
+                  setDefinition: _setDefinition,
                 ),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  ContextualTranslationWidget(
-                    token: widget.token,
-                    fullText: widget.messageEvent.messageDisplayText,
-                    langCode: widget.messageEvent.messageDisplayLangCode,
-                    onPressed: () =>
-                        _setActivityType(ActivityTypeEnum.wordMeaning),
-                    definition: _definition,
-                    setDefinition: _setDefinition,
-                  ),
                   MorphologicalListWidget(
                     token: widget.token,
-                    onPressed: _setSelectedMorphFeature,
+                    setMorphFeature: _setSelectedMorphFeature,
                     selectedMorphFeature: _selectedMorphFeature,
                     completedActivities: completedMorphActivities,
                   ),

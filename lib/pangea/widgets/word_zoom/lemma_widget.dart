@@ -1,7 +1,7 @@
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:flutter/material.dart';
 
-class LemmaWidget extends StatefulWidget {
+class LemmaWidget extends StatelessWidget {
   final PangeaToken token;
   final VoidCallback onPressed;
 
@@ -17,29 +17,18 @@ class LemmaWidget extends StatefulWidget {
   });
 
   @override
-  LemmaWidgetState createState() => LemmaWidgetState();
-}
-
-class LemmaWidgetState extends State<LemmaWidget> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: 40,
       height: 40,
       child: IconButton(
         onPressed: () {
-          widget.onPressed();
-          if (widget.lemma == null) {
-            debugPrint("SETTING LEMMA!!!!! IN BUTTON");
-            widget.setLemma(widget.token.lemma.text);
+          onPressed();
+          if (lemma == null) {
+            setLemma(token.lemma.text);
           }
         },
-        icon: Text(widget.token.xpEmoji),
+        icon: Text(token.xpEmoji),
       ),
     );
   }

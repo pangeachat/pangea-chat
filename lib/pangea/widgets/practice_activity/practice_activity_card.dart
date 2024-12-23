@@ -120,7 +120,19 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
         question: activity.question,
       );
     } catch (e, s) {
-      ErrorHandler.logError(e: e, s: s);
+      ErrorHandler.logError(
+        e: e,
+        s: s,
+        data: {
+          'activity': currentActivity?.toJson(),
+          'record': currentCompletionRecord?.toJson(),
+          'targetTokens': widget.targetTokensAndActivityType.tokens
+              .map((token) => token.toJson())
+              .toList(),
+          'activityType': widget.targetTokensAndActivityType.activityType,
+          'morphFeature': widget.morphFeature,
+        },
+      );
       debugger(when: kDebugMode);
     } finally {
       _updateFetchingActivity(false);
@@ -130,6 +142,9 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
   Future<PracticeActivityModel?> _fetchActivityModel({
     ActivityQualityFeedback? activityFeedback,
   }) async {
+    debugPrint(
+      "fetching activity model of type: ${widget.targetTokensAndActivityType.activityType}",
+    );
     // check if we already have an activity matching the specs
     final tokens = widget.targetTokensAndActivityType.tokens;
     final type = widget.targetTokensAndActivityType.activityType;
@@ -203,7 +218,7 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
       debugger(when: savoringTheJoy && kDebugMode);
 
       if (mounted) setState(() => savoringTheJoy = true);
-      await Future.delayed(const Duration(milliseconds: 2500));
+      await Future.delayed(const Duration(seconds: 1));
       if (mounted) setState(() => savoringTheJoy = false);
     } catch (e, s) {
       debugger(when: kDebugMode);

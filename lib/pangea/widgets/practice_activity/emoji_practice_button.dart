@@ -1,3 +1,4 @@
+import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:flutter/material.dart';
 
@@ -30,13 +31,12 @@ class EmojiPracticeButtonState extends State<EmojiPracticeButton> {
   }
 
   bool get _canDoActivity {
-    return true;
-    // final canDo = widget.token.shouldDoActivity(
-    //   a: ActivityTypeEnum.emoji,
-    //   feature: null,
-    //   tag: null,
-    // );
-    // return canDo;
+    final canDo = widget.token.shouldDoActivity(
+      a: ActivityTypeEnum.emoji,
+      feature: null,
+      tag: null,
+    );
+    return canDo;
   }
 
   @override
@@ -45,7 +45,7 @@ class EmojiPracticeButtonState extends State<EmojiPracticeButton> {
     return SizedBox(
       height: 40,
       width: 40,
-      child: _canDoActivity
+      child: _canDoActivity || emoji != null
           ? IconButton(
               onPressed: () {
                 widget.onPressed();
