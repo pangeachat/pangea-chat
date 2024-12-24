@@ -631,6 +631,11 @@ class Choreographer {
       );
 
   AssistanceState get assistanceState {
+    if (pangeaController.subscriptionController.subscriptionStatus ==
+        SubscriptionStatus.showPaywall) {
+      return AssistanceState.noSub;
+    }
+
     if (currentText.isEmpty && itController.sourceText == null) {
       return AssistanceState.noMessage;
     }
