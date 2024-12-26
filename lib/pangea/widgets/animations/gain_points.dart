@@ -92,7 +92,6 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
 
   @override
   Widget build(BuildContext context) {
-    print('Animate status: $animate');
     if (!animate) return const SizedBox();
 
     final textColor = _addedPoints! > 0 ? Colors.green : widget.loseColor;
@@ -109,7 +108,9 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
       child: FadeTransition(
         opacity: _fadeAnimation,
         child: Text(
-          '${_addedPoints! > 0 ? '+' : ''}$_addedPoints',
+          //'${_addedPoints! > 0 ? '+' : ''}$_addedPoints',
+          '${_addedPoints! > 0 ? '+' : _addedPoints}',
+          //'Testing',
           style: BotStyle.text(
             context,
             big: true,
