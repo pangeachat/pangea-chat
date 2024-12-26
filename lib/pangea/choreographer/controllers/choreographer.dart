@@ -48,6 +48,8 @@ class Choreographer {
   bool isFetching = false;
   int _timesClicked = 0;
 
+  final int msBeforeIGCStart = 10000;
+
   Timer? debounceTimer;
   ChoreoRecord choreoRecord = ChoreoRecord.newRecord;
   // last checked by IGC or translation
@@ -77,10 +79,8 @@ class Choreographer {
 
   void send(BuildContext context) {
     debugPrint("can send message: $canSendMessage");
-    if (!canSendMessage) {
-      if (igc.igcTextData != null && igc.igcTextData!.matches.isNotEmpty) {
-        igc.showFirstMatch(context);
-      }
+    if (igc.igcTextData != null && igc.igcTextData!.matches.isNotEmpty) {
+      igc.showFirstMatch(context);
       return;
     }
 
@@ -237,7 +237,7 @@ class Choreographer {
 
     if (editTypeIsKeyboard) {
       debounceTimer ??= Timer(
-        const Duration(milliseconds: 1500),
+        Duration(milliseconds: msBeforeIGCStart),
         () => getLanguageHelp(),
       );
     } else {
