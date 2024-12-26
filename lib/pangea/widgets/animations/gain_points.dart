@@ -14,7 +14,7 @@ class PointsGainedAnimation extends StatefulWidget {
   const PointsGainedAnimation({
     super.key,
     required this.origin,
-    this.gainColor,
+    this.gainColor = Colors.green,
     this.loseColor = Colors.red,
   });
 
@@ -92,10 +92,18 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
 
   @override
   Widget build(BuildContext context) {
+    print('Animate status: $animate');
     if (!animate) return const SizedBox();
 
-    final textColor = _addedPoints! > 0 ? widget.gainColor : widget.loseColor;
+    final textColor = _addedPoints! > 0 ? Colors.green : widget.loseColor;
+    //final textColor = _addedPoints! > 0 ? widget.gainColor : widget.loseColor; - original line (bugged)
+    //There seems to be a bug where, even if this.gainColor is intialized as Colors.green, 
+    //the points gained on the user's response are still white (however pre-submission corrections 
+    //are green.) Using Colors.green directly rectifies this issue.
 
+    //print('Gain color: ${widget.gainColor}');
+    //print('Lose color: ${widget.loseColor}');
+    //print('Text color: ${textColor}');
     return SlideTransition(
       position: _offsetAnimation,
       child: FadeTransition(

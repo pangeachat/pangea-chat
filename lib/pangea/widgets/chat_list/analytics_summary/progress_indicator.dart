@@ -53,7 +53,7 @@ class ProgressIndicatorBadge extends StatelessWidget {
                   ? Text(
                       points.toString(),
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 1, 
                         fontWeight: FontWeight.bold,
                         color: indicator.color(context),
                       ),
