@@ -3084,9 +3084,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$pleaseChooseAUsername() {
       return "Por favor, elija un nombre de usuario";
     },
-    get$define(_) {
-      return "Defina";
-    },
     get$sendReadReceipts() {
       return "Enviar recibos de lectura";
     },
@@ -3122,9 +3119,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$trialPeriodExpired() {
       return "Su periodo de prueba ha expirado";
-    },
-    get$selectToDefine() {
-      return "Clic una palabra para definirla";
     },
     get$subscribedToUnlockTools() {
       return "\xa1Suscr\xedbete para desbloquear la traducci\xf3n interactiva y la verificaci\xf3n gramatical, la reproducci\xf3n de audio, las actividades de pr\xe1ctica personalizadas y la anal\xedtica de aprendizaje!";
@@ -3374,15 +3368,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$chatName() {
       return "Nombre del chat";
-    },
-    get$reportContentIssueTitle() {
-      return "Informar sobre un problema de contenido";
-    },
-    get$feedback() {
-      return "Comentarios opcionales";
-    },
-    get$reportContentIssueDescription() {
-      return "\xa1Ups! La IA puede facilitar experiencias de aprendizaje personalizadas, pero... tambi\xe9n alucina. Por favor, proporciona cualquier comentario que tengas y lo intentaremos de nuevo.";
     },
     get$clickTheWordAgainToDeselect() {
       return "Click the selected word to deselect it.";
@@ -4146,9 +4131,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$selectBotChatMode() {
       return "Selecciona el modo de chat";
     },
-    get$messageNotInTargetLang() {
-      return "El mensaje no est\xe1 en la lengua de llegada";
-    },
     get$other() {
       return "Otros";
     },
@@ -4347,6 +4329,27 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$constructUseIgnHWLDesc() {
       return "Ignored in hidden word activity";
     },
+    get$constructUseCorLDesc() {
+      return "Correct in lemma activity";
+    },
+    get$constructUseIncLDesc() {
+      return "Incorrect in lemma activity";
+    },
+    get$constructUseIgnLDesc() {
+      return "Ignored in lemma activity";
+    },
+    get$constructUseCorMDesc() {
+      return "Correct in grammar activity";
+    },
+    get$constructUseIncMDesc() {
+      return "Incorrect in grammar activity";
+    },
+    get$constructUseIgnMDesc() {
+      return "Ignored in grammar activity";
+    },
+    get$constructUseEmojiDesc() {
+      return "Correct in emoji activity";
+    },
     get$constructUseNanDesc() {
       return "Not applicable";
     },
@@ -4434,6 +4437,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_219", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "0M5DG1GlSf5XZYIwmBNyq5tTINk=");
+})($__dart_deferred_initializers__, "/QLR/ITaqkckF8c+NsNCPWtB9sI=");
 ;
 //# sourceMappingURL=main.dart.js_219.part.js.map

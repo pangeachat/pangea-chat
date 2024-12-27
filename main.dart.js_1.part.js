@@ -3091,9 +3091,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$pleaseChooseAUsername() {
       return "Please choose a username";
     },
-    get$define(_) {
-      return "Define";
-    },
     get$sendReadReceipts() {
       return "\u53d1\u9001\u5df2\u8bfb\u56de\u6267";
     },
@@ -3129,9 +3126,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$trialPeriodExpired() {
       return "Your trial period has expired";
-    },
-    get$selectToDefine() {
-      return "Click any word to see its definition!";
     },
     get$subscribedToUnlockTools() {
       return "Subscribe to unlock interactive translation and grammar checking, audio playback, personalized practice activities, and learning analytics!";
@@ -3381,15 +3375,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$chatName() {
       return "Chat name";
-    },
-    get$reportContentIssueTitle() {
-      return "Report content issue";
-    },
-    get$feedback() {
-      return "Optional feedback";
-    },
-    get$reportContentIssueDescription() {
-      return "Uh oh! AI can faciliate personalized learning experiences but... also hallucinates. Please provide any feedback you have and we'll try again.";
     },
     get$clickTheWordAgainToDeselect() {
       return "Click the selected word to deselect it.";
@@ -4153,9 +4138,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$selectBotChatMode() {
       return "Select chat mode";
     },
-    get$messageNotInTargetLang() {
-      return "Message not in target language";
-    },
     get$other() {
       return "Other";
     },
@@ -4353,6 +4335,27 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$constructUseIgnHWLDesc() {
       return "Ignored in hidden word activity";
+    },
+    get$constructUseCorLDesc() {
+      return "Correct in lemma activity";
+    },
+    get$constructUseIncLDesc() {
+      return "Incorrect in lemma activity";
+    },
+    get$constructUseIgnLDesc() {
+      return "Ignored in lemma activity";
+    },
+    get$constructUseCorMDesc() {
+      return "Correct in grammar activity";
+    },
+    get$constructUseIncMDesc() {
+      return "Incorrect in grammar activity";
+    },
+    get$constructUseIgnMDesc() {
+      return "Ignored in grammar activity";
+    },
+    get$constructUseEmojiDesc() {
+      return "Correct in emoji activity";
     },
     get$constructUseNanDesc() {
       return "Not applicable";
@@ -5779,6 +5782,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_1", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "2Moh7D5a3yTJmFPWVtRVQmfK60Q=");
+})($__dart_deferred_initializers__, "m7aFxL7AIeupgOjGBX6ZT+aoYeY=");
 ;
 //# sourceMappingURL=main.dart.js_1.part.js.map
