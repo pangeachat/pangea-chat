@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:fluffychat/pangea/controllers/get_analytics_controller.dart';
 import 'package:fluffychat/pangea/controllers/put_analytics_controller.dart';
@@ -34,6 +35,8 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
   int? get _currentXP =>
       MatrixState.pangeaController.getAnalytics.constructListModel.totalXP;
   int? _addedPoints;
+
+  final Random _random = Random();
 
   @override
   void initState() {
@@ -103,14 +106,55 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
     //print('Gain color: ${widget.gainColor}');
     //print('Lose color: ${widget.loseColor}');
     //print('Text color: ${textColor}');
+
     return SlideTransition(
       position: _offsetAnimation,
       child: FadeTransition(
         opacity: _fadeAnimation,
+        child: Wrap( 
+          direction: Axis.horizontal, 
+          children: _addedPoints! > 0 ? 
+          //If gain, show number of "+"s equal to _addedPoints.
+            List.generate(_addedPoints!, (_) {
+              final randomOffset = Offset(
+                (_random.nextDouble() - 0.5) * 30,
+                (_random.nextDouble() - 0.5) * 30,
+              ); 
+              return Transform.translate(
+                offset: randomOffset, 
+                child: Text(
+                  "+",
+                  style: BotStyle.text(
+                    context,
+                    big: true,
+                    setColor: textColor == null,
+                    existingStyle: TextStyle(
+                      color: textColor,
+                    ),
+                  ),
+                ),
+              );
+            },
+          )
+          //If loss, just show negative number of points lost.
+          : [
+            Text(
+              '$_addedPoints',
+              style: BotStyle.text(
+                context,
+                big: true,
+                setColor: textColor == null,
+                existingStyle: TextStyle(
+                  color: textColor,
+                ),
+              ),
+            ),
+          ],
+          
+        /*
         child: Text(
           //'${_addedPoints! > 0 ? '+' : ''}$_addedPoints',
           '${_addedPoints! > 0 ? '+' : _addedPoints}',
-          //'Testing',
           style: BotStyle.text(
             context,
             big: true,
@@ -119,6 +163,8 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
               color: textColor,
             ),
           ),
+        ),
+        */
         ),
       ),
     );
