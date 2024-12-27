@@ -1356,6 +1356,12 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$saveChanges() {
       return "Guardar";
     },
+    get$publicProfileTitle() {
+      return "Perfil p\xfablico";
+    },
+    get$publicProfileDesc() {
+      return "Su perfil debe ser p\xfablico para poder buscar o ser encontrado como compa\xf1ero de conversaci\xf3n.";
+    },
     get$errorDisableIT() {
       return "La asistencia de traducci\xf3n est\xe1 deshabilitada.";
     },
@@ -4437,6 +4443,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_219", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "/QLR/ITaqkckF8c+NsNCPWtB9sI=");
+})($__dart_deferred_initializers__, "UHmDbVxY294GgU//aUu+QRqJY1Q=");
 ;
 //# sourceMappingURL=main.dart.js_219.part.js.map
