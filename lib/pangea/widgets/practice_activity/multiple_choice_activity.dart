@@ -243,12 +243,17 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
       ],
     );
 
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child:
-          practiceActivity.activityType == ActivityTypeEnum.hiddenWordListening
-              ? SingleChildScrollView(child: content)
-              : content,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        maxWidth: AppConfig.toolbarMinWidth,
+        maxHeight: AppConfig.toolbarMaxHeight,
+      ),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: content,
+        ),
+      ),
     );
   }
 }

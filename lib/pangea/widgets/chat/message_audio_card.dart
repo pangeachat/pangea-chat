@@ -185,7 +185,6 @@ class MessageAudioCardState extends State<MessageAudioCard> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          padding: const EdgeInsets.all(8),
           alignment: Alignment.center,
           child: _isLoading
               ? const ToolbarContentLoadingIndicator()
@@ -199,6 +198,7 @@ class MessageAudioCardState extends State<MessageAudioCard> {
                       setIsPlayingAudio: widget.setIsPlayingAudio,
                       fontSize:
                           AppConfig.messageFontSize * AppConfig.fontSizeFactor,
+                      padding: 0,
                     )
                   : const CardErrorWidget(
                       error: "Null audio file in message_audio_card",
