@@ -631,8 +631,7 @@ class Choreographer {
       );
 
   AssistanceState get assistanceState {
-    if (pangeaController.subscriptionController.subscriptionStatus ==
-        SubscriptionStatus.showPaywall) {
+    if (!pangeaController.subscriptionController.isSubscribed) {
       return AssistanceState.noSub;
     }
 
