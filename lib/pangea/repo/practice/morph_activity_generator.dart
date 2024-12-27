@@ -44,7 +44,10 @@ class MorphActivityGenerator {
 
     if (!morphActivitySequence.containsKey(pos)) {
       debugger(when: kDebugMode);
-      ErrorHandler.logError(m: "No sequence defined for $pos in $langCode");
+      ErrorHandler.logError(
+        m: "No sequence defined",
+        data: {"langCode": langCode, "pos": pos},
+      );
       return [];
     }
 

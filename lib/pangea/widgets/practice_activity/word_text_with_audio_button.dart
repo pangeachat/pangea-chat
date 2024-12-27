@@ -45,7 +45,14 @@ class WordAudioButtonState extends State<WordTextWithAudioButton> {
                 widget.eventID,
               );
             } catch (e, s) {
-              ErrorHandler.logError(e: e, s: s);
+              ErrorHandler.logError(
+                e: e,
+                s: s,
+                data: {
+                  "text": widget.text,
+                  "eventID": widget.eventID,
+                },
+              );
             } finally {
               if (mounted) {
                 setState(() => _isPlaying = false);
