@@ -28,6 +28,7 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
   late AnimationController _controller;
   late Animation<Offset> _offsetAnimation;
   late Animation<double> _fadeAnimation;
+  late Animation<double> _swayAnimation;
 
   StreamSubscription? _pointsSubscription;
   int? get _prevXP =>
@@ -47,8 +48,8 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
     );
 
     _offsetAnimation = Tween<Offset>(
-      begin: const Offset(0.0, 0.0),
-      end: const Offset(0.0, -1.0),
+      begin: const Offset(0.0, -1.75),
+      end: const Offset(0.0, -2.75),
     ).animate(
       CurvedAnimation(
         parent: _controller,
@@ -63,6 +64,16 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
       CurvedAnimation(
         parent: _controller,
         curve: Curves.easeOut,
+      ),
+    );
+
+    _swayAnimation = Tween<double>(
+      begin: 0.0,
+      end: 2 * pi
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.linear,
       ),
     );
 
@@ -111,60 +122,54 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
       position: _offsetAnimation,
       child: FadeTransition(
         opacity: _fadeAnimation,
-        child: Wrap( 
-          direction: Axis.horizontal, 
-          children: _addedPoints! > 0 ? 
-          //If gain, show number of "+"s equal to _addedPoints.
-            List.generate(_addedPoints!, (_) {
-              final randomOffset = Offset(
-                (_random.nextDouble() - 0.5) * 30,
-                (_random.nextDouble() - 0.5) * 30,
-              ); 
-              return Transform.translate(
-                offset: randomOffset, 
-                child: Text(
-                  "+",
-                  style: BotStyle.text(
-                    context,
-                    big: true,
-                    setColor: textColor == null,
-                    existingStyle: TextStyle(
-                      color: textColor,
+        child: IgnorePointer(
+          ignoring: _controller.isAnimating,
+          child: Wrap( 
+            direction: Axis.horizontal, 
+            children: _addedPoints! > 0 ? 
+              //If gain, show number of "+"s equal to _addedPoints.
+              List.generate(_addedPoints!, (_) {
+                final randomOffset = Offset(
+                  (_random.nextDouble() - 0.5) * 30,
+                  (_random.nextDouble() - 0.5) * 30,
+                ); 
+                return AnimatedBuilder(
+                  animation: _swayAnimation,
+                  builder: (context, child){
+                    final swayOffsetX = sin(_swayAnimation.value) * 15;
+                    return Transform.translate(
+                      offset: Offset(swayOffsetX, randomOffset.dy) +
+                        randomOffset,
+                      child: Text(
+                        "+",
+                        style: BotStyle.text(
+                          context,
+                          big: true,
+                          setColor: textColor == null,
+                          existingStyle: TextStyle(
+                            color: textColor,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
               );
-            },
-          )
+            })
           //If loss, just show negative number of points lost.
           : [
-            Text(
-              '$_addedPoints',
-              style: BotStyle.text(
-                context,
-                big: true,
-                setColor: textColor == null,
-                existingStyle: TextStyle(
-                  color: textColor,
+              Text(
+                '$_addedPoints',
+                style: BotStyle.text(
+                  context,
+                  big: true,
+                  setColor: textColor == null,
+                  existingStyle: TextStyle(
+                    color: textColor,
+                  ),
                 ),
               ),
-            ),
-          ],
-          
-        /*
-        child: Text(
-          //'${_addedPoints! > 0 ? '+' : ''}$_addedPoints',
-          '${_addedPoints! > 0 ? '+' : _addedPoints}',
-          style: BotStyle.text(
-            context,
-            big: true,
-            setColor: textColor == null,
-            existingStyle: TextStyle(
-              color: textColor,
-            ),
-          ),
-        ),
-        */
+            ],
+          ), 
         ),
       ),
     );
