@@ -445,9 +445,9 @@ class ChatView extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       PointsGainedAnimation(
-                                        gainColor: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
+                                        //gainColor: Theme.of(context)
+                                        //    .colorScheme
+                                        //    .onPrimary,
                                         origin:
                                             AnalyticsUpdateOrigin.sendMessage,
                                       ),
