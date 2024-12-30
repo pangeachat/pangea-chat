@@ -32,10 +32,21 @@ class SettingsLearningController extends State<SettingsLearning> {
   }
 
   setPublicProfile(bool isPublic) {
-    pangeaController.userController.updateProfile((profile) {
-      profile.userSettings.publicProfile = isPublic;
-      return profile;
-    });
+    pangeaController.userController.updateProfile(
+      (profile) {
+        // set user DOB to younger that 18 if private and older than 18 if public
+        if (isPublic) {
+          profile.userSettings.dateOfBirth = DateTime.now().subtract(
+            const Duration(days: 18 * 365),
+          );
+        } else {
+          profile.userSettings.dateOfBirth = DateTime.now().subtract(
+            const Duration(days: 17 * 365),
+          );
+        }
+        return profile;
+      },
+    );
     setState(() {});
   }
 
@@ -87,6 +98,13 @@ class SettingsLearningController extends State<SettingsLearning> {
         return toolSettings.enableTTS;
     }
   }
+
+  bool get publicProfile =>
+      pangeaController.userController.profile.userSettings.dateOfBirth
+          ?.isBefore(
+        DateTime.now().subtract(const Duration(days: 18 * 365)),
+      ) ??
+      false;
 
   @override
   Widget build(BuildContext context) {
