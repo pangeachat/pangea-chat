@@ -7,6 +7,7 @@ import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pages/chat/events/message_reactions.dart';
 import 'package:fluffychat/pangea/controllers/message_analytics_controller.dart';
+import 'package:fluffychat/pangea/controllers/text_to_speech_controller.dart';
 import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
 import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
@@ -121,6 +122,24 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
       debugPrint("_updateSelectedSpan: setting toolbarMode to wordZoom");
       updateToolbarMode(MessageMode.wordZoom);
     }
+    setState(() {});
+  }
+
+  // If audio is playing a word, highlight that word
+  void highlightCurrentText(int currentPosition, List<TTSToken> tokens) {
+    PangeaTokenText? textToSelect;
+    // Check if current time is between start and end times of tokens
+    for (final TTSToken token in tokens) {
+      if (token.endMS >= currentPosition) {
+        debugPrint("EndMS: ${token.endMS}");
+        if (token.startMS <= currentPosition) {
+          debugPrint("EndMS: ${token.startMS}");
+          textToSelect = token.text;
+        }
+        break;
+      }
+    }
+    _selectedSpan = textToSelect;
     setState(() {});
   }
 
