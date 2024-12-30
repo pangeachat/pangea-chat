@@ -110,7 +110,14 @@ class WordZoomWidgetState extends State<WordZoomWidget> {
   }
 
   void _setSelectionType(WordZoomSelection type) {
-    if (mounted) setState(() => _selectionType = type);
+    if (mounted) {
+      setState(() {
+        _selectionType = type;
+        if (type != WordZoomSelection.morph) {
+          _selectedMorphFeature = null;
+        }
+      });
+    }
   }
 
   void onActivityFinish({
@@ -217,7 +224,7 @@ class WordZoomWidgetState extends State<WordZoomWidget> {
                             ? WordZoomSelection.translation
                             : WordZoomSelection.emoji,
                       ),
-                      // setEmoji: _setEmoji,
+                      isSelected: _selectionType == WordZoomSelection.emoji,
                     ),
                     WordTextWithAudioButton(
                       text: widget.token.text.content,
@@ -231,6 +238,7 @@ class WordZoomWidgetState extends State<WordZoomWidget> {
                             ? WordZoomSelection.translation
                             : WordZoomSelection.lemma,
                       ),
+                      isSelected: _selectionType == WordZoomSelection.lemma,
                     ),
                   ],
                 ),

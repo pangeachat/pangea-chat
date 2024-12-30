@@ -36,9 +36,12 @@ class ContextualTranslationWidget extends StatelessWidget {
       future: _fetchDefinition(),
       builder: (context, snapshot) {
         return Center(
-          child: snapshot.hasData
-              ? Text(snapshot.data ?? "...")
-              : const CircularProgressIndicator.adaptive(),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: snapshot.hasData
+                ? Text(snapshot.data ?? "...")
+                : const CircularProgressIndicator.adaptive(),
+          ),
         );
       },
     );

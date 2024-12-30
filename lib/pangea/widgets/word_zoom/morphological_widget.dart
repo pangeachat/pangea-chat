@@ -161,6 +161,14 @@ class MorphologicalActivityButton extends StatelessWidget {
               onPressed: () => onPressed(morphCategory),
               icon: Icon(icon),
               color: isSelected ? Theme.of(context).colorScheme.primary : null,
+              style: IconButton.styleFrom(
+                backgroundColor: isSelected
+                    ? Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.25)
+                    : null,
+              ),
             ),
           ),
         ),

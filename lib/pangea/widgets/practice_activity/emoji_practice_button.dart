@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 class EmojiPracticeButton extends StatelessWidget {
   final PangeaToken token;
   final VoidCallback onPressed;
+  final bool isSelected;
 
   const EmojiPracticeButton({
     required this.token,
     required this.onPressed,
+    this.isSelected = false,
     super.key,
   });
 
@@ -32,6 +34,14 @@ class EmojiPracticeButton extends StatelessWidget {
                 icon: emoji == null
                     ? const Icon(Icons.add_reaction_outlined)
                     : Text(emoji),
+                style: IconButton.styleFrom(
+                  backgroundColor: isSelected
+                      ? Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withValues(alpha: 0.25)
+                      : null,
+                ),
               ),
             )
           : const SizedBox.shrink(),
