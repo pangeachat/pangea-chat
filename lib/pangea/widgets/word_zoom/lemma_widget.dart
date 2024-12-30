@@ -5,15 +5,10 @@ class LemmaWidget extends StatelessWidget {
   final PangeaToken token;
   final VoidCallback onPressed;
 
-  final String? lemma;
-  final Function(String) setLemma;
-
   const LemmaWidget({
     super.key,
     required this.token,
     required this.onPressed,
-    this.lemma,
-    required this.setLemma,
   });
 
   @override
@@ -22,12 +17,7 @@ class LemmaWidget extends StatelessWidget {
       width: 40,
       height: 40,
       child: IconButton(
-        onPressed: () {
-          onPressed();
-          if (lemma == null) {
-            setLemma(token.lemma.text);
-          }
-        },
+        onPressed: onPressed,
         icon: Text(token.xpEmoji),
       ),
     );

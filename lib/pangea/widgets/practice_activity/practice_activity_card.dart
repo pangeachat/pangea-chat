@@ -152,14 +152,18 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
     final existingActivity =
         widget.pangeaMessageEvent.practiceActivities.firstWhereOrNull(
       (activity) {
-        final sameActivity = activity.practiceActivity.targetTokens != null &&
-            activity.practiceActivity.activityType == type &&
-            activity.practiceActivity.targetTokens!
-                .map((t) => t.vocabConstructID.string)
-                .toSet()
-                .containsAll(
-                  tokens.map((t) => t.vocabConstructID.string).toSet(),
-                );
+        final sameActivity =
+            activity.practiceActivity.content.choices.toSet().containsAll(
+                      activity.practiceActivity.content.answers.toSet(),
+                    ) &&
+                activity.practiceActivity.targetTokens != null &&
+                activity.practiceActivity.activityType == type &&
+                activity.practiceActivity.targetTokens!
+                    .map((t) => t.vocabConstructID.string)
+                    .toSet()
+                    .containsAll(
+                      tokens.map((t) => t.vocabConstructID.string).toSet(),
+                    );
         if (type != ActivityTypeEnum.morphId || sameActivity == false) {
           return sameActivity;
         }
@@ -198,6 +202,7 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
         await practiceGenerationController.getPracticeActivity(
       req,
       widget.pangeaMessageEvent,
+      context,
     );
 
     if (activityResponse.activity == null) return null;
@@ -240,6 +245,8 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
   /// Exits the practice flow if there are no more activities.
   void onActivityFinish({String? correctAnswer}) async {
     try {
+      widget.wordDetailsController?.setShowActivity(true);
+
       if (currentCompletionRecord == null || currentActivity == null) {
         debugger(when: kDebugMode);
         return;
@@ -251,10 +258,12 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
       );
 
       await _savorTheJoy();
+
       widget.wordDetailsController?.onActivityFinish(
         activityType: currentActivity!.activityType,
         correctAnswer: correctAnswer,
       );
+      widget.wordDetailsController?.setShowActivity(false);
     } catch (e, s) {
       _onError();
       debugger(when: kDebugMode);
