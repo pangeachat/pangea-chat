@@ -71,6 +71,9 @@ class UserSettingsState extends State<UserSettingsPage> {
   @override
   void dispose() {
     displayNameController.dispose();
+    loading = false;
+    selectedLanguageError = null;
+    profileCreationError = null;
     super.dispose();
   }
 
