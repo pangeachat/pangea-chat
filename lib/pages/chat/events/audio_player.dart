@@ -3,8 +3,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pangea/constants/model_keys.dart';
-import 'package:fluffychat/pangea/controllers/text_to_speech_controller.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_audio_card.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
 import 'package:fluffychat/utils/error_reporter.dart';
@@ -191,15 +189,13 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
         audioPlayer.stop();
         audioPlayer.seek(null);
       }
+      // #Pangea
       // Pass current timestamp to overlay, so it can highlight as necessary
-      final dataMap = widget.event?.content.tryGetMap(ModelKey.transcription);
-      if (dataMap != null && dataMap['tokens'] != null) {
-        debugPrint("Current timestamp: $currentPosition");
-
-        final tokens = PangeaAudioEventData.fromJson(dataMap as dynamic).tokens;
-        widget.overlayController
-            ?.highlightCurrentText(state.inMilliseconds, tokens);
+      if (widget.matrixFile != null) {
+        widget.overlayController?.highlightCurrentText(
+            state.inMilliseconds, widget.matrixFile!.tokens);
       }
+      // Pangea#
     });
     onDurationChanged ??= audioPlayer.durationStream.listen((max) {
       if (max == null || max == Duration.zero) return;

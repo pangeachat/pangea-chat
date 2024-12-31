@@ -125,15 +125,13 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
     setState(() {});
   }
 
-  // If audio is playing a word, highlight that word
+  /// If sentence TTS is playing a word, highlight that word in message overlay
   void highlightCurrentText(int currentPosition, List<TTSToken> tokens) {
     PangeaTokenText? textToSelect;
     // Check if current time is between start and end times of tokens
     for (final TTSToken token in tokens) {
       if (token.endMS >= currentPosition) {
-        debugPrint("EndMS: ${token.endMS}");
         if (token.startMS <= currentPosition) {
-          debugPrint("EndMS: ${token.startMS}");
           textToSelect = token.text;
         }
         break;
