@@ -18,6 +18,7 @@ import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/widgets/animations/gain_points.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
 import 'package:fluffychat/pangea/widgets/chat/toolbar_content_loading_indicator.dart';
+import 'package:fluffychat/pangea/widgets/igc/card_error_widget.dart';
 import 'package:fluffychat/pangea/widgets/practice_activity/multiple_choice_activity.dart';
 import 'package:fluffychat/pangea/widgets/word_zoom/word_zoom_widget.dart';
 import 'package:fluffychat/widgets/matrix.dart';
@@ -65,6 +66,7 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
       PracticeGenerationController();
 
   PangeaController get pangeaController => MatrixState.pangeaController;
+  String? _error;
 
   @override
   void initState() {
@@ -96,6 +98,7 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
   Future<void> _fetchActivity({
     ActivityQualityFeedback? activityFeedback,
   }) async {
+    _error = null;
     if (!mounted ||
         !pangeaController.languageController.languagesSet ||
         widget.overlayController.messageAnalyticsEntry == null) {
@@ -134,6 +137,7 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
         },
       );
       debugger(when: kDebugMode);
+      _error = e.toString();
     } finally {
       _updateFetchingActivity(false);
     }
@@ -218,12 +222,14 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
         timeStamp: DateTime.now(),
       );
 
+  final Duration _savorTheJoyDuration = const Duration(seconds: 1);
+
   Future<void> _savorTheJoy() async {
     try {
       debugger(when: savoringTheJoy && kDebugMode);
 
       if (mounted) setState(() => savoringTheJoy = true);
-      await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed(_savorTheJoyDuration);
       if (mounted) setState(() => savoringTheJoy = false);
     } catch (e, s) {
       debugger(when: kDebugMode);
@@ -243,14 +249,16 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
   /// Saves the completion record and sends it to the server.
   /// Fetches a new activity if there are any left to complete.
   /// Exits the practice flow if there are no more activities.
-  void onActivityFinish({String? correctAnswer}) async {
+  void onActivityFinish() async {
     try {
-      widget.wordDetailsController?.setShowActivity(true);
-
       if (currentCompletionRecord == null || currentActivity == null) {
         debugger(when: kDebugMode);
         return;
       }
+
+      widget.wordDetailsController?.onActivityFinish(
+        savorTheJoyDuration: _savorTheJoyDuration,
+      );
 
       widget.overlayController.onActivityFinish();
       pangeaController.activityRecordController.completeActivity(
@@ -258,12 +266,6 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
       );
 
       await _savorTheJoy();
-
-      widget.wordDetailsController?.onActivityFinish(
-        activityType: currentActivity!.activityType,
-        correctAnswer: correctAnswer,
-      );
-      widget.wordDetailsController?.setShowActivity(false);
     } catch (e, s) {
       _onError();
       debugger(when: kDebugMode);
@@ -310,9 +312,20 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
 
   @override
   Widget build(BuildContext context) {
+    if (_error != null) {
+      return CardErrorWidget(
+        error: _error!,
+        maxWidth: 500,
+      );
+    }
+
     if (!fetchingActivity && currentActivity == null) {
       debugPrint("don't think we should be here");
       debugger(when: kDebugMode);
+      return CardErrorWidget(
+        error: _error!,
+        maxWidth: 500,
+      );
     }
 
     return Stack(
