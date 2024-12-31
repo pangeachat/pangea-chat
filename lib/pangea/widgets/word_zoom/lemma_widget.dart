@@ -1,4 +1,5 @@
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
+import 'package:fluffychat/pangea/widgets/practice_activity/word_zoom_activity_button.dart';
 import 'package:flutter/material.dart';
 
 class LemmaWidget extends StatelessWidget {
@@ -15,18 +16,10 @@ class LemmaWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 40,
-      height: 40,
-      child: IconButton(
-        onPressed: onPressed,
-        icon: Text(token.xpEmoji),
-        style: IconButton.styleFrom(
-          backgroundColor: isSelected
-              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.25)
-              : null,
-        ),
-      ),
+    return WordZoomActivityButton(
+      icon: Text(token.xpEmoji),
+      isSelected: isSelected,
+      onPressed: onPressed,
     );
   }
 }

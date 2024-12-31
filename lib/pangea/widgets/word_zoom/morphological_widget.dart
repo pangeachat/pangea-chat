@@ -1,6 +1,7 @@
 import 'package:fluffychat/pangea/constants/morph_categories_and_labels.dart';
 import 'package:fluffychat/pangea/enum/analytics/morph_categories_enum.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
+import 'package:fluffychat/pangea/widgets/practice_activity/word_zoom_activity_button.dart';
 import 'package:flutter/material.dart';
 
 class ActivityMorph {
@@ -148,31 +149,15 @@ class MorphologicalActivityButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Tooltip(
-          message: getMorphologicalCategoryCopy(
-            morphCategory,
-            context,
-          ),
-          child: Opacity(
-            opacity: (isSelected || !isUnlocked) ? 1 : 0.5,
-            child: IconButton(
-              onPressed: () => onPressed(morphCategory),
-              icon: Icon(icon),
-              color: isSelected ? Theme.of(context).colorScheme.primary : null,
-              style: IconButton.styleFrom(
-                backgroundColor: isSelected
-                    ? Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .withValues(alpha: 0.25)
-                    : null,
-              ),
-            ),
-          ),
-        ),
-      ],
+    return WordZoomActivityButton(
+      icon: Icon(icon),
+      isSelected: isSelected,
+      onPressed: () => onPressed(morphCategory),
+      tooltip: getMorphologicalCategoryCopy(
+        morphCategory,
+        context,
+      ),
+      opacity: (isSelected || !isUnlocked) ? 1 : 0.5,
     );
   }
 }
