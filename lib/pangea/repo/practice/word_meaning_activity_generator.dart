@@ -30,7 +30,7 @@ class WordMeaningActivityGenerator {
     final res = await LemmaDictionaryRepo.get(lemmaDefReq);
 
     final choices =
-        LemmaDictionaryRepo.getDistractorDefinitions(lemmaDefReq, 3);
+        LemmaDictionaryRepo.getDistractorDefinitions(lemmaDefReq.lemma, 3);
 
     if (!choices.contains(res.definition)) {
       choices.add(res.definition);
