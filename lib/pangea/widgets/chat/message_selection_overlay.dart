@@ -133,8 +133,9 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
       if (token.endMS >= currentPosition) {
         if (token.startMS <= currentPosition) {
           textToSelect = token.text;
+        } else {
+          break;
         }
-        break;
       }
     }
     _selectedSpan = textToSelect;
