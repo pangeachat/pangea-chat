@@ -63,52 +63,6 @@ class MorphologicalListWidget extends StatelessWidget {
     } else {
       return activityMorphs.take(lastRevealedIndex + 2).toList();
     }
-    // // we always start with the part of speech
-    // final visibleMorphs = [
-    //   ActivityMorph(
-    //     morphFeature: "pos",
-    //     morphTag: token.pos,
-    //     revealed: !token.shouldDoPosActivity,
-    //     // revealed: !shouldDoActivity || !canGenerateDistractors,
-    //   ),
-    // ];
-
-    // // each pos has a defined set of morphological features to display and do activities for
-    // final List<String> seq = MorphActivityGenerator().getSequence(
-    //   MatrixState.pangeaController.languageController.userL2?.langCode,
-    //   token.pos,
-    // );
-
-    // for (final String feature in seq) {
-    //   // don't add any more if the last one is not revealed yet
-    //   if (!visibleMorphs.last.revealed) {
-    //     break;
-    //   }
-
-    //   // check that the feature is in token.morph
-    //   if (!token.morph.containsKey(feature)) {
-    //     ErrorHandler.logError(
-    //       m: "Morphological feature suggested for pos but not found in token",
-    //       data: {
-    //         "feature": feature,
-    //         "token": token,
-    //         "lang_code": MatrixState
-    //             .pangeaController.languageController.userL2?.langCode,
-    //       },
-    //     );
-    //     continue;
-    //   }
-
-    //   visibleMorphs.add(
-    //     ActivityMorph(
-    //       morphFeature: feature,
-    //       morphTag: token.morph[feature],
-    //       revealed: !token.shouldDoMorphActivity(feature),
-    //     ),
-    //   );
-    // }
-
-    // return visibleMorphs;
   }
 
   @override
