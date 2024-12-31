@@ -206,9 +206,9 @@ class WordZoomWidgetState extends State<WordZoomWidget> {
           lemma: morphTag,
           context: context,
         );
-        return Text(copy ?? morphTag);
+        return Text(copy ?? morphTag, textAlign: TextAlign.center);
       case WordZoomSelection.lemma:
-        return Text(widget.token.lemma.text);
+        return Text(widget.token.lemma.text, textAlign: TextAlign.center);
       case WordZoomSelection.emoji:
         return widget.token.getEmoji() != null
             ? Text(widget.token.getEmoji()!)
