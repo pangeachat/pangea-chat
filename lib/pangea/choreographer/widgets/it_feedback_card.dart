@@ -1,5 +1,4 @@
 import 'package:fluffychat/pangea/repo/full_text_translation_repo.dart';
-import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
@@ -47,20 +46,7 @@ class ITFeedbackCardController extends State<ITFeedbackCard> {
     setState(() {
       isLoadingFeedback = true;
     });
-    // controller.itFeedback
-    //     .get(widget.req)
-    //     .then((value) {
-    //       res = value;
-    //     })
-    //     .catchError((e) => error = e)
-    //     .whenComplete(
-    //       () => setState(() {
-    //         isLoadingFeedback = false;
-    //       }),
-    //     );
 
-    // trying out using translation instead of feedback
-    // TODO - refactor if we like this better
     FullTextTranslationRepo.translate(
       accessToken: controller.userController.accessToken,
       request: FullTextTranslationRequestModel(
@@ -85,45 +71,6 @@ class ITFeedbackCardController extends State<ITFeedbackCard> {
             isLoadingFeedback = false;
           }),
         );
-  }
-
-  Future<void> translateFeedback() async {
-    if (res == null) {
-      ErrorHandler.logError(
-        m: "Cannot translate feedback because res is null",
-        data: {},
-      );
-      return;
-    }
-    setState(() {
-      isTranslating = true;
-    });
-    FullTextTranslationRepo.translate(
-      accessToken: controller.userController.accessToken,
-      request: FullTextTranslationRequestModel(
-        text: res!.text,
-        tgtLang: controller.languageController.userL1?.langCode ??
-            widget.req.sourceTextLang,
-        userL1: controller.languageController.userL1?.langCode ??
-            widget.req.sourceTextLang,
-        userL2: controller.languageController.userL2?.langCode ??
-            widget.req.targetLang,
-      ),
-    )
-        .then((value) {
-          translatedFeedback = value.bestTranslation;
-        })
-        .catchError((e) => error = e)
-        .whenComplete(
-          () => setState(() {
-            isTranslating = false;
-          }),
-        );
-  }
-
-  void handleGetExplanationButtonPress() {
-    if (isLoadingFeedback) return;
-    getFeedback();
   }
 
   @override
@@ -153,14 +100,6 @@ class ITFeedbackCardView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // CardHeader(
-            //   text: controller.widget.req.chosenContinuance,
-            //   botExpression: BotExpression.nonGold,
-            // ),
-            // Text(
-            //   controller.widget.choiceFeedback,
-            //   style: BotStyle.text(context),
-            // ),
             Text(
               controller.widget.req.chosenContinuance,
             ),
@@ -182,90 +121,6 @@ class ITFeedbackCardView extends StatelessWidget {
                 style: BotStyle.text(context),
               ),
             ),
-            // if (controller.res == null)
-            //   WhyButton(
-            //     onPress: controller.handleGetExplanationButtonPress,
-            //     loading: controller.isLoadingFeedback,
-            //   ),
-            // if (controller.res != null)
-            //   Text(
-            //     controller.res!.text,
-            //     style: BotStyle.text(context),
-            //   ),
-            // if res is not null and feedback not in the userL1, show a button to translate the text
-            // if (controller.res != null &&
-            //     controller.translatedFeedback == null &&
-            //     controller.widget.req.feedbackLang !=
-            //         controller.controller.languageController.userL1?.langCode)
-            //   Column(
-            //     children: [
-            //       const SizedBox(height: 10),
-            //       TranslateButton(
-            //         onPress: controller.translateFeedback,
-            //         loading: controller.isTranslating,
-            //       ),
-            //     ],
-            //   ),
-            // if (controller.translatedFeedback != null)
-            //   //add little line to separate the text from the translation
-            //   Column(
-            //     children: [
-            //       const Divider(
-            //         color: AppConfig.primaryColor,
-            //         thickness: 2,
-            //         height: 20, // Set the space around the divider
-            //         indent: 20, // Set the starting space (left padding)
-            //         endIndent: 20, // Set the ending space (right padding)
-            //       ),
-            //       Text(
-            //         controller.translatedFeedback!,
-            //         style: BotStyle.text(context),
-            //       ),
-            //     ],
-            //   ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// button to translate the text
-class TranslateButton extends StatelessWidget {
-  const TranslateButton({
-    super.key,
-    required this.onPress,
-    required this.loading,
-  });
-
-  final VoidCallback onPress;
-  final bool loading;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: loading ? null : onPress,
-      style: ButtonStyle(
-        backgroundColor: WidgetStateProperty.all<Color>(
-          AppConfig.primaryColor.withOpacity(0.1),
-        ),
-      ),
-      child: SizedBox(
-        width: 150, // set the width of the button contents here
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (!loading) const Icon(Icons.translate),
-            if (loading)
-              const Center(
-                child: SizedBox(
-                  width: 24.0,
-                  height: 24.0,
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-            // const SizedBox(width: 8),
-            // Text(L10n.of(context).translate),
           ],
         ),
       ),
