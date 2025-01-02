@@ -17,7 +17,6 @@ import 'package:fluffychat/pangea/models/tokens_event_content_model.dart';
 import 'package:fluffychat/pangea/utils/any_state_holder.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/utils/overlay.dart';
-import 'package:fluffychat/pangea/utils/play_click_sound.dart';
 import 'package:fluffychat/pangea/widgets/chat/tts_controller.dart';
 import 'package:fluffychat/pangea/widgets/igc/paywall_card.dart';
 import 'package:flutter/foundation.dart';
@@ -43,10 +42,11 @@ class Choreographer {
   late AlternativeTranslator altTranslator;
   late ErrorService errorService;
   final tts = TtsController();
-  final clickPlayer = ClickPlayer();
 
   bool isFetching = false;
   int _timesClicked = 0;
+
+  final int msBeforeIGCStart = 10000;
 
   Timer? debounceTimer;
   ChoreoRecord choreoRecord = ChoreoRecord.newRecord;
@@ -77,10 +77,13 @@ class Choreographer {
 
   void send(BuildContext context) {
     debugPrint("can send message: $canSendMessage");
-    if (!canSendMessage) {
-      if (igc.igcTextData != null && igc.igcTextData!.matches.isNotEmpty) {
-        igc.showFirstMatch(context);
-      }
+    if (igc.igcTextData != null && igc.igcTextData!.matches.isNotEmpty) {
+      igc.showFirstMatch(context);
+      return;
+    } else if (isRunningIT) {
+      // If the user is in the middle of IT, don't send the message.
+      // If they've already clicked the send button once, this will
+      // not be true, so they can still send it if they want.
       return;
     }
 
@@ -107,7 +110,11 @@ class Choreographer {
 
   Future<void> _sendWithIGC(BuildContext context) async {
     if (!canSendMessage) {
-      igc.showFirstMatch(context);
+      // It's possible that the reason user can't send message is because they're in the middle of IT. If this is the case,
+      // do nothing (there's no matches to show). The user can click the send button again to override this.
+      if (!isRunningIT) {
+        igc.showFirstMatch(context);
+      }
       return;
     }
 
@@ -237,7 +244,7 @@ class Choreographer {
 
     if (editTypeIsKeyboard) {
       debounceTimer ??= Timer(
-        const Duration(milliseconds: 1500),
+        Duration(milliseconds: msBeforeIGCStart),
         () => getLanguageHelp(),
       );
     } else {
@@ -289,7 +296,21 @@ class Choreographer {
               onlyTokensAndLanguageDetection: onlyTokensAndLanguageDetection,
             ));
     } catch (err, stack) {
-      ErrorHandler.logError(e: err, s: stack);
+      ErrorHandler.logError(
+        e: err,
+        s: stack,
+        data: {
+          "l2Lang": l2Lang?.toJson(),
+          "l1Lang": l1Lang?.toJson(),
+          "choreoMode": choreoMode,
+          "igcEnabled": igcEnabled,
+          "itEnabled": itEnabled,
+          "isAutoIGCEnabled": isAutoIGCEnabled,
+          "isTranslationDone": itController.isTranslationDone,
+          "onlyTokensAndLanguageDetection": onlyTokensAndLanguageDetection,
+          "useCustomInput": _useCustomInput,
+        },
+      );
     } finally {
       stopLoading();
     }
@@ -317,6 +338,10 @@ class Choreographer {
         ErrorHandler.logError(
           e: "onReplacementSelect with null igcTextData",
           s: StackTrace.current,
+          data: {
+            "matchIndex": matchIndex,
+            "choiceIndex": choiceIndex,
+          },
         );
         MatrixState.pAnyState.closeOverlay();
         return;
@@ -325,6 +350,11 @@ class Choreographer {
         ErrorHandler.logError(
           e: "onReplacementSelect with null choices",
           s: StackTrace.current,
+          data: {
+            "igctextData": igc.igcTextData?.toJson(),
+            "matchIndex": matchIndex,
+            "choiceIndex": choiceIndex,
+          },
         );
         MatrixState.pAnyState.closeOverlay();
         return;
@@ -363,16 +393,15 @@ class Choreographer {
       setState();
     } catch (err, stack) {
       debugger(when: kDebugMode);
-      Sentry.addBreadcrumb(
-        Breadcrumb.fromJson(
-          {
-            "igctextDdata": igc.igcTextData?.toJson(),
-            "matchIndex": matchIndex,
-            "choiceIndex": choiceIndex,
-          },
-        ),
+      ErrorHandler.logError(
+        e: err,
+        s: stack,
+        data: {
+          "igctextData": igc.igcTextData?.toJson(),
+          "matchIndex": matchIndex,
+          "choiceIndex": choiceIndex,
+        },
       );
-      ErrorHandler.logError(e: err, s: stack);
       igc.igcTextData?.matches.clear();
     } finally {
       giveInputFocus();
@@ -387,6 +416,7 @@ class Choreographer {
         ErrorHandler.logError(
           m: "should not be in onIgnoreMatch with null igcTextData",
           s: StackTrace.current,
+          data: {},
         );
         return;
       }
@@ -397,7 +427,7 @@ class Choreographer {
 
       if (matchIndex == -1) {
         debugger(when: kDebugMode);
-        throw Exception("Cannnot find the ignored match in igcTextData");
+        throw Exception("Cannot find the ignored match in igcTextData");
       }
 
       igc.igcTextData!.matches[matchIndex].status = PangeaMatchStatus.ignored;
@@ -417,6 +447,9 @@ class Choreographer {
       ErrorHandler.logError(
         e: err,
         s: stack,
+        data: {
+          "igctextData": igc.igcTextData?.toJson(),
+        },
       );
       igc.igcTextData?.matches.clear();
     } finally {
@@ -485,7 +518,6 @@ class Choreographer {
     _textController.dispose();
     trialStream?.cancel();
     tts.dispose();
-    clickPlayer.dispose();
   }
 
   LanguageModel? get l2Lang {
@@ -605,6 +637,10 @@ class Choreographer {
       );
 
   AssistanceState get assistanceState {
+    if (!pangeaController.subscriptionController.isSubscribed) {
+      return AssistanceState.noSub;
+    }
+
     if (currentText.isEmpty && itController.sourceText == null) {
       return AssistanceState.noMessage;
     }

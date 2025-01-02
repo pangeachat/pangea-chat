@@ -519,7 +519,10 @@ class ChatController extends State<ChatPageWithRoom>
       ErrorHandler.logError(
         e: PangeaWarningError("Failed to set read marker: $e"),
         s: s,
-        m: 'Failed to set read marker for eventId: $eventId',
+        data: {
+          'eventId': eventId,
+          'roomId': roomId,
+        },
       );
       Sentry.captureException(
         e,
@@ -689,11 +692,26 @@ class ChatController extends State<ChatPageWithRoom>
           ErrorHandler.logError(
             e: Exception('msgEventId is null'),
             s: StackTrace.current,
+            data: {
+              'roomId': roomId,
+              'text': sendController.text,
+              'inReplyTo': replyEvent?.eventId,
+              'editEventId': editEvent?.eventId,
+            },
           );
           return;
         }
       },
-      onError: (err, stack) => ErrorHandler.logError(e: err, s: stack),
+      onError: (err, stack) => ErrorHandler.logError(
+        e: err,
+        s: stack,
+        data: {
+          'roomId': roomId,
+          'text': sendController.text,
+          'inReplyTo': replyEvent?.eventId,
+          'editEventId': editEvent?.eventId,
+        },
+      ),
     );
     // Pangea#
     sendController.value = TextEditingValue(
@@ -834,7 +852,16 @@ class ChatController extends State<ChatPageWithRoom>
       // #Pangea
       // ).catchError((e) {
     ).catchError((e, s) {
-      ErrorHandler.logError(e: e, s: s);
+      ErrorHandler.logError(
+        e: e,
+        s: s,
+        data: {
+          'roomId': roomId,
+          'file': file.name,
+          'duration': result.duration,
+          'waveform': result.waveform,
+        },
+      );
       // Pangea#
       scaffoldMessenger.showSnackBar(
         SnackBar(
@@ -952,6 +979,9 @@ class ChatController extends State<ChatPageWithRoom>
       okLabel: L10n.of(context).ok,
       cancelLabel: L10n.of(context).cancel,
       textFields: [DialogTextField(hintText: L10n.of(context).reason)],
+      // #Pangea
+      autoSubmit: true,
+      // Pangea#
     );
     if (reason == null || reason.single.isEmpty) return;
     // #Pangea
@@ -964,7 +994,16 @@ class ChatController extends State<ChatPageWithRoom>
         event.content['body'].toString(),
       );
     } catch (err) {
-      ErrorHandler.logError(e: err, s: StackTrace.current);
+      ErrorHandler.logError(
+        e: err,
+        s: StackTrace.current,
+        data: {
+          'roomId': roomId,
+          'reason': reason.single,
+          'senderId': event.senderId,
+          'content': event.content['body'].toString(),
+        },
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -1026,6 +1065,9 @@ class ChatController extends State<ChatPageWithRoom>
             ],
             okLabel: L10n.of(context).remove,
             cancelLabel: L10n.of(context).cancel,
+            // #Pangea
+            autoSubmit: true,
+            // Pangea#
           )
         : <String>[];
     if (reasonInput == null) {
@@ -1127,7 +1169,11 @@ class ChatController extends State<ChatPageWithRoom>
   void sendAgainAction() {
     // #Pangea
     if (selectedEvents.isEmpty) {
-      ErrorHandler.logError(e: "No selected events in send again action");
+      ErrorHandler.logError(
+        e: "No selected events in send again action",
+        s: StackTrace.current,
+        data: {"roomId": roomId},
+      );
       clearSelectedEvents();
       return;
     }
@@ -1658,7 +1704,17 @@ class ChatController extends State<ChatPageWithRoom>
       );
     } catch (err) {
       debugger(when: kDebugMode);
-      ErrorHandler.logError(e: err, s: StackTrace.current);
+      ErrorHandler.logError(
+        e: err,
+        s: StackTrace.current,
+        data: {
+          'roomId': roomId,
+          'event': event.toJson(),
+          'selectedToken': selectedToken?.toJson(),
+          'nextEvent': nextEvent?.toJson(),
+          'prevEvent': prevEvent?.toJson(),
+        },
+      );
       return;
     }
 

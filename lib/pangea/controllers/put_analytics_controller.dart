@@ -96,6 +96,7 @@ class PutAnalyticsController extends BaseController<AnalyticsStream> {
         s: s,
         e: err,
         m: "Failed to get last updated time for analytics",
+        data: {},
       );
     } finally {
       // if this is the initial load, complete the lastUpdatedCompleter
@@ -184,6 +185,16 @@ class PutAnalyticsController extends BaseController<AnalyticsStream> {
 
     // get all our grammar constructs
     for (final token in tokensToSave) {
+      uses.add(
+        OneConstructUse(
+          useType: useType,
+          lemma: token.pos,
+          form: token.text.content,
+          category: "POS",
+          constructType: ConstructTypeEnum.morph,
+          metadata: metadata,
+        ),
+      );
       for (final entry in token.morph.entries) {
         uses.add(
           OneConstructUse(
@@ -244,6 +255,9 @@ class PutAnalyticsController extends BaseController<AnalyticsStream> {
         e: PangeaWarningError("Failed to add message since update: $e"),
         s: s,
         m: 'Failed to add message since update for eventId: $cacheKey',
+        data: {
+          "cacheKey": cacheKey,
+        },
       );
     }
   }
@@ -358,6 +372,9 @@ class PutAnalyticsController extends BaseController<AnalyticsStream> {
         e: err,
         m: "Failed to update analytics",
         s: s,
+        data: {
+          "l2Override": l2Override,
+        },
       );
     } finally {
       _updateCompleter?.complete();

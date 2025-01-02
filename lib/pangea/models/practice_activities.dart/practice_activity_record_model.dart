@@ -5,6 +5,7 @@
 import 'dart:developer';
 
 import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
+import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
 import 'package:fluffychat/pangea/enum/construct_use_type_enum.dart';
 import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
@@ -142,6 +143,16 @@ class ActivityRecordResponse {
         return score > 0
             ? ConstructUseTypeEnum.corWL
             : ConstructUseTypeEnum.incWL;
+      case ActivityTypeEnum.emoji:
+        return ConstructUseTypeEnum.em;
+      case ActivityTypeEnum.lemmaId:
+        return score > 0
+            ? ConstructUseTypeEnum.corL
+            : ConstructUseTypeEnum.incL;
+      case ActivityTypeEnum.morphId:
+        return score > 0
+            ? ConstructUseTypeEnum.corM
+            : ConstructUseTypeEnum.incM;
       case ActivityTypeEnum.hiddenWordListening:
         return score > 0
             ? ConstructUseTypeEnum.corHWL
@@ -153,20 +164,84 @@ class ActivityRecordResponse {
   List<OneConstructUse> toUses(
     PracticeActivityModel practiceActivity,
     ConstructUseMetaData metadata,
-  ) =>
-      practiceActivity.tgtConstructs
+  ) {
+    if (practiceActivity.targetTokens == null ||
+        practiceActivity.targetTokens!.isEmpty) {
+      return [];
+    }
+
+    if (practiceActivity.activityType == ActivityTypeEnum.emoji) {
+      final token = practiceActivity.targetTokens!.first;
+      return [
+        OneConstructUse(
+          lemma: token.lemma.text,
+          form: token.text.content,
+          constructType: ConstructTypeEnum.vocab,
+          useType: useType(practiceActivity.activityType),
+          metadata: metadata,
+          category: token.pos,
+        ),
+      ];
+    }
+
+    if (practiceActivity.activityType == ActivityTypeEnum.morphId) {
+      return practiceActivity.tgtConstructs
           .map(
-            (construct) => OneConstructUse(
-              lemma: construct.lemma,
-              // TODO - add form to practiceActivity target_construct data somehow
-              form: null,
-              constructType: construct.type,
+            (token) => OneConstructUse(
+              lemma: token.lemma,
+              form: practiceActivity.targetTokens!.first.text.content,
+              constructType: ConstructTypeEnum.morph,
               useType: useType(practiceActivity.activityType),
               metadata: metadata,
-              category: construct.category,
+              category: token.category,
             ),
           )
           .toList();
+    }
+
+    final uses = practiceActivity.targetTokens!
+        .map(
+          (token) => OneConstructUse(
+            lemma: token.lemma.text,
+            form: token.text.content,
+            constructType: ConstructTypeEnum.vocab,
+            useType: useType(practiceActivity.activityType),
+            metadata: metadata,
+            category: token.pos,
+          ),
+        )
+        .toList();
+
+    uses.addAll(
+      practiceActivity.targetTokens!.map((token) {
+        return OneConstructUse(
+          lemma: token.pos,
+          form: token.text.content,
+          constructType: ConstructTypeEnum.morph,
+          useType: useType(practiceActivity.activityType),
+          metadata: metadata,
+          category: "POS",
+        );
+      }),
+    );
+
+    for (final token in practiceActivity.targetTokens!) {
+      for (final entry in token.morph.entries) {
+        uses.add(
+          OneConstructUse(
+            useType: useType(practiceActivity.activityType),
+            lemma: entry.value,
+            form: token.text.content,
+            category: entry.key,
+            constructType: ConstructTypeEnum.morph,
+            metadata: metadata,
+          ),
+        );
+      }
+    }
+
+    return uses;
+  }
 
   factory ActivityRecordResponse.fromJson(Map<String, dynamic> json) {
     return ActivityRecordResponse(
