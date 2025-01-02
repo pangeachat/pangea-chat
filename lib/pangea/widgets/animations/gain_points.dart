@@ -28,7 +28,8 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
   late AnimationController _controller;
   late Animation<Offset> _offsetAnimation;
   late Animation<double> _fadeAnimation;
-  late Animation<double> _swayAnimation;
+  List<Animation<double>> _swayAnimation = [];
+  List<double> _randomSwayOffset = [];
 
   StreamSubscription? _pointsSubscription;
   int? get _prevXP =>
@@ -67,19 +68,29 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
       ),
     );
 
-    _swayAnimation = Tween<double>(
-      begin: 0.0,
-      end: 2 * pi
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.linear,
-      ),
-    );
-
     _pointsSubscription = MatrixState
         .pangeaController.getAnalytics.analyticsStream.stream
         .listen(_showPointsGained);
+  }
+
+  void initSwayAnimations(){
+    _swayAnimation.clear();
+    _randomSwayOffset.clear();
+
+    for(int i = 0; i < (_addedPoints ?? 0); i++) {
+      _swayAnimation.add(
+        Tween<double>(
+          begin: 0.0,
+          end: 2 * pi,
+        ).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: Curves.linear,
+          ),
+        ),
+      );
+      _randomSwayOffset.add(_random.nextDouble() * 2 * pi);
+    }
   }
 
   @override
@@ -93,6 +104,7 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
     if (update.origin != widget.origin) return;
     setState(() => _addedPoints = (_currentXP ?? 0) - (_prevXP ?? 0));
     if (_prevXP != _currentXP) {
+      initSwayAnimations();
       _controller.reset();
       _controller.forward();
     }
@@ -120,15 +132,15 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
             direction: Axis.horizontal, 
             children: _addedPoints! > 0 ? 
               //If gain, show number of "+"s equal to _addedPoints.
-              List.generate(_addedPoints!, (_) {
+              List.generate(_addedPoints!, (index) {
                 final randomOffset = Offset(
                   (_random.nextDouble() - 0.5) * 30,
                   (_random.nextDouble() - 0.5) * 30,
                 ); 
                 return AnimatedBuilder(
-                  animation: _swayAnimation,
+                  animation: _swayAnimation[index],
                   builder: (context, child){
-                    final swayOffsetX = sin(_swayAnimation.value) * 15;
+                    final swayOffsetX = sin(_swayAnimation[index].value + _randomSwayOffset[index]) * 15;
                     return Transform.translate(
                       offset: Offset(swayOffsetX, randomOffset.dy) +
                         randomOffset,
