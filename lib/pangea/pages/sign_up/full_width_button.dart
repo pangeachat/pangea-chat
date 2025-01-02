@@ -43,6 +43,7 @@ class FullWidthButtonState extends State<FullWidthButton> {
               onPressed: widget.onPressed,
               borderRadius: BorderRadius.circular(36),
               color: Theme.of(context).colorScheme.primary,
+              isShadow: true,
               child: Container(
                 // internal padding
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -117,6 +118,7 @@ class FullWidthTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final TextEditingController? controller;
   final String? errorText;
+  final Function(String)? onSubmitted;
 
   const FullWidthTextField({
     required this.hintText,
@@ -127,6 +129,7 @@ class FullWidthTextField extends StatelessWidget {
     this.validator,
     this.controller,
     this.errorText,
+    this.onSubmitted,
     super.key,
   });
 
@@ -150,6 +153,7 @@ class FullWidthTextField extends StatelessWidget {
         validator: validator,
         onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
         controller: controller,
+        onFieldSubmitted: onSubmitted,
       ),
     );
   }

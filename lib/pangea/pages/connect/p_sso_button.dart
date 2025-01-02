@@ -55,6 +55,30 @@ class PangeaSsoButton extends StatefulWidget {
 class PangeaSsoButtonState extends State<PangeaSsoButton> {
   bool _loading = false;
   String? _error;
+  AppLifecycleListener? _listener;
+
+  @override
+  void initState() {
+    _listener = AppLifecycleListener(
+      onStateChange: _onAppLifecycleChange,
+    );
+    super.initState();
+  }
+
+  // when the SSO login launches, stop the loading indicator
+  void _onAppLifecycleChange(AppLifecycleState state) {
+    if ((state == AppLifecycleState.inactive ||
+            state == AppLifecycleState.hidden) &&
+        _loading) {
+      setState(() => _loading = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _listener?.dispose();
+    super.dispose();
+  }
 
   Future<void> _runSSOLogin() async {
     try {
@@ -71,7 +95,11 @@ class PangeaSsoButtonState extends State<PangeaSsoButton> {
         context,
       );
     } catch (err, s) {
-      ErrorHandler.logError(e: err, s: s);
+      ErrorHandler.logError(
+        e: err,
+        s: s,
+        data: {},
+      );
       if (err is MatrixException) {
         _error = err.errorMessage;
       } else {

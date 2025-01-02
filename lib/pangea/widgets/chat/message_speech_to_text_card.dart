@@ -79,10 +79,7 @@ class MessageSpeechToTextCardState extends State<MessageSpeechToTextCard> {
       if (transcript.sttTokens.isEmpty) {
         return TextSpan(
           text: remainingFullText,
-          style: BotStyle.text(
-            context,
-            setColor: false,
-          ),
+          style: BotStyle.text(context),
         );
       }
 
@@ -142,7 +139,11 @@ class MessageSpeechToTextCardState extends State<MessageSpeechToTextCard> {
 
       return TextSpan(children: spans);
     } catch (err, s) {
-      ErrorHandler.logError(e: err, s: s);
+      ErrorHandler.logError(
+        e: err,
+        s: s,
+        data: {},
+      );
       setState(() => error = err);
       return const TextSpan(text: '');
     }
