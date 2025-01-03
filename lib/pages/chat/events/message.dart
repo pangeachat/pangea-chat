@@ -153,11 +153,8 @@ class Message extends StatelessWidget {
         previousEvent!.senderId == event.senderId &&
         previousEvent!.originServerTs.sameEnvironment(event.originServerTs);
 
-    final textColor = ownMessage
-        ? theme.brightness == Brightness.light
-            ? theme.colorScheme.onPrimary
-            : theme.colorScheme.onPrimaryContainer
-        : theme.colorScheme.onSurface;
+    final textColor =
+        ownMessage ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface;
     final rowMainAxisAlignment =
         ownMessage ? MainAxisAlignment.end : MainAxisAlignment.start;
 
@@ -191,9 +188,7 @@ class Message extends StatelessWidget {
     if (ownMessage) {
       color = displayEvent.status.isError
           ? Colors.redAccent
-          : theme.brightness == Brightness.light
-              ? theme.colorScheme.primary
-              : theme.colorScheme.primaryContainer;
+          : theme.colorScheme.primary;
     }
 
     final resetAnimateIn = this.resetAnimateIn;
@@ -396,8 +391,6 @@ class Message extends StatelessWidget {
                                         showToolbar(pangeaMessageEvent);
                                       },
                                       color: color,
-                                      clickPlayer:
-                                          controller.choreographer.clickPlayer,
                                       child:
                                           // Pangea#
                                           Container(
@@ -526,7 +519,6 @@ class Message extends StatelessWidget {
                                                   controller: controller,
                                                   nextEvent: nextEvent,
                                                   prevEvent: previousEvent,
-                                                  isButton: isButton,
                                                   // Pangea#
                                                 ),
                                                 if (event.hasAggregatedEvents(

@@ -4615,6 +4615,13 @@
   "constructUseCorHWLDesc": "Correct in hidden word activity",
   "constructUseIncHWLDesc": "Incorrect in hidden word activity",
   "constructUseIgnHWLDesc": "Ignored in hidden word activity",
+  "constructUseCorLDesc": "Correct in lemma activity",
+  "constructUseIncLDesc": "Incorrect in lemma activity",
+  "constructUseIgnLDesc": "Ignored in lemma activity",
+  "constructUseCorMDesc": "Correct in grammar activity",
+  "constructUseIncMDesc": "Incorrect in grammar activity",
+  "constructUseIgnMDesc": "Ignored in grammar activity",
+  "constructUseEmojiDesc": "Correct in emoji activity",
   "constructUseNanDesc": "Not applicable",
   "xpIntoLevel": "{currentXP} / {maxXP} XP",
   "@xpIntoLevel": {
@@ -4648,5 +4655,10 @@
   "pleaseAgreeToTOS": "Please agree to the Terms and Conditions",
   "pleaseEnterEmail": "Please enter a valid email address.",
   "pleaseSelectALanguage": "Please select a language",
-  "myBaseLanguage": "My base language"
+  "myBaseLanguage": "My base language",
+  "publicProfileTitle": "Allow my profile to be found in search",
+  "publicProfileDesc": "By enabling this option, I confirm that I am of legal age in my country of residence",
+  "clickWordsInstructions": "Click on individual words for more activities.",
+  "chooseBestDefinition": "Choose the best definition",
+  "chooseBaseForm": "Choose the base form"
 }

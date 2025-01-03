@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 import 'package:fluffychat/pangea/constants/model_keys.dart';
+import 'package:fluffychat/pangea/models/pangea_token_text_model.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:http/http.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../config/environment.dart';
-import '../models/pangea_token_model.dart';
 import '../network/requests.dart';
 import '../network/urls.dart';
 
@@ -37,6 +37,10 @@ class ContextualizationTranslationRepo {
         e: Exception(
           "empty translations in contextual translation response return",
         ),
+        data: {
+          "accessToken": accessToken,
+          "request": request.toJson(),
+        },
       );
     }
 

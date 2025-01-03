@@ -86,11 +86,11 @@ class ChatDetailsController extends State<ChatDetails> {
       maxLines: 8,
     );
     if (input == null) return;
-    final success = await showFutureLoadingDialog(
-      context: context,
-      future: () => room.setDescription(input),
-    );
     // #Pangea
+    // final success = await showFutureLoadingDialog(
+    //   context: context,
+    //   future: () => room.setDescription(input.single),
+    // );
     // if (success.error == null) {
     //   ScaffoldMessenger.of(context).showSnackBar(
     //     SnackBar(

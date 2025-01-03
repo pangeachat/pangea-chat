@@ -143,6 +143,16 @@ class ActivityRecordResponse {
         return score > 0
             ? ConstructUseTypeEnum.corWL
             : ConstructUseTypeEnum.incWL;
+      case ActivityTypeEnum.emoji:
+        return ConstructUseTypeEnum.em;
+      case ActivityTypeEnum.lemmaId:
+        return score > 0
+            ? ConstructUseTypeEnum.corL
+            : ConstructUseTypeEnum.incL;
+      case ActivityTypeEnum.morphId:
+        return score > 0
+            ? ConstructUseTypeEnum.corM
+            : ConstructUseTypeEnum.incM;
       case ActivityTypeEnum.hiddenWordListening:
         return score > 0
             ? ConstructUseTypeEnum.corHWL
@@ -155,9 +165,40 @@ class ActivityRecordResponse {
     PracticeActivityModel practiceActivity,
     ConstructUseMetaData metadata,
   ) {
-    if (practiceActivity.targetTokens == null) {
+    if (practiceActivity.targetTokens == null ||
+        practiceActivity.targetTokens!.isEmpty) {
       return [];
     }
+
+    if (practiceActivity.activityType == ActivityTypeEnum.emoji) {
+      final token = practiceActivity.targetTokens!.first;
+      return [
+        OneConstructUse(
+          lemma: token.lemma.text,
+          form: token.text.content,
+          constructType: ConstructTypeEnum.vocab,
+          useType: useType(practiceActivity.activityType),
+          metadata: metadata,
+          category: token.pos,
+        ),
+      ];
+    }
+
+    if (practiceActivity.activityType == ActivityTypeEnum.morphId) {
+      return practiceActivity.tgtConstructs
+          .map(
+            (token) => OneConstructUse(
+              lemma: token.lemma,
+              form: practiceActivity.targetTokens!.first.text.content,
+              constructType: ConstructTypeEnum.morph,
+              useType: useType(practiceActivity.activityType),
+              metadata: metadata,
+              category: token.category,
+            ),
+          )
+          .toList();
+    }
+
     final uses = practiceActivity.targetTokens!
         .map(
           (token) => OneConstructUse(

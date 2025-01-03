@@ -45,6 +45,7 @@ class SpaceCodeUtil {
       okLabel: L10n.of(context).ok,
       cancelLabel: L10n.of(context).cancel,
       hintText: L10n.of(context).joinWithClassCodeHint,
+      autoSubmit: true,
     );
     if (spaceCode == null || spaceCode.isEmpty) return;
     await pangeaController.classController.joinClasswithCode(

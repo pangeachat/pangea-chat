@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
-
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-
 import 'package:fluffychat/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
 
 Future<String?> showTextInputDialog({
   required BuildContext context,
@@ -24,6 +22,9 @@ Future<String?> showTextInputDialog({
   TextInputType? keyboardType,
   int? maxLength,
   bool autocorrect = true,
+  // #Pangea
+  bool autoSubmit = false,
+  // Pangea#
 }) =>
     showAdaptiveDialog<String>(
       context: context,
@@ -67,6 +68,19 @@ Future<String?> showTextInputDialog({
                         prefixText: prefixText,
                         suffixText: suffixText,
                       ),
+                      // #Pangea
+                      onSubmitted: autoSubmit
+                          ? (_) {
+                              final input = controller.text;
+                              final errorText = validator?.call(input);
+                              if (errorText != null) {
+                                error = errorText;
+                                return;
+                              }
+                              Navigator.of(context).pop<String>(input);
+                            }
+                          : null,
+                      // Pangea#
                     );
                   },
                 ),

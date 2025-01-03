@@ -21,10 +21,6 @@ class UserController extends BaseController {
   /// Convenience function that returns the user ID currently stored in the client.
   String? get userId => _pangeaController.matrixState.client.userID;
 
-  /// Convenience function that returns the accessToken currently stored in the client.
-  String? get _matrixAccessToken =>
-      _pangeaController.matrixState.client.accessToken;
-
   /// Cached version of the user profile, so it doesn't have
   /// to be read in from client's account data each time it is accessed.
   Profile? _cachedProfile;
@@ -115,7 +111,11 @@ class UserController extends BaseController {
       await _initialize();
       addProfileListener();
     } catch (err, s) {
-      ErrorHandler.logError(e: err, s: s);
+      ErrorHandler.logError(
+        e: err,
+        s: s,
+        data: {},
+      );
     } finally {
       _profileCompleter!.complete();
     }
@@ -159,6 +159,7 @@ class UserController extends BaseController {
     if (userId == null) {
       ErrorHandler.logError(
         e: "calling fullname with userId == null",
+        data: {},
       );
       return null;
     }
@@ -173,7 +174,11 @@ class UserController extends BaseController {
       await initialize();
       return profile.userSettings.targetLanguage != null;
     } catch (err, s) {
-      ErrorHandler.logError(e: err, s: s);
+      ErrorHandler.logError(
+        e: err,
+        s: s,
+        data: {},
+      );
       return false;
     }
   }
@@ -208,7 +213,11 @@ class UserController extends BaseController {
           srcLang != LanguageKeys.unknownLanguage &&
           tgtLang != LanguageKeys.unknownLanguage;
     } catch (err, s) {
-      ErrorHandler.logError(e: err, s: s);
+      ErrorHandler.logError(
+        e: err,
+        s: s,
+        data: {},
+      );
       return false;
     }
   }

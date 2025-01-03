@@ -55,6 +55,16 @@ class SignupPageController extends State<SignupPage> {
     });
   }
 
+  @override
+  void dispose() {
+    usernameController.dispose();
+    passwordController.dispose();
+    emailController.dispose();
+    loading = false;
+    error = null;
+    super.dispose();
+  }
+
   bool get enableSignUp =>
       !loading &&
       isTnCChecked &&
@@ -185,13 +195,21 @@ class SignupPageController extends State<SignupPage> {
       }
     } on MatrixException catch (e, s) {
       if (e.error != MatrixError.M_THREEPID_IN_USE) {
-        ErrorHandler.logError(e: e, s: s);
+        ErrorHandler.logError(
+          e: e,
+          s: s,
+          data: {},
+        );
       }
       error = e.errorMessage;
     } catch (e, s) {
       const cancelledString = "Exception: Request has been canceled";
       if (e.toString() != cancelledString) {
-        ErrorHandler.logError(e: e, s: s);
+        ErrorHandler.logError(
+          e: e,
+          s: s,
+          data: {},
+        );
       }
       error = (e).toLocalizedString(context);
     } finally {

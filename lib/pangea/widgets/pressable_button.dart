@@ -14,7 +14,9 @@ class PressableButton extends StatefulWidget {
 
   final void Function()? onPressed;
   final Stream? triggerAnimation;
-  final ClickPlayer? clickPlayer;
+  final bool playSound;
+
+  final bool? isShadow;
 
   const PressableButton({
     required this.borderRadius,
@@ -24,7 +26,8 @@ class PressableButton extends StatefulWidget {
     this.buttonHeight = 5,
     this.depressed = false,
     this.triggerAnimation,
-    this.clickPlayer,
+    this.isShadow,
+    this.playSound = false,
     super.key,
   });
 
@@ -38,6 +41,7 @@ class PressableButtonState extends State<PressableButton>
   late Animation<double> _tweenAnimation;
   Completer<void>? _animationCompleter;
   StreamSubscription? _triggerAnimationSubscription;
+  final ClickPlayer clickPlayer = ClickPlayer();
 
   // seperate the widget's depressed state from the internal
   // state to enable animations when this changes
@@ -53,6 +57,7 @@ class PressableButtonState extends State<PressableButton>
     );
     _tweenAnimation =
         Tween<double>(begin: 0, end: widget.buttonHeight).animate(_controller);
+
     if (!_depressed) {
       _triggerAnimationSubscription = widget.triggerAnimation?.listen((_) {
         _animationCompleter = Completer<void>();
@@ -76,6 +81,9 @@ class PressableButtonState extends State<PressableButton>
       });
     }
   }
+
+  bool get _isShadow =>
+      widget.isShadow ?? Theme.of(context).brightness == Brightness.light;
 
   void _onTapDown(TapDownDetails? details) {
     if (_depressed) return;
@@ -105,7 +113,7 @@ class PressableButtonState extends State<PressableButton>
     if (_animationCompleter != null) {
       await _animationCompleter!.future;
     }
-    widget.clickPlayer?.play();
+    if (widget.playSound) clickPlayer.play();
     if (!kIsWeb) {
       HapticFeedback.mediumImpact();
     }
@@ -121,6 +129,7 @@ class PressableButtonState extends State<PressableButton>
   void dispose() {
     _controller.dispose();
     _triggerAnimationSubscription?.cancel();
+    clickPlayer.dispose();
     super.dispose();
   }
 
@@ -135,20 +144,28 @@ class PressableButtonState extends State<PressableButton>
         child: AnimatedBuilder(
           animation: _tweenAnimation,
           builder: (context, child) {
-            return Container(
-              decoration: BoxDecoration(
-                color: Color.alphaBlend(
-                  Colors.black.withOpacity(0.25),
-                  widget.color,
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: _tweenAnimation.value),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Color.alphaBlend(
+                      _isShadow
+                          ? Colors.black.withOpacity(0.25)
+                          : Colors.white.withOpacity(0.25),
+                      widget.color,
+                    ),
+                    borderRadius: widget.borderRadius,
+                  ),
+                  padding: EdgeInsets.only(
+                    bottom: !_depressed
+                        ? widget.buttonHeight - _tweenAnimation.value
+                        : 0,
+                  ),
+                  child: child,
                 ),
-                borderRadius: widget.borderRadius,
-              ),
-              padding: EdgeInsets.only(
-                bottom: !_depressed
-                    ? widget.buttonHeight - _tweenAnimation.value
-                    : 0,
-              ),
-              child: child,
+              ],
             );
           },
           child: Container(
