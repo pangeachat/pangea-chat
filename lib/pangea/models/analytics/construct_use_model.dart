@@ -66,15 +66,15 @@ class ConstructUses {
   String get xpEmoji {
     if (points < AnalyticsConstants.xpForGreens) {
       // bean emoji
-      return "🫛";
+      return AnalyticsConstants.emojiForSeed;
     }
 
     if (points < AnalyticsConstants.xpForFlower) {
       // sprout emoji
-      return "🌱";
+      return AnalyticsConstants.emojiForGreen;
     }
 
     // flower emoji
-    return "🌺";
+    return AnalyticsConstants.emojiForFlower;
   }
 }
