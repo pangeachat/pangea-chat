@@ -128,19 +128,30 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
   }
 
   /// If sentence TTS is playing a word, highlight that word in message overlay
-  void highlightCurrentText(int currentPosition, List<TTSToken> tokens) {
-    final List<PangeaTokenText> textToSelect = [];
+  void highlightCurrentText(int currentPosition, List<TTSToken> ttsTokens) {
+    final List<TTSToken> textToSelect = [];
     // Check if current time is between start and end times of tokens
-    for (final TTSToken token in tokens) {
+    for (final TTSToken token in ttsTokens) {
       if (token.endMS > currentPosition) {
         if (token.startMS < currentPosition) {
-          textToSelect.add(token.text);
+          textToSelect.add(token);
         } else {
           break;
         }
       }
     }
-    _selectedSpan = textToSelect.isEmpty ? null : textToSelect;
+
+    if (const ListEquality().equals(textToSelect, _selectedSpan)) return;
+    if (tokens != null) {
+      for (final ttsToken in textToSelect) {
+        final matchingToken = ttsToken.matchingToken(tokens!);
+        if (matchingToken?.pos.toLowerCase() == 'punct') {
+          textToSelect.remove(ttsToken);
+        }
+      }
+    }
+    _selectedSpan =
+        textToSelect.isEmpty ? null : textToSelect.map((t) => t.text).toList();
     setState(() {});
   }
 
