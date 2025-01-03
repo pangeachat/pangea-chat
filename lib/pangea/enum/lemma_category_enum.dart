@@ -1,7 +1,6 @@
-import 'dart:ui';
-
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/constants/analytics_constants.dart';
+import 'package:flutter/material.dart';
 
 enum LemmaCategoryEnum {
   flowers,
@@ -13,22 +12,24 @@ extension LemmaCategoryExtension on LemmaCategoryEnum {
   Color get color {
     switch (this) {
       case LemmaCategoryEnum.flowers:
-        return AppConfig.primaryColorLight;
+        return Color.lerp(AppConfig.primaryColor, Colors.white, 0.6) ??
+            AppConfig.primaryColor;
       case LemmaCategoryEnum.greens:
-        return AppConfig.success;
+        return Color.lerp(AppConfig.success, Colors.white, 0.6) ??
+            AppConfig.success;
       case LemmaCategoryEnum.seeds:
-        return AppConfig.goldLight;
+        return Color.lerp(AppConfig.gold, Colors.white, 0.6) ?? AppConfig.gold;
     }
   }
 
   String get emoji {
     switch (this) {
       case LemmaCategoryEnum.flowers:
-        return "🌸";
+        return AnalyticsConstants.emojiForFlower;
       case LemmaCategoryEnum.greens:
-        return "🌱";
+        return AnalyticsConstants.emojiForGreen;
       case LemmaCategoryEnum.seeds:
-        return "🫛";
+        return AnalyticsConstants.emojiForSeed;
     }
   }
 

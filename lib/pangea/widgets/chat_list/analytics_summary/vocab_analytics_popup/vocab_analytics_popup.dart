@@ -1,4 +1,7 @@
+import 'package:fluffychat/config/app_config.dart';
+import 'package:fluffychat/pangea/constants/analytics_constants.dart';
 import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
+import 'package:fluffychat/pangea/enum/lemma_category_enum.dart';
 import 'package:fluffychat/pangea/enum/progress_indicators_enum.dart';
 import 'package:fluffychat/pangea/models/analytics/construct_list_model.dart';
 import 'package:fluffychat/pangea/models/analytics/construct_use_model.dart';
@@ -26,40 +29,155 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
     return entries;
   }
 
-  // a wrapped list of chips with the content of the lemmas and no border/background/etc
-  // when construct(n).xpEmoji != construct(n+1).xpEmoji, add a ListTile with the n+1 emoji
+  /// Produces list of chips with lemma content,
+  /// and assigns them to flowers, greens, and seeds tiles
   Widget get dialogContent {
     if (_constructsModel.constructList(type: ConstructTypeEnum.vocab).isEmpty) {
       return Center(child: Text(L10n.of(context).noDataFound));
     }
 
-    final List<Widget> tiles = [];
+    // Get lists of lemmas
+    final List<Widget> flowerLemmas = [];
+    final List<Widget> greenLemmas = [];
+    final List<Widget> seedLemmas = [];
     for (int i = 0; i < _sortedEntries.length; i++) {
       final construct = _sortedEntries[i];
-      final nextConstruct =
-          i + 1 < _sortedEntries.length ? _sortedEntries[i + 1] : null;
 
-      tiles.add(
-        VocabChip(
-          construct: construct,
-          onTap: () {
-            print("TODO: Implement this ${construct.lemma}");
-          },
-        ),
-      );
-
-      if (nextConstruct != null && construct.points != nextConstruct.points) {
-        tiles.add(
-          ListTile(
-            title: Text(nextConstruct.points.toString()),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+      // Add lemma to relevant widget list, followed by comma
+      if (construct.points < AnalyticsConstants.xpForGreens) {
+        seedLemmas.add(
+          VocabChip(
+            construct: construct,
+            onTap: () {
+              debugPrint("TODO: Implement this ${construct.lemma}");
+            },
+          ),
+        );
+        seedLemmas.add(
+          const Text(
+            ", ",
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.black,
+            ),
+          ),
+        );
+      } else if (construct.points >= AnalyticsConstants.xpForFlower) {
+        flowerLemmas.add(
+          VocabChip(
+            construct: construct,
+            onTap: () {
+              debugPrint("TODO: Implement this ${construct.lemma}");
+            },
+          ),
+        );
+        flowerLemmas.add(
+          const Text(
+            ", ",
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.black,
+            ),
+          ),
+        );
+      } else {
+        greenLemmas.add(
+          VocabChip(
+            construct: construct,
+            onTap: () {
+              debugPrint("TODO: Implement this ${construct.lemma}");
+            },
+          ),
+        );
+        greenLemmas.add(
+          const Text(
+            ", ",
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.black,
+            ),
           ),
         );
       }
     }
 
+    // Pass sorted lemmas to background widgets
+    final Widget flowers =
+        dialogWidget(LemmaCategoryEnum.flowers, flowerLemmas);
+    final Widget greens = dialogWidget(LemmaCategoryEnum.greens, greenLemmas);
+    final Widget seeds = dialogWidget(LemmaCategoryEnum.seeds, seedLemmas);
+
     return ListView(
-      children: tiles,
+      children: [flowers, greens, seeds],
+    );
+  }
+
+  /// Card that contains flowers, greens, and seeds chips
+  Widget dialogWidget(LemmaCategoryEnum type, List<Widget> lemmaList) {
+    // Remove extraneous commas from lemmaList
+    if (lemmaList.isNotEmpty) {
+      lemmaList.removeLast();
+    } else {
+      lemmaList.add(
+        const Text(
+          "No lemmas",
+          style: TextStyle(
+            fontSize: 15,
+            color: Colors.black,
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+      child: Material(
+        borderRadius:
+            const BorderRadius.all(Radius.circular(AppConfig.borderRadius)),
+        color: type.color,
+        child: Padding(
+          padding: const EdgeInsets.all(
+            10,
+          ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    backgroundColor:
+                        Theme.of(context).brightness == Brightness.light
+                            ? Colors.white
+                            : Colors.black,
+                    radius: 14,
+                    child: Text(
+                      type.emoji,
+                    ),
+                  ),
+                  Text(
+                    " ${type.xpString} XP",
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Wrap(
+                spacing: 0,
+                runSpacing: 0,
+                children: lemmaList,
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -80,6 +198,7 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
                 icon: const Icon(Icons.close),
                 onPressed: Navigator.of(context).pop,
               ),
+              // Edit: add search and training buttons
             ),
             body: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),
@@ -109,24 +228,26 @@ class VocabChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(4),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-          child: Text(
-            construct.lemma,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).textTheme.titleMedium?.color,
+    return GestureDetector(
+      onTap: onTap,
+      child: Text(
+        construct.lemma,
+        style: const TextStyle(
+          // Workaround to add space between text and underline
+          color: Colors.transparent,
+          shadows: [
+            Shadow(
+              color: Colors.black,
+              offset: Offset(0, -3),
             ),
-          ),
+          ],
+          decoration: TextDecoration.underline,
+          decorationStyle: TextDecorationStyle.dashed,
+          decorationColor: Colors.black,
+          decorationThickness: 1,
+          fontSize: 15,
         ),
       ),
     );
   }
 }
-
-/// A container with rounded corners and background color
