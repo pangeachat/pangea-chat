@@ -193,7 +193,9 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
       // Pass current timestamp to overlay, so it can highlight as necessary
       if (widget.matrixFile != null) {
         widget.overlayController?.highlightCurrentText(
-            state.inMilliseconds, widget.matrixFile!.tokens);
+          state.inMilliseconds,
+          widget.matrixFile!.tokens,
+        );
       }
       // Pangea#
     });
@@ -339,6 +341,14 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
       status == AudioPlayerStatus.downloaded
           ? _playAction()
           : _downloadAction();
+    }
+    // View token start and end times
+    if (widget.matrixFile != null) {
+      for (final token in widget.matrixFile!.tokens) {
+        debugPrint(
+          "Start: ${token.startMS}, end: ${token.endMS}, text: '${token.text.content}'",
+        );
+      }
     }
     // Pangea#
   }
