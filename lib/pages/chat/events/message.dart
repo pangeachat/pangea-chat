@@ -510,6 +510,7 @@ class Message extends StatelessWidget {
                                                   textColor: textColor,
                                                   onInfoTab: onInfoTab,
                                                   borderRadius: borderRadius,
+                                                  timeline: timeline,
                                                   // #Pangea
                                                   pangeaMessageEvent:
                                                       pangeaMessageEvent,

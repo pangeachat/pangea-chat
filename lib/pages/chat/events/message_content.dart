@@ -42,11 +42,13 @@ class MessageContent extends StatelessWidget {
   final Event? nextEvent;
   final Event? prevEvent;
   // Pangea#
+  final Timeline timeline;
 
   const MessageContent(
     this.event, {
     this.onInfoTab,
     super.key,
+    required this.timeline,
     required this.textColor,
     // #Pangea
     this.pangeaMessageEvent,
@@ -173,6 +175,7 @@ class MessageContent extends StatelessWidget {
               height: height,
               fit: fit,
               borderRadius: borderRadius,
+              timeline: timeline,
             );
           case CuteEventContent.eventType:
             return CuteContent(event);
