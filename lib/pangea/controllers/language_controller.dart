@@ -1,15 +1,13 @@
-import 'package:flutter/material.dart';
-
-import 'package:universal_io/io.dart';
+// ignore_for_file: depend_on_referenced_packages
 
 import 'package:fluffychat/pangea/constants/language_constants.dart';
 import 'package:fluffychat/pangea/controllers/language_list_controller.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/models/language_model.dart';
+import 'package:flutter/material.dart';
+import 'package:universal_io/io.dart';
+
 import '../widgets/user_settings/p_language_dialog.dart';
-
-// ignore: depend_on_referenced_packages
-
 
 class LanguageController {
   late PangeaController _pangeaController;

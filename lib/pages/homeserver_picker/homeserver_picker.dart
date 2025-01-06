@@ -23,7 +23,6 @@ import '../../utils/localized_exception_extension.dart';
 import 'package:fluffychat/utils/tor_stub.dart'
     if (dart.library.html) 'package:tor_detector_web/tor_detector_web.dart';
 
-
 class HomeserverPicker extends StatefulWidget {
   final bool addMultiAccount;
   const HomeserverPicker({required this.addMultiAccount, super.key});
