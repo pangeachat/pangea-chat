@@ -213,7 +213,8 @@ class PangeaToken {
       case ActivityTypeEnum.wordMeaning:
         return canBeDefined;
       case ActivityTypeEnum.lemmaId:
-        return lemma.saveVocab;
+        return lemma.saveVocab &&
+            text.content.toLowerCase() != lemma.text.toLowerCase();
       case ActivityTypeEnum.emoji:
         return true;
       case ActivityTypeEnum.morphId:
@@ -309,9 +310,10 @@ class PangeaToken {
       case ActivityTypeEnum.hiddenWordListening:
         return daysSinceLastUseByType(a) > 7;
       case ActivityTypeEnum.lemmaId:
-        return daysSinceLastUseByType(a) > 7;
+        return _didActivitySuccessfully(ActivityTypeEnum.wordMeaning) &&
+            daysSinceLastUseByType(a) > 7;
       case ActivityTypeEnum.emoji:
-        return getEmoji() == null;
+        return true;
       case ActivityTypeEnum.morphId:
         if (morphFeature == null || morphTag == null) {
           debugger(when: kDebugMode);
