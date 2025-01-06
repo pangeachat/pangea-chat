@@ -5,6 +5,7 @@ import 'package:fluffychat/pangea/enum/lemma_category_enum.dart';
 import 'package:fluffychat/pangea/enum/progress_indicators_enum.dart';
 import 'package:fluffychat/pangea/models/analytics/construct_list_model.dart';
 import 'package:fluffychat/pangea/models/analytics/construct_use_model.dart';
+import 'package:fluffychat/pangea/widgets/chat_list/analytics_summary/vocab_analytics_popup/vocab_definition_popup.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
@@ -49,7 +50,13 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
           VocabChip(
             construct: construct,
             onTap: () {
-              debugPrint("TODO: Implement this ${construct.lemma}");
+              showDialog<VocabDefinitionPopup>(
+                context: context,
+                builder: (c) => VocabDefinitionPopup(
+                  construct: construct,
+                  type: LemmaCategoryEnum.seeds,
+                ),
+              );
             },
           ),
         );
@@ -67,7 +74,13 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
           VocabChip(
             construct: construct,
             onTap: () {
-              debugPrint("TODO: Implement this ${construct.lemma}");
+              showDialog<VocabDefinitionPopup>(
+                context: context,
+                builder: (c) => VocabDefinitionPopup(
+                  construct: construct,
+                  type: LemmaCategoryEnum.flowers,
+                ),
+              );
             },
           ),
         );
@@ -85,7 +98,13 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
           VocabChip(
             construct: construct,
             onTap: () {
-              debugPrint("TODO: Implement this ${construct.lemma}");
+              showDialog<VocabDefinitionPopup>(
+                context: context,
+                builder: (c) => VocabDefinitionPopup(
+                  construct: construct,
+                  type: LemmaCategoryEnum.greens,
+                ),
+              );
             },
           ),
         );
@@ -149,9 +168,12 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
                         Theme.of(context).brightness == Brightness.light
                             ? Colors.white
                             : Colors.black,
-                    radius: 14,
+                    radius: 16,
                     child: Text(
-                      type.emoji,
+                      " ${type.emoji}",
+                      style: const TextStyle(
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                   Text(

@@ -22,6 +22,19 @@ extension LemmaCategoryExtension on LemmaCategoryEnum {
     }
   }
 
+  Color get darkColor {
+    switch (this) {
+      case LemmaCategoryEnum.flowers:
+        return Color.lerp(AppConfig.primaryColor, Colors.white, 0.3) ??
+            AppConfig.primaryColor;
+      case LemmaCategoryEnum.greens:
+        return Color.lerp(AppConfig.success, Colors.black, 0.3) ??
+            AppConfig.success;
+      case LemmaCategoryEnum.seeds:
+        return Color.lerp(AppConfig.gold, Colors.black, 0.3) ?? AppConfig.gold;
+    }
+  }
+
   String get emoji {
     switch (this) {
       case LemmaCategoryEnum.flowers:
