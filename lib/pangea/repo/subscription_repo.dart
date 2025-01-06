@@ -68,7 +68,7 @@ class SubscriptionRepo {
       choreoApiKey: Environment.choreoApiKey,
       accessToken: MatrixState.pangeaController.userController.accessToken,
     );
-    
+
     final http.Response res = await req.get(url: PApiUrls.rcSubscription);
     final Map<String, dynamic> json = jsonDecode(res.body);
     final RCSubscriptionResponseModel resp =
