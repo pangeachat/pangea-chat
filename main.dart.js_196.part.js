@@ -1423,9 +1423,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$learningSettings() {
       return "Learning settings";
     },
-    get$inviteStudentByUserNameDesc() {
-      return "If your student already has an account, you can search for them.";
-    },
     get$almostPerfect() {
       return "That seems right! Here's what I would have said.";
     },
@@ -4459,6 +4456,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_196", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "d2b1qnQFN66IjYXoHLhMb1Lk/0I=");
+})($__dart_deferred_initializers__, "WL9DbFmnfzEiPzKYLKh3NbYLElc=");
 ;
 //# sourceMappingURL=main.dart.js_196.part.js.map
