@@ -1,6 +1,10 @@
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
+
 import 'package:collection/collection.dart';
+import 'package:matrix/matrix.dart';
+
 import 'package:fluffychat/pangea/constants/language_constants.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
@@ -14,9 +18,6 @@ import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activ
 import 'package:fluffychat/pangea/repo/lemma_definition_repo.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-import 'package:flutter/foundation.dart';
-import 'package:matrix/matrix.dart';
-
 import '../constants/model_keys.dart';
 import 'lemma.dart';
 
