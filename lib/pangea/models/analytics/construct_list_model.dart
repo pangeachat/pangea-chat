@@ -1,13 +1,10 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
-
 import 'package:collection/collection.dart';
 
 import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
 import 'package:fluffychat/pangea/models/analytics/construct_use_model.dart';
 import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
-import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 
@@ -20,13 +17,12 @@ class ConstructListModel {
     prevXP = 0;
     totalXP = 0;
     level = 0;
-    vocabLemmas = 0;
-    grammarLemmas = 0;
     _uses.clear();
   }
 
-  List<OneConstructUse> _uses = [];
+  final List<OneConstructUse> _uses = [];
   List<OneConstructUse> get uses => _uses;
+  List<OneConstructUse> get truncatedUses => _uses.take(100).toList();
 
   /// A map of lemmas to ConstructUses, each of which contains a lemma
   /// key = lemmma + constructType.string, value = ConstructUses
@@ -39,18 +35,27 @@ class ConstructListModel {
   /// A map of categories to lists of ConstructUses
   Map<String, List<ConstructUses>> _categoriesToUses = {};
 
+  /// A list of unique vocab lemmas
+  List<String> vocabLemmasList = [];
+
+  /// A list of unique grammar lemmas
+  List<String> grammarLemmasList = [];
+
   /// Analytics data consumed by widgets. Updated each time new analytics come in.
   int prevXP = 0;
   int totalXP = 0;
   int level = 0;
-  int vocabLemmas = 0;
-  int grammarLemmas = 0;
 
   ConstructListModel({
     required List<OneConstructUse> uses,
   }) {
     updateConstructs(uses);
   }
+
+  int get totalLemmas => vocabLemmasList.length + grammarLemmasList.length;
+  int get vocabLemmas => vocabLemmasList.length;
+  int get grammarLemmas => grammarLemmasList.length;
+  List<String> get lemmasList => vocabLemmasList + grammarLemmasList;
 
   /// Given a list of new construct uses, update the map of construct
   /// IDs to ConstructUses and re-sort the list of ConstructUses
@@ -81,7 +86,6 @@ class ConstructListModel {
   void _updateUsesList(List<OneConstructUse> newUses) {
     newUses.sort((a, b) => b.timeStamp.compareTo(a.timeStamp));
     _uses.insertAll(0, newUses);
-    _uses = _uses.take(100).toList();
   }
 
   /// A map of lemmas to ConstructUses, each of which contains a lemma
@@ -141,15 +145,15 @@ class ConstructListModel {
   }
 
   void _updateMetrics() {
-    vocabLemmas = constructList(type: ConstructTypeEnum.vocab)
+    vocabLemmasList = constructList(type: ConstructTypeEnum.vocab)
         .map((e) => e.lemma)
         .toSet()
-        .length;
+        .toList();
 
-    grammarLemmas = constructList(type: ConstructTypeEnum.morph)
+    grammarLemmasList = constructList(type: ConstructTypeEnum.morph)
         .map((e) => e.lemma)
         .toSet()
-        .length;
+        .toList();
 
     prevXP = totalXP;
     totalXP = _constructList.fold<int>(
@@ -205,9 +209,7 @@ class ConstructListModel {
 
   List<ConstructUses> constructList({ConstructTypeEnum? type}) => _constructList
       .where(
-        (constructUse) =>
-            constructUse.points > 0 &&
-            (type == null || constructUse.constructType == type),
+        (constructUse) => type == null || constructUse.constructType == type,
       )
       .toList();
 
@@ -224,91 +226,47 @@ class ConstructListModel {
     );
   }
 
-  List<String> morphActivityDistractors(
-    String morphFeature,
-    String morphTag,
-  ) {
-    final List<ConstructUses> morphConstructs = constructList(
-      type: ConstructTypeEnum.morph,
-    );
-    final List<String> possibleDistractors = morphConstructs
-        .where(
-          (c) =>
-              c.category == morphFeature.toLowerCase() &&
-              c.lemma.toLowerCase() != morphTag.toLowerCase() &&
-              c.lemma.isNotEmpty &&
-              c.lemma != "X",
-        )
-        .map((c) => c.lemma)
-        .toList();
-
-    possibleDistractors.shuffle();
-    return possibleDistractors.take(3).toList();
-  }
-
-  Future<List<String>> lemmaActivityDistractors(PangeaToken token) async {
-    final List<String> lemmas = constructList(type: ConstructTypeEnum.vocab)
-        .map((c) => c.lemma)
-        .toSet()
-        .toList();
-
-    // Offload computation to an isolate
-    final Map<String, int> distances =
-        await compute(_computeDistancesInIsolate, {
-      'lemmas': lemmas,
-      'target': token.lemma.text,
-    });
-
-    // Sort lemmas by distance
-    final sortedLemmas = distances.keys.toList()
-      ..sort((a, b) => distances[a]!.compareTo(distances[b]!));
-
-    // Take the shortest 4
-    final choices = sortedLemmas.take(4).toList();
-    if (!choices.contains(token.lemma.text)) {
-      final random = Random();
-      choices[random.nextInt(4)] = token.lemma.text;
+  // Not storing this for now to reduce memory load
+  // It's only used by downloads, so doesn't need to be accessible on the fly
+  Map<String, List<ConstructUses>> lemmasToUses({
+    ConstructTypeEnum? type,
+  }) {
+    final Map<String, List<ConstructUses>> lemmasToUses = {};
+    final constructs = constructList(type: type);
+    for (final ConstructUses use in constructs) {
+      final lemma = use.lemma;
+      lemmasToUses.putIfAbsent(lemma, () => []);
+      lemmasToUses[lemma]!.add(use);
     }
-    return choices;
+    return lemmasToUses;
   }
+}
 
-  // isolate helper function
-  Map<String, int> _computeDistancesInIsolate(Map<String, dynamic> params) {
-    final List<String> lemmas = params['lemmas'];
-    final String target = params['target'];
+class LemmasToUsesWrapper {
+  final Map<String, List<ConstructUses>> lemmasToUses;
 
-    // Calculate Levenshtein distances
-    final Map<String, int> distances = {};
-    for (final lemma in lemmas) {
-      distances[lemma] = levenshteinDistanceSync(target, lemma);
-    }
-    return distances;
-  }
+  LemmasToUsesWrapper(this.lemmasToUses);
 
-  int levenshteinDistanceSync(String s, String t) {
-    final int m = s.length;
-    final int n = t.length;
-    final List<List<int>> dp = List.generate(
-      m + 1,
-      (_) => List.generate(n + 1, (_) => 0),
-    );
+  List<String> get correctUseLemmas => lemmasToUses.entries
+      .where((entry) => entry.value.any((use) => use.hasCorrectUse))
+      .map((entry) => entry.key)
+      .toList();
 
-    for (int i = 0; i <= m; i++) {
-      for (int j = 0; j <= n; j++) {
-        if (i == 0) {
-          dp[i][j] = j;
-        } else if (j == 0) {
-          dp[i][j] = i;
-        } else if (s[i - 1] == t[j - 1]) {
-          dp[i][j] = dp[i - 1][j - 1];
-        } else {
-          dp[i][j] = 1 +
-              [dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]]
-                  .reduce((a, b) => a < b ? a : b);
-        }
-      }
-    }
+  List<String> get incorrectUseLemmas => lemmasToUses.entries
+      .where((entry) => entry.value.any((use) => use.hasIncorrectUse))
+      .map((entry) => entry.key)
+      .toList();
 
-    return dp[m][n];
-  }
+  int totalXP(String lemma) => lemmasToUses[lemma]!.fold<int>(
+        0,
+        (total, use) => total + use.points,
+      );
+
+  List<String> thresholdedLemmas(int? start, int? end) => lemmasToUses.entries
+      .where((entry) {
+        final xp = totalXP(entry.key);
+        return (end == null || xp >= end) && (start == null || xp <= start);
+      })
+      .map((entry) => entry.key)
+      .toList();
 }
