@@ -59,7 +59,8 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
   Animation<double>? _overlayPositionAnimation;
 
   MessageMode toolbarMode = MessageMode.noneSelected;
-  List<PangeaTokenText>? _selectedSpan;
+  PangeaTokenText? _selectedSpan;
+  List<PangeaTokenText>? temporarySelection;
 
   List<PangeaToken>? tokens;
   bool initialized = false;
@@ -109,7 +110,7 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
   }
 
   void _updateSelectedSpan(PangeaTokenText selectedSpan) {
-    _selectedSpan = [selectedSpan];
+    _selectedSpan = selectedSpan;
 
     if (!(messageAnalyticsEntry?.hasHiddenWordActivity ?? false)) {
       widget.chatController.choreographer.tts.tryToSpeak(
@@ -141,16 +142,17 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
       }
     }
 
-    if (const ListEquality().equals(textToSelect, _selectedSpan)) return;
-    if (tokens != null) {
-      for (final ttsToken in textToSelect) {
-        final matchingToken = ttsToken.matchingToken(tokens!);
-        if (matchingToken?.pos.toLowerCase() == 'punct') {
-          textToSelect.remove(ttsToken);
-        }
-      }
-    }
-    _selectedSpan =
+    if (const ListEquality().equals(textToSelect, temporarySelection)) return;
+    // This messes with multi-word selection
+    // if (tokens != null) {
+    //   for (final ttsToken in textToSelect) {
+    //     final matchingToken = ttsToken.matchingToken(tokens!);
+    //     if (matchingToken?.pos.toLowerCase() == 'punct') {
+    //       textToSelect.remove(ttsToken);
+    //     }
+    //   }
+    // }
+    temporarySelection =
         textToSelect.isEmpty ? null : textToSelect.map((t) => t.text).toList();
     setState(() {});
   }
@@ -304,6 +306,9 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
         debugPrint("updateToolbarMode: $mode - clearing selectedSpan");
         _selectedSpan = null;
       }
+      if (mode != MessageMode.textToSpeech) {
+        temporarySelection = null;
+      }
       toolbarMode = mode;
     });
   }
@@ -318,8 +323,8 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
     }
 
     return widget._pangeaMessageEvent!.messageDisplayText.substring(
-      _selectedSpan!.first.offset,
-      _selectedSpan!.first.offset + _selectedSpan!.first.length,
+      _selectedSpan!.offset,
+      _selectedSpan!.offset + _selectedSpan!.length,
     );
   }
 
@@ -353,21 +358,25 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
     setState(() {});
   }
 
-  /// Whether the given token is currently selected
+  /// Whether the given token is currently selected or highlighted
   bool isTokenSelected(PangeaToken token) {
-    final isSelected = (_selectedSpan?.firstWhereOrNull(
-          (e) => e.offset == token.text.offset && e.length == token.text.length,
-        )) !=
-        null;
+    final isSelected = (_selectedSpan?.offset == token.text.offset &&
+            _selectedSpan?.length == token.text.length) ||
+        ((temporarySelection?.firstWhereOrNull(
+              (e) =>
+                  e.offset == token.text.offset &&
+                  e.length == token.text.length,
+            )) !=
+            null);
     return isSelected;
   }
 
   PangeaToken? get selectedToken => tokens?.firstWhereOrNull(isTokenSelected);
 
   /// Whether the overlay is currently displaying a selection
-  bool get isSelection => _selectedSpan != null;
+  bool get isSelection => _selectedSpan != null || temporarySelection != null;
 
-  List<PangeaTokenText>? get selectedSpan => _selectedSpan;
+  PangeaTokenText? get selectedSpan => _selectedSpan;
 
   bool get _hasReactions {
     final reactionsEvents = widget._event.aggregatedEvents(
