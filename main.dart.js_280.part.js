@@ -4440,6 +4440,90 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$notTheCodeError() {
       return "Sorry, that's not the code!";
     },
+    get$totalXP() {
+      return "Total XP";
+    },
+    get$numLemmas() {
+      return "Number of lemmas";
+    },
+    get$numLemmasUsedCorrectly() {
+      return "Number of lemmas used correctly at least once";
+    },
+    get$numLemmasUsedIncorrectly() {
+      return "Number of lemmas used incorrectly at least once";
+    },
+    get$numLemmasSmallXP() {
+      return "Number of lemmas with 0 - 30 XP";
+    },
+    get$numLemmasMediumXP() {
+      return "Number of lemmas with 31 - 200 XP";
+    },
+    get$numLemmasLargeXP() {
+      return "Number of lemmas with > 200 XP";
+    },
+    get$numGrammarConcepts() {
+      return "Number of grammar concepts";
+    },
+    get$listGrammarConcepts() {
+      return "List of grammar concepts";
+    },
+    get$listGrammarConceptsUsedCorrectly() {
+      return "List of grammar concepts used correctly at least 80% of the time";
+    },
+    get$listGrammarConceptsUsedIncorrectly() {
+      return "List of grammar concepts used correctly less than 80% of the time";
+    },
+    get$listGrammarConceptsSmallXP() {
+      return "List of grammar concepts with 0 - 30 XP";
+    },
+    get$listGrammarConceptsMediumXP() {
+      return "List of grammar concepts with 31 - 200 XP";
+    },
+    get$listGrammarConceptsLargeXP() {
+      return "List of grammar concepts with 201 - 500 XP";
+    },
+    get$listGrammarConceptsHugeXP() {
+      return "List of grammar concepts with > 500 XP";
+    },
+    get$numMessagesSent() {
+      return "Number of messages sent";
+    },
+    get$numWordsTyped() {
+      return "Number of words typed in original messages";
+    },
+    get$numCorrectChoices() {
+      return "Number of correct words chosen from system-generated suggestions";
+    },
+    get$numIncorrectChoices() {
+      return "Number of incorrect words chosen from system-generated suggestions";
+    },
+    get$downloadSpaceAnalytics() {
+      return "Download space analytics";
+    },
+    get$commaSeparatedFile() {
+      return "CSV";
+    },
+    get$excelFile() {
+      return "Excel";
+    },
+    get$fileType() {
+      return "File type";
+    },
+    get$download(_) {
+      return "Download";
+    },
+    get$analyticsNotAvailable() {
+      return "User analytics not available";
+    },
+    get$downloading() {
+      return "Downloading...";
+    },
+    get$failedFetchUserAnalytics() {
+      return "Failed to download user analytics";
+    },
+    get$downloadComplete() {
+      return "Download complete!";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4455,6 +4539,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_280", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "cl+KeZqmRDM5VSiPagKATP1foss=");
+})($__dart_deferred_initializers__, "iujZCrExcyJIklfvIZrH9T4g28o=");
 ;
 //# sourceMappingURL=main.dart.js_280.part.js.map
