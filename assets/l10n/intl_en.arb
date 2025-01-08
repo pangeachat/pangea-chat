@@ -4661,5 +4661,9 @@
   "clickWordsInstructions": "Click on individual words for more activities.",
   "chooseBestDefinition": "Choose the best definition",
   "definitionSectionHeader": "Definition:",
-  "formSectionHeader": "Forms used in chats:"
+  "formSectionHeader": "Forms used in chats:",
+  "noEmojiSelectedTooltip": "No emoji selected",
+  "writingExercisesTooltip": "Writing exercises",
+  "listeningExercisesTooltip": "Listening exercises",
+  "readingExercisesTooltip": "Reading exercises"
 }

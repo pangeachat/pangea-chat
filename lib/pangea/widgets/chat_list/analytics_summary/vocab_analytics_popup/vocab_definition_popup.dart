@@ -221,10 +221,13 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                       emoji!,
                     ),
                   if (emoji == null)
-                    Icon(
-                      Icons.add_reaction_outlined,
-                      size: 25,
-                      color: textColor.withValues(alpha: 0.7),
+                    Tooltip(
+                      message: L10n.of(context).noEmojiSelectedTooltip,
+                      child: Icon(
+                        Icons.add_reaction_outlined,
+                        size: 25,
+                        color: textColor.withValues(alpha: 0.7),
+                      ),
                     ),
                   const SizedBox(
                     width: 7,
@@ -241,6 +244,7 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
               leading: IconButton(
                 icon: Icon(Icons.adaptive.arrow_back_outlined),
                 color: textColor,
+                tooltip: MaterialLocalizations.of(context).backButtonTooltip,
                 onPressed: Navigator.of(context).pop,
               ),
               actions: (exampleEventID != null)
@@ -267,14 +271,17 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Icon(
-                        // TODO: use POS specific icon
-                        // morphFeature doesn't work because this is Vocab analytics, not Morph
-                        (morphFeature != null)
-                            ? getIconForMorphFeature(morphFeature!)
-                            : Symbols.toys_and_games,
-                        size: 23,
-                        color: textColor.withValues(alpha: 0.7),
+                      Tooltip(
+                        message: L10n.of(context).grammarCopyPOS,
+                        child: Icon(
+                          // TODO: use POS specific icon
+                          // morphFeature doesn't work because this is Vocab analytics, not Morph
+                          (morphFeature != null)
+                              ? getIconForMorphFeature(morphFeature!)
+                              : Symbols.toys_and_games,
+                          size: 23,
+                          color: textColor.withValues(alpha: 0.7),
+                        ),
                       ),
                       const SizedBox(
                         width: 5,
@@ -407,10 +414,13 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Icon(
-                        Symbols.edit_square,
-                        size: 25,
-                        color: textColor.withValues(alpha: 0.7),
+                      Tooltip(
+                        message: L10n.of(context).writingExercisesTooltip,
+                        child: Icon(
+                          Symbols.edit_square,
+                          size: 25,
+                          color: textColor.withValues(alpha: 0.7),
+                        ),
                       ),
                       const SizedBox(
                         width: 7,
@@ -450,10 +460,13 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.hearing,
-                        size: 25,
-                        color: textColor.withValues(alpha: 0.7),
+                      Tooltip(
+                        message: L10n.of(context).listeningExercisesTooltip,
+                        child: Icon(
+                          Icons.hearing,
+                          size: 25,
+                          color: textColor.withValues(alpha: 0.7),
+                        ),
                       ),
                       const SizedBox(
                         width: 7,
@@ -469,10 +482,13 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Icon(
-                        Symbols.two_pager,
-                        size: 25,
-                        color: textColor.withValues(alpha: 0.7),
+                      Tooltip(
+                        message: L10n.of(context).readingExercisesTooltip,
+                        child: Icon(
+                          Symbols.two_pager,
+                          size: 25,
+                          color: textColor.withValues(alpha: 0.7),
+                        ),
                       ),
                       const SizedBox(
                         width: 7,
