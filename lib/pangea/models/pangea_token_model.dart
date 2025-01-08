@@ -521,7 +521,7 @@ class PangeaToken {
 
   Future<List<String>> getEmojiChoices() => LemmaDictionaryRepo.get(
         LemmaDefinitionRequest(
-          lemma: lemma.text,
+          lemma: lemma,
           partOfSpeech: pos,
           lemmaLang: MatrixState
                   .pangeaController.languageController.userL2?.langCode ??
