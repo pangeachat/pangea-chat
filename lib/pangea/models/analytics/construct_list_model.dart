@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-
 import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
 import 'package:fluffychat/pangea/models/analytics/construct_use_model.dart';
 import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
@@ -247,26 +246,90 @@ class LemmasToUsesWrapper {
 
   LemmasToUsesWrapper(this.lemmasToUses);
 
-  List<String> get correctUseLemmas => lemmasToUses.entries
-      .where((entry) => entry.value.any((use) => use.hasCorrectUse))
-      .map((entry) => entry.key)
-      .toList();
+  /// Return an object containing two lists, one of lemmas with
+  /// any correct uses and one of lemmas with any incorrect uses
+  LemmasOverUnderList lemmasByCorrectUse({
+    String Function(ConstructUses)? getCopy,
+  }) {
+    final List<String> correctLemmas = [];
+    final List<String> incorrectLemmas = [];
+    for (final entry in lemmasToUses.entries) {
+      final lemma = entry.key;
+      final constructUses = entry.value;
+      final copy = getCopy?.call(constructUses.first) ?? lemma;
+      if (constructUses.any((use) => use.hasCorrectUse)) {
+        correctLemmas.add(copy);
+      }
+      if (constructUses.any((use) => use.hasIncorrectUse)) {
+        incorrectLemmas.add(copy);
+      }
+    }
+    return LemmasOverUnderList(over: correctLemmas, under: incorrectLemmas);
+  }
 
-  List<String> get incorrectUseLemmas => lemmasToUses.entries
-      .where((entry) => entry.value.any((use) => use.hasIncorrectUse))
-      .map((entry) => entry.key)
-      .toList();
+  /// Return an object containing two lists, one of lemmas with percent used
+  /// correctly > percent and one of lemmas with percent used correctly < percent
+  LemmasOverUnderList lemmasByPercent({
+    double percent = 0.8,
+    String Function(ConstructUses)? getCopy,
+  }) {
+    final List<String> overLemmas = [];
+    final List<String> underLemmas = [];
+    for (final entry in lemmasToUses.entries) {
+      final lemma = entry.key;
+      final constructUses = entry.value;
+      final uses = constructUses.map((u) => u.uses).expand((e) => e).toList();
 
-  int totalXP(String lemma) => lemmasToUses[lemma]!.fold<int>(
-        0,
-        (total, use) => total + use.points,
-      );
+      int correct = 0;
+      int incorrect = 0;
+      for (final use in uses) {
+        if (use.pointValue > 0) {
+          correct++;
+        } else if (use.pointValue < 0) {
+          incorrect++;
+        }
+      }
 
-  List<String> thresholdedLemmas(int? start, int? end) => lemmasToUses.entries
-      .where((entry) {
-        final xp = totalXP(entry.key);
-        return (end == null || xp >= end) && (start == null || xp <= start);
-      })
-      .map((entry) => entry.key)
-      .toList();
+      if (correct + incorrect == 0) continue;
+
+      final copy = getCopy?.call(constructUses.first) ?? lemma;
+      final percent = correct / (correct + incorrect);
+      percent >= percent ? overLemmas.add(copy) : underLemmas.add(copy);
+    }
+    return LemmasOverUnderList(over: overLemmas, under: underLemmas);
+  }
+
+  int totalXP(String lemma) {
+    final uses = lemmasToUses[lemma];
+    if (uses == null) return 0;
+    if (uses.length == 1) return uses.first.points;
+    return lemmasToUses[lemma]!.fold<int>(
+      0,
+      (total, use) => total + use.points,
+    );
+  }
+
+  List<String> thresholdedLemmas({
+    required int start,
+    int? end,
+    String Function(ConstructUses)? getCopy,
+  }) {
+    final filteredList = lemmasToUses.entries.where((entry) {
+      final xp = totalXP(entry.key);
+      return xp >= start && (end == null || xp <= end);
+    });
+    return filteredList
+        .map((entry) => getCopy?.call(entry.value.first) ?? entry.key)
+        .toList();
+  }
+}
+
+class LemmasOverUnderList {
+  final List<String> over;
+  final List<String> under;
+
+  LemmasOverUnderList({
+    required this.over,
+    required this.under,
+  });
 }
