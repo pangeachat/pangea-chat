@@ -17,6 +17,7 @@ import 'package:fluffychat/pangea/models/analytics/construct_use_model.dart';
 import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
 import 'package:fluffychat/pangea/utils/bot_name.dart';
 import 'package:fluffychat/pangea/utils/download_file.dart';
+import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/utils/grammar/get_grammar_copy.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 
@@ -42,12 +43,20 @@ class DownloadAnalyticsDialogState extends State<DownloadAnalyticsDialog> {
   @override
   void initState() {
     super.initState();
-    widget.space.requestParticipants().whenComplete(() {
+    widget.space
+        .requestParticipants([Membership.join], false, true).whenComplete(() {
       _resetDownloadStatuses();
       _initialized = true;
       if (mounted) setState(() {});
-    }).catchError((error) {
-      if (mounted) setState(() => _error = error.toString());
+    }).catchError((e, s) {
+      ErrorHandler.logError(
+        e: e,
+        s: s,
+        data: {
+          "spaceID": widget.space.id,
+        },
+      );
+      if (mounted) setState(() => _error = e.toString());
       return <User>[];
     });
   }
@@ -87,9 +96,16 @@ class DownloadAnalyticsDialogState extends State<DownloadAnalyticsDialog> {
       if (mounted) setState(() {});
       await _downloadSpaceAnalytics();
       if (mounted) setState(() => _finishedDownload = true);
-    } catch (error) {
+    } catch (e, s) {
+      ErrorHandler.logError(
+        e: e,
+        s: s,
+        data: {
+          "spaceID": widget.space.id,
+        },
+      );
       _resetDownloadStatuses();
-      _error = error.toString();
+      _error = e.toString();
       if (mounted) setState(() {});
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -145,7 +161,15 @@ class DownloadAnalyticsDialogState extends State<DownloadAnalyticsDialog> {
       );
       setState(() => _downloadStatues[userID] = 2);
       return summary;
-    } catch (err) {
+    } catch (e, s) {
+      ErrorHandler.logError(
+        e: e,
+        s: s,
+        data: {
+          "spaceID": widget.space.id,
+          "userID": userID,
+        },
+      );
       setState(() => _downloadStatues[userID] = -1);
     }
     return null;
@@ -253,7 +277,7 @@ class DownloadAnalyticsDialogState extends State<DownloadAnalyticsDialog> {
     return Dialog(
       child: Container(
         constraints: const BoxConstraints(
-          maxWidth: 350,
+          maxWidth: 400,
         ),
         padding: const EdgeInsets.symmetric(vertical: 20),
         child: Column(
@@ -308,6 +332,7 @@ class DownloadAnalyticsDialogState extends State<DownloadAnalyticsDialog> {
                       padding: const EdgeInsets.all(4.0),
                       child: Tooltip(
                         message: tooltip,
+                        triggerMode: TooltipTriggerMode.tap,
                         child: Opacity(
                           opacity: analyticsAvailable &&
                                   _downloadStatues[user.id] != -1
@@ -337,7 +362,9 @@ class DownloadAnalyticsDialogState extends State<DownloadAnalyticsDialog> {
                                         ),
                                       ),
                               ),
-                              Text(user.displayName ?? user.id),
+                              Flexible(
+                                child: Text(user.displayName ?? user.id),
+                              ),
                             ],
                           ),
                         ),
@@ -357,7 +384,11 @@ class DownloadAnalyticsDialogState extends State<DownloadAnalyticsDialog> {
                             ? L10n.of(context).downloading
                             : L10n.of(context).download,
                       )
-                    : const CircularProgressIndicator.adaptive(),
+                    : const SizedBox(
+                        height: 10,
+                        width: 10,
+                        child: CircularProgressIndicator.adaptive(),
+                      ),
               ),
             ),
             AnimatedSize(
