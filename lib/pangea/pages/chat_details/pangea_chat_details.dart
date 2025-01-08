@@ -14,6 +14,7 @@ import 'package:fluffychat/pangea/pages/class_settings/p_class_widgets/class_det
 import 'package:fluffychat/pangea/pages/class_settings/p_class_widgets/download_analytics_button.dart';
 import 'package:fluffychat/pangea/pages/class_settings/p_class_widgets/room_capacity_button.dart';
 import 'package:fluffychat/pangea/utils/download_chat.dart';
+import 'package:fluffychat/pangea/utils/download_file.dart';
 import 'package:fluffychat/pangea/widgets/chat/visibility_toggle.dart';
 import 'package:fluffychat/pangea/widgets/conversation_bot/conversation_bot_settings.dart';
 import 'package:fluffychat/utils/fluffy_share.dart';

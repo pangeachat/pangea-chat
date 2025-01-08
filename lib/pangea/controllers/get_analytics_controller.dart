@@ -8,7 +8,6 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'package:fluffychat/pangea/constants/class_default_values.dart';
 import 'package:fluffychat/pangea/constants/local.key.dart';
-import 'package:fluffychat/pangea/controllers/analytics/analytics_download_controller.dart';
 import 'package:fluffychat/pangea/controllers/message_analytics_controller.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/controllers/put_analytics_controller.dart';
@@ -24,7 +23,6 @@ import 'package:fluffychat/pangea/utils/error_handler.dart';
 class GetAnalyticsController {
   late PangeaController _pangeaController;
   late MessageAnalyticsController perMessage;
-  late AnalyticsDownloadController downloadController;
 
   final List<AnalyticsCacheEntry> _cache = [];
   StreamSubscription<AnalyticsUpdate>? _analyticsUpdateSubscription;
@@ -40,7 +38,6 @@ class GetAnalyticsController {
     perMessage = MessageAnalyticsController(
       this,
     );
-    downloadController = AnalyticsDownloadController(this);
   }
 
   String? get _l2Code => _pangeaController.languageController.userL2?.langCode;

@@ -4688,5 +4688,10 @@
   "numWordsTyped": "Number of words typed in original messages",
   "numCorrectChoices": "Number of correct words chosen from system-generated suggestions",
   "numIncorrectChoices": "Number of incorrect words chosen from system-generated suggestions",
-  "downloadSpaceAnalytics": "Download space analytics"
+  "downloadSpaceAnalytics": "Download space analytics",
+  "commaSeparatedFile": "CSV",
+  "excelFile": "Excel",
+  "fileType": "File type",
+  "download": "Download",
+  "analyticsNotAvailable": "User analytics not available"
 }
