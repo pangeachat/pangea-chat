@@ -43,9 +43,10 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
     final List<Widget> seedLemmas = [];
     for (int i = 0; i < _sortedEntries.length; i++) {
       final construct = _sortedEntries[i];
+      final int points = construct.points;
 
       // Add lemma to relevant widget list, followed by comma
-      if (construct.points < AnalyticsConstants.xpForGreens) {
+      if (points < AnalyticsConstants.xpForGreens) {
         seedLemmas.add(
           VocabChip(
             construct: construct,
@@ -55,6 +56,7 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
                 builder: (c) => VocabDefinitionPopup(
                   construct: construct,
                   type: LemmaCategoryEnum.seeds,
+                  points: points,
                 ),
               );
             },
@@ -69,7 +71,7 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
             ),
           ),
         );
-      } else if (construct.points >= AnalyticsConstants.xpForFlower) {
+      } else if (points >= AnalyticsConstants.xpForFlower) {
         flowerLemmas.add(
           VocabChip(
             construct: construct,
@@ -79,6 +81,7 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
                 builder: (c) => VocabDefinitionPopup(
                   construct: construct,
                   type: LemmaCategoryEnum.flowers,
+                  points: points,
                 ),
               );
             },
@@ -103,6 +106,7 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
                 builder: (c) => VocabDefinitionPopup(
                   construct: construct,
                   type: LemmaCategoryEnum.greens,
+                  points: points,
                 ),
               );
             },
