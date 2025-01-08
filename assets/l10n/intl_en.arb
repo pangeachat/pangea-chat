@@ -4693,5 +4693,8 @@
   "excelFile": "Excel",
   "fileType": "File type",
   "download": "Download",
-  "analyticsNotAvailable": "User analytics not available"
+  "analyticsNotAvailable": "User analytics not available",
+  "downloading": "Downloading...",
+  "failedFetchUserAnalytics": "Failed to download user analytics",
+  "downloadComplete": "Download complete!"
 }

@@ -7,6 +7,7 @@ import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
 
 import 'package:fluffychat/config/app_config.dart';
+import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pangea/constants/class_default_values.dart';
 import 'package:fluffychat/pangea/enum/analytics/analytics_summary_enum.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
@@ -31,18 +32,20 @@ class DownloadAnalyticsDialog extends StatefulWidget {
 }
 
 class DownloadAnalyticsDialogState extends State<DownloadAnalyticsDialog> {
-  bool _loading = true;
+  bool _initialized = false;
+  bool _loading = false;
+  bool _finishedDownload = false;
   String? _error;
+
   Map<String, int> _downloadStatues = {};
 
   @override
   void initState() {
     super.initState();
     widget.space.requestParticipants().whenComplete(() {
-      _downloadStatues = Map.fromEntries(
-        _usersToDownload.map((user) => MapEntry(user.id, 0)),
-      );
-      if (mounted) setState(() => _loading = false);
+      _resetDownloadStatuses();
+      _initialized = true;
+      if (mounted) setState(() {});
     }).catchError((error) {
       if (mounted) setState(() => _error = error.toString());
       return <User>[];
@@ -80,16 +83,14 @@ class DownloadAnalyticsDialogState extends State<DownloadAnalyticsDialog> {
     try {
       _loading = true;
       _error = null;
-      _downloadStatues = Map.fromEntries(
-        _usersToDownload.map((user) => MapEntry(user.id, 1)),
-      );
+      _resetDownloadStatuses();
       if (mounted) setState(() {});
       await _downloadSpaceAnalytics();
+      if (mounted) setState(() => _finishedDownload = true);
     } catch (error) {
-      _downloadStatues = Map.fromEntries(
-        _usersToDownload.map((user) => MapEntry(user.id, 0)),
-      );
-      if (mounted) setState(() => _error = error.toString());
+      _resetDownloadStatuses();
+      _error = error.toString();
+      if (mounted) setState(() {});
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -119,17 +120,17 @@ class DownloadAnalyticsDialogState extends State<DownloadAnalyticsDialog> {
   }
 
   Future<AnalyticsSummaryModel?> _getUserAnalyticsModel(String userID) async {
-    setState(() => _downloadStatues[userID] = 1);
-    final userAnalyticsRoom = _userAnalyticsRoom(userID);
-    final constructEvents = await userAnalyticsRoom?.getAnalyticsEvents(
-      userId: userID,
-    );
-    if (constructEvents == null) {
-      setState(() => _downloadStatues[userID] = 0);
-      return null;
-    }
-
     try {
+      setState(() => _downloadStatues[userID] = 1);
+      final userAnalyticsRoom = _userAnalyticsRoom(userID);
+      final constructEvents = await userAnalyticsRoom?.getAnalyticsEvents(
+        userId: userID,
+      );
+      if (constructEvents == null) {
+        setState(() => _downloadStatues[userID] = 0);
+        return null;
+      }
+
       final List<OneConstructUse> uses = [];
       for (final event in constructEvents) {
         uses.addAll(event.content.uses);
@@ -234,8 +235,18 @@ class DownloadAnalyticsDialogState extends State<DownloadAnalyticsDialog> {
 
   DownloadType _downloadType = DownloadType.csv;
 
-  void _setDownloadType(DownloadType type) =>
-      setState(() => _downloadType = type);
+  void _setDownloadType(DownloadType type) {
+    _resetDownloadStatuses();
+    setState(() => _downloadType = type);
+  }
+
+  void _resetDownloadStatuses() {
+    _error = null;
+    _finishedDownload = false;
+    _downloadStatues = Map.fromEntries(
+      _usersToDownload.map((user) => MapEntry(user.id, 0)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -244,7 +255,7 @@ class DownloadAnalyticsDialogState extends State<DownloadAnalyticsDialog> {
         constraints: const BoxConstraints(
           maxWidth: 350,
         ),
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(vertical: 20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -274,21 +285,34 @@ class DownloadAnalyticsDialogState extends State<DownloadAnalyticsDialog> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxHeight: 300),
+                constraints: const BoxConstraints(
+                  maxHeight: 300,
+                  minHeight: 0,
+                ),
                 child: ListView.builder(
+                  shrinkWrap: true,
                   itemCount: _usersToDownload.length,
                   itemBuilder: (context, index) {
                     final user = _usersToDownload[index];
                     final analyticsAvailable =
                         _userAnalyticsRoom(user.id) != null;
+
+                    String tooltip = "";
+                    if (!analyticsAvailable) {
+                      tooltip = L10n.of(context).analyticsNotAvailable;
+                    } else if (_downloadStatues[user.id] == -1) {
+                      tooltip = L10n.of(context).failedFetchUserAnalytics;
+                    }
+
                     return Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: Tooltip(
-                        message: analyticsAvailable
-                            ? ""
-                            : L10n.of(context).analyticsNotAvailable,
+                        message: tooltip,
                         child: Opacity(
-                          opacity: analyticsAvailable ? 1 : 0.5,
+                          opacity: analyticsAvailable &&
+                                  _downloadStatues[user.id] != -1
+                              ? 1
+                              : 0.5,
                           child: Row(
                             children: [
                               SizedBox(
@@ -298,10 +322,19 @@ class DownloadAnalyticsDialogState extends State<DownloadAnalyticsDialog> {
                                         Icons.error_outline,
                                         size: 16,
                                       )
-                                    : CircleAvatar(
-                                        backgroundColor:
-                                            _downloadStatusColor(user.id),
-                                        radius: 6,
+                                    : Center(
+                                        child: AnimatedContainer(
+                                          duration:
+                                              FluffyThemes.animationDuration,
+                                          height: 12,
+                                          width: 12,
+                                          decoration: BoxDecoration(
+                                            color:
+                                                _downloadStatusColor(user.id),
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                          ),
+                                        ),
                                       ),
                               ),
                               Text(user.displayName ?? user.id),
@@ -317,17 +350,34 @@ class DownloadAnalyticsDialogState extends State<DownloadAnalyticsDialog> {
             Padding(
               padding: const EdgeInsets.fromLTRB(8.0, 16.0, 8.0, 8.0),
               child: OutlinedButton(
-                onPressed: _loading ? null : _runDownload,
-                child: _loading
-                    ? const CircularProgressIndicator.adaptive()
-                    : Text(L10n.of(context).download),
+                onPressed: _loading || !_initialized ? null : _runDownload,
+                child: _initialized
+                    ? Text(
+                        _loading
+                            ? L10n.of(context).downloading
+                            : L10n.of(context).download,
+                      )
+                    : const CircularProgressIndicator.adaptive(),
               ),
             ),
-            if (_error != null)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(L10n.of(context).oopsSomethingWentWrong),
-              ),
+            AnimatedSize(
+              duration: FluffyThemes.animationDuration,
+              child: _finishedDownload
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(L10n.of(context).downloadComplete),
+                    )
+                  : const SizedBox(),
+            ),
+            AnimatedSize(
+              duration: FluffyThemes.animationDuration,
+              child: _error != null
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(L10n.of(context).oopsSomethingWentWrong),
+                    )
+                  : const SizedBox(),
+            ),
           ],
         ),
       ),
