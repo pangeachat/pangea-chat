@@ -62,7 +62,7 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
 
   MessageMode toolbarMode = MessageMode.noneSelected;
   PangeaTokenText? _selectedSpan;
-  List<PangeaTokenText>? temporarySelection;
+  List<PangeaTokenText>? _highlightedTokens;
 
   List<PangeaToken>? tokens;
   bool initialized = false;
@@ -144,17 +144,8 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
       }
     }
 
-    if (const ListEquality().equals(textToSelect, temporarySelection)) return;
-    // This messes with multi-word selection
-    // if (tokens != null) {
-    //   for (final ttsToken in textToSelect) {
-    //     final matchingToken = ttsToken.matchingToken(tokens!);
-    //     if (matchingToken?.pos.toLowerCase() == 'punct') {
-    //       textToSelect.remove(ttsToken);
-    //     }
-    //   }
-    // }
-    temporarySelection =
+    if (const ListEquality().equals(textToSelect, _highlightedTokens)) return;
+    _highlightedTokens =
         textToSelect.isEmpty ? null : textToSelect.map((t) => t.text).toList();
     setState(() {});
   }
@@ -309,7 +300,7 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
         _selectedSpan = null;
       }
       if (mode != MessageMode.textToSpeech) {
-        temporarySelection = null;
+        _highlightedTokens = null;
       }
       toolbarMode = mode;
     });
@@ -362,21 +353,22 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
 
   /// Whether the given token is currently selected or highlighted
   bool isTokenSelected(PangeaToken token) {
-    final isSelected = (_selectedSpan?.offset == token.text.offset &&
-            _selectedSpan?.length == token.text.length) ||
-        ((temporarySelection?.firstWhereOrNull(
-              (e) =>
-                  e.offset == token.text.offset &&
-                  e.length == token.text.length,
-            )) !=
-            null);
+    final isSelected = _selectedSpan?.offset == token.text.offset &&
+        _selectedSpan?.length == token.text.length;
     return isSelected;
+  }
+
+  bool isTokenHighlighted(PangeaToken token) {
+    if (_highlightedTokens == null) return false;
+    return _highlightedTokens!.any(
+      (t) => t.offset == token.text.offset && t.length == token.text.length,
+    );
   }
 
   PangeaToken? get selectedToken => tokens?.firstWhereOrNull(isTokenSelected);
 
   /// Whether the overlay is currently displaying a selection
-  bool get isSelection => _selectedSpan != null || temporarySelection != null;
+  bool get isSelection => _selectedSpan != null || _highlightedTokens != null;
 
   PangeaTokenText? get selectedSpan => _selectedSpan;
 

@@ -345,14 +345,6 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
           ? _playAction()
           : _downloadAction();
     }
-    // View token start and end times
-    if (widget.matrixFile != null) {
-      for (final token in widget.matrixFile!.tokens) {
-        debugPrint(
-          "Start: ${token.startMS}, end: ${token.endMS}, text: '${token.text.content}'",
-        );
-      }
-    }
     // Pangea#
   }
 
