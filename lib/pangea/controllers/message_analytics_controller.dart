@@ -160,9 +160,11 @@ class MessageAnalyticsEntry {
       return null;
     }
 
-    // we will only do hidden word listening 50% of the time
+    // we will only do hidden word listening 30% of the time
     // if there are no other activities to do, we will always do hidden word listening
-    if (numOtherActivities >= _maxQueueLength && Random().nextDouble() < 0.5) {
+    if (Random().nextDouble() < 0.7) {
+      // @ggurdin - just want you to review this change. i'm not sure what numOtherActivities >= _maxQueueLength was doing
+      // if (numOtherActivities >= _maxQueueLength && Random().nextDouble() < 0.5) {
       return null;
     }
 
