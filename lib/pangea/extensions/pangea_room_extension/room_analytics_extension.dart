@@ -112,13 +112,29 @@ extension AnalyticsRoomExtension on Room {
   /// Invite teachers of 1 space to 1 analytics room
   Future<void> _inviteSpaceAdminsToAnalyticsRoom(Room analyticsRoom) async {
     if (!isSpace) return;
+
+    List<User> analyticsParticipants = analyticsRoom.getParticipants();
     if (!analyticsRoom.participantListComplete) {
-      await analyticsRoom.requestParticipants();
+      analyticsParticipants = await analyticsRoom.requestParticipants();
     }
 
-    final List<User> participants = analyticsRoom.getParticipants();
-    final List<User> uninvitedTeachers = (await teachers)
-        .where((teacher) => !participants.contains(teacher))
+    List<User> spaceParticipants = getParticipants();
+    if (!participantListComplete) {
+      spaceParticipants = await requestParticipants();
+    }
+
+    final spaceAdmins = spaceParticipants
+        .where(
+          (participant) =>
+              participant.powerLevel >= ClassDefaultValues.powerLevelOfAdmin &&
+              participant.id != BotName.byEnvironment,
+        )
+        .toList();
+
+    final List<User> uninvitedTeachers = spaceAdmins
+        .where(
+          (admin) => !analyticsParticipants.any((user) => user.id == admin.id),
+        )
         .toList();
 
     if (analyticsRoom.canSendEvent(EventTypes.RoomMember)) {
@@ -145,10 +161,11 @@ extension AnalyticsRoomExtension on Room {
   /// so teacher is still able to get analytics data for this student.
   void _inviteAdminsToAnalyticsRoom() {
     if (client.userID == null || !isAnalyticsRoomOfUser(client.userID!)) return;
+    final spaces = client.rooms.where((room) => room.isSpace).toList();
     Future.wait(
-      client.rooms.where((room) => room.isSpace).map(
-            (space) => inviteSpaceAdminsToAnalyticsRoom(this),
-          ),
+      spaces.map(
+        (space) => space.inviteSpaceAdminsToAnalyticsRoom(this),
+      ),
     );
   }
 
