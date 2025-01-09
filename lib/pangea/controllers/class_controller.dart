@@ -2,23 +2,21 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:fluffychat/pangea/constants/local.key.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
-import 'package:fluffychat/pangea/extensions/client_extension/client_extension.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/models/space_model.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/utils/firebase_analytics.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:go_router/go_router.dart';
+import 'package:matrix/matrix.dart';
+
 import 'base_controller.dart';
 
 class ClassController extends BaseController {
@@ -36,17 +34,19 @@ class ClassController extends BaseController {
   /// to enable all other users to add child rooms to the space.
   void fixClassPowerLevels() {
     Future.wait(
-      _pangeaController.matrixState.client.spacesImTeaching.map(
-        (space) => space.setClassPowerLevels().catchError((err, s) {
-          ErrorHandler.logError(
-            e: err,
-            s: s,
-            data: {
-              "spaceID": space.id,
-            },
-          );
-        }),
-      ),
+      _pangeaController.matrixState.client.rooms
+          .where((room) => room.isSpace && room.isRoomAdmin)
+          .map(
+            (space) => space.setClassPowerLevels().catchError((err, s) {
+              ErrorHandler.logError(
+                e: err,
+                s: s,
+                data: {
+                  "spaceID": space.id,
+                },
+              );
+            }),
+          ),
     );
   }
 
@@ -150,9 +150,10 @@ class ClassController extends BaseController {
 
     // when possible, add user's analytics room the to space they joined
     room.addAnalyticsRoomsToSpace();
+    room.joinAnalyticsRoomsInSpace();
 
     // and invite the space's teachers to the user's analytics rooms
-    room.inviteSpaceTeachersToAnalyticsRooms();
+    room.inviteSpaceAdminsToAnalyticsRooms();
     GoogleAnalytics.joinClass(classCode);
 
     if (room.client.getRoomById(room.id)?.membership != Membership.join) {

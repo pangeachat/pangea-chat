@@ -70,7 +70,7 @@ extension AnalyticsClientExtension on Client {
     analyticsRoom?.addAnalyticsRoomToSpaces();
 
     // and invite all teachers to new analytics room
-    analyticsRoom?.inviteTeachersToAnalyticsRoom();
+    analyticsRoom?.inviteAdminsToAnalyticsRoom();
     return getRoomById(roomID)!;
   }
 
@@ -120,17 +120,18 @@ extension AnalyticsClientExtension on Client {
   /// Invite teachers to all my analytics room.
   /// Handles case when students cannot add analytics room to space(s)
   /// so teacher is still able to get analytics data for this student
-  void _inviteAllTeachersToAllAnalyticsRooms() {
+  void _inviteAllAdminsToAllAnalyticsRooms() {
     if (userID == null || userID == BotName.byEnvironment) return;
     for (final Room room in allMyAnalyticsRooms) {
-      room.inviteTeachersToAnalyticsRoom();
+      room.inviteAdminsToAnalyticsRoom();
     }
   }
 
   // Join all analytics rooms in all spaces
   // Allows teachers to join analytics rooms without being invited
   Future<void> _joinAnalyticsRoomsInAllSpaces() async {
-    for (final Room space in _spacesImTeaching) {
+    final spaces = rooms.where((room) => room.isSpace).toList();
+    for (final Room space in spaces) {
       // Each call to joinAnalyticsRoomsInSpace calls getSpaceHierarchy, which has a
       // strict rate limit. So we wait a second between each call to prevent a 429 error.
       await Future.delayed(
@@ -144,24 +145,25 @@ extension AnalyticsClientExtension on Client {
   /// Checks for invites to any student analytics rooms.
   /// Handles case of analytics rooms that can't be added to some space(s).
   void _joinInvitedAnalyticsRooms() {
-    Future.wait(
-      rooms
-          .where(
-            (room) =>
-                room.membership == Membership.invite && room.isAnalyticsRoom,
-          )
-          .map(
-            (room) => room.join().catchError((err, s) {
-              ErrorHandler.logError(
-                e: err,
-                s: s,
-                data: {
-                  "roomID": room.id,
-                },
-              );
-            }),
-          ),
-    );
+    Future.wait(rooms.map(_joinAnalyticsRoom));
+  }
+
+  Future<void> _joinAnalyticsRoom(Room room) async {
+    if (room.membership != Membership.invite || !room.isAnalyticsRoom) {
+      return;
+    }
+
+    try {
+      await room.join();
+    } catch (err, s) {
+      ErrorHandler.logError(
+        e: err,
+        s: s,
+        data: {
+          "roomID": room.id,
+        },
+      );
+    }
   }
 
   /// Helper function to join all relevant analytics rooms
@@ -169,7 +171,7 @@ extension AnalyticsClientExtension on Client {
   void _migrateAnalyticsRooms() {
     _updateAnalyticsRoomVisibility().then((_) {
       _addAnalyticsRoomsToAllSpaces();
-      _inviteAllTeachersToAllAnalyticsRooms();
+      _inviteAllAdminsToAllAnalyticsRooms();
       _joinInvitedAnalyticsRooms();
       _joinAnalyticsRoomsInAllSpaces();
     });

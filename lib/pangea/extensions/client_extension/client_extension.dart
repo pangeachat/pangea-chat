@@ -9,13 +9,11 @@ import 'package:matrix/matrix.dart';
 import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/constants/pangea_room_types.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
-import 'package:fluffychat/pangea/models/space_model.dart';
 import 'package:fluffychat/pangea/utils/bot_name.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 
 part "client_analytics_extension.dart";
 part "general_info_extension.dart";
-part "space_extension.dart";
 
 extension PangeaClient on Client {
 // analytics
@@ -39,16 +37,6 @@ extension PangeaClient on Client {
   /// Helper function to join all relevant analytics rooms
   /// and set up those rooms to be joined by other users.
   void migrateAnalyticsRooms() => _migrateAnalyticsRooms();
-
-  // spaces
-
-  List<Room> get spacesImTeaching => _spacesImTeaching;
-
-  List<Room> get spacesImAStudentIn => _spacesImStudyingIn;
-
-  List<Room> get spacesImIn => _spacesImIn;
-
-  PangeaRoomRules? get lastUpdatedRoomRules => _lastUpdatedRoomRules;
 
 // general_info
 

@@ -69,17 +69,17 @@ extension PangeaRoom on Room {
   void addAnalyticsRoomsToSpace() => _addAnalyticsRoomsToSpace();
 
   /// Invite teachers of 1 space to 1 analytics room
-  Future<void> inviteSpaceTeachersToAnalyticsRoom(Room analyticsRoom) async =>
-      await _inviteSpaceTeachersToAnalyticsRoom(analyticsRoom);
+  Future<void> inviteSpaceAdminsToAnalyticsRoom(Room analyticsRoom) async =>
+      await _inviteSpaceAdminsToAnalyticsRoom(analyticsRoom);
 
   /// Invite all the user's teachers to 1 analytics room.
   /// Handles case when students cannot add analytics room to space
   /// so teacher is still able to get analytics data for this student.
-  void inviteTeachersToAnalyticsRoom() => _inviteTeachersToAnalyticsRoom();
+  void inviteAdminsToAnalyticsRoom() => _inviteAdminsToAnalyticsRoom();
 
   /// Invite teachers of 1 space to all users' analytics rooms
-  void inviteSpaceTeachersToAnalyticsRooms() =>
-      _inviteSpaceTeachersToAnalyticsRooms();
+  void inviteSpaceAdminsToAnalyticsRooms() =>
+      _inviteSpaceAdminsToAnalyticsRooms();
 
   Future<DateTime?> analyticsLastUpdated(String userId) async {
     return await _analyticsLastUpdated(userId);

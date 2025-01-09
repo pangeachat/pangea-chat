@@ -16,27 +16,16 @@ extension AnalyticsRoomExtension on Room {
         maxDepth: 1,
       );
 
-      final List<String> analyticsRoomIds = spaceHierarchy.rooms
-          .where((r) => r.roomType == PangeaRoomTypes.analytics)
+      final analyticsRooms = spaceHierarchy.rooms
+          .where(
+            (r) =>
+                r.roomType == PangeaRoomTypes.analytics &&
+                !client.rooms.any((room) => room.id == r.roomId),
+          )
           .map((r) => r.roomId)
           .toList();
 
-      await Future.wait(
-        analyticsRoomIds.map(
-          (roomID) => joinSpaceChild(roomID).catchError((err, s) {
-            debugPrint("Failed to join analytics room $roomID in space $id");
-            ErrorHandler.logError(
-              e: err,
-              m: "Failed to join analytics room $roomID in space $id",
-              s: s,
-              data: {
-                "roomID": roomID,
-                "spaceID": id,
-              },
-            );
-          }),
-        ),
-      );
+      await Future.wait(analyticsRooms.map(_joinAnalyticsRoom));
     } catch (err, s) {
       ErrorHandler.logError(
         e: err,
@@ -47,6 +36,23 @@ extension AnalyticsRoomExtension on Room {
       );
       return;
     }
+  }
+
+  Future<void> _joinAnalyticsRoom(String roomID) async {
+    final syncFuture = client.waitForRoomInSync(roomID);
+    await joinSpaceChild(roomID).catchError((err, s) {
+      debugPrint("Failed to join analytics room $roomID in space $id");
+      ErrorHandler.logError(
+        e: err,
+        m: "Failed to join analytics room $roomID in space $id",
+        s: s,
+        data: {
+          "roomID": roomID,
+          "spaceID": id,
+        },
+      );
+    });
+    await syncFuture;
   }
 
   // add 1 analytics room to 1 space
@@ -86,8 +92,12 @@ extension AnalyticsRoomExtension on Room {
   void _addAnalyticsRoomToSpaces() {
     if (!isAnalyticsRoomOfUser(client.userID!)) return;
     Future.wait(
-      client.spacesImAStudentIn
-          .where((space) => !space.spaceChildren.any((sc) => sc.roomId == id))
+      client.rooms
+          .where(
+            (room) =>
+                room.isSpace &&
+                !room.spaceChildren.any((sc) => sc.roomId == id),
+          )
           .map((space) => space.addAnalyticsRoomToSpace(this)),
     );
   }
@@ -100,7 +110,7 @@ extension AnalyticsRoomExtension on Room {
   }
 
   /// Invite teachers of 1 space to 1 analytics room
-  Future<void> _inviteSpaceTeachersToAnalyticsRoom(Room analyticsRoom) async {
+  Future<void> _inviteSpaceAdminsToAnalyticsRoom(Room analyticsRoom) async {
     if (!isSpace) return;
     if (!analyticsRoom.participantListComplete) {
       await analyticsRoom.requestParticipants();
@@ -133,20 +143,20 @@ extension AnalyticsRoomExtension on Room {
   /// Invite all the user's teachers to 1 analytics room.
   /// Handles case when students cannot add analytics room to space
   /// so teacher is still able to get analytics data for this student.
-  void _inviteTeachersToAnalyticsRoom() {
+  void _inviteAdminsToAnalyticsRoom() {
     if (client.userID == null || !isAnalyticsRoomOfUser(client.userID!)) return;
     Future.wait(
-      client.spacesImAStudentIn.map(
-        (space) => inviteSpaceTeachersToAnalyticsRoom(this),
-      ),
+      client.rooms.where((room) => room.isSpace).map(
+            (space) => inviteSpaceAdminsToAnalyticsRoom(this),
+          ),
     );
   }
 
   /// Invite teachers of 1 space to all users' analytics rooms
-  void _inviteSpaceTeachersToAnalyticsRooms() {
+  void _inviteSpaceAdminsToAnalyticsRooms() {
     Future.wait(
       client.allMyAnalyticsRooms.map(
-        (room) => inviteSpaceTeachersToAnalyticsRoom(room),
+        (room) => inviteSpaceAdminsToAnalyticsRoom(room),
       ),
     );
   }
