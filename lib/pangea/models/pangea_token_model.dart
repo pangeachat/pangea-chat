@@ -1,6 +1,11 @@
 import 'dart:developer';
+import 'dart:math';
+
+import 'package:flutter/foundation.dart';
 
 import 'package:collection/collection.dart';
+import 'package:matrix/matrix.dart';
+
 import 'package:fluffychat/pangea/constants/language_constants.dart';
 import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
@@ -14,9 +19,6 @@ import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activ
 import 'package:fluffychat/pangea/repo/lemma_definition_repo.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-import 'package:flutter/foundation.dart';
-import 'package:matrix/matrix.dart';
-
 import '../constants/model_keys.dart';
 import 'lemma.dart';
 
@@ -225,36 +227,36 @@ class PangeaToken {
     }
   }
 
-  bool _didActivity(
-    ActivityTypeEnum a, [
-    String? morphFeature,
-    String? morphTag,
-  ]) {
-    if ((morphFeature == null || morphTag == null) &&
-        a == ActivityTypeEnum.morphId) {
-      debugger(when: kDebugMode);
-      return true;
-    }
-    switch (a) {
-      case ActivityTypeEnum.wordMeaning:
-      case ActivityTypeEnum.wordFocusListening:
-      case ActivityTypeEnum.hiddenWordListening:
-      case ActivityTypeEnum.lemmaId:
-      case ActivityTypeEnum.emoji:
-        return vocabConstruct.uses
-            .map((u) => u.useType)
-            .any((u) => a.associatedUseTypes.contains(u));
-      case ActivityTypeEnum.morphId:
-        return morph.entries
-            .map((e) => morphConstruct(morphFeature!, morphTag!).uses)
-            .expand((e) => e)
-            .any(
-              (u) =>
-                  a.associatedUseTypes.contains(u.useType) &&
-                  u.form == text.content,
-            );
-    }
-  }
+  // bool _didActivity(
+  //   ActivityTypeEnum a, [
+  //   String? morphFeature,
+  //   String? morphTag,
+  // ]) {
+  //   if ((morphFeature == null || morphTag == null) &&
+  //       a == ActivityTypeEnum.morphId) {
+  //     debugger(when: kDebugMode);
+  //     return true;
+  //   }
+  //   switch (a) {
+  //     case ActivityTypeEnum.wordMeaning:
+  //     case ActivityTypeEnum.wordFocusListening:
+  //     case ActivityTypeEnum.hiddenWordListening:
+  //     case ActivityTypeEnum.lemmaId:
+  //     case ActivityTypeEnum.emoji:
+  //       return vocabConstruct.uses
+  //           .map((u) => u.useType)
+  //           .any((u) => a.associatedUseTypes.contains(u));
+  //     case ActivityTypeEnum.morphId:
+  //       return morph.entries
+  //           .map((e) => morphConstruct(morphFeature!, morphTag!).uses)
+  //           .expand((e) => e)
+  //           .any(
+  //             (u) =>
+  //                 a.associatedUseTypes.contains(u.useType) &&
+  //                 u.form == text.content,
+  //           );
+  //   }
+  // }
 
   bool _didActivitySuccessfully(
     ActivityTypeEnum a, [
@@ -350,30 +352,41 @@ class PangeaToken {
         ?.value;
   }
 
-  Future<bool> canGenerateDistractors(
+  /// Syncronously determine if a distractor can be generated for a given activity type.
+  /// WARNING - do not use this function to determine if lemma activities can be generated.
+  /// Use [canGenerateLemmaDistractors] instead.
+  bool canGenerateDistractors(
     ActivityTypeEnum type, {
     String? morphFeature,
     String? morphTag,
-  }) async {
-    final constructListModel =
-        MatrixState.pangeaController.getAnalytics.constructListModel;
+  }) {
     switch (type) {
       case ActivityTypeEnum.lemmaId:
-        final distractors =
-            await constructListModel.lemmaActivityDistractors(this);
-        return distractors.isNotEmpty;
+        // the function to determine this for lemmas is async
+        // do not use this function for lemma activities
+        debugger(when: kDebugMode);
+        return false;
       case ActivityTypeEnum.morphId:
-        final distractors = constructListModel.morphActivityDistractors(
+        final distractors = morphActivityDistractors(
           morphFeature!,
           morphTag!,
         );
         return distractors.isNotEmpty;
+      case ActivityTypeEnum.wordMeaning:
+        return LemmaDictionaryRepo.getDistractorDefinitions(
+          lemma.text,
+          1,
+        ).isNotEmpty;
       case ActivityTypeEnum.emoji:
       case ActivityTypeEnum.wordFocusListening:
-      case ActivityTypeEnum.wordMeaning:
       case ActivityTypeEnum.hiddenWordListening:
         return true;
     }
+  }
+
+  Future<bool> canGenerateLemmaDistractors() async {
+    final distractors = await lemmaActivityDistractors(this);
+    return distractors.isNotEmpty;
   }
 
   // maybe for every 5 points of xp for a particular activity, increment the days between uses by 2
@@ -508,7 +521,7 @@ class PangeaToken {
 
   Future<List<String>> getEmojiChoices() => LemmaDictionaryRepo.get(
         LemmaDefinitionRequest(
-          lemma: lemma.text,
+          lemma: lemma,
           partOfSpeech: pos,
           lemmaLang: MatrixState
                   .pangeaController.languageController.userL2?.langCode ??
@@ -594,5 +607,95 @@ class PangeaToken {
       // flower emoji
       return "🌺";
     }
+  }
+
+  List<String> morphActivityDistractors(
+    String morphFeature,
+    String morphTag,
+  ) {
+    final List<ConstructUses> morphConstructs = MatrixState
+        .pangeaController.getAnalytics.constructListModel
+        .constructList(type: ConstructTypeEnum.morph);
+    final List<String> possibleDistractors = morphConstructs
+        .where(
+          (c) =>
+              c.category == morphFeature.toLowerCase() &&
+              c.lemma.toLowerCase() != morphTag.toLowerCase() &&
+              c.lemma.isNotEmpty &&
+              c.lemma != "X",
+        )
+        .map((c) => c.lemma)
+        .toList();
+
+    possibleDistractors.shuffle();
+    return possibleDistractors.take(3).toList();
+  }
+
+  Future<List<String>> lemmaActivityDistractors(PangeaToken token) async {
+    final List<String> lemmas = MatrixState
+        .pangeaController.getAnalytics.constructListModel
+        .constructList(type: ConstructTypeEnum.vocab)
+        .map((c) => c.lemma)
+        .toSet()
+        .toList();
+
+    // Offload computation to an isolate
+    final Map<String, int> distances =
+        await compute(_computeDistancesInIsolate, {
+      'lemmas': lemmas,
+      'target': token.lemma.text,
+    });
+
+    // Sort lemmas by distance
+    final sortedLemmas = distances.keys.toList()
+      ..sort((a, b) => distances[a]!.compareTo(distances[b]!));
+
+    // Take the shortest 4
+    final choices = sortedLemmas.take(4).toList();
+    if (!choices.contains(token.lemma.text)) {
+      final random = Random();
+      choices[random.nextInt(4)] = token.lemma.text;
+    }
+    return choices;
+  }
+
+  // isolate helper function
+  Map<String, int> _computeDistancesInIsolate(Map<String, dynamic> params) {
+    final List<String> lemmas = params['lemmas'];
+    final String target = params['target'];
+
+    // Calculate Levenshtein distances
+    final Map<String, int> distances = {};
+    for (final lemma in lemmas) {
+      distances[lemma] = levenshteinDistanceSync(target, lemma);
+    }
+    return distances;
+  }
+
+  int levenshteinDistanceSync(String s, String t) {
+    final int m = s.length;
+    final int n = t.length;
+    final List<List<int>> dp = List.generate(
+      m + 1,
+      (_) => List.generate(n + 1, (_) => 0),
+    );
+
+    for (int i = 0; i <= m; i++) {
+      for (int j = 0; j <= n; j++) {
+        if (i == 0) {
+          dp[i][j] = j;
+        } else if (j == 0) {
+          dp[i][j] = i;
+        } else if (s[i - 1] == t[j - 1]) {
+          dp[i][j] = dp[i - 1][j - 1];
+        } else {
+          dp[i][j] = 1 +
+              [dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]]
+                  .reduce((a, b) => a < b ? a : b);
+        }
+      }
+    }
+
+    return dp[m][n];
   }
 }

@@ -1,32 +1,41 @@
 import 'dart:convert';
 
-import 'package:fluffychat/pangea/network/urls.dart';
-import 'package:fluffychat/widgets/matrix.dart';
 import 'package:http/http.dart';
 
-import '../config/environment.dart';
-import '../network/requests.dart';
+import 'package:fluffychat/pangea/config/environment.dart';
+import 'package:fluffychat/pangea/models/lemma.dart';
+import 'package:fluffychat/pangea/network/requests.dart';
+import 'package:fluffychat/pangea/network/urls.dart';
+import 'package:fluffychat/pangea/utils/error_handler.dart';
+import 'package:fluffychat/widgets/matrix.dart';
 
 class LemmaDefinitionRequest {
-  final String lemma;
+  final Lemma _lemma;
   final String partOfSpeech;
   final String lemmaLang;
   final String userL1;
 
   LemmaDefinitionRequest({
-    required this.lemma,
     required this.partOfSpeech,
     required this.lemmaLang,
     required this.userL1,
-  });
+    required Lemma lemma,
+  }) : _lemma = lemma;
 
-  factory LemmaDefinitionRequest.fromJson(Map<String, dynamic> json) {
-    return LemmaDefinitionRequest(
-      lemma: json['lemma'] as String,
-      partOfSpeech: json['part_of_speech'] as String,
-      lemmaLang: json['lemma_lang'] as String,
-      userL1: json['user_l1'] as String,
+  String get lemma {
+    if (_lemma.text.isNotEmpty) {
+      return _lemma.text;
+    }
+    ErrorHandler.logError(
+      e: "Found lemma with empty text",
+      data: {
+        'lemma': _lemma,
+        'part_of_speech': partOfSpeech,
+        'lemma_lang': lemmaLang,
+        'user_l1': userL1,
+      },
     );
+    return _lemma.form;
   }
 
   Map<String, dynamic> toJson() {
@@ -58,24 +67,24 @@ class LemmaDefinitionRequest {
 
 class LemmaDefinitionResponse {
   final List<String> emoji;
-  final String definition;
+  final String meaning;
 
   LemmaDefinitionResponse({
     required this.emoji,
-    required this.definition,
+    required this.meaning,
   });
 
   factory LemmaDefinitionResponse.fromJson(Map<String, dynamic> json) {
     return LemmaDefinitionResponse(
       emoji: (json['emoji'] as List<dynamic>).map((e) => e as String).toList(),
-      definition: json['definition'] as String,
+      meaning: json['meaning'] as String,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'emoji': emoji,
-      'definition': definition,
+      'meaning': meaning,
     };
   }
 
@@ -86,12 +95,12 @@ class LemmaDefinitionResponse {
           runtimeType == other.runtimeType &&
           emoji.length == other.emoji.length &&
           emoji.every((element) => other.emoji.contains(element)) &&
-          definition == other.definition;
+          meaning == other.meaning;
 
   @override
   int get hashCode =>
       emoji.fold(0, (prev, element) => prev ^ element.hashCode) ^
-      definition.hashCode;
+      meaning.hashCode;
 }
 
 class LemmaDictionaryRepo {
@@ -142,7 +151,7 @@ class LemmaDictionaryRepo {
     final List<String> definitions = [];
     for (final entry in _cache.entries) {
       if (entry.key.lemma != lemma) {
-        definitions.add(entry.value.definition);
+        definitions.add(entry.value.meaning);
       }
     }
 

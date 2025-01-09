@@ -1,5 +1,9 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
+
+import 'package:matrix/matrix.dart';
+
 import 'package:fluffychat/pangea/constants/local.key.dart';
 import 'package:fluffychat/pangea/controllers/base_controller.dart';
 import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
@@ -10,8 +14,6 @@ import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_e
 import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
-import 'package:flutter/foundation.dart';
-import 'package:matrix/matrix.dart';
 
 enum AnalyticsUpdateType { server, local }
 
@@ -245,6 +247,17 @@ class PutAnalyticsController extends BaseController<AnalyticsStream> {
     try {
       final currentCache = _pangeaController.getAnalytics.messagesSinceUpdate;
       constructs.addAll(currentCache[cacheKey] ?? []);
+
+      // if this is not a draft message, add the eventId to the metadata
+      // if it's missing (it will be missing for draft constructs)
+      if (!cacheKey.startsWith('draft')) {
+        constructs = constructs.map((construct) {
+          if (construct.metadata.eventId != null) return construct;
+          construct.metadata.eventId = cacheKey;
+          return construct;
+        }).toList();
+      }
+
       currentCache[cacheKey] = constructs;
 
       await _setMessagesSinceUpdate(currentCache);

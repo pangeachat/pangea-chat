@@ -1,11 +1,13 @@
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+
 import 'package:collection/collection.dart';
+
 import 'package:fluffychat/pangea/controllers/message_analytics_controller.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/utils/message_text_util.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 
 /// Question - does this need to be stateful or does this work?
 /// Need to test.
@@ -130,6 +132,10 @@ class MessageTextWidget extends StatelessWidget {
   final bool Function(PangeaToken)? isSelected;
   final void Function(TokenPosition tokenPosition)? onClick;
 
+  final bool? softWrap;
+  final int? maxLines;
+  final TextOverflow? overflow;
+
   const MessageTextWidget({
     super.key,
     required this.pangeaMessageEvent,
@@ -137,6 +143,9 @@ class MessageTextWidget extends StatelessWidget {
     this.messageAnalyticsEntry,
     this.isSelected,
     this.onClick,
+    this.softWrap,
+    this.maxLines,
+    this.overflow,
   });
 
   @override
@@ -150,7 +159,20 @@ class MessageTextWidget extends StatelessWidget {
       isSelected: isSelected,
     );
 
+    if (tokenPositions == null) {
+      return Text(
+        pangeaMessageEvent.messageDisplayText,
+        style: style,
+        softWrap: softWrap,
+        maxLines: maxLines,
+        overflow: overflow,
+      );
+    }
+
     return RichText(
+      softWrap: softWrap ?? true,
+      maxLines: maxLines,
+      overflow: overflow ?? TextOverflow.clip,
       text: TextSpan(
         children:
             tokenPositions.mapIndexed((int i, TokenPosition tokenPosition) {
@@ -179,8 +201,8 @@ class MessageTextWidget extends StatelessWidget {
                 TextStyle(
                   backgroundColor: tokenPosition.highlight
                       ? Theme.of(context).brightness == Brightness.light
-                          ? Colors.black.withOpacity(0.4)
-                          : Colors.white.withOpacity(0.4)
+                          ? Colors.black.withAlpha(100)
+                          : Colors.white.withAlpha(100)
                       : Colors.transparent,
                 ),
               ),

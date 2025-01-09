@@ -1,6 +1,18 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:cross_file/cross_file.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:flutter_shortcuts/flutter_shortcuts.dart';
+import 'package:go_router/go_router.dart';
+import 'package:matrix/matrix.dart' as sdk;
+import 'package:matrix/matrix.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+import 'package:uni_links/uni_links.dart';
+
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat_list/chat_list_view.dart';
@@ -17,28 +29,16 @@ import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/utils/show_scaffold_dialog.dart';
 import 'package:fluffychat/utils/show_update_snackbar.dart';
-import 'package:fluffychat/utils/tor_stub.dart'
-    if (dart.library.html) 'package:tor_detector_web/tor_detector_web.dart';
+import 'package:fluffychat/utils/tor_stub.dart';
+import 'package:fluffychat/utils/url_launcher.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_modal_action_popup.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/share_scaffold_dialog.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:flutter_shortcuts/flutter_shortcuts.dart';
-import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart' as sdk;
-import 'package:matrix/matrix.dart';
-import 'package:receive_sharing_intent/receive_sharing_intent.dart';
-import 'package:uni_links/uni_links.dart';
-
 import '../../../utils/account_bundles.dart';
 import '../../config/setting_keys.dart';
-import '../../utils/url_launcher.dart';
 import '../../utils/voip/callkeep_manager.dart';
 import '../../widgets/fluffy_chat_app.dart';
 import '../../widgets/matrix.dart';
@@ -969,7 +969,9 @@ class ChatListController extends State<ChatList>
   bool waitForFirstSync = false;
 
   Future<void> _waitForFirstSync() async {
-    final router = GoRouter.of(context);
+    // #Pangea
+    // final router = GoRouter.of(context);
+    // Pangea#
     final client = Matrix.of(context).client;
     await client.roomsLoading;
     await client.accountDataLoading;
