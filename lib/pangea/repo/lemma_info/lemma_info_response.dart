@@ -2,17 +2,17 @@ import 'package:fluffychat/pangea/models/content_feedback.dart';
 
 class LemmaInfoResponse implements JsonSerializable {
   final List<String> emoji;
-  final String definition;
+  final String meaning;
 
   LemmaInfoResponse({
     required this.emoji,
-    required this.definition,
+    required this.meaning,
   });
 
   factory LemmaInfoResponse.fromJson(Map<String, dynamic> json) {
     return LemmaInfoResponse(
       emoji: (json['emoji'] as List<dynamic>).map((e) => e as String).toList(),
-      definition: json['definition'] as String,
+      meaning: json['meaning'] as String,
     );
   }
 
@@ -20,7 +20,7 @@ class LemmaInfoResponse implements JsonSerializable {
   Map<String, dynamic> toJson() {
     return {
       'emoji': emoji,
-      'definition': definition,
+      'meaning': meaning,
     };
   }
 
@@ -31,10 +31,10 @@ class LemmaInfoResponse implements JsonSerializable {
           runtimeType == other.runtimeType &&
           emoji.length == other.emoji.length &&
           emoji.every((element) => other.emoji.contains(element)) &&
-          definition == other.definition;
+          meaning == other.meaning;
 
   @override
   int get hashCode =>
       emoji.fold(0, (prev, element) => prev ^ element.hashCode) ^
-      definition.hashCode;
+      meaning.hashCode;
 }

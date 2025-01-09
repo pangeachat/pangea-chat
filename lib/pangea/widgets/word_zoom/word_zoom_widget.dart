@@ -1,20 +1,17 @@
 import 'dart:async';
 
 import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pangea/controllers/message_analytics_controller.dart';
 import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/utils/grammar/get_grammar_copy.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
-import 'package:fluffychat/pangea/widgets/chat/toolbar_content_loading_indicator.dart';
 import 'package:fluffychat/pangea/widgets/chat/tts_controller.dart';
 import 'package:fluffychat/pangea/widgets/practice_activity/emoji_practice_button.dart';
-import 'package:fluffychat/pangea/widgets/practice_activity/practice_activity_card.dart';
 import 'package:fluffychat/pangea/widgets/practice_activity/word_text_with_audio_button.dart';
-import 'package:fluffychat/pangea/widgets/word_zoom/lemma_meaning_widget.dart';
 import 'package:fluffychat/pangea/widgets/word_zoom/lemma_widget.dart';
 import 'package:fluffychat/pangea/widgets/word_zoom/morphological_widget.dart';
+import 'package:fluffychat/pangea/widgets/word_zoom/word_zoom_center_widget.dart';
 import 'package:flutter/material.dart';
 
 enum WordZoomSelection {
@@ -24,7 +21,7 @@ enum WordZoomSelection {
   morph,
 }
 
-extension on WordZoomSelection {
+extension WordZoomSelectionUtils on WordZoomSelection {
   ActivityTypeEnum get activityType {
     switch (this) {
       case WordZoomSelection.meaning:
@@ -318,73 +315,5 @@ class ActivityAnswerWidget extends StatelessWidget {
       case WordZoomSelection.meaning:
         return const SizedBox();
     }
-  }
-}
-
-class WordZoomCenterWidget extends StatelessWidget {
-  final WordZoomSelection? selectionType;
-  final String? selectedMorphFeature;
-  final bool shouldDoActivity;
-  final bool locked;
-  final WordZoomWidgetState wordDetailsController;
-
-  const WordZoomCenterWidget({
-    required this.selectionType,
-    required this.selectedMorphFeature,
-    required this.shouldDoActivity,
-    required this.locked,
-    required this.wordDetailsController,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (selectionType == null) {
-      return const ToolbarContentLoadingIndicator();
-    }
-
-    if (shouldDoActivity || locked) {
-      return PracticeActivityCard(
-        pangeaMessageEvent: wordDetailsController.widget.messageEvent,
-        targetTokensAndActivityType: TargetTokensAndActivityType(
-          tokens: [wordDetailsController.widget.token],
-          activityType: selectionType!.activityType,
-        ),
-        overlayController: wordDetailsController.widget.overlayController,
-        morphFeature: selectedMorphFeature,
-        wordDetailsController: wordDetailsController,
-      );
-    }
-
-    if (selectionType == WordZoomSelection.meaning) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: LemmaMeaningWidget(
-            lemma: wordDetailsController.widget.token.lemma.text.isNotEmpty
-                ? wordDetailsController.widget.token.lemma.text
-                : wordDetailsController.widget.token.lemma.form,
-            pos: wordDetailsController.widget.token.pos,
-            langCode: wordDetailsController
-                .widget.messageEvent.messageDisplayLangCode,
-          ),
-        ),
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ActivityAnswerWidget(
-            token: wordDetailsController.widget.token,
-            selectionType: selectionType!,
-            selectedMorphFeature: selectedMorphFeature,
-          ),
-        ],
-      ),
-    );
   }
 }

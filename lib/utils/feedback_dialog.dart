@@ -1,3 +1,4 @@
+import 'package:fluffychat/config/app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 
@@ -5,6 +6,7 @@ import '../pangea/widgets/common/bot_face_svg.dart';
 
 Future<dynamic> showFeedbackDialog(
   BuildContext context,
+  Widget offendingContent,
   void Function(String) submitFeedback,
 ) {
   final TextEditingController feedbackController = TextEditingController();
@@ -28,6 +30,17 @@ Future<dynamic> showFeedbackDialog(
                 ),
                 const SizedBox(height: 10),
                 Text(L10n.of(context).reportContentIssueDescription),
+                const SizedBox(height: 10),
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8.0),
+                    border: Border.all(
+                      color: AppConfig.warning,
+                    ),
+                  ),
+                  child: offendingContent,
+                ),
                 const SizedBox(height: 10),
                 TextField(
                   controller: feedbackController,

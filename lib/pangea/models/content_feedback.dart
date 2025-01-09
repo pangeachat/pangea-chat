@@ -17,4 +17,15 @@ class ContentFeedback<T extends JsonSerializable> {
       'feedback': feedback,
     };
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ContentFeedback &&
+          runtimeType == other.runtimeType &&
+          content == other.content &&
+          feedback == other.feedback;
+
+  @override
+  int get hashCode => content.hashCode ^ feedback.hashCode;
 }

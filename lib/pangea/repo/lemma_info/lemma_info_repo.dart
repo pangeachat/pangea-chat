@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:fluffychat/pangea/models/content_feedback.dart';
 import 'package:fluffychat/pangea/network/urls.dart';
@@ -6,6 +7,7 @@ import 'package:fluffychat/pangea/repo/lemma_info/lemma_info_request.dart';
 import 'package:fluffychat/pangea/repo/lemma_info/lemma_info_response.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
 import '../../config/environment.dart';
@@ -41,10 +43,13 @@ class LemmaInfoRepo {
     } else if (feedback != null) {
       // the cache should have the request in order for the user to provide feedback
       // this would be a strange situation and indicate some error in our logic
+      debugger(when: kDebugMode);
       ErrorHandler.logError(
         m: 'Feedback provided for a non-cached request',
         data: request.toJson(),
       );
+    } else {
+      debugPrint('No cached response for lemma ${request.lemma}');
     }
 
     final Requests req = Requests(
@@ -75,14 +80,14 @@ class LemmaInfoRepo {
   ) {
     _clearExpiredEntries();
 
-    final List<String> definitions = [];
+    final Set<String> definitions = {};
     for (final entry in _cache.entries) {
       if (entry.key.lemma != lemma) {
-        definitions.add(entry.value.definition);
+        definitions.add(entry.value.meaning);
       }
     }
 
-    definitions.shuffle();
+    definitions.toList().shuffle();
 
     return definitions.take(count).toList();
   }

@@ -10,12 +10,13 @@ class LemmaInfoRequest {
   ContentFeedback<LemmaInfoResponse>? feedback;
 
   LemmaInfoRequest({
-    required this.partOfSpeech,
-    required this.lemmaLang,
+    required String partOfSpeech,
+    required String lemmaLang,
     required this.userL1,
     required this.lemma,
     this.feedback,
-  });
+  })  : partOfSpeech = partOfSpeech.toLowerCase(),
+        lemmaLang = lemmaLang.toLowerCase();
 
   Map<String, dynamic> toJson() {
     return {
@@ -34,13 +35,9 @@ class LemmaInfoRequest {
           runtimeType == other.runtimeType &&
           lemma == other.lemma &&
           partOfSpeech == other.partOfSpeech &&
-          lemmaLang == other.lemmaLang &&
-          userL1 == other.userL1;
+          feedback == other.feedback;
 
   @override
   int get hashCode =>
-      lemma.hashCode ^
-      partOfSpeech.hashCode ^
-      lemmaLang.hashCode ^
-      userL1.hashCode;
+      lemma.hashCode ^ partOfSpeech.hashCode ^ feedback.hashCode;
 }
