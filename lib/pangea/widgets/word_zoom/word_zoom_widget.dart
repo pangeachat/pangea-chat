@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/controllers/message_analytics_controller.dart';
 import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
@@ -14,12 +12,13 @@ import 'package:fluffychat/pangea/widgets/chat/tts_controller.dart';
 import 'package:fluffychat/pangea/widgets/practice_activity/emoji_practice_button.dart';
 import 'package:fluffychat/pangea/widgets/practice_activity/practice_activity_card.dart';
 import 'package:fluffychat/pangea/widgets/practice_activity/word_text_with_audio_button.dart';
-import 'package:fluffychat/pangea/widgets/word_zoom/contextual_translation_widget.dart';
+import 'package:fluffychat/pangea/widgets/word_zoom/lemma_meaning_widget.dart';
 import 'package:fluffychat/pangea/widgets/word_zoom/lemma_widget.dart';
 import 'package:fluffychat/pangea/widgets/word_zoom/morphological_widget.dart';
+import 'package:flutter/material.dart';
 
 enum WordZoomSelection {
-  translation,
+  meaning,
   emoji,
   lemma,
   morph,
@@ -28,7 +27,7 @@ enum WordZoomSelection {
 extension on WordZoomSelection {
   ActivityTypeEnum get activityType {
     switch (this) {
-      case WordZoomSelection.translation:
+      case WordZoomSelection.meaning:
         return ActivityTypeEnum.wordMeaning;
       case WordZoomSelection.emoji:
         return ActivityTypeEnum.emoji;
@@ -117,7 +116,7 @@ class WordZoomWidgetState extends State<WordZoomWidget> {
   WordZoomSelection get _defaultSelectionType =>
       _shouldShowActivity(WordZoomSelection.lemma)
           ? WordZoomSelection.lemma
-          : WordZoomSelection.translation;
+          : WordZoomSelection.meaning;
 
   Future<void> _setSelectionType(
     WordZoomSelection type, {
@@ -167,7 +166,7 @@ class WordZoomWidgetState extends State<WordZoomWidget> {
     _lockActivity();
     Future.delayed(savorTheJoyDuration, () {
       if (_selectionType == WordZoomSelection.lemma) {
-        _setSelectionType(WordZoomSelection.translation);
+        _setSelectionType(WordZoomSelection.meaning);
       }
       _unlockActivity();
     });
@@ -186,7 +185,7 @@ class WordZoomWidgetState extends State<WordZoomWidget> {
     switch (selection) {
       case WordZoomSelection.lemma:
         return _canGenerateLemmaActivity;
-      case WordZoomSelection.translation:
+      case WordZoomSelection.meaning:
       case WordZoomSelection.morph:
         return widget.token.canGenerateDistractors(
           selection.activityType,
@@ -316,7 +315,7 @@ class ActivityAnswerWidget extends StatelessWidget {
         return token.getEmoji() != null
             ? Text(token.getEmoji()!)
             : const Text("emoji is null");
-      case WordZoomSelection.translation:
+      case WordZoomSelection.meaning:
         return const SizedBox();
     }
   }
@@ -357,11 +356,19 @@ class WordZoomCenterWidget extends StatelessWidget {
       );
     }
 
-    if (selectionType == WordZoomSelection.translation) {
-      return ContextualTranslationWidget(
-        token: wordDetailsController.widget.token,
-        langCode:
-            wordDetailsController.widget.messageEvent.messageDisplayLangCode,
+    if (selectionType == WordZoomSelection.meaning) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: LemmaMeaningWidget(
+            lemma: wordDetailsController.widget.token.lemma.text.isNotEmpty
+                ? wordDetailsController.widget.token.lemma.text
+                : wordDetailsController.widget.token.lemma.form,
+            pos: wordDetailsController.widget.token.pos,
+            langCode: wordDetailsController
+                .widget.messageEvent.messageDisplayLangCode,
+          ),
+        ),
       );
     }
 

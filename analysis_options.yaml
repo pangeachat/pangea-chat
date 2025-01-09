@@ -8,6 +8,10 @@ linter:
     - prefer_final_locals
     - prefer_final_in_for_each
     - require_trailing_commas
+  exclude:
+    - lib/generated_plugin_registrant.dart
+    - lib/l10n/*.dart
+    - assets/l10n/*.arb
 
 analyzer:
   errors:
@@ -16,6 +20,7 @@ analyzer:
   exclude:
     - lib/generated_plugin_registrant.dart
     - lib/l10n/*.dart
+    - assets/l10n/*.arb
 
 dart_code_metrics:
   metrics:

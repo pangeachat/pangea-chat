@@ -1,19 +1,22 @@
-class LemmaDefinitionResponse {
+import 'package:fluffychat/pangea/models/content_feedback.dart';
+
+class LemmaInfoResponse implements JsonSerializable {
   final List<String> emoji;
   final String definition;
 
-  LemmaDefinitionResponse({
+  LemmaInfoResponse({
     required this.emoji,
     required this.definition,
   });
 
-  factory LemmaDefinitionResponse.fromJson(Map<String, dynamic> json) {
-    return LemmaDefinitionResponse(
+  factory LemmaInfoResponse.fromJson(Map<String, dynamic> json) {
+    return LemmaInfoResponse(
       emoji: (json['emoji'] as List<dynamic>).map((e) => e as String).toList(),
       definition: json['definition'] as String,
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'emoji': emoji,
@@ -24,7 +27,7 @@ class LemmaDefinitionResponse {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is LemmaDefinitionResponse &&
+      other is LemmaInfoResponse &&
           runtimeType == other.runtimeType &&
           emoji.length == other.emoji.length &&
           emoji.every((element) => other.emoji.contains(element)) &&

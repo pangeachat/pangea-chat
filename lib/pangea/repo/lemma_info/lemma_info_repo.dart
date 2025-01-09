@@ -1,40 +1,50 @@
 import 'dart:convert';
 
+import 'package:fluffychat/pangea/models/content_feedback.dart';
 import 'package:fluffychat/pangea/network/urls.dart';
-import 'package:fluffychat/pangea/repo/lemma_definition/lemma_definition_request.dart';
-import 'package:fluffychat/pangea/repo/lemma_definition/lemma_definition_response.dart';
+import 'package:fluffychat/pangea/repo/lemma_info/lemma_info_request.dart';
+import 'package:fluffychat/pangea/repo/lemma_info/lemma_info_response.dart';
+import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 import '../../config/environment.dart';
 import '../../network/requests.dart';
 
-class LemmaDictionaryRepo {
+class LemmaInfoRepo {
   // In-memory cache with timestamps
-  static final Map<LemmaDefinitionRequest, LemmaDefinitionResponse> _cache = {};
-  static final Map<LemmaDefinitionRequest, DateTime> _cacheTimestamps = {};
+  static final Map<LemmaInfoRequest, LemmaInfoResponse> _cache = {};
+  static final Map<LemmaInfoRequest, DateTime> _cacheTimestamps = {};
 
   static const Duration _cacheDuration = Duration(days: 2);
 
-  static Future<LemmaDefinitionResponse> get(
-    LemmaDefinitionRequest request,
-  ) async {
+  static Future<LemmaInfoResponse> get(
+    LemmaInfoRequest request, [
+    String? feedback,
+  ]) async {
     _clearExpiredEntries();
 
-    // Check the cache first
     if (_cache.containsKey(request)) {
-      // If the request has feedback, remove it from the cache
-      if (request.feedback != null) {
-        debugPrint('Removing request from cache');
-        _cache.remove(request);
+      final cached = _cache[request]!;
 
-        assert(!_cache.containsKey(request));
-
-        // otherwise, return the cached response
+      if (feedback == null) {
+        // in this case, we just return the cached response
+        return cached;
       } else {
-        return _cache[request]!;
+        // we're adding this within the service to avoid needing to have the widgets
+        // save state including the bad response
+        request.feedback = ContentFeedback(
+          cached,
+          feedback,
+        );
       }
+    } else if (feedback != null) {
+      // the cache should have the request in order for the user to provide feedback
+      // this would be a strange situation and indicate some error in our logic
+      ErrorHandler.logError(
+        m: 'Feedback provided for a non-cached request',
+        data: request.toJson(),
+      );
     }
 
     final Requests req = Requests(
@@ -49,7 +59,7 @@ class LemmaDictionaryRepo {
     );
 
     final decodedBody = jsonDecode(utf8.decode(res.bodyBytes));
-    final response = LemmaDefinitionResponse.fromJson(decodedBody);
+    final response = LemmaInfoResponse.fromJson(decodedBody);
 
     // Store the response and timestamp in the cache
     _cache[request] = response;
