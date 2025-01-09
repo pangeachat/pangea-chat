@@ -1,11 +1,20 @@
+import 'package:flutter/material.dart';
+
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:go_router/go_router.dart';
+import 'package:matrix/matrix.dart';
+
 import 'package:fluffychat/pages/chat_details/chat_details.dart';
 import 'package:fluffychat/pages/chat_details/participant_list_item.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/pages/class_settings/class_name_header.dart';
 import 'package:fluffychat/pangea/pages/class_settings/p_class_widgets/class_details_toggle_add_students_tile.dart';
+import 'package:fluffychat/pangea/pages/class_settings/p_class_widgets/download_analytics_button.dart';
 import 'package:fluffychat/pangea/pages/class_settings/p_class_widgets/room_capacity_button.dart';
 import 'package:fluffychat/pangea/utils/download_chat.dart';
+import 'package:fluffychat/pangea/utils/download_file.dart';
 import 'package:fluffychat/pangea/widgets/chat/visibility_toggle.dart';
 import 'package:fluffychat/pangea/widgets/conversation_bot/conversation_bot_settings.dart';
 import 'package:fluffychat/utils/fluffy_share.dart';
@@ -15,11 +24,6 @@ import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart';
 
 class PangeaChatDetailsView extends StatelessWidget {
   final ChatDetailsController controller;
@@ -333,6 +337,8 @@ class PangeaChatDetailsView extends StatelessWidget {
                           room: room,
                           controller: controller,
                         ),
+                        if (room.isSpace && room.isRoomAdmin)
+                          DownloadAnalyticsButton(space: room),
                         Divider(color: theme.dividerColor, height: 1),
                         if (isGroupChat)
                           ListTile(

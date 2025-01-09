@@ -1,5 +1,9 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
+
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+
 import 'package:fluffychat/pages/chat_list/client_chooser_button.dart';
 import 'package:fluffychat/pangea/controllers/get_analytics_controller.dart';
 import 'package:fluffychat/pangea/enum/progress_indicators_enum.dart';
@@ -13,8 +17,6 @@ import 'package:fluffychat/pangea/widgets/chat_list/analytics_summary/morph_anal
 import 'package:fluffychat/pangea/widgets/chat_list/analytics_summary/progress_indicator.dart';
 import 'package:fluffychat/pangea/widgets/chat_list/analytics_summary/vocab_analytics_popup/vocab_analytics_popup.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
 
 /// A summary of "My Analytics" shown at the top of the chat list
 /// It shows a variety of progress indicators such as

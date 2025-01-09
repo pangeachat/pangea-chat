@@ -1,12 +1,13 @@
 import 'dart:developer';
 import 'dart:math';
 
-import 'package:collection/collection.dart';
-import 'package:fluffychat/pangea/widgets/chat/tts_controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+import 'package:collection/collection.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 
+import 'package:fluffychat/pangea/widgets/chat/tts_controller.dart';
 import '../../utils/bot_style.dart';
 import 'it_shimmer.dart';
 
@@ -36,6 +37,10 @@ class ChoicesArray extends StatefulWidget {
 
   final String Function(String)? getDisplayCopy;
 
+  /// activity has multiple correct answers, so user can still
+  /// select choices once the correct choice has been selected
+  final bool enableMultiSelect;
+
   const ChoicesArray({
     super.key,
     required this.isLoading,
@@ -50,6 +55,7 @@ class ChoicesArray extends StatefulWidget {
     this.onLongPress,
     this.getDisplayCopy,
     this.id,
+    this.enableMultiSelect = false,
   });
 
   @override
@@ -66,7 +72,7 @@ class ChoicesArrayState extends State<ChoicesArray> {
   }
 
   void enableInteractions() {
-    if (_hasSelectedCorrectChoice) return;
+    if (_hasSelectedCorrectChoice && !widget.enableMultiSelect) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) setState(() => interactionDisabled = false);
     });
@@ -187,7 +193,7 @@ class ChoiceItem extends StatelessWidget {
                 //if index is selected, then give the background a slight primary color
                 backgroundColor: entry.value.color != null
                     ? WidgetStateProperty.all<Color>(
-                        entry.value.color!.withOpacity(0.2),
+                        entry.value.color!.withAlpha(50),
                       )
                     // : theme.colorScheme.primaryFixed,
                     : null,

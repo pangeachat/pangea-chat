@@ -1,6 +1,8 @@
-import 'package:fluffychat/pangea/config/environment.dart';
 import 'package:flutter/material.dart';
+
 import 'package:matrix/matrix.dart';
+
+import 'package:fluffychat/pangea/config/environment.dart';
 
 abstract class AppConfig {
   // #Pangea
@@ -103,10 +105,7 @@ abstract class AppConfig {
   static bool sendTypingNotifications = true;
   static bool sendPublicReadReceipts = true;
   static bool swipeRightToLeftToReply = true;
-  //#Pangea
-  static bool sendOnEnter = true;
-  // static bool sendOnEnter = false;
-  //Pangea#
+  static bool? sendOnEnter;
   static bool showPresences = true;
   static bool experimentalVoip = false;
   static const bool hideTypingUsernames = false;

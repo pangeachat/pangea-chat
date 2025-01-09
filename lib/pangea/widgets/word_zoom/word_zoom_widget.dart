@@ -1,11 +1,15 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/controllers/message_analytics_controller.dart';
 import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
-import 'package:fluffychat/pangea/repo/lemma_definition_repo.dart';
 import 'package:fluffychat/pangea/utils/grammar/get_grammar_copy.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
+import 'package:fluffychat/pangea/widgets/chat/toolbar_content_loading_indicator.dart';
 import 'package:fluffychat/pangea/widgets/chat/tts_controller.dart';
 import 'package:fluffychat/pangea/widgets/practice_activity/emoji_practice_button.dart';
 import 'package:fluffychat/pangea/widgets/practice_activity/practice_activity_card.dart';
@@ -13,7 +17,6 @@ import 'package:fluffychat/pangea/widgets/practice_activity/word_text_with_audio
 import 'package:fluffychat/pangea/widgets/word_zoom/contextual_translation_widget.dart';
 import 'package:fluffychat/pangea/widgets/word_zoom/lemma_widget.dart';
 import 'package:fluffychat/pangea/widgets/word_zoom/morphological_widget.dart';
-import 'package:flutter/material.dart';
 
 enum WordZoomSelection {
   translation,
@@ -59,32 +62,26 @@ class WordZoomWidgetState extends State<WordZoomWidget> {
   /// The currently selected word zoom activity type.
   /// If an activity should be shown for this type, shows that activity.
   /// If not, shows the info related to that activity type.
-  /// Defaults to the lemma translation.
-  WordZoomSelection _selectionType = WordZoomSelection.translation;
+  /// Null if not set yet, since it takes a second to determine if the lemma activity can be shown.
+  WordZoomSelection? _selectionType;
 
   /// If doing a morphological activity, this is the selected morph feature.
   String? _selectedMorphFeature;
 
-  /// If true, the activity will be shown regardless of shouldDoActivity.
+  /// If non-null and not complete, the activity will be shown regardless of shouldDoActivity.
   /// Used to show the practice activity card's savor the joy animation.
   /// (Analytics sending triggers the point gain animation, do also
   /// causes shouldDoActivity to be false. This is a workaround.)
-  bool _forceShowActivity = false;
+  Completer<void>? _activityLock;
 
   // The function to determine if lemma distractors can be generated
   // is computationally expensive, so we only do it once
   bool _canGenerateLemmaActivity = false;
 
-  bool get _canGenerateDefintionActivity =>
-      LemmaDictionaryRepo.getDistractorDefinitions(
-        widget.token.lemma.text,
-        1,
-      ).isNotEmpty;
-
   @override
   void initState() {
     super.initState();
-    _setCanGenerateLemmaActivity();
+    _setInitialSelectionType();
   }
 
   @override
@@ -92,51 +89,73 @@ class WordZoomWidgetState extends State<WordZoomWidget> {
     super.didUpdateWidget(oldWidget);
     if (widget.token != oldWidget.token) {
       _clean();
-      _setCanGenerateLemmaActivity();
+      _setInitialSelectionType();
     }
   }
 
   void _clean() {
     if (mounted) {
       setState(() {
-        _selectionType = WordZoomSelection.translation;
+        _activityLock = null;
+        _selectionType = null;
         _selectedMorphFeature = null;
-        _forceShowActivity = false;
       });
     }
   }
 
-  void _setCanGenerateLemmaActivity() {
-    widget.token.canGenerateDistractors(ActivityTypeEnum.lemmaId).then((value) {
-      if (mounted) setState(() => _canGenerateLemmaActivity = value);
-    });
+  Future<void> _setCanGenerateLemmaActivity() async {
+    final canGenerate = await widget.token.canGenerateLemmaDistractors();
+    if (mounted) setState(() => _canGenerateLemmaActivity = canGenerate);
   }
 
-  void _setSelectionType(WordZoomSelection type, {String? feature}) {
+  Future<void> _setInitialSelectionType() async {
+    if (_selectionType != null) return;
+    await _setCanGenerateLemmaActivity();
+    _setSelectionType(_defaultSelectionType);
+  }
+
+  WordZoomSelection get _defaultSelectionType =>
+      _shouldShowActivity(WordZoomSelection.lemma)
+          ? WordZoomSelection.lemma
+          : WordZoomSelection.translation;
+
+  Future<void> _setSelectionType(
+    WordZoomSelection type, {
+    String? feature,
+  }) async {
     WordZoomSelection newSelectedType = type;
     String? newSelectedFeature;
     if (type != WordZoomSelection.morph) {
       // if setting selectionType to non-morph activity, either set it if it's not
       // already selected, or reset to it the default type
-      newSelectedType =
-          _selectionType == type ? WordZoomSelection.translation : type;
+      newSelectedType = _selectionType == type ? _defaultSelectionType : type;
     } else {
       // otherwise (because there could be multiple different morph features), check
       // if the feature is already selected, and if so, reset to the default type.
       // if not, set the selectionType and feature
       newSelectedFeature = _selectedMorphFeature == feature ? null : feature;
       newSelectedType = newSelectedFeature == null
-          ? WordZoomSelection.translation
+          ? _defaultSelectionType
           : WordZoomSelection.morph;
     }
+
+    // wait for savor the joy animation to finish before changing the selection type
+    if (_activityLock != null) await _activityLock!.future;
 
     _selectionType = newSelectedType;
     _selectedMorphFeature = newSelectedFeature;
     if (mounted) setState(() {});
   }
 
-  void _setForceShowActivity(bool showActivity) {
-    if (mounted) setState(() => _forceShowActivity = showActivity);
+  void _lockActivity() {
+    if (mounted) setState(() => _activityLock = Completer());
+  }
+
+  void _unlockActivity() {
+    if (_activityLock == null) return;
+    _activityLock!.complete();
+    _activityLock = null;
+    if (mounted) setState(() {});
   }
 
   /// This function should be called before overlayController.onActivityFinish to
@@ -145,76 +164,39 @@ class WordZoomWidgetState extends State<WordZoomWidget> {
   void onActivityFinish({
     Duration savorTheJoyDuration = const Duration(seconds: 1),
   }) {
-    _setForceShowActivity(true);
+    _lockActivity();
     Future.delayed(savorTheJoyDuration, () {
-      _setForceShowActivity(false);
+      if (_selectionType == WordZoomSelection.lemma) {
+        _setSelectionType(WordZoomSelection.translation);
+      }
+      _unlockActivity();
     });
   }
 
-  Widget get _wordZoomCenterWidget {
-    final showActivity = widget.token.shouldDoActivity(
-          a: _selectionType.activityType,
-          feature: _selectedMorphFeature,
-          tag: _selectedMorphFeature == null
+  bool _shouldShowActivity(WordZoomSelection selection) {
+    final shouldDo = widget.token.shouldDoActivity(
+      a: selection.activityType,
+      feature: _selectedMorphFeature,
+      tag: _selectedMorphFeature == null
+          ? null
+          : widget.token.morph[_selectedMorphFeature],
+    );
+    if (!shouldDo) return false;
+
+    switch (selection) {
+      case WordZoomSelection.lemma:
+        return _canGenerateLemmaActivity;
+      case WordZoomSelection.translation:
+      case WordZoomSelection.morph:
+        return widget.token.canGenerateDistractors(
+          selection.activityType,
+          morphFeature: _selectedMorphFeature,
+          morphTag: _selectedMorphFeature == null
               ? null
               : widget.token.morph[_selectedMorphFeature],
-        ) &&
-        (_selectionType != WordZoomSelection.lemma ||
-            _canGenerateLemmaActivity) &&
-        (_selectionType != WordZoomSelection.translation ||
-            _canGenerateDefintionActivity);
-
-    if (showActivity || _forceShowActivity) {
-      return PracticeActivityCard(
-        pangeaMessageEvent: widget.messageEvent,
-        targetTokensAndActivityType: TargetTokensAndActivityType(
-          tokens: [widget.token],
-          activityType: _selectionType.activityType,
-        ),
-        overlayController: widget.overlayController,
-        morphFeature: _selectedMorphFeature,
-        wordDetailsController: this,
-      );
-    }
-
-    if (_selectionType == WordZoomSelection.translation) {
-      return ContextualTranslationWidget(
-        token: widget.token,
-        langCode: widget.messageEvent.messageDisplayLangCode,
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [_activityAnswer],
-      ),
-    );
-  }
-
-  Widget get _activityAnswer {
-    switch (_selectionType) {
-      case WordZoomSelection.morph:
-        if (_selectedMorphFeature == null) {
-          return const Text("There should be a selected morph feature");
-        }
-        final String morphTag = widget.token.morph[_selectedMorphFeature!];
-        final copy = getGrammarCopy(
-          category: _selectedMorphFeature!,
-          lemma: morphTag,
-          context: context,
         );
-        return Text(copy ?? morphTag, textAlign: TextAlign.center);
-      case WordZoomSelection.lemma:
-        return Text(widget.token.lemma.text, textAlign: TextAlign.center);
       case WordZoomSelection.emoji:
-        return widget.token.getEmoji() != null
-            ? Text(widget.token.getEmoji()!)
-            : const Text("emoji is null");
-      case WordZoomSelection.translation:
-        return const SizedBox();
+        return true;
     }
   }
 
@@ -245,6 +227,7 @@ class WordZoomWidgetState extends State<WordZoomWidget> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         EmojiPracticeButton(
                           token: widget.token,
@@ -252,21 +235,37 @@ class WordZoomWidgetState extends State<WordZoomWidget> {
                               _setSelectionType(WordZoomSelection.emoji),
                           isSelected: _selectionType == WordZoomSelection.emoji,
                         ),
-                        WordTextWithAudioButton(
-                          text: widget.token.text.content,
-                          ttsController: widget.tts,
-                          eventID: widget.messageEvent.eventId,
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            WordTextWithAudioButton(
+                              text: widget.token.text.content,
+                              ttsController: widget.tts,
+                              eventID: widget.messageEvent.eventId,
+                            ),
+                            // if _selectionType is null, we don't know if the lemma activity
+                            // can be shown yet, so we don't show the lemma definition
+                            if (!_shouldShowActivity(WordZoomSelection.lemma) &&
+                                _selectionType != null)
+                              LemmaWidget(
+                                token: widget.token,
+                              ),
+                          ],
                         ),
-                        LemmaWidget(
-                          token: widget.token,
-                          onPressed: () =>
-                              _setSelectionType(WordZoomSelection.lemma),
-                          isSelected: _selectionType == WordZoomSelection.lemma,
-                        ),
+                        const SizedBox(width: 40),
                       ],
                     ),
                   ),
-                  _wordZoomCenterWidget,
+                  WordZoomCenterWidget(
+                    selectionType: _selectionType,
+                    selectedMorphFeature: _selectedMorphFeature,
+                    shouldDoActivity: _selectionType != null
+                        ? _shouldShowActivity(_selectionType!)
+                        : false,
+                    locked:
+                        _activityLock != null && !_activityLock!.isCompleted,
+                    wordDetailsController: this,
+                  ),
                   MorphologicalListWidget(
                     token: widget.token,
                     setMorphFeature: (feature) => _setSelectionType(
@@ -280,6 +279,104 @@ class WordZoomWidgetState extends State<WordZoomWidget> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class ActivityAnswerWidget extends StatelessWidget {
+  final PangeaToken token;
+  final WordZoomSelection selectionType;
+  final String? selectedMorphFeature;
+
+  const ActivityAnswerWidget({
+    super.key,
+    required this.token,
+    required this.selectionType,
+    required this.selectedMorphFeature,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    switch (selectionType) {
+      case WordZoomSelection.morph:
+        if (selectedMorphFeature == null) {
+          return const Text("There should be a selected morph feature");
+        }
+        final String morphTag = token.morph[selectedMorphFeature!];
+        final copy = getGrammarCopy(
+          category: selectedMorphFeature!,
+          lemma: morphTag,
+          context: context,
+        );
+        return Text(copy ?? morphTag, textAlign: TextAlign.center);
+      case WordZoomSelection.lemma:
+        return Text(token.lemma.text, textAlign: TextAlign.center);
+      case WordZoomSelection.emoji:
+        return token.getEmoji() != null
+            ? Text(token.getEmoji()!)
+            : const Text("emoji is null");
+      case WordZoomSelection.translation:
+        return const SizedBox();
+    }
+  }
+}
+
+class WordZoomCenterWidget extends StatelessWidget {
+  final WordZoomSelection? selectionType;
+  final String? selectedMorphFeature;
+  final bool shouldDoActivity;
+  final bool locked;
+  final WordZoomWidgetState wordDetailsController;
+
+  const WordZoomCenterWidget({
+    required this.selectionType,
+    required this.selectedMorphFeature,
+    required this.shouldDoActivity,
+    required this.locked,
+    required this.wordDetailsController,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (selectionType == null) {
+      return const ToolbarContentLoadingIndicator();
+    }
+
+    if (shouldDoActivity || locked) {
+      return PracticeActivityCard(
+        pangeaMessageEvent: wordDetailsController.widget.messageEvent,
+        targetTokensAndActivityType: TargetTokensAndActivityType(
+          tokens: [wordDetailsController.widget.token],
+          activityType: selectionType!.activityType,
+        ),
+        overlayController: wordDetailsController.widget.overlayController,
+        morphFeature: selectedMorphFeature,
+        wordDetailsController: wordDetailsController,
+      );
+    }
+
+    if (selectionType == WordZoomSelection.translation) {
+      return ContextualTranslationWidget(
+        token: wordDetailsController.widget.token,
+        langCode:
+            wordDetailsController.widget.messageEvent.messageDisplayLangCode,
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ActivityAnswerWidget(
+            token: wordDetailsController.widget.token,
+            selectionType: selectionType!,
+            selectedMorphFeature: selectedMorphFeature,
+          ),
+        ],
       ),
     );
   }

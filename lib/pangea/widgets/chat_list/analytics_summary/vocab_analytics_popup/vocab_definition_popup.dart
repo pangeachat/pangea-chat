@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/constants/language_constants.dart';
 import 'package:fluffychat/pangea/constants/morph_categories_and_labels.dart';
-import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
 import 'package:fluffychat/pangea/enum/construct_use_type_enum.dart';
 import 'package:fluffychat/pangea/enum/lemma_category_enum.dart';
 import 'package:fluffychat/pangea/models/analytics/construct_list_model.dart';
@@ -55,6 +54,10 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
     final ConstructListModel constructsModel =
         MatrixState.pangeaController.getAnalytics.constructListModel;
     // Find selected emoji, if applicable, using PangeaToken.getEmoji
+    // TODO: Use preexisting token somehow
+    // constructlistmodel.constructList - find all morphs associated with lemma
+    // lemmasToUses
+    // use preexisting ConstructListModel
     emoji = PangeaToken(
       text: PangeaTokenText(
         offset: 0,
@@ -78,26 +81,48 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
     super.initState();
   }
 
+  /// Sort uses of lemma associated with writing, reading, and listening.
   List<OneConstructUse> loadUses() {
     final List<OneConstructUse> writingUsesDetailed = [];
     for (final OneConstructUse use in widget.construct.uses) {
+      if (use.useType.pointValue == 0) {
+        continue;
+      }
       final bool positive = use.useType.pointValue > 0;
-      final ActivityTypeEnum activityType = use.useType.activityType;
-      // TODO: Check with someone that grouping is correct
+      final ConstructUseTypeEnum activityType = use.useType;
       switch (activityType) {
-        case ActivityTypeEnum.lemmaId:
-        case ActivityTypeEnum.morphId:
+        case ConstructUseTypeEnum.wa:
+        case ConstructUseTypeEnum.ga:
+        case ConstructUseTypeEnum.unk:
+        case ConstructUseTypeEnum.corIt:
+        case ConstructUseTypeEnum.ignIt:
+        case ConstructUseTypeEnum.incIt:
+        case ConstructUseTypeEnum.corIGC:
+        case ConstructUseTypeEnum.ignIGC:
+        case ConstructUseTypeEnum.incIGC:
+        case ConstructUseTypeEnum.corL:
+        case ConstructUseTypeEnum.ignL:
+        case ConstructUseTypeEnum.incL:
+        case ConstructUseTypeEnum.corM:
+        case ConstructUseTypeEnum.ignM:
+        case ConstructUseTypeEnum.incM:
           writingUses.add(positive);
           writingUsesDetailed.add(use);
           break;
-        case ActivityTypeEnum.wordFocusListening:
-        case ActivityTypeEnum.hiddenWordListening:
+        case ConstructUseTypeEnum.corWL:
+        case ConstructUseTypeEnum.ignWL:
+        case ConstructUseTypeEnum.incWL:
+        case ConstructUseTypeEnum.corHWL:
+        case ConstructUseTypeEnum.ignHWL:
+        case ConstructUseTypeEnum.incHWL:
           hearingUses.add(positive);
           break;
-        case ActivityTypeEnum.wordMeaning:
+        case ConstructUseTypeEnum.corPA:
+        case ConstructUseTypeEnum.ignPA:
+        case ConstructUseTypeEnum.incPA:
           readingUses.add(positive);
           break;
-        case ActivityTypeEnum.emoji:
+        default:
           break;
       }
     }
@@ -137,12 +162,15 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
       if (use.metadata.eventId == null) {
         continue;
       }
-      // TODO: This is absurdly slow.
-      // There has got to be a faster way to do this
-      // final String? messageText =
-      //     (await (MatrixState().client.getRoomById(use.metadata.roomId))
-      //             ?.getEventById(use.metadata.eventId!))
-      //         ?.text;
+      // debugPrint("Usage Room ID: ${use.metadata.roomId}");
+      // TODO: Room retrieval isn't working. Can Future function
+      // that uses MatrixState not be called from InitState?
+      // final Room? room = MatrixState().client.getRoomById(use.metadata.roomId);
+      // debugPrint("Usage Event ID: ${use.metadata.eventId}");
+      // final Event? event = await room?.getEventById(use.metadata.eventId!);
+      // debugPrint("Usage text retrieval...");
+      // final String? messageText = event?.text;
+      // debugPrint("Usage Message text: $messageText");
 
       // if (messageText != null) {
       //   examples.add(
@@ -179,21 +207,27 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
   }
 
   Future<String?> getDefinition() async {
-    final LemmaDefinitionRequest lemmaDefReq = LemmaDefinitionRequest(
-      lemma: widget.construct.lemma,
-      partOfSpeech: widget.construct.category,
+    final lang2 =
+        MatrixState.pangeaController.languageController.userL2?.langCode;
+    if (lang2 == null) {
+      debugPrint("No lang2, cannot retrieve definition");
+      return L10n.of(context).definitionNotFound;
+    }
 
-      /// This assumes that the user's L2 is the language of the lemma
-      // TODO: Edit default lemmaLang value?
-      lemmaLang:
-          MatrixState.pangeaController.languageController.userL2?.langCode ??
-              LanguageKeys.defaultLanguage,
+    final LemmaDefinitionRequest lemmaDefReq = LemmaDefinitionRequest(
+      partOfSpeech: widget.construct.category,
+      lemmaLang: lang2,
       userL1:
           MatrixState.pangeaController.languageController.userL1?.langCode ??
               LanguageKeys.defaultLanguage,
+      lemma: Lemma(
+        text: widget.construct.lemma,
+        saveVocab: false,
+        form: widget.construct.lemma,
+      ),
     );
     res = await LemmaDictionaryRepo.get(lemmaDefReq);
-    return res?.definition;
+    return res?.meaning;
   }
 
   @override

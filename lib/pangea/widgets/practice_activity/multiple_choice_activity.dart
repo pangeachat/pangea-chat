@@ -1,5 +1,10 @@
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+
+import 'package:matrix/matrix.dart';
+
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/choice_array.dart';
 import 'package:fluffychat/pangea/controllers/put_analytics_controller.dart';
@@ -14,9 +19,6 @@ import 'package:fluffychat/pangea/widgets/chat/tts_controller.dart';
 import 'package:fluffychat/pangea/widgets/practice_activity/practice_activity_card.dart';
 import 'package:fluffychat/pangea/widgets/practice_activity/word_audio_button.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:matrix/matrix.dart';
 
 /// The multiple choice activity view
 class MultipleChoiceActivity extends StatefulWidget {
@@ -25,6 +27,8 @@ class MultipleChoiceActivity extends StatefulWidget {
   final Event event;
   final VoidCallback? onError;
   final MessageOverlayController overlayController;
+  final String? initialSelectedChoice;
+  final bool clearResponsesOnUpdate;
 
   const MultipleChoiceActivity({
     super.key,
@@ -32,6 +36,8 @@ class MultipleChoiceActivity extends StatefulWidget {
     required this.currentActivity,
     required this.event,
     required this.overlayController,
+    this.initialSelectedChoice,
+    this.clearResponsesOnUpdate = false,
     this.onError,
   });
 
@@ -44,6 +50,17 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
 
   PracticeActivityRecordModel? get currentRecordModel =>
       widget.practiceCardController.currentCompletionRecord;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialSelectedChoice != null) {
+      currentRecordModel?.addResponse(
+        text: widget.initialSelectedChoice,
+        score: 1,
+      );
+    }
+  }
 
   @override
   void didUpdateWidget(covariant MultipleChoiceActivity oldWidget) {
@@ -87,6 +104,10 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
 
     if (currentRecordModel?.hasTextResponse(value) ?? false) {
       return;
+    }
+
+    if (widget.clearResponsesOnUpdate) {
+      currentRecordModel?.clearResponses();
     }
 
     currentRecordModel?.addResponse(
@@ -197,7 +218,7 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
           style: AppConfig.messageTextStyle(
             widget.event,
             Theme.of(context).colorScheme.primary,
-          ),
+          ).merge(const TextStyle(fontStyle: FontStyle.italic)),
         ),
         const SizedBox(height: 8),
         if (practiceActivity.activityType ==
@@ -229,6 +250,8 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
           tts: practiceActivity.activityType.includeTTSOnClick ? tts : null,
           enableAudio: !widget.overlayController.isPlayingAudio,
           getDisplayCopy: _getDisplayCopy,
+          enableMultiSelect:
+              widget.currentActivity.activityType == ActivityTypeEnum.emoji,
         ),
       ],
     );

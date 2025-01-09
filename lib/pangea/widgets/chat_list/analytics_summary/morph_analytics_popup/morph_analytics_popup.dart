@@ -1,11 +1,13 @@
+import 'package:flutter/material.dart';
+
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+
 import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
 import 'package:fluffychat/pangea/enum/progress_indicators_enum.dart';
 import 'package:fluffychat/pangea/models/analytics/construct_list_model.dart';
 import 'package:fluffychat/pangea/models/analytics/construct_use_model.dart';
 import 'package:fluffychat/pangea/widgets/chat_list/analytics_summary/morph_analytics_popup/morph_analytics_xp_tile.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
 
 class MorphAnalyticsPopup extends StatefulWidget {
   final ConstructTypeEnum type;
@@ -84,7 +86,9 @@ class MorphAnalyticsPopupState extends State<MorphAnalyticsPopup> {
           ),
           Expanded(
             child: ConstructsTileList(
-              _categoriesToUses[selectedCategory]!,
+              _categoriesToUses[selectedCategory]!
+                  .where((use) => use.points > 0)
+                  .toList(),
             ),
           ),
         ],
@@ -93,7 +97,10 @@ class MorphAnalyticsPopupState extends State<MorphAnalyticsPopup> {
       dialogContent = Center(child: Text(L10n.of(context).noDataFound));
     } else if (hasNoCategories || !widget.showGroups) {
       dialogContent = ConstructsTileList(
-        _constructsModel.constructList(type: widget.type),
+        _constructsModel
+            .constructList(type: widget.type)
+            .where((uses) => uses.points > 0)
+            .toList(),
       );
     } else {
       dialogContent = ListView.builder(
