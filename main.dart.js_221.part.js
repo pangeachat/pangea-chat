@@ -3375,6 +3375,15 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$chatName() {
       return "Nombre del chat";
     },
+    get$reportContentIssueTitle() {
+      return "Informar sobre un problema de contenido";
+    },
+    get$feedback() {
+      return "Comentarios opcionales";
+    },
+    get$reportContentIssueDescription() {
+      return "\xa1Ups! La IA puede facilitar experiencias de aprendizaje personalizadas, pero... tambi\xe9n alucina. Por favor, proporciona cualquier comentario que tengas y lo intentaremos de nuevo.";
+    },
     get$clickTheWordAgainToDeselect() {
       return "Click the selected word to deselect it.";
     },
@@ -4435,7 +4444,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Click on individual words for more activities.";
     },
     get$chooseBestDefinition() {
-      return "Choose the best definition";
+      return "What does this word mean?";
     },
     get$chooseBaseForm() {
       return "Choose the base form";
@@ -4542,6 +4551,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_221", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "44FBG2Cyzn4DIJuTsP2fZNePvGc=");
+})($__dart_deferred_initializers__, "kwiXn67fWSuw1iz7hywBplWoRR8=");
 ;
 //# sourceMappingURL=main.dart.js_221.part.js.map
