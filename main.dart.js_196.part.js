@@ -7,18 +7,18 @@
 $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersList, $) {
   var A,
   B = {
-    L10nBo$() {
-      return new B.L10nBo(A.canonicalizedLocale("bo"));
+    L10nBn$() {
+      return new B.L10nBn(A.canonicalizedLocale("bn"));
     },
-    L10nBo: function L10nBo(t0) {
+    L10nBn: function L10nBn(t0) {
       this.localeName = t0;
     }
   },
   C;
   A = holdersList[0];
-  B = hunkHelpers.updateHolder(holdersList[8], B);
+  B = hunkHelpers.updateHolder(holdersList[7], B);
   C = holdersList[51];
-  B.L10nBo.prototype = {
+  B.L10nBn.prototype = {
     get$alwaysUse24HourFormat() {
       return "false";
     },
@@ -50,13 +50,13 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "About " + homeserver;
     },
     get$accept(_) {
-      return "Accept";
+      return "\u09b8\u09cd\u09ac\u09c0\u0995\u09be\u09b0 \u0995\u09b0\u09bf";
     },
     acceptedTheInvitation$1(username) {
-      return "\ud83d\udc4d " + username + " accepted the invitation";
+      return username + " \u0986\u09ae\u09a8\u09cd\u09a4\u09cd\u09b0\u09a3 \u0997\u09cd\u09b0\u09b9\u09a3 \u0995\u09b0\u09c7\u099b\u09c7";
     },
     get$account() {
-      return "Account";
+      return "\u0985\u09cd\u09af\u09be\u0995\u09be\u0989\u09a8\u09cd\u099f";
     },
     activatedEndToEndEncryption$1(username) {
       return "\ud83d\udd10 " + username + " activated end to end encryption";
@@ -132,6 +132,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$swipeRightToLeftToReply() {
       return "Swipe right to left to reply";
+    },
+    get$sendOnEnter() {
+      return "Send on enter";
     },
     badServerVersionsException$4(serverVersions, supportedVersions, serverVerions, suportedVersions) {
       return "The homeserver supports the Spec versions:\n" + serverVersions + "\nBut this app supports only " + supportedVersions;
@@ -4532,14 +4535,14 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
   var typesOffset = hunkHelpers.updateTypes([]);
   (function inheritance() {
     var _inherit = hunkHelpers.inherit;
-    _inherit(B.L10nBo, C.L10n);
+    _inherit(B.L10nBn, C.L10n);
   })();
-  A._Universe_addRules(init.typeUniverse, JSON.parse('{"L10nBo":{"L10n":[]}}'));
+  A._Universe_addRules(init.typeUniverse, JSON.parse('{"L10nBn":{"L10n":[]}}'));
 };
 ;
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_196", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "ez0vMMmNMwCKb1yphdBNB+e8wsk=");
+})($__dart_deferred_initializers__, "y8V5iiwG2vF+X3SdCXMIrk0ebKc=");
 ;
 //# sourceMappingURL=main.dart.js_196.part.js.map

@@ -145,6 +145,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$swipeRightToLeftToReply() {
       return "Swipe right to left to reply";
     },
+    get$sendOnEnter() {
+      return "Send on enter";
+    },
     badServerVersionsException$4(serverVersions, supportedVersions, serverVerions, suportedVersions) {
       return "The homeserver supports the Spec versions:\n" + serverVersions + "\nBut this app supports only " + supportedVersions;
     },
@@ -4647,6 +4650,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$sendTypingNotifications() {
       return "Enviar notifica\xe7\xf5es de digita\xe7\xe3o";
     },
+    get$sendOnEnter() {
+      return "Enviar ao pressionar enter";
+    },
     badServerVersionsException$4(serverVersions, supportedVersions, serverVerions, suportedVersions) {
       return "O servidor matriz suporta as vers\xf5es Spec:\n" + serverVersions + "\nMas este app suporta apenas " + supportedVersions;
     },
@@ -5903,6 +5909,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     badServerLoginTypesException$3(serverVersions, supportedVersions, suportedVersions) {
       return "O servidor suporta os tipos de in\xedcio de sess\xe3o:\n" + serverVersions + "\nMas esta aplica\xe7\xe3o apenas suporta:\n" + suportedVersions;
     },
+    get$sendOnEnter() {
+      return "Enviar com Enter";
+    },
     badServerVersionsException$4(serverVersions, supportedVersions, serverVerions, suportedVersions) {
       return "O servidor suporta as vers\xf5es Spec:\n" + serverVersions + "\nMas esta aplica\xe7\xe3o apenas suporta " + suportedVersions;
     },
@@ -6538,6 +6547,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_15", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "rwVYmwiEqR8ItSdnExEbsSKBygg=");
+})($__dart_deferred_initializers__, "UottzW7ex4/LVN0W0mILnOqiAO0=");
 ;
 //# sourceMappingURL=main.dart.js_15.part.js.map
