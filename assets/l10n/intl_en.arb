@@ -4230,6 +4230,7 @@
   "reportContentIssueTitle": "Report content issue",
   "feedback": "Optional feedback",
   "reportContentIssueDescription": "Uh oh! AI can faciliate personalized learning experiences but... also hallucinates. Please provide any feedback you have and we'll try again.",
+  "changeContent": "Uh oh! AI can faciliate personalized learning experiences but... also hallucinates. What should it be?",
   "clickTheWordAgainToDeselect": "Click the selected word to deselect it.",
   "l2SupportNa": "Not Available",
   "l2SupportAlpha": "Alpha",
@@ -4696,5 +4697,6 @@
   "analyticsNotAvailable": "User analytics not available",
   "downloading": "Downloading...",
   "failedFetchUserAnalytics": "Failed to download user analytics",
-  "downloadComplete": "Download complete!"
+  "downloadComplete": "Download complete!",
+  "editMorphologicalLabel": "Pangea Bot makes mistakes too! What should this label be?"
 }

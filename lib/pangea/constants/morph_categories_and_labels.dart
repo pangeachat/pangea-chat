@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import 'package:material_symbols_icons/symbols.dart';
 
 const Map<String, List<String>> morphCategoriesAndLabels = {
@@ -224,4 +223,13 @@ IconData getIconForMorphFeature(String feature) {
       debugger(when: kDebugMode);
       return Icons.help_outline;
   }
+}
+
+List<String> getLabelsForMorphCategory(String category) {
+  for (final feat in morphCategoriesAndLabels.keys) {
+    if (feat.toLowerCase() == category.toLowerCase()) {
+      return morphCategoriesAndLabels[feat]!;
+    }
+  }
+  return [];
 }
