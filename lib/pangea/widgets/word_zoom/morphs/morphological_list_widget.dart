@@ -1,7 +1,8 @@
+import 'package:flutter/material.dart';
+
 import 'package:fluffychat/pangea/constants/morph_categories_and_labels.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/widgets/word_zoom/morphs/morphological_list_item.dart';
-import 'package:flutter/material.dart';
 
 class ActivityMorph {
   final String morphFeature;
