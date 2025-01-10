@@ -173,26 +173,34 @@ class SpanCardState extends State<SpanCard> {
     );
   }
 
-  void onReplaceSelected() {
+  Future<void> onReplaceSelected() async {
     addIgnoredTokenUses();
-    widget.scm
-        .onReplacementSelect(
-          matchIndex: widget.scm.matchIndex,
-          choiceIndex: selectedChoiceIndex!,
-        )
-        .then((value) => setState(() {}));
+    await widget.scm.onReplacementSelect(
+      matchIndex: widget.scm.matchIndex,
+      choiceIndex: selectedChoiceIndex!,
+    );
+    _showFirstMatch();
   }
 
   void onIgnoreMatch() {
-    MatrixState.pAnyState.closeOverlay();
     addIgnoredTokenUses();
 
     Future.delayed(
       Duration.zero,
       () {
         widget.scm.onIgnore();
+        _showFirstMatch();
       },
     );
+  }
+
+  void _showFirstMatch() {
+    if (widget.scm.choreographer.igc.igcTextData != null &&
+        widget.scm.choreographer.igc.igcTextData!.matches.isNotEmpty) {
+      widget.scm.choreographer.igc.showFirstMatch(context);
+    } else {
+      MatrixState.pAnyState.closeOverlay();
+    }
   }
 
   @override
