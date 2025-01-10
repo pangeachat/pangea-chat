@@ -57,7 +57,6 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
 
   @override
   void initState() {
-    debugPrint("Category: ${widget.construct.category}");
     definition = getDefinition();
     writingExamples = getExamples(loadUses());
 
@@ -172,10 +171,19 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
         ),
       );
     }
-    return Wrap(
-      spacing: 3,
-      runSpacing: 5,
-      children: dots,
+    // Clips content if there are 5 or more rows of dots
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        maxWidth: 250,
+        maxHeight: 90,
+      ),
+      child: SingleChildScrollView(
+        child: Wrap(
+          spacing: 3,
+          runSpacing: 5,
+          children: dots,
+        ),
+      ),
     );
   }
 
@@ -185,9 +193,6 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
     final Set<String> exampleText = {};
     final List<Widget> examples = [];
     for (final OneConstructUse use in writingUsesDetailed) {
-      if (examples.length >= 3) {
-        return examples;
-      }
       if (use.metadata.eventId == null) {
         continue;
       }
@@ -199,6 +204,9 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
       if (messageText != null) {
         // Save text to set, to avoid duplicate entries
         exampleText.add(messageText);
+        if (exampleText.length >= 3) {
+          break;
+        }
       }
     }
     // Turn message text into widgets:
@@ -499,8 +507,13 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                             ),
                           );
                         } else {
-                          return const CircularProgressIndicator.adaptive(
-                            strokeWidth: 2,
+                          return const Column(
+                            children: [
+                              SizedBox(height: 10),
+                              CircularProgressIndicator.adaptive(
+                                strokeWidth: 2,
+                              ),
+                            ],
                           );
                         }
                       },

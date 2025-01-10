@@ -5,11 +5,15 @@ import 'package:fluffychat/pangea/enum/lemma_category_enum.dart';
 import 'package:fluffychat/pangea/enum/progress_indicators_enum.dart';
 import 'package:fluffychat/pangea/models/analytics/construct_list_model.dart';
 import 'package:fluffychat/pangea/models/analytics/construct_use_model.dart';
+import 'package:fluffychat/pangea/utils/grammar/get_grammar_copy.dart';
 import 'package:fluffychat/pangea/widgets/chat_list/analytics_summary/vocab_analytics_popup/vocab_definition_popup.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:matrix/matrix.dart';
 
+/// Displays vocab analytics, sorted into categories
+/// (flowers, greens, and seeds) by points
 class VocabAnalyticsPopup extends StatefulWidget {
   const VocabAnalyticsPopup({
     super.key,
@@ -23,10 +27,12 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
   ConstructListModel get _constructsModel =>
       MatrixState.pangeaController.getAnalytics.constructListModel;
 
+  // Sort entries alphabetically, to better detect duplicates
   List<ConstructUses> get _sortedEntries {
     final entries =
         _constructsModel.constructList(type: ConstructTypeEnum.vocab);
-    entries.sort((a, b) => b.points.compareTo(a.points));
+    entries
+        .sort((a, b) => a.lemma.toLowerCase().compareTo(b.lemma.toLowerCase()));
     return entries;
   }
 
@@ -36,20 +42,39 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
     if (_constructsModel.constructList(type: ConstructTypeEnum.vocab).isEmpty) {
       return Center(child: Text(L10n.of(context).noDataFound));
     }
+    final sortedEntries = _sortedEntries;
 
-    // Get lists of lemmas
+    // Get lists of lemmas by category
     final List<Widget> flowerLemmas = [];
     final List<Widget> greenLemmas = [];
     final List<Widget> seedLemmas = [];
-    for (int i = 0; i < _sortedEntries.length; i++) {
-      final construct = _sortedEntries[i];
+    for (int i = 0; i < sortedEntries.length; i++) {
+      final construct = sortedEntries[i];
+      if (construct.lemma.isEmpty) {
+        continue;
+      }
       final int points = construct.points;
+      String? displayText;
 
-      // Add lemma to relevant widget list, followed by comma
+      // Check if previous or next entry has duplicate lemma
+      if ((i > 0 && sortedEntries[i - 1].lemma.equals(construct.lemma)) ||
+          ((i < sortedEntries.length - 1 &&
+              sortedEntries[i + 1].lemma.equals(construct.lemma)))) {
+        final String pos = getGrammarCopy(
+              category: "pos",
+              lemma: construct.category,
+              context: context,
+            ) ??
+            construct.category;
+        displayText = "${sortedEntries[i].lemma} (${pos.toLowerCase()})";
+      }
+
+      // Add VocabChip for lemma to relevant widget list, followed by comma
       if (points < AnalyticsConstants.xpForGreens) {
         seedLemmas.add(
           VocabChip(
             construct: construct,
+            displayText: displayText,
             onTap: () {
               showDialog<VocabDefinitionPopup>(
                 context: context,
@@ -75,6 +100,7 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
         flowerLemmas.add(
           VocabChip(
             construct: construct,
+            displayText: displayText,
             onTap: () {
               showDialog<VocabDefinitionPopup>(
                 context: context,
@@ -100,6 +126,7 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
         greenLemmas.add(
           VocabChip(
             construct: construct,
+            displayText: displayText,
             onTap: () {
               showDialog<VocabDefinitionPopup>(
                 context: context,
@@ -244,12 +271,14 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
 // otherwise, is very visually simple with transparent border/background/etc
 class VocabChip extends StatelessWidget {
   final ConstructUses construct;
+  final String? displayText;
   final VoidCallback onTap;
 
   const VocabChip({
     super.key,
     required this.construct,
     required this.onTap,
+    this.displayText,
   });
 
   @override
@@ -257,7 +286,7 @@ class VocabChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Text(
-        construct.lemma,
+        displayText ?? construct.lemma,
         style: const TextStyle(
           // Workaround to add space between text and underline
           color: Colors.transparent,
