@@ -2,17 +2,18 @@
 
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
+
 import 'package:collection/collection.dart';
+import 'package:matrix/matrix.dart';
+import 'package:matrix/src/utils/markdown.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+
 import 'package:fluffychat/pangea/extensions/pangea_event_extension.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_choreo_event.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/models/token_api_models.dart';
 import 'package:fluffychat/pangea/models/tokens_event_content_model.dart';
-import 'package:flutter/foundation.dart';
-import 'package:matrix/matrix.dart';
-import 'package:matrix/src/utils/markdown.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-
 import '../../widgets/matrix.dart';
 import '../constants/language_constants.dart';
 import '../constants/pangea_event_types.dart';
@@ -23,9 +24,7 @@ import '../utils/error_handler.dart';
 class RepresentationEvent {
   Event? _event;
   PangeaRepresentation? _content;
-
-  /// if tokens were sent with the message, they'll be passed in the constructor
-  PangeaMessageTokens? _tokensSentWithMessage;
+  PangeaMessageTokens? _tokens;
   ChoreoRecord? _choreo;
   Timeline timeline;
   Event parentMessageEvent;
@@ -45,7 +44,7 @@ class RepresentationEvent {
     }
     _event = event;
     _content = content;
-    _tokensSentWithMessage = tokens;
+    _tokens = tokens;
     _choreo = choreo;
   }
 
@@ -68,8 +67,7 @@ class RepresentationEvent {
       content.originalSent == false && content.originalWritten == false;
 
   List<PangeaToken>? get tokens {
-    if (_tokensSentWithMessage != null && _event == null)
-      return _tokensSentWithMessage!.tokens;
+    if (_tokens != null) return _tokens!.tokens;
 
     if (_event == null) {
       // debugger(when: kDebugMode);
@@ -90,20 +88,19 @@ class RepresentationEvent {
 
     if (tokenEvents.length > 1) {
       debugger(when: kDebugMode);
-      // this will no longer be the case once user's can edit token information
-      // ErrorHandler.logError(
-      //   m: 'should not have more than one tokenEvent per representation ${_event?.eventId}',
-      //   s: StackTrace.current,
-      //   data: {
-      //     "eventID": _event?.eventId,
-      //     "content": tokenEvents.map((e) => e.content).toString(),
-      //     "type": tokenEvents.map((e) => e.type).toString(),
-      //   },
-      // );
+      ErrorHandler.logError(
+        m: 'should not have more than one tokenEvent per representation ${_event?.eventId}',
+        s: StackTrace.current,
+        data: {
+          "eventID": _event?.eventId,
+          "content": tokenEvents.map((e) => e.content).toString(),
+          "type": tokenEvents.map((e) => e.type).toString(),
+        },
+      );
     }
 
     final PangeaMessageTokens storedTokens =
-        tokenEvents.last.getPangeaContent<PangeaMessageTokens>();
+        tokenEvents.first.getPangeaContent<PangeaMessageTokens>();
 
     if (PangeaToken.reconstructText(storedTokens.tokens) != text) {
       ErrorHandler.logError(
@@ -117,9 +114,9 @@ class RepresentationEvent {
       return null;
     }
 
-    _tokensSentWithMessage = storedTokens;
+    _tokens = storedTokens;
 
-    return _tokensSentWithMessage?.tokens;
+    return _tokens?.tokens;
   }
 
   Future<List<PangeaToken>> tokensGlobal(
