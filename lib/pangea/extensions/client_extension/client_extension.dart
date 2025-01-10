@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
@@ -31,12 +32,18 @@ extension PangeaClient on Client {
 
   List<Room> get allMyAnalyticsRooms => _allMyAnalyticsRooms;
 
+  /// Update the visibility of all analytics rooms to private (do they don't show in search
+  /// results) and set the join rules to public (so they come through in space hierarchy response)
   Future<void> updateAnalyticsRoomVisibility() async =>
-      await _updateAnalyticsRoomVisibility();
+      _updateAnalyticsRoomVisibility();
 
-  /// Helper function to join all relevant analytics rooms
-  /// and set up those rooms to be joined by other users.
-  void migrateAnalyticsRooms() => _migrateAnalyticsRooms();
+  /// Space admins join analytics rooms in spaces via the space hierarchy,
+  /// so other members of the space need to add their analytics rooms to the space.
+  Future<void> addAnalyticsRoomsToSpaces() async =>
+      _addAnalyticsRoomsToSpaces();
+
+  bool isJoinSpaceSyncUpdate(SyncUpdate update) =>
+      _isJoinSpaceSyncUpdate(update);
 
 // general_info
 
