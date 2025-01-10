@@ -4668,7 +4668,7 @@
   "numLemmasUsedCorrectly": "Number of lemmas used correctly at least once",
   "listLemmasUsedCorrectly": "List of lemmas used correctly at least once",
   "numLemmasUsedIncorrectly": "Number of lemmas used incorrectly at least once",
-  "listLemmasUsedIncorrectly": "List of lemmas used incorrectly at least once",
+  "listLemmasUsedIncorrectly": "Number of lemmas used correctly 0 times",
   "numLemmasSmallXP": "Number of lemmas with 0 - 30 XP",
   "numLemmasMediumXP": "Number of lemmas with 31 - 200 XP",
   "numLemmasLargeXP": "Number of lemmas with > 200 XP",

@@ -102,10 +102,34 @@ class AnalyticsSummaryModel {
           )
         : null;
 
-    // final morphLemmasPercentCorrect = morphLemmas.lemmasByPercent(
-    //   percent: 0.8,
-    //   getCopy: getCopy,
-    // );
+    final List<String> correctOriginalUseLemmas = [];
+    final List<String> correctSystemUseLemmas = [];
+    final List<String> incorrectOriginalUseLemmas = [];
+    final List<String> incorrectSystemUseLemmas = [];
+
+    if (morphLemmas != null) {
+      final originalWrittenUses = morphLemmas.lemmasByPercent(
+        filter: (use) =>
+            use.useType == ConstructUseTypeEnum.wa ||
+            use.useType == ConstructUseTypeEnum.ga,
+        percent: 0.8,
+      );
+
+      correctSystemUseLemmas.addAll(originalWrittenUses.over);
+      incorrectSystemUseLemmas.addAll(originalWrittenUses.under);
+
+      final systemGeneratedUses = morphLemmas.lemmasByPercent(
+        filter: (use) =>
+            use.useType != ConstructUseTypeEnum.wa &&
+            use.useType != ConstructUseTypeEnum.ga &&
+            use.useType != ConstructUseTypeEnum.unk &&
+            use.pointValue != 0,
+        percent: 0.8,
+      );
+
+      correctSystemUseLemmas.addAll(systemGeneratedUses.over);
+      incorrectSystemUseLemmas.addAll(systemGeneratedUses.under);
+    }
 
     final vocabLemmasCorrect = vocabLemmas?.lemmasByCorrectUse();
 
@@ -152,10 +176,10 @@ class AnalyticsSummaryModel {
       listMorphConstructs: morphLemmas?.lemmasToUses.entries
           .map((entry) => getCopy(entry.value.first))
           .toList(),
-      listMorphConstructsUsedCorrectlyOriginal: [],
-      listMorphConstructsUsedIncorrectlyOriginal: [],
-      listMorphConstructsUsedCorrectlySystem: [],
-      listMorphConstructsUsedIncorrectlySystem: [],
+      listMorphConstructsUsedCorrectlyOriginal: correctOriginalUseLemmas,
+      listMorphConstructsUsedIncorrectlyOriginal: incorrectOriginalUseLemmas,
+      listMorphConstructsUsedCorrectlySystem: correctSystemUseLemmas,
+      listMorphConstructsUsedIncorrectlySystem: incorrectSystemUseLemmas,
       listMorphSmallXP: morphLemmas?.thresholdedLemmas(
         start: 0,
         end: 30,
