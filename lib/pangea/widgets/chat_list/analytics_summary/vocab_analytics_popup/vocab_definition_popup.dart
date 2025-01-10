@@ -1,7 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:fluffychat/config/app_config.dart';
+import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pangea/constants/language_constants.dart';
 import 'package:fluffychat/pangea/constants/morph_categories_and_labels.dart';
+import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
 import 'package:fluffychat/pangea/enum/construct_use_type_enum.dart';
 import 'package:fluffychat/pangea/enum/lemma_category_enum.dart';
 import 'package:fluffychat/pangea/models/analytics/construct_list_model.dart';
@@ -11,12 +13,14 @@ import 'package:fluffychat/pangea/models/lemma.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/models/pangea_token_text_model.dart';
 import 'package:fluffychat/pangea/repo/lemma_definition_repo.dart';
+import 'package:fluffychat/pangea/utils/grammar/get_grammar_copy.dart';
 import 'package:fluffychat/pangea/widgets/chat/tts_controller.dart';
 import 'package:fluffychat/pangea/widgets/practice_activity/word_audio_button.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:matrix/matrix.dart';
 
 class VocabDefinitionPopup extends StatefulWidget {
   final ConstructUses construct;
@@ -35,6 +39,8 @@ class VocabDefinitionPopup extends StatefulWidget {
 }
 
 class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
+  ConstructListModel? constructsModel;
+  OneConstructUse? exampleForm;
   String? exampleEventID;
   LemmaDefinitionResponse? res;
   late Future<String?> definition;
@@ -46,18 +52,47 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
   List<bool> hearingUses = [];
   List<bool> readingUses = [];
   late Future<List<Widget>> writingExamples;
+  Set<String>? forms;
+  String? formString;
 
   @override
   void initState() {
     definition = getDefinition();
     writingExamples = getExamples(loadUses());
-    final ConstructListModel constructsModel =
+    constructsModel =
         MatrixState.pangeaController.getAnalytics.constructListModel;
+
+    // Get possible forms of lemma
+    forms = (constructsModel!.lemmasToUses())[widget.construct.lemma]
+        ?.first
+        .uses
+        .map((e) => e.form)
+        .whereType<String>()
+        .toSet();
+    debugPrint("forms: $forms");
+    final morphsWithForms = constructsModel?.uses.where(
+      (e) =>
+          e.constructType == ConstructTypeEnum.morph &&
+          (forms?.any((f) => e.form == f) ?? false),
+    );
+    exampleForm = morphsWithForms?.firstOrNull;
+
+    // Save forms as string
+    if (forms != null) {
+      formString = "  ";
+      for (final String form in forms!) {
+        if (form.isNotEmpty) {
+          formString = "${formString!}$form, ";
+        }
+      }
+      if (formString!.length <= 2) {
+        formString = null;
+      } else {
+        formString = formString!.substring(0, formString!.length - 2);
+      }
+    }
+
     // Find selected emoji, if applicable, using PangeaToken.getEmoji
-    // TODO: Use preexisting token somehow
-    // constructlistmodel.constructList - find all morphs associated with lemma
-    // lemmasToUses
-    // use preexisting ConstructListModel
     emoji = PangeaToken(
       text: PangeaTokenText(
         offset: 0,
@@ -72,7 +107,6 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
       pos: widget.construct.category,
       morph: {},
     ).getEmoji();
-    morphFeature = token?.morph.entries.first.key;
 
     exampleEventID = widget.construct.uses
         .firstWhereOrNull((e) => e.metadata.eventId != null)
@@ -154,54 +188,55 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
   Future<List<Widget>> getExamples(
     List<OneConstructUse> writingUsesDetailed,
   ) async {
+    final Set<String> exampleText = {};
     final List<Widget> examples = [];
-    for (final OneConstructUse use in widget.construct.uses) {
+    for (final OneConstructUse use in writingUsesDetailed) {
       if (examples.length >= 3) {
         return examples;
       }
       if (use.metadata.eventId == null) {
         continue;
       }
-      // debugPrint("Usage Room ID: ${use.metadata.roomId}");
-      // TODO: Room retrieval isn't working. Can Future function
-      // that uses MatrixState not be called from InitState?
-      // final Room? room = MatrixState().client.getRoomById(use.metadata.roomId);
-      // debugPrint("Usage Event ID: ${use.metadata.eventId}");
-      // final Event? event = await room?.getEventById(use.metadata.eventId!);
-      // debugPrint("Usage text retrieval...");
-      // final String? messageText = event?.text;
-      // debugPrint("Usage Message text: $messageText");
+      final Room? room = MatrixState.pangeaController.matrixState.client
+          .getRoomById(use.metadata.roomId);
+      final Event? event = await room?.getEventById(use.metadata.eventId!);
+      final String? messageText = event?.text;
 
-      // if (messageText != null) {
-      //   examples.add(
-      //     const SizedBox(
-      //       height: 5,
-      //     ),
-      //   );
-      //   examples.add(
-      //     Container(
-      //       decoration: BoxDecoration(
-      //         color: widget.type.color,
-      //         borderRadius: BorderRadius.circular(
-      //           4,
-      //         ),
-      //       ),
-      //       padding: const EdgeInsets.symmetric(
-      //         horizontal: 16,
-      //         vertical: 8,
-      //       ),
-      //       constraints: const BoxConstraints(
-      //         maxWidth: FluffyThemes.columnWidth * 1.5,
-      //       ),
-      //       child: Text(
-      //         messageText,
-      //         style: const TextStyle(
-      //           color: Colors.black,
-      //         ),
-      //       ),
-      //     ),
-      //   );
-      // }
+      if (messageText != null) {
+        // Save text to set, to avoid duplicate entries
+        exampleText.add(messageText);
+      }
+    }
+    // Turn message text into widgets:
+    for (final String text in exampleText) {
+      examples.add(
+        const SizedBox(
+          height: 5,
+        ),
+      );
+      examples.add(
+        Container(
+          decoration: BoxDecoration(
+            color: widget.type.color,
+            borderRadius: BorderRadius.circular(
+              4,
+            ),
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
+          ),
+          constraints: const BoxConstraints(
+            maxWidth: FluffyThemes.columnWidth * 1.5,
+          ),
+          child: Text(
+            text,
+            style: const TextStyle(
+              color: Colors.black,
+            ),
+          ),
+        ),
+      );
     }
     return examples;
   }
@@ -308,8 +343,6 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                       Tooltip(
                         message: L10n.of(context).grammarCopyPOS,
                         child: Icon(
-                          // TODO: use POS specific icon
-                          // morphFeature doesn't work because this is Vocab analytics, not Morph
                           (morphFeature != null)
                               ? getIconForMorphFeature(morphFeature!)
                               : Symbols.toys_and_games,
@@ -321,15 +354,14 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                         width: 5,
                       ),
                       Text(
-                        // TODO: use getGrammarCopy to get full category name
-                        // widget.construct.category doesn't work as parameter of getGrammarCopy
-                        // Is this also a vocab vs morph problem?
-                        // getGrammarCopy(
-                        //       category: ,
-                        //       lemma: widget.construct.lemma,
-                        //       context: context,
-                        //     ) ??
-                        widget.construct.category,
+                        (exampleForm != null)
+                            ? getGrammarCopy(
+                                  category: exampleForm!.category,
+                                  lemma: exampleForm!.lemma,
+                                  context: context,
+                                ) ??
+                                widget.construct.category
+                            : widget.construct.category,
                         style: TextStyle(
                           color: textColor,
                           fontSize: 16,
@@ -412,11 +444,9 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          // TODO: Fetch forms using constructListModel from GetAnalyticsController
-                          // What function is supposed to do that?
-                          // Started code on line 55
-                          const TextSpan(
-                            text: "  Example forms....",
+                          TextSpan(
+                            text: formString ??
+                                "  ${L10n.of(context).formsNotFound}",
                           ),
                         ],
                       ),

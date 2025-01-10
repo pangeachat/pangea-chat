@@ -4667,6 +4667,7 @@
   "listeningExercisesTooltip": "Listening exercises",
   "readingExercisesTooltip": "Reading exercises",
   "definitionNotFound": "Definition could not be found.",
+  "formsNotFound": "Forms could not be found.",
   "chooseBaseForm": "Choose the base form",
   "notTheCodeError": "Sorry, that's not the code!",
   "totalXP": "Total XP",

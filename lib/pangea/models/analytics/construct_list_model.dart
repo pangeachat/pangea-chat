@@ -27,7 +27,7 @@ class ConstructListModel {
   List<OneConstructUse> get truncatedUses => _uses.take(100).toList();
 
   /// A map of lemmas to ConstructUses, each of which contains a lemma
-  /// key = lemmma + constructType.string, value = ConstructUses
+  /// key = lemma + constructType.string, value = ConstructUses
   Map<String, ConstructUses> _constructMap = {};
 
   /// Storing this to avoid re-running the sort operation each time this needs to
