@@ -27,7 +27,7 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
   ConstructListModel get _constructsModel =>
       MatrixState.pangeaController.getAnalytics.constructListModel;
 
-  // Sort entries alphabetically, to better detect duplicates
+  /// Sort entries alphabetically, to better detect duplicates
   List<ConstructUses> get _sortedEntries {
     final entries =
         _constructsModel.constructList(type: ConstructTypeEnum.vocab);
@@ -56,7 +56,7 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
       final int points = construct.points;
       String? displayText;
 
-      // Check if previous or next entry has duplicate lemma
+      // Check if previous or next entry has same lemma as this entry
       if ((i > 0 && sortedEntries[i - 1].lemma.equals(construct.lemma)) ||
           ((i < sortedEntries.length - 1 &&
               sortedEntries[i + 1].lemma.equals(construct.lemma)))) {
@@ -151,7 +151,7 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
       }
     }
 
-    // Pass sorted lemmas to background widgets
+    // Pass sorted lemmas to background tile widgets
     final Widget flowers =
         dialogWidget(LemmaCategoryEnum.flowers, flowerLemmas);
     final Widget greens = dialogWidget(LemmaCategoryEnum.greens, greenLemmas);
@@ -162,7 +162,7 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
     );
   }
 
-  /// Card that contains flowers, greens, and seeds chips
+  /// Tile that contains flowers, greens, or seeds chips
   Widget dialogWidget(LemmaCategoryEnum type, List<Widget> lemmaList) {
     // Remove extraneous commas from lemmaList
     if (lemmaList.isNotEmpty) {
@@ -251,7 +251,7 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
                 icon: const Icon(Icons.close),
                 onPressed: Navigator.of(context).pop,
               ),
-              // Edit: add search and training buttons
+              // TODO: add search and training buttons?
             ),
             body: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),
@@ -264,8 +264,8 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
   }
 }
 
-// a simple chip with the text of the lemma
-// highlights on hover
+/// A simple chip with the text of the lemma
+// TODO: highlights on hover
 // callback on click
 // has some padding to separate from other chips
 // otherwise, is very visually simple with transparent border/background/etc

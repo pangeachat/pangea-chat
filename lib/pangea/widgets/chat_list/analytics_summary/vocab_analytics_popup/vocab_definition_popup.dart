@@ -17,13 +17,14 @@ import 'package:fluffychat/pangea/repo/lemma_info/lemma_info_response.dart';
 import 'package:fluffychat/pangea/utils/grammar/get_grammar_copy.dart';
 import 'package:fluffychat/pangea/widgets/chat/tts_controller.dart';
 import 'package:fluffychat/pangea/widgets/practice_activity/word_audio_button.dart';
+import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:matrix/matrix.dart';
 
-/// Displays information about selected lemma and word usage
+/// Displays information about selected lemma, and its usage
 class VocabDefinitionPopup extends StatefulWidget {
   final ConstructUses construct;
   final LemmaCategoryEnum type;
@@ -153,10 +154,11 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
           break;
       }
     }
+    // Save writing uses to find usage examples
     return writingUsesDetailed;
   }
 
-  // Wrapping row of dots - green if positive usage, red if negative
+  /// Returns a wrapping row of dots - green if positive usage, red if negative
   Widget getUsageDots(List<bool> uses) {
     final List<Widget> dots = [];
     for (final bool use in uses) {
@@ -171,10 +173,11 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
         ),
       );
     }
-    // Clips content if there are 5 or more rows of dots
+    // Clips content (and enables scrolling) if there are 5 or more rows of dots
     return ConstrainedBox(
-      constraints: const BoxConstraints(
-        maxWidth: 250,
+      constraints: BoxConstraints(
+        // TODO: May need different maxWidth for android devices
+        maxWidth: PlatformInfos.isMobile ? 250 : 350,
         maxHeight: 90,
       ),
       child: SingleChildScrollView(
@@ -187,6 +190,7 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
     );
   }
 
+  /// Get examples of messages that uses this lemma
   Future<List<Widget>> getExamples(
     List<OneConstructUse> writingUsesDetailed,
   ) async {
@@ -209,6 +213,7 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
         }
       }
     }
+
     // Turn message text into widgets:
     for (final String text in exampleText) {
       examples.add(
@@ -243,6 +248,7 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
     return examples;
   }
 
+  /// Fetch the meaning of the lemma
   Future<String?> getDefinition() async {
     final lang2 =
         MatrixState.pangeaController.languageController.userL2?.langCode;
