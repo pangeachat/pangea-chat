@@ -3,7 +3,6 @@ import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pangea/constants/language_constants.dart';
 import 'package:fluffychat/pangea/constants/morph_categories_and_labels.dart';
-import 'package:fluffychat/pangea/enum/construct_type_enum.dart';
 import 'package:fluffychat/pangea/enum/construct_use_type_enum.dart';
 import 'package:fluffychat/pangea/enum/lemma_category_enum.dart';
 import 'package:fluffychat/pangea/models/analytics/construct_list_model.dart';
@@ -24,6 +23,7 @@ import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:matrix/matrix.dart';
 
+/// Displays information about selected lemma and word usage
 class VocabDefinitionPopup extends StatefulWidget {
   final ConstructUses construct;
   final LemmaCategoryEnum type;
@@ -41,8 +41,6 @@ class VocabDefinitionPopup extends StatefulWidget {
 }
 
 class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
-  ConstructListModel? constructsModel;
-  OneConstructUse? exampleForm;
   String? exampleEventID;
   LemmaInfoResponse? res;
   late Future<String?> definition;
@@ -59,25 +57,19 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
 
   @override
   void initState() {
+    debugPrint("Category: ${widget.construct.category}");
     definition = getDefinition();
     writingExamples = getExamples(loadUses());
-    constructsModel =
-        MatrixState.pangeaController.getAnalytics.constructListModel;
 
     // Get possible forms of lemma
-    forms = (constructsModel!.lemmasToUses())[widget.construct.lemma]
+    final ConstructListModel constructsModel =
+        MatrixState.pangeaController.getAnalytics.constructListModel;
+    forms = (constructsModel.lemmasToUses())[widget.construct.lemma]
         ?.first
         .uses
         .map((e) => e.form)
         .whereType<String>()
         .toSet();
-    debugPrint("forms: $forms");
-    final morphsWithForms = constructsModel?.uses.where(
-      (e) =>
-          e.constructType == ConstructTypeEnum.morph &&
-          (forms?.any((f) => e.form == f) ?? false),
-    );
-    exampleForm = morphsWithForms?.firstOrNull;
 
     // Save forms as string
     if (forms != null) {
@@ -248,7 +240,7 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
         MatrixState.pangeaController.languageController.userL2?.langCode;
     if (lang2 == null) {
       debugPrint("No lang2, cannot retrieve definition");
-      return L10n.of(context).definitionNotFound;
+      return L10n.of(context).meaningNotFound;
     }
 
     final LemmaInfoRequest lemmaDefReq = LemmaInfoRequest(
@@ -330,235 +322,236 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                     ]
                   : [],
             ),
-            body: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Tooltip(
-                        message: L10n.of(context).grammarCopyPOS,
-                        child: Icon(
-                          (morphFeature != null)
-                              ? getIconForMorphFeature(morphFeature!)
-                              : Symbols.toys_and_games,
-                          size: 23,
-                          color: textColor.withValues(alpha: 0.7),
+            body: SingleChildScrollView(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Tooltip(
+                          message: L10n.of(context).grammarCopyPOS,
+                          child: Icon(
+                            (morphFeature != null)
+                                ? getIconForMorphFeature(morphFeature!)
+                                : Symbols.toys_and_games,
+                            size: 23,
+                            color: textColor.withValues(alpha: 0.7),
+                          ),
                         ),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        (exampleForm != null)
-                            ? getGrammarCopy(
-                                  category: exampleForm!.category,
-                                  lemma: exampleForm!.lemma,
-                                  context: context,
-                                ) ??
-                                widget.construct.category
-                            : widget.construct.category,
-                        style: TextStyle(
-                          color: textColor,
-                          fontSize: 16,
+                        const SizedBox(
+                          width: 5,
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                        Text(
+                          getGrammarCopy(
+                                category: "pos",
+                                lemma: widget.construct.category,
+                                context: context,
+                              ) ??
+                              widget.construct.category,
+                          style: TextStyle(
+                            color: textColor,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
 
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: FutureBuilder(
-                      future: definition,
-                      builder: (
-                        BuildContext context,
-                        AsyncSnapshot<String?> snapshot,
-                      ) {
-                        if (snapshot.hasData) {
-                          return RichText(
-                            text: TextSpan(
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.onSurface,
-                                fontSize: 16,
-                              ),
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text:
-                                      L10n.of(context).definitionSectionHeader,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                TextSpan(text: "  ${snapshot.data!}"),
-                              ],
-                            ),
-                          );
-                        } else {
-                          return Wrap(
-                            children: [
-                              Text(
-                                L10n.of(context).definitionSectionHeader,
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: FutureBuilder(
+                        future: definition,
+                        builder: (
+                          BuildContext context,
+                          AsyncSnapshot<String?> snapshot,
+                        ) {
+                          if (snapshot.hasData) {
+                            return RichText(
+                              text: TextSpan(
                                 style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.onSurface,
                                   fontSize: 16,
-                                  fontWeight: FontWeight.bold,
                                 ),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: L10n.of(context).meaningSectionHeader,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  TextSpan(text: "  ${snapshot.data!}"),
+                                ],
                               ),
-                              const SizedBox(
-                                width: 10,
+                            );
+                          } else {
+                            return Wrap(
+                              children: [
+                                Text(
+                                  L10n.of(context).meaningSectionHeader,
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                const CircularProgressIndicator.adaptive(
+                                  strokeWidth: 2,
+                                ),
+                              ],
+                            );
+                          }
+                        },
+                      ),
+                    ),
+
+                    const SizedBox(
+                      height: 10,
+                    ),
+
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: RichText(
+                        text: TextSpan(
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontSize: 16,
+                          ),
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: L10n.of(context).formSectionHeader,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
                               ),
-                              const CircularProgressIndicator.adaptive(
-                                strokeWidth: 2,
-                              ),
-                            ],
+                            ),
+                            TextSpan(
+                              text: formString ??
+                                  "  ${L10n.of(context).formsNotFound}",
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Divider(
+                      height: 3,
+                      color: textColor.withValues(alpha: 0.7),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      "${widget.type.emoji} ${widget.points} XP",
+                      style: TextStyle(
+                        color: textColor,
+                        fontSize: 20,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    // Writing exercise section
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Tooltip(
+                          message: L10n.of(context).writingExercisesTooltip,
+                          child: Icon(
+                            Symbols.edit_square,
+                            size: 25,
+                            color: textColor.withValues(alpha: 0.7),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 7,
+                        ),
+                        getUsageDots(writingUses),
+                      ],
+                    ),
+
+                    FutureBuilder(
+                      future: writingExamples,
+                      builder: (
+                        BuildContext context,
+                        AsyncSnapshot<List<Widget>> snapshot,
+                      ) {
+                        if (snapshot.hasData) {
+                          return Align(
+                            alignment: Alignment.topLeft,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: snapshot.data!,
+                            ),
+                          );
+                        } else {
+                          return const CircularProgressIndicator.adaptive(
+                            strokeWidth: 2,
                           );
                         }
                       },
                     ),
-                  ),
 
-                  const SizedBox(
-                    height: 10,
-                  ),
-
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: RichText(
-                      text: TextSpan(
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          fontSize: 16,
-                        ),
-                        children: <TextSpan>[
-                          TextSpan(
-                            text: L10n.of(context).formSectionHeader,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          TextSpan(
-                            text: formString ??
-                                "  ${L10n.of(context).formsNotFound}",
-                          ),
-                        ],
-                      ),
+                    const SizedBox(
+                      height: 20,
                     ),
-                  ),
-
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Divider(
-                    height: 3,
-                    color: textColor.withValues(alpha: 0.7),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    "${widget.type.emoji} ${widget.points} XP",
-                    style: TextStyle(
-                      color: textColor,
-                      fontSize: 20,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  // Writing exercise section
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Tooltip(
-                        message: L10n.of(context).writingExercisesTooltip,
-                        child: Icon(
-                          Symbols.edit_square,
-                          size: 25,
-                          color: textColor.withValues(alpha: 0.7),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 7,
-                      ),
-                      getUsageDots(writingUses),
-                    ],
-                  ),
-
-                  FutureBuilder(
-                    future: writingExamples,
-                    builder: (
-                      BuildContext context,
-                      AsyncSnapshot<List<Widget>> snapshot,
-                    ) {
-                      if (snapshot.hasData) {
-                        return Align(
-                          alignment: Alignment.topLeft,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: snapshot.data!,
+                    // Listening exercise section
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Tooltip(
+                          message: L10n.of(context).listeningExercisesTooltip,
+                          child: Icon(
+                            Icons.hearing,
+                            size: 25,
+                            color: textColor.withValues(alpha: 0.7),
                           ),
-                        );
-                      } else {
-                        return const CircularProgressIndicator.adaptive(
-                          strokeWidth: 2,
-                        );
-                      }
-                    },
-                  ),
-
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  // Listening exercise section
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Tooltip(
-                        message: L10n.of(context).listeningExercisesTooltip,
-                        child: Icon(
-                          Icons.hearing,
-                          size: 25,
-                          color: textColor.withValues(alpha: 0.7),
                         ),
-                      ),
-                      const SizedBox(
-                        width: 7,
-                      ),
-                      getUsageDots(hearingUses),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  // Reading exercise section
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Tooltip(
-                        message: L10n.of(context).readingExercisesTooltip,
-                        child: Icon(
-                          Symbols.two_pager,
-                          size: 25,
-                          color: textColor.withValues(alpha: 0.7),
+                        const SizedBox(
+                          width: 7,
                         ),
-                      ),
-                      const SizedBox(
-                        width: 7,
-                      ),
-                      getUsageDots(readingUses),
-                    ],
-                  ),
-                ],
+                        getUsageDots(hearingUses),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    // Reading exercise section
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Tooltip(
+                          message: L10n.of(context).readingExercisesTooltip,
+                          child: Icon(
+                            Symbols.two_pager,
+                            size: 25,
+                            color: textColor.withValues(alpha: 0.7),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 7,
+                        ),
+                        getUsageDots(readingUses),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
