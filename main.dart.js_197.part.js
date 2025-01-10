@@ -4546,6 +4546,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$downloadComplete() {
       return "Download complete!";
     },
+    get$editMorphologicalLabel() {
+      return "Pangea Bot makes mistakes too! What should this label be?";
+    },
     get$dataAvailable() {
       return "Data availability";
     },
@@ -4570,6 +4573,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_197", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "a6+12injWEUry9Sxr/c+EByFBtQ=");
+})($__dart_deferred_initializers__, "WyyJT+S4IfKqs5WHf39vUJBKocM=");
 ;
 //# sourceMappingURL=main.dart.js_197.part.js.map
