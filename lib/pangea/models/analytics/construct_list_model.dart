@@ -8,7 +8,9 @@ import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/models/practice_activities.dart/practice_activity_model.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
+import 'package:fluffychat/pangea/utils/grammar/get_grammar_copy.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 /// A wrapper around a list of [OneConstructUse]s, used to simplify
 /// the process of filtering / sorting / displaying the events.
@@ -357,8 +359,61 @@ class LemmasToUsesWrapper {
 
   LemmasToUsesWrapper(this.lemmasToUses);
 
+  Map<String, List<OneConstructUse>> lemmasToFilteredUses(
+    bool Function(OneConstructUse) filter,
+  ) {
+    final Map<String, List<OneConstructUse>> lemmasToOneConstructUses = {};
+    for (final entry in lemmasToUses.entries) {
+      final lemma = entry.key;
+      final uses = entry.value;
+      lemmasToOneConstructUses[lemma] =
+          uses.expand((use) => use.uses).toList().where(filter).toList();
+    }
+    return lemmasToOneConstructUses;
+  }
+
+  LemmasOverUnderList lemmasByPercent({
+    required bool Function(OneConstructUse) filter,
+    required double percent,
+    required BuildContext context,
+  }) {
+    final List<String> correctUseLemmas = [];
+    final List<String> incorrectUseLemmas = [];
+
+    final uses = lemmasToFilteredUses(filter);
+    for (final entry in uses.entries) {
+      if (entry.value.isEmpty) continue;
+      final List<OneConstructUse> correctUses = [];
+      final List<OneConstructUse> incorrectUses = [];
+
+      final lemma = getGrammarCopy(
+            category: entry.value.first.category,
+            lemma: entry.key,
+            context: context,
+          ) ??
+          entry.key;
+      final uses = entry.value.toList();
+
+      for (final use in uses) {
+        use.pointValue > 0 ? correctUses.add(use) : incorrectUses.add(use);
+      }
+
+      final totalUses = correctUses.length + incorrectUses.length;
+      final percent = totalUses == 0 ? 0 : correctUses.length / totalUses;
+
+      percent > 0.8
+          ? correctUseLemmas.add(lemma)
+          : incorrectUseLemmas.add(lemma);
+    }
+
+    return LemmasOverUnderList(
+      over: correctUseLemmas,
+      under: incorrectUseLemmas,
+    );
+  }
+
   /// Return an object containing two lists, one of lemmas with
-  /// any correct uses and one of lemmas with any incorrect uses
+  /// any correct uses and one of lemmas no correct uses
   LemmasOverUnderList lemmasByCorrectUse({
     String Function(ConstructUses)? getCopy,
   }) {
@@ -370,44 +425,11 @@ class LemmasToUsesWrapper {
       final copy = getCopy?.call(constructUses.first) ?? lemma;
       if (constructUses.any((use) => use.hasCorrectUse)) {
         correctLemmas.add(copy);
-      }
-      if (constructUses.any((use) => use.hasIncorrectUse)) {
+      } else {
         incorrectLemmas.add(copy);
       }
     }
     return LemmasOverUnderList(over: correctLemmas, under: incorrectLemmas);
-  }
-
-  /// Return an object containing two lists, one of lemmas with percent used
-  /// correctly > percent and one of lemmas with percent used correctly < percent
-  LemmasOverUnderList lemmasByPercent({
-    double percent = 0.8,
-    String Function(ConstructUses)? getCopy,
-  }) {
-    final List<String> overLemmas = [];
-    final List<String> underLemmas = [];
-    for (final entry in lemmasToUses.entries) {
-      final lemma = entry.key;
-      final constructUses = entry.value;
-      final uses = constructUses.map((u) => u.uses).expand((e) => e).toList();
-
-      int correct = 0;
-      int incorrect = 0;
-      for (final use in uses) {
-        if (use.pointValue > 0) {
-          correct++;
-        } else if (use.pointValue < 0) {
-          incorrect++;
-        }
-      }
-
-      if (correct + incorrect == 0) continue;
-
-      final copy = getCopy?.call(constructUses.first) ?? lemma;
-      final percent = correct / (correct + incorrect);
-      percent >= percent ? overLemmas.add(copy) : underLemmas.add(copy);
-    }
-    return LemmasOverUnderList(over: overLemmas, under: underLemmas);
   }
 
   int totalXP(String lemma) {
