@@ -12,7 +12,9 @@ import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
 import 'package:fluffychat/pangea/models/lemma.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/models/pangea_token_text_model.dart';
-import 'package:fluffychat/pangea/repo/lemma_definition_repo.dart';
+import 'package:fluffychat/pangea/repo/lemma_info/lemma_info_repo.dart';
+import 'package:fluffychat/pangea/repo/lemma_info/lemma_info_request.dart';
+import 'package:fluffychat/pangea/repo/lemma_info/lemma_info_response.dart';
 import 'package:fluffychat/pangea/utils/grammar/get_grammar_copy.dart';
 import 'package:fluffychat/pangea/widgets/chat/tts_controller.dart';
 import 'package:fluffychat/pangea/widgets/practice_activity/word_audio_button.dart';
@@ -42,7 +44,7 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
   ConstructListModel? constructsModel;
   OneConstructUse? exampleForm;
   String? exampleEventID;
-  LemmaDefinitionResponse? res;
+  LemmaInfoResponse? res;
   late Future<String?> definition;
   String? emoji;
   PangeaToken? token;
@@ -249,19 +251,15 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
       return L10n.of(context).definitionNotFound;
     }
 
-    final LemmaDefinitionRequest lemmaDefReq = LemmaDefinitionRequest(
+    final LemmaInfoRequest lemmaDefReq = LemmaInfoRequest(
       partOfSpeech: widget.construct.category,
       lemmaLang: lang2,
       userL1:
           MatrixState.pangeaController.languageController.userL1?.langCode ??
               LanguageKeys.defaultLanguage,
-      lemma: Lemma(
-        text: widget.construct.lemma,
-        saveVocab: false,
-        form: widget.construct.lemma,
-      ),
+      lemma: widget.construct.lemma,
     );
-    res = await LemmaDictionaryRepo.get(lemmaDefReq);
+    res = await LemmaInfoRepo.get(lemmaDefReq);
     return res?.meaning;
   }
 

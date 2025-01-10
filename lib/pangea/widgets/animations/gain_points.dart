@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/controllers/get_analytics_controller.dart';
 import 'package:fluffychat/pangea/controllers/put_analytics_controller.dart';
 import 'package:fluffychat/pangea/utils/bot_style.dart';
@@ -15,7 +16,7 @@ class PointsGainedAnimation extends StatefulWidget {
   const PointsGainedAnimation({
     super.key,
     required this.origin,
-    this.gainColor,
+    this.gainColor = AppConfig.gold,
     this.loseColor = Colors.red,
   });
 

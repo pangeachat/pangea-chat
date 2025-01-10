@@ -156,20 +156,23 @@ class LevelBarPopup extends StatelessWidget {
                                   children: [
                                     Text(
                                       "${use.pointValue > 0 ? '+' : ''}${use.pointValue}",
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 16,
                                         height: 1,
+                                        color: use.pointValue > 0
+                                            ? AppConfig.gold
+                                            : Colors.red,
                                       ),
                                     ),
-                                    const SizedBox(width: 5),
-                                    const CircleAvatar(
-                                      radius: 8,
-                                      child: Icon(
-                                        size: 10,
-                                        Icons.star,
-                                        color: Colors.white,
-                                      ),
-                                    ),
+                                    // const SizedBox(width: 5),
+                                    // const CircleAvatar(
+                                    //   radius: 8,
+                                    //   child: Icon(
+                                    //     size: 10,
+                                    //     Icons.star,
+                                    //     color: Colors.white,
+                                    //   ),
+                                    // ),
                                   ],
                                 ),
                               ),

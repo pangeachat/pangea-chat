@@ -4668,6 +4668,7 @@
   "readingExercisesTooltip": "Reading exercises",
   "definitionNotFound": "Definition could not be found.",
   "formsNotFound": "Forms could not be found.",
+  "chooseBestDefinition": "What does this word mean?",
   "chooseBaseForm": "Choose the base form",
   "notTheCodeError": "Sorry, that's not the code!",
   "totalXP": "Total XP",
