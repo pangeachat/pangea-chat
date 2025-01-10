@@ -934,6 +934,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$tryToSendAgain() {
       return "\u5c1d\u8bd5\u91cd\u65b0\u53d1\u9001";
     },
+    get$unavailable() {
+      return "\u4e0d\u53ef\u7528";
+    },
     unbannedUser$2(username, targetName) {
       return username + " \u89e3\u5c01\u4e86 " + targetName;
     },
@@ -4487,10 +4490,16 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "List of grammar concepts";
     },
     get$listGrammarConceptsUsedCorrectly() {
-      return "List of grammar concepts used correctly at least 80% of the time";
+      return "List of grammar concepts used correctly in original messages at least 80% of the time";
     },
     get$listGrammarConceptsUsedIncorrectly() {
-      return "List of grammar concepts used correctly less than 80% of the time";
+      return "List of grammar concepts used correctly in original messages less than 80% of the time";
+    },
+    get$listGrammarConceptsUseCorrectlySystemGenerated() {
+      return "List of grammar concepts chosen correctly from system-generated suggestions at least 80% of the time";
+    },
+    get$listGrammarConceptsUseIncorrectlySystemGenerated() {
+      return "List of grammar concepts chosen correctly from system-generated suggestions less than 80% of the time";
     },
     get$listGrammarConceptsSmallXP() {
       return "List of grammar concepts with 0 - 30 XP";
@@ -4542,6 +4551,15 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$downloadComplete() {
       return "Download complete!";
+    },
+    get$dataAvailable() {
+      return "Data availability";
+    },
+    get$available(_) {
+      return "Available";
+    },
+    get$accessingMemberAnalytics() {
+      return "Accessing member analytics...";
     },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
@@ -5445,6 +5463,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$tryToSendAgain() {
       return "\u518d\u6b21\u5617\u8a66\u50b3\u9001";
     },
+    get$unavailable() {
+      return "\u7121\u6cd5\u53d6\u5f97";
+    },
     unbannedUser$2(username, targetName) {
       return username + " \u89e3\u9664\u5c01\u9396\u4e86 " + targetName;
     },
@@ -5899,6 +5920,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_1", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "6UZ+fi90S3LXc4Xz7FFprQNWRBU=");
+})($__dart_deferred_initializers__, "Eqfi5FTCMXhfSmsz48g4ztwsgNQ=");
 ;
 //# sourceMappingURL=main.dart.js_1.part.js.map
