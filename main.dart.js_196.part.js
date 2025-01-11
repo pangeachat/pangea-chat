@@ -4438,9 +4438,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$clickWordsInstructions() {
       return "Click on individual words for more activities.";
     },
-    get$chooseBestDefinition() {
-      return "What does this word mean?";
-    },
     get$chooseBaseForm() {
       return "Choose the base form";
     },
@@ -4537,8 +4534,8 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$downloadComplete() {
       return "Download complete!";
     },
-    get$editMorphologicalLabel() {
-      return "Pangea Bot makes mistakes too! What should this label be?";
+    whatIsTheMorphTag$2(morphologicalFeature, wordForm) {
+      return "What is the " + morphologicalFeature + " of '" + wordForm + "'?";
     },
     get$dataAvailable() {
       return "Data availability";
@@ -4549,8 +4546,20 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$accessingMemberAnalytics() {
       return "Accessing member analytics...";
     },
-    get$editLemmaMeaning() {
-      return "Pangea Bot makes mistakes too! What should be the definition of this lemma?";
+    get$pangeaBotIsFallible() {
+      return "Pangea Bot makes mistakes too!";
+    },
+    whatIsMeaning$2(lemma, partOfSpeech) {
+      return "What does '" + lemma + "' mean?";
+    },
+    pickAnEmoji$2(lemma, partOfSpeech) {
+      return "What's your favorite emoji for '" + lemma + "'?";
+    },
+    get$lemmaMeaningInstructionsBody() {
+      return "Above is the meaning of the lemma. Double-click to edit.";
+    },
+    get$doubleClickToEdit() {
+      return "Double-click to edit.";
     },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
@@ -4567,6 +4576,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_196", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "VLcfdE/Hvyvzon3+fRjwtPr/wUE=");
+})($__dart_deferred_initializers__, "YExePUp/e87O9bHomMia5Q//8hQ=");
 ;
 //# sourceMappingURL=main.dart.js_196.part.js.map
