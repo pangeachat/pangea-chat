@@ -30,6 +30,7 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
   late Animation<double> _fadeAnimation;
   List<Animation<double>> _swayAnimation = [];
   List<double> _randomSwayOffset = [];
+  List<Offset> _particleTrajectories = [];
 
   StreamSubscription? _pointsSubscription;
   int? get _prevXP =>
@@ -44,7 +45,7 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 5),
       vsync: this,
     );
 
@@ -73,9 +74,22 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
         .listen(_showPointsGained);
   }
 
+  void initParticleTrajectories() {
+  _particleTrajectories.clear();
+  for (int i = 0; i < (_addedPoints ?? 0); i++) {
+    final angle = _random.nextDouble() * (pi / 2) + pi / 4; // Random angle in the V-shaped range.
+    final baseSpeed = 20; // Initial base speed.
+    final exponentialFactor = 30; // Factor for exponential growth.
+    final speedMultiplier = _random.nextDouble(); // Random speed multiplier.
+    final speed = baseSpeed * pow(exponentialFactor, speedMultiplier); // Exponential speed.
+    _particleTrajectories.add(Offset(speed * cos(angle), -speed * sin(angle)));
+    }
+  }
+
   void initSwayAnimations(){
     _swayAnimation.clear();
     _randomSwayOffset.clear();
+    initParticleTrajectories();
 
     for(int i = 0; i < (_addedPoints ?? 0); i++) {
       _swayAnimation.add(
@@ -128,22 +142,21 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
         opacity: _fadeAnimation,
         child: IgnorePointer(
           ignoring: _controller.isAnimating,
-          child: Wrap( 
-            direction: Axis.horizontal, 
+          child: Stack( 
             children: _addedPoints! > 0 ? 
               //If gain, show number of "+"s equal to _addedPoints.
               List.generate(_addedPoints!, (index) {
-                final randomOffset = Offset(
-                  (_random.nextDouble() - 0.5) * 30,
-                  (_random.nextDouble() - 0.5) * 30,
-                ); 
                 return AnimatedBuilder(
-                  animation: _swayAnimation[index],
+                  animation: _controller,
                   builder: (context, child){
-                    final swayOffsetX = sin(_swayAnimation[index].value + _randomSwayOffset[index]) * 15;
+                    final progress = _controller.value; 
+                    final trajectory = _particleTrajectories[index];
+                    final swayOffsetX = sin(_swayAnimation[index].value + _randomSwayOffset[index]) * 5;
                     return Transform.translate(
-                      offset: Offset(swayOffsetX, randomOffset.dy) +
-                        randomOffset,
+                      offset: Offset(
+                        trajectory.dx * pow(progress, 2),
+                        trajectory.dy * pow(progress, 2),
+                      ),
                       child: Text(
                         "+",
                         style: BotStyle.text(
