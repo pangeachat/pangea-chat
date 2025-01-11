@@ -3378,15 +3378,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$chatName() {
       return "Chat name";
     },
-    get$reportContentIssueTitle() {
-      return "Report content issue";
-    },
-    get$feedback() {
-      return "Optional feedback";
-    },
-    get$reportContentIssueDescription() {
-      return "Uh oh! AI can faciliate personalized learning experiences but... also hallucinates. Please provide any feedback you have and we'll try again.";
-    },
     get$clickTheWordAgainToDeselect() {
       return "Click the selected word to deselect it.";
     },
@@ -4557,6 +4548,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$accessingMemberAnalytics() {
       return "Accessing member analytics...";
     },
+    get$editLemmaMeaning() {
+      return "Pangea Bot makes mistakes too! What should be the definition of this lemma?";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4572,6 +4566,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_253", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "EJyyMDzQ6JmVHZKx+1gU1d79YRo=");
+})($__dart_deferred_initializers__, "W2wxjWodoA1qi60N196UwjYXSNs=");
 ;
 //# sourceMappingURL=main.dart.js_253.part.js.map

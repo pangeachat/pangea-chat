@@ -3378,15 +3378,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$chatName() {
       return "Nombre del chat";
     },
-    get$reportContentIssueTitle() {
-      return "Informar sobre un problema de contenido";
-    },
-    get$feedback() {
-      return "Comentarios opcionales";
-    },
-    get$reportContentIssueDescription() {
-      return "\xa1Ups! La IA puede facilitar experiencias de aprendizaje personalizadas, pero... tambi\xe9n alucina. Por favor, proporciona cualquier comentario que tengas y lo intentaremos de nuevo.";
-    },
     get$clickTheWordAgainToDeselect() {
       return "Click the selected word to deselect it.";
     },
@@ -4557,6 +4548,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$accessingMemberAnalytics() {
       return "Accessing member analytics...";
     },
+    get$editLemmaMeaning() {
+      return "Pangea Bot makes mistakes too! What should be the definition of this lemma?";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4572,6 +4566,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_221", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "3nGa0BsjsL9JGwffgL6KH8VhTFw=");
+})($__dart_deferred_initializers__, "FeuFw87J7xMjv8AojgQwGHyXgkk=");
 ;
 //# sourceMappingURL=main.dart.js_221.part.js.map
