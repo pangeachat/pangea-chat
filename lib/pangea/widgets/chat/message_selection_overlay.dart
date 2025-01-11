@@ -13,6 +13,7 @@ import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pages/chat/events/message_reactions.dart';
 import 'package:fluffychat/pangea/controllers/message_analytics_controller.dart';
+import 'package:fluffychat/pangea/controllers/text_to_speech_controller.dart';
 import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
 import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
@@ -61,6 +62,7 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
 
   MessageMode toolbarMode = MessageMode.noneSelected;
   PangeaTokenText? _selectedSpan;
+  List<PangeaTokenText>? _highlightedTokens;
 
   List<PangeaToken>? tokens;
   bool initialized = false;
@@ -125,6 +127,26 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
       debugPrint("_updateSelectedSpan: setting toolbarMode to wordZoom");
       updateToolbarMode(MessageMode.wordZoom);
     }
+    setState(() {});
+  }
+
+  /// If sentence TTS is playing a word, highlight that word in message overlay
+  void highlightCurrentText(int currentPosition, List<TTSToken> ttsTokens) {
+    final List<TTSToken> textToSelect = [];
+    // Check if current time is between start and end times of tokens
+    for (final TTSToken token in ttsTokens) {
+      if (token.endMS > currentPosition) {
+        if (token.startMS < currentPosition) {
+          textToSelect.add(token);
+        } else {
+          break;
+        }
+      }
+    }
+
+    if (const ListEquality().equals(textToSelect, _highlightedTokens)) return;
+    _highlightedTokens =
+        textToSelect.isEmpty ? null : textToSelect.map((t) => t.text).toList();
     setState(() {});
   }
 
@@ -277,6 +299,9 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
         debugPrint("updateToolbarMode: $mode - clearing selectedSpan");
         _selectedSpan = null;
       }
+      if (mode != MessageMode.textToSpeech) {
+        _highlightedTokens = null;
+      }
       toolbarMode = mode;
     });
   }
@@ -326,17 +351,24 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
     setState(() {});
   }
 
-  /// Whether the given token is currently selected
+  /// Whether the given token is currently selected or highlighted
   bool isTokenSelected(PangeaToken token) {
     final isSelected = _selectedSpan?.offset == token.text.offset &&
         _selectedSpan?.length == token.text.length;
     return isSelected;
   }
 
+  bool isTokenHighlighted(PangeaToken token) {
+    if (_highlightedTokens == null) return false;
+    return _highlightedTokens!.any(
+      (t) => t.offset == token.text.offset && t.length == token.text.length,
+    );
+  }
+
   PangeaToken? get selectedToken => tokens?.firstWhereOrNull(isTokenSelected);
 
   /// Whether the overlay is currently displaying a selection
-  bool get isSelection => _selectedSpan != null;
+  bool get isSelection => _selectedSpan != null || _highlightedTokens != null;
 
   PangeaTokenText? get selectedSpan => _selectedSpan;
 
