@@ -566,7 +566,10 @@ class PangeaMessageEvent {
         messageDisplayRepresentation?.tokens == null) {
       return 1;
     }
-    final int total = messageDisplayRepresentation!.tokens!.length;
+    final int total = messageDisplayRepresentation!.tokens!
+        .where((token) =>
+            token.isActivityBasicallyEligible(ActivityTypeEnum.wordMeaning))
+        .length;
 
     final int toDo = messageDisplayRepresentation!.tokens!
         .where(
