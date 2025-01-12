@@ -210,7 +210,10 @@ class PangeaToken {
     );
   }
 
-  bool _isActivityBasicallyEligible(ActivityTypeEnum a) {
+  bool isActivityBasicallyEligible(ActivityTypeEnum a) {
+    if (!lemma.saveVocab) {
+      return false;
+    }
     switch (a) {
       case ActivityTypeEnum.wordMeaning:
         return canBeDefined;
@@ -402,8 +405,7 @@ class PangeaToken {
     required String? feature,
     required String? tag,
   }) {
-    return lemma.saveVocab &&
-        _isActivityBasicallyEligible(a) &&
+    return isActivityBasicallyEligible(a) &&
         _isActivityProbablyLevelAppropriate(a, feature, tag);
   }
 
