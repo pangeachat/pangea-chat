@@ -1,17 +1,15 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
 import 'package:collection/collection.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
 import 'package:fluffychat/pangea/widgets/pressable_button.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:matrix/matrix.dart';
 
 class ToolbarButtons extends StatelessWidget {
   final Event event;
@@ -23,8 +21,8 @@ class ToolbarButtons extends StatelessWidget {
     super.key,
   });
 
-  int? get activitiesCompleted =>
-      overlayController.pangeaMessageEvent?.numberOfActivitiesCompleted;
+  double? get proportionOfActivitiesCompleted =>
+      overlayController.pangeaMessageEvent?.proportionOfActivitiesCompleted;
 
   List<MessageMode> get modes => MessageMode.values
       .where((mode) => mode.shouldShowAsToolbarButton(event))
@@ -62,7 +60,7 @@ class ToolbarButtons extends StatelessWidget {
                 height: 12,
                 width: overlayController.isPracticeComplete
                     ? width
-                    : min(width, (width / 2) * activitiesCompleted!),
+                    : min(width, width * proportionOfActivitiesCompleted!),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(AppConfig.borderRadius),
                   color: AppConfig.success,
@@ -76,15 +74,13 @@ class ToolbarButtons extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: modes.mapIndexed((index, mode) {
               final enabled = mode.isUnlocked(
-                index,
-                activitiesCompleted!,
+                proportionOfActivitiesCompleted!,
                 overlayController.isPracticeComplete,
               );
               final color = mode.iconButtonColor(
                 context,
-                index,
                 overlayController.toolbarMode,
-                activitiesCompleted!,
+                proportionOfActivitiesCompleted!,
                 overlayController.isPracticeComplete,
               );
               return mode.showButton

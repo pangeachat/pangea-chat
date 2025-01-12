@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:matrix/matrix.dart';
@@ -81,23 +80,34 @@ extension MessageModeExtension on MessageMode {
   }
 
   bool isUnlocked(
-    int index,
-    int numActivitiesCompleted,
+    double proportionOfActivitiesCompleted,
     bool totallyDone,
-  ) =>
-      numActivitiesCompleted >= index || totallyDone;
+  ) {
+    if (totallyDone) return true;
+
+    switch (this) {
+      case MessageMode.translation:
+        return proportionOfActivitiesCompleted >= 1;
+      case MessageMode.textToSpeech:
+        return proportionOfActivitiesCompleted >= 0.5;
+      case MessageMode.speechToText:
+      case MessageMode.practiceActivity:
+      case MessageMode.wordZoom:
+      case MessageMode.noneSelected:
+        return true;
+    }
+  }
 
   bool get showButton => this != MessageMode.practiceActivity;
 
   Color iconButtonColor(
     BuildContext context,
-    int index,
     MessageMode currentMode,
-    int numActivitiesCompleted,
+    double proportionOfActivitiesUnlocked,
     bool totallyDone,
   ) {
     //locked
-    if (!isUnlocked(index, numActivitiesCompleted, totallyDone)) {
+    if (!isUnlocked(proportionOfActivitiesUnlocked, totallyDone)) {
       return barAndLockedButtonColor(context);
     }
 

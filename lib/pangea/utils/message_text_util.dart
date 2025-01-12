@@ -1,10 +1,9 @@
-import 'package:flutter/material.dart';
-
 import 'package:fluffychat/pangea/controllers/message_analytics_controller.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_token_text.dart';
+import 'package:flutter/material.dart';
 
 class MessageTextUtil {
   static List<TokenPosition>? getTokenPositions(
@@ -46,8 +45,7 @@ class MessageTextUtil {
               start: globalIndex,
               end: startIndex,
               hideContent: false,
-              highlight:
-                  (isSelected?.call(token) ?? false) && !hasHiddenContent,
+              selected: (isSelected?.call(token) ?? false) && !hasHiddenContent,
             ),
           );
         }
@@ -58,7 +56,7 @@ class MessageTextUtil {
             end: endIndex,
             token: token,
             hideContent: hideContent,
-            highlight: (isSelected?.call(token) ?? false) &&
+            selected: (isSelected?.call(token) ?? false) &&
                 !hideContent &&
                 !hasHiddenContent,
           ),

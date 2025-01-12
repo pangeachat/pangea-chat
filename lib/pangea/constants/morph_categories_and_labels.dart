@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import 'package:material_symbols_icons/symbols.dart';
 
 const Map<String, List<String>> morphCategoriesAndLabels = {
@@ -220,6 +219,8 @@ IconData getIconForMorphFeature(String feature) {
       return Icons.check_circle_outline;
     case 'prepcase':
       return Icons.location_on_outlined;
+    case 'conjtype':
+      return Icons.compare_arrows;
     default:
       debugger(when: kDebugMode);
       return Icons.help_outline;

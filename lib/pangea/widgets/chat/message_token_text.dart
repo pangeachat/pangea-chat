@@ -1,13 +1,13 @@
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-
 import 'package:collection/collection.dart';
-
+import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/controllers/message_analytics_controller.dart';
+import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/utils/message_text_util.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 
 /// Question - does this need to be stateful or does this work?
 /// Need to test.
@@ -69,7 +69,7 @@ class MessageTokenText extends StatelessWidget {
 class TokenPosition {
   final int start;
   final int end;
-  final bool highlight;
+  final bool selected;
   final bool hideContent;
   final PangeaToken? token;
 
@@ -77,7 +77,7 @@ class TokenPosition {
     required this.start,
     required this.end,
     required this.hideContent,
-    required this.highlight,
+    required this.selected,
     this.token,
   });
 }
@@ -199,11 +199,20 @@ class MessageTextWidget extends StatelessWidget {
               text: substring,
               style: style.merge(
                 TextStyle(
-                  backgroundColor: tokenPosition.highlight
-                      ? Theme.of(context).brightness == Brightness.light
-                          ? Colors.black.withAlpha(100)
-                          : Colors.white.withAlpha(100)
-                      : Colors.transparent,
+                  backgroundColor: tokenPosition.selected
+                      // ? Theme.of(context).brightness == Brightness.light
+                      //     ? Colors.black.withAlpha(100)
+                      //     : Colors.white.withAlpha(100)
+                      ? AppConfig.primaryColor.withAlpha(80)
+                      : (tokenPosition.token?.shouldDoActivity(
+                                    a: ActivityTypeEnum.wordMeaning,
+                                    feature: null,
+                                    tag: null,
+                                  ) ??
+                                  false) &&
+                              isSelected != null
+                          ? AppConfig.success.withAlpha(60)
+                          : Colors.transparent,
                 ),
               ),
             );

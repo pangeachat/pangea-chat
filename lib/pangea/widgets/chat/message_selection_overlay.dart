@@ -1,12 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-
 import 'package:collection/collection.dart';
-import 'package:matrix/matrix.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/setting_keys.dart';
 import 'package:fluffychat/config/themes.dart';
@@ -26,6 +20,10 @@ import 'package:fluffychat/pangea/widgets/chat/overlay_header.dart';
 import 'package:fluffychat/pangea/widgets/chat/overlay_message.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:matrix/matrix.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 class MessageSelectionOverlay extends StatefulWidget {
   final ChatController chatController;
@@ -76,7 +74,8 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
   int get activitiesLeftToComplete => messageAnalyticsEntry?.numActivities ?? 0;
 
   bool get isPracticeComplete =>
-      activitiesLeftToComplete <= 0 || !messageInUserL2;
+      (pangeaMessageEvent?.proportionOfActivitiesCompleted ?? 1) >= 1 ||
+      !messageInUserL2;
 
   /// Decides whether an _initialSelectedToken should be used
   /// for a first practice activity on the word meaning

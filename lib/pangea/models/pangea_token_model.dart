@@ -606,10 +606,10 @@ class PangeaToken {
   }
 
   String get xpEmoji {
-    if (xp < 30) {
+    if (vocabConstruct.points < 30) {
       // bean emoji
       return "🫛";
-    } else if (xp < 100) {
+    } else if (vocabConstruct.points < 100) {
       // sprout emoji
       return "🌱";
     } else {
