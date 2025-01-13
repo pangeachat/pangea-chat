@@ -81,6 +81,19 @@ class SpanCardState extends State<SpanCard> {
     if (widget.scm.pangeaMatch?.match.choices == null) {
       return;
     }
+
+    // if user ever selected the correct choice, automatically select it
+    final selectedCorrectIndex =
+        widget.scm.pangeaMatch!.match.choices!.indexWhere((choice) {
+      return choice.selected && choice.isBestCorrection;
+    });
+
+    if (selectedCorrectIndex != -1) {
+      selectedChoiceIndex = selectedCorrectIndex;
+      currentExpression = BotExpression.gold;
+      return;
+    }
+
     if (selectedChoiceIndex == null) {
       DateTime? mostRecent;
       final numChoices = widget.scm.pangeaMatch!.match.choices!.length;
