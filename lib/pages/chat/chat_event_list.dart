@@ -10,7 +10,8 @@ import 'package:fluffychat/pages/chat/events/message.dart';
 import 'package:fluffychat/pages/chat/seen_by_row.dart';
 import 'package:fluffychat/pages/chat/typing_indicators.dart';
 import 'package:fluffychat/pages/user_bottom_sheet/user_bottom_sheet.dart';
-import 'package:fluffychat/pangea/enum/instructions_enum.dart';
+import 'package:fluffychat/pangea/instructions/instructions_enum.dart';
+import 'package:fluffychat/pangea/instructions/instructions_show_popup.dart';
 import 'package:fluffychat/utils/account_config.dart';
 import 'package:fluffychat/utils/adaptive_bottom_sheet.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/filtered_timeline_extension.dart';
@@ -59,7 +60,7 @@ class ChatEventList extends StatelessWidget {
           )
           .toList();
       if (msgEvents.isEmpty) return;
-      controller.pangeaController.instructions.showInstructionsPopup(
+      instructionsShowPopup(
         context,
         InstructionsEnum.clickMessage,
         msgEvents[0].eventId,

@@ -113,10 +113,11 @@ class AnalyticsSummaryModel {
             use.useType == ConstructUseTypeEnum.wa ||
             use.useType == ConstructUseTypeEnum.ga,
         percent: 0.8,
+        context: context,
       );
 
-      correctSystemUseLemmas.addAll(originalWrittenUses.over);
-      incorrectSystemUseLemmas.addAll(originalWrittenUses.under);
+      correctOriginalUseLemmas.addAll(originalWrittenUses.over);
+      incorrectOriginalUseLemmas.addAll(originalWrittenUses.under);
 
       final systemGeneratedUses = morphLemmas.lemmasByPercent(
         filter: (use) =>
@@ -125,6 +126,7 @@ class AnalyticsSummaryModel {
             use.useType != ConstructUseTypeEnum.unk &&
             use.pointValue != 0,
         percent: 0.8,
+        context: context,
       );
 
       correctSystemUseLemmas.addAll(systemGeneratedUses.over);
@@ -182,11 +184,11 @@ class AnalyticsSummaryModel {
       listMorphConstructsUsedIncorrectlySystem: incorrectSystemUseLemmas,
       listMorphSmallXP: morphLemmas?.thresholdedLemmas(
         start: 0,
-        end: 30,
+        end: 50,
         getCopy: getCopy,
       ),
       listMorphMediumXP: morphLemmas?.thresholdedLemmas(
-        start: 31,
+        start: 51,
         end: 200,
         getCopy: getCopy,
       ),

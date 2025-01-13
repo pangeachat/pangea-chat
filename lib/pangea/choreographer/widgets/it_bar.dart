@@ -12,10 +12,10 @@ import 'package:fluffychat/pangea/choreographer/widgets/translation_finished_flo
 import 'package:fluffychat/pangea/constants/choreo_constants.dart';
 import 'package:fluffychat/pangea/controllers/put_analytics_controller.dart';
 import 'package:fluffychat/pangea/enum/construct_use_type_enum.dart';
-import 'package:fluffychat/pangea/enum/instructions_enum.dart';
+import 'package:fluffychat/pangea/instructions/instructions_enum.dart';
+import 'package:fluffychat/pangea/instructions/instructions_inline_tooltip.dart';
 import 'package:fluffychat/pangea/pages/settings_learning/settings_learning.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
-import 'package:fluffychat/pangea/utils/inline_tooltip.dart';
 import 'package:fluffychat/pangea/widgets/animations/gain_points.dart';
 import '../../controllers/it_feedback_controller.dart';
 import '../../models/it_response_model.dart';
@@ -67,7 +67,7 @@ class ITBarState extends State<ITBar> with SingleTickerProviderStateMixin {
   }
 
   bool get showITInstructionsTooltip {
-    final toggledOff = InstructionsEnum.clickBestOption.toggledOff();
+    final toggledOff = InstructionsEnum.clickBestOption.isToggledOff;
     if (!toggledOff) {
       setState(() => showedClickInstruction = true);
     }
@@ -205,11 +205,11 @@ class ITBarState extends State<ITBar> with SingleTickerProviderStateMixin {
                       ),
                     const SizedBox(height: 8.0),
                     if (showITInstructionsTooltip)
-                      const InlineTooltip(
+                      const InstructionsInlineTooltip(
                         instructionsEnum: InstructionsEnum.clickBestOption,
                       ),
                     if (showTranslationsChoicesTooltip)
-                      const InlineTooltip(
+                      const InstructionsInlineTooltip(
                         instructionsEnum: InstructionsEnum.translationChoices,
                       ),
                     Container(

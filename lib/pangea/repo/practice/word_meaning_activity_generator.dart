@@ -48,7 +48,8 @@ class WordMeaningActivityGenerator {
         langCode: req.userL2,
         activityType: ActivityTypeEnum.wordMeaning,
         content: ActivityContent(
-          question: L10n.of(context).chooseBestDefinition,
+          question:
+              L10n.of(context).whatIsMeaning(lemmaId.lemma, lemmaId.category),
           choices: choices,
           answers: [res.meaning],
           spanDisplayDetails: null,

@@ -4230,6 +4230,7 @@
   "reportContentIssueTitle": "Report content issue",
   "feedback": "Optional feedback",
   "reportContentIssueDescription": "Uh oh! AI can faciliate personalized learning experiences but... also hallucinates. Please provide any feedback you have and we'll try again.",
+  "changeContent": "Uh oh! AI can faciliate personalized learning experiences but... also hallucinates. What should it be?",
   "clickTheWordAgainToDeselect": "Click the selected word to deselect it.",
   "l2SupportNa": "Not Available",
   "l2SupportAlpha": "Alpha",
@@ -4659,15 +4660,14 @@
   "publicProfileTitle": "Allow my profile to be found in search",
   "publicProfileDesc": "By enabling this option, I confirm that I am of legal age in my country of residence",
   "clickWordsInstructions": "Click on individual words for more activities.",
-  "chooseBestDefinition": "What does this word mean?",
   "chooseBaseForm": "Choose the base form",
   "notTheCodeError": "Sorry, that's not the code!",
   "totalXP": "Total XP",
-  "numLemmas": "Number of lemmas",
+  "numLemmas": "Total number of lemmas",
   "listOfLemmas": "List of lemmas",
   "numLemmasUsedCorrectly": "Number of lemmas used correctly at least once",
   "listLemmasUsedCorrectly": "List of lemmas used correctly at least once",
-  "numLemmasUsedIncorrectly": "Number of lemmas used incorrectly at least once",
+  "numLemmasUsedIncorrectly": "Number of lemmas used correctly 0 times",
   "listLemmasUsedIncorrectly": "Number of lemmas used correctly 0 times",
   "numLemmasSmallXP": "Number of lemmas with 0 - 30 XP",
   "numLemmasMediumXP": "Number of lemmas with 31 - 200 XP",
@@ -4676,16 +4676,15 @@
   "listLemmasMediumXP": "List of lemmas with 31 - 200 XP",
   "listLemmasLargeXP": "List of lemmas with > 200 XP",
   "numGrammarConcepts": "Number of grammar concepts",
-  "listGrammarConcepts": "List of grammar concepts",
-  "listGrammarConceptsUsedCorrectly": "List of grammar concepts used correctly in original messages at least 80% of the time",
-  "listGrammarConceptsUsedIncorrectly": "List of grammar concepts used correctly in original messages less than 80% of the time",
-  "listGrammarConceptsUseCorrectlySystemGenerated": "List of grammar concepts chosen correctly from system-generated suggestions at least 80% of the time",
-  "listGrammarConceptsUseIncorrectlySystemGenerated": "List of grammar concepts chosen correctly from system-generated suggestions less than 80% of the time",
-  "incorrectGrammarConceptsUseCases": "Use cases of grammar concepts used incorrectly",
-  "listGrammarConceptsSmallXP": "List of grammar concepts with 0 - 30 XP",
-  "listGrammarConceptsMediumXP": "List of grammar concepts with 31 - 200 XP",
-  "listGrammarConceptsLargeXP": "List of grammar concepts with 201 - 500 XP",
-  "listGrammarConceptsHugeXP": "List of grammar concepts with > 500 XP",
+  "listGrammarConcepts": "Grammar concepts",
+  "listGrammarConceptsUsedCorrectly": "Grammar concepts used correctly in original messages at least 80% of the time",
+  "listGrammarConceptsUsedIncorrectly": "Grammar concepts used correctly in original messages less than 80% of the time",
+  "listGrammarConceptsUseCorrectlySystemGenerated": "Grammar concepts chosen correctly from system-generated suggestions at least 80% of the time",
+  "listGrammarConceptsUseIncorrectlySystemGenerated": "Grammar concepts chosen correctly from system-generated suggestions less than 80% of the time",
+  "listGrammarConceptsSmallXP": "Grammar concepts with 0-50 xp",
+  "listGrammarConceptsMediumXP": "Grammar concepts with 51-200 xp",
+  "listGrammarConceptsLargeXP": "Grammar concepts 201-500 xp",
+  "listGrammarConceptsHugeXP": "Grammar concepts >500 xp",
   "numMessagesSent": "Number of messages sent",
   "numWordsTyped": "Number of words typed in original messages",
   "numCorrectChoices": "Number of correct words chosen from system-generated suggestions",
@@ -4699,9 +4698,43 @@
   "downloading": "Downloading...",
   "failedFetchUserAnalytics": "Failed to download user analytics",
   "downloadComplete": "Download complete!",
+  "whatIsTheMorphTag": "What is the {morphologicalFeature} of '{wordForm}'?",
+  "@whatIsTheMorphTag": {
+    "type": "text",
+    "placeholders": {
+      "morphologicalFeature": {},
+      "wordForm": {}
+    }
+  },
   "dataAvailable": "Data availability",
   "lemmasNeverUsedCorrectly": "Number of lemmas used correctly 0 times",
   "available": "Available",
   "unavailable": "Unavailable",
-  "accessingMemberAnalytics": "Accessing member analytics..."
+  "accessingMemberAnalytics": "Accessing member analytics...",
+  "pangeaBotIsFallible": "Pangea Bot makes mistakes too!",
+  "whatIsMeaning": "What does '{lemma}' mean?",
+  "@whatIsMeaning": {
+    "type": "text",
+    "placeholders": {
+      "lemma": {},
+      "partOfSpeech": {}
+    }
+  },
+  "pickAnEmoji": "What's your favorite emoji for '{lemma}'?",
+  "@pickAnEmoji": {
+    "type": "text",
+    "placeholders": {
+      "lemma": {},
+      "partOfSpeech": {}
+    }
+  },
+  "lemmaMeaningInstructionsBody": "Above is the meaning of the lemma. Double-click to edit.",
+  "doubleClickToEdit": "Double-click to edit.",
+  "removeFeature": "Remove {feature}",
+  "@removeFeature": {
+    "type": "text",
+    "placeholders": {
+      "feature": {}
+    }
+  }
 }
