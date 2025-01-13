@@ -1,4 +1,8 @@
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+
 import 'package:collection/collection.dart';
+
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/controllers/message_analytics_controller.dart';
 import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
@@ -6,8 +10,6 @@ import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dar
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/utils/message_text_util.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 
 /// Question - does this need to be stateful or does this work?
 /// Need to test.
@@ -176,6 +178,19 @@ class MessageTextWidget extends StatelessWidget {
       text: TextSpan(
         children:
             tokenPositions.mapIndexed((int i, TokenPosition tokenPosition) {
+          final shouldDo = tokenPosition.token?.shouldDoActivity(
+                a: ActivityTypeEnum.wordMeaning,
+                feature: null,
+                tag: null,
+              ) ??
+              false;
+
+          final didMeaningActivity =
+              tokenPosition.token?.didActivitySuccessfully(
+                    ActivityTypeEnum.wordMeaning,
+                  ) ??
+                  true;
+
           final substring = messageCharacters
               .skip(tokenPosition.start)
               .take(tokenPosition.end - tokenPosition.start)
@@ -200,18 +215,11 @@ class MessageTextWidget extends StatelessWidget {
               style: style.merge(
                 TextStyle(
                   backgroundColor: tokenPosition.selected
-                      // ? Theme.of(context).brightness == Brightness.light
-                      //     ? Colors.black.withAlpha(100)
-                      //     : Colors.white.withAlpha(100)
                       ? AppConfig.primaryColor.withAlpha(80)
-                      : (tokenPosition.token?.shouldDoActivity(
-                                    a: ActivityTypeEnum.wordMeaning,
-                                    feature: null,
-                                    tag: null,
-                                  ) ??
-                                  false) &&
-                              isSelected != null
-                          ? AppConfig.success.withAlpha(60)
+                      : (isSelected != null && shouldDo)
+                          ? !didMeaningActivity
+                              ? AppConfig.success.withAlpha(60)
+                              : AppConfig.gold.withAlpha(60)
                           : Colors.transparent,
                 ),
               ),

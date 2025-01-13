@@ -1,7 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
+
 import 'package:collection/collection.dart';
+import 'package:matrix/matrix.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+
 import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/controllers/text_to_speech_controller.dart';
 import 'package:fluffychat/pangea/enum/activity_type_enum.dart';
@@ -16,10 +21,6 @@ import 'package:fluffychat/pangea/models/speech_to_text_models.dart';
 import 'package:fluffychat/pangea/models/tokens_event_content_model.dart';
 import 'package:fluffychat/pangea/repo/full_text_translation_repo.dart';
 import 'package:fluffychat/pangea/widgets/chat/message_audio_card.dart';
-import 'package:flutter/foundation.dart';
-import 'package:matrix/matrix.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-
 import '../../widgets/matrix.dart';
 import '../constants/language_constants.dart';
 import '../constants/pangea_event_types.dart';
@@ -567,19 +568,19 @@ class PangeaMessageEvent {
       return 1;
     }
     final int total = messageDisplayRepresentation!.tokens!
-        .where((token) =>
-            token.isActivityBasicallyEligible(ActivityTypeEnum.wordMeaning))
+        .where(
+          (token) =>
+              token.isActivityBasicallyEligible(ActivityTypeEnum.wordMeaning),
+        )
         .length;
 
     final int toDo = messageDisplayRepresentation!.tokens!
         .where(
-          (token) => token.shouldDoActivity(
-            a: ActivityTypeEnum.wordMeaning,
-            feature: null,
-            tag: null,
-          ),
+          (token) =>
+              token.didActivitySuccessfully(ActivityTypeEnum.wordMeaning),
         )
         .length;
+
     final double proportion =
         (total - toDo) / messageDisplayRepresentation!.tokens!.length;
 
