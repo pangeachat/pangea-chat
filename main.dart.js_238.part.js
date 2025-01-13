@@ -4447,13 +4447,13 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Total XP";
     },
     get$numLemmas() {
-      return "Number of lemmas";
+      return "Total number of lemmas";
     },
     get$numLemmasUsedCorrectly() {
       return "Number of lemmas used correctly at least once";
     },
     get$numLemmasUsedIncorrectly() {
-      return "Number of lemmas used incorrectly at least once";
+      return "Number of lemmas used correctly 0 times";
     },
     get$numLemmasSmallXP() {
       return "Number of lemmas with 0 - 30 XP";
@@ -4468,31 +4468,31 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Number of grammar concepts";
     },
     get$listGrammarConcepts() {
-      return "List of grammar concepts";
+      return "Grammar concepts";
     },
     get$listGrammarConceptsUsedCorrectly() {
-      return "List of grammar concepts used correctly in original messages at least 80% of the time";
+      return "Grammar concepts used correctly in original messages at least 80% of the time";
     },
     get$listGrammarConceptsUsedIncorrectly() {
-      return "List of grammar concepts used correctly in original messages less than 80% of the time";
+      return "Grammar concepts used correctly in original messages less than 80% of the time";
     },
     get$listGrammarConceptsUseCorrectlySystemGenerated() {
-      return "List of grammar concepts chosen correctly from system-generated suggestions at least 80% of the time";
+      return "Grammar concepts chosen correctly from system-generated suggestions at least 80% of the time";
     },
     get$listGrammarConceptsUseIncorrectlySystemGenerated() {
-      return "List of grammar concepts chosen correctly from system-generated suggestions less than 80% of the time";
+      return "Grammar concepts chosen correctly from system-generated suggestions less than 80% of the time";
     },
     get$listGrammarConceptsSmallXP() {
-      return "List of grammar concepts with 0 - 30 XP";
+      return "Grammar concepts with 0-50 xp";
     },
     get$listGrammarConceptsMediumXP() {
-      return "List of grammar concepts with 31 - 200 XP";
+      return "Grammar concepts with 51-200 xp";
     },
     get$listGrammarConceptsLargeXP() {
-      return "List of grammar concepts with 201 - 500 XP";
+      return "Grammar concepts 201-500 xp";
     },
     get$listGrammarConceptsHugeXP() {
-      return "List of grammar concepts with > 500 XP";
+      return "Grammar concepts >500 xp";
     },
     get$numMessagesSent() {
       return "Number of messages sent";
@@ -4575,6 +4575,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_238", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "ZhEUvs7JeTzh+AP/yvszA+QDSRg=");
+})($__dart_deferred_initializers__, "Wx8Q9x0J+sPZhojQ7lOwM2jiKdw=");
 ;
 //# sourceMappingURL=main.dart.js_238.part.js.map
