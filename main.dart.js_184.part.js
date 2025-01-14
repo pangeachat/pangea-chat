@@ -4438,6 +4438,30 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$clickWordsInstructions() {
       return "Click on individual words for more activities.";
     },
+    get$meaningSectionHeader() {
+      return "Meaning:";
+    },
+    get$formSectionHeader() {
+      return "Forms used in chats:";
+    },
+    get$noEmojiSelectedTooltip() {
+      return "No emoji selected";
+    },
+    get$writingExercisesTooltip() {
+      return "Writing exercises";
+    },
+    get$listeningExercisesTooltip() {
+      return "Listening exercises";
+    },
+    get$readingExercisesTooltip() {
+      return "Reading exercises";
+    },
+    get$meaningNotFound() {
+      return "Meaning could not be found.";
+    },
+    get$formsNotFound() {
+      return "Forms could not be found.";
+    },
     get$chooseBaseForm() {
       return "Choose the base form";
     },
@@ -4576,6 +4600,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_184", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "IEK1Zvnchk3/RINbnT3/IvYISLA=");
+})($__dart_deferred_initializers__, "9l7RI1GJdDEC4RnM2FXQd/7sNfQ=");
 ;
 //# sourceMappingURL=main.dart.js_184.part.js.map
