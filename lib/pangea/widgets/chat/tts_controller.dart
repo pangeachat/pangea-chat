@@ -9,7 +9,8 @@ import 'package:matrix/matrix_api_lite/utils/logs.dart';
 import 'package:text_to_speech/text_to_speech.dart';
 
 import 'package:fluffychat/pangea/controllers/user_controller.dart';
-import 'package:fluffychat/pangea/enum/instructions_enum.dart';
+import 'package:fluffychat/pangea/instructions/instructions_enum.dart';
+import 'package:fluffychat/pangea/instructions/instructions_show_popup.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/widgets/chat/missing_voice_button.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
@@ -163,7 +164,7 @@ class TtsController {
     BuildContext context,
     String eventID,
   ) async {
-    await MatrixState.pangeaController.instructions.showInstructionsPopup(
+    await instructionsShowPopup(
       context,
       InstructionsEnum.missingVoice,
       eventID,

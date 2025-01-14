@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pangea/enum/instructions_enum.dart';
-import 'package:fluffychat/pangea/utils/inline_tooltip.dart';
+import 'package:fluffychat/pangea/instructions/instructions_enum.dart';
+import 'package:fluffychat/pangea/instructions/instructions_inline_tooltip.dart';
 
 class StarAnimationWidget extends StatefulWidget {
   const StarAnimationWidget({super.key});
@@ -79,7 +79,7 @@ class GamifiedTextWidget extends StatelessWidget {
         child: Column(
           children: [
             StarAnimationWidget(),
-            InlineTooltip(
+            InstructionsInlineTooltip(
               instructionsEnum: InstructionsEnum.unlockedLanguageTools,
             ),
           ],

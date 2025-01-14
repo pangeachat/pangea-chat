@@ -178,6 +178,7 @@ extension PangeaRoom on Room {
     PangeaMessageTokens? tokensSent,
     PangeaMessageTokens? tokensWritten,
     ChoreoRecord? choreo,
+    String? messageTag,
   }) =>
       _pangeaSendTextEvent(
         message,
@@ -194,6 +195,7 @@ extension PangeaRoom on Room {
         tokensSent: tokensSent,
         tokensWritten: tokensWritten,
         choreo: choreo,
+        messageTag: messageTag,
       );
 
   Future<String> updateStateEvent(Event stateEvent) =>

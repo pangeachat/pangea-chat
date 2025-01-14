@@ -5,25 +5,29 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 
+import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/constants/morph_categories_and_labels.dart';
+import 'package:fluffychat/pangea/enum/analytics/morph_categories_enum.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/models/tokens_event_content_model.dart';
-import 'package:fluffychat/pangea/utils/bot_style.dart';
 import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/pangea/utils/grammar/get_grammar_copy.dart';
+import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 
 class MorphologicalCenterWidget extends StatefulWidget {
   final PangeaToken token;
   final String morphFeature;
   final PangeaMessageEvent pangeaMessageEvent;
+  final MessageOverlayController overlayController;
 
   const MorphologicalCenterWidget({
     required this.token,
     required this.morphFeature,
     required this.pangeaMessageEvent,
+    required this.overlayController,
     super.key,
   });
 
@@ -66,7 +70,12 @@ class MorphologicalCenterWidgetState extends State<MorphologicalCenterWidget> {
 
   PangeaMessageEvent get pm => widget.pangeaMessageEvent;
 
-  Future<void> confirmChanges() async {
+  /// confirm the changes made by the user
+  /// this will send a new message to the server
+  /// with the new morphological tag
+  Future<void> saveChanges(
+    PangeaToken Function(PangeaToken token) changeCallback,
+  ) async {
     try {
       // NOTE: it is not clear how this would work if the user was not editing the originalSent tokens
       // this case would only happen in immersion mode which is disabled until further notice
@@ -84,10 +93,12 @@ class MorphologicalCenterWidgetState extends State<MorphologicalCenterWidget> {
       if (tokenIndex == -1) {
         throw Exception("Token not found in message");
       }
-      existingTokens[tokenIndex].morph[widget.morphFeature] = selectedMorphTag;
+      existingTokens[tokenIndex] = changeCallback(existingTokens[tokenIndex]);
 
       // send a new message as an edit to original message to the server
       // including the new tokens
+      // marking the message as a morphological edit will allow use to filter
+      // from some processing and potentially find the data for LLM fine-tuning
       await pm.room.pangeaSendTextEvent(
         pm.messageDisplayText,
         editEventId: pm.eventId,
@@ -98,7 +109,12 @@ class MorphologicalCenterWidgetState extends State<MorphologicalCenterWidget> {
             ? PangeaMessageTokens(tokens: pm.originalWritten!.tokens!)
             : null,
         choreo: pm.originalSent?.choreo,
+        messageTag: ModelKey.messageTagMorphEdit,
       );
+
+      setState(() {
+        editMode = false;
+      });
     } catch (e) {
       SnackBar(
         content: Text(L10n.of(context).oopsSomethingWentWrong),
@@ -115,20 +131,27 @@ class MorphologicalCenterWidgetState extends State<MorphologicalCenterWidget> {
     }
   }
 
-  List<String> get allMorphTagsForEdit {
-    final List<String> tags = getLabelsForMorphCategory(widget.morphFeature)
-        .where((tag) => !["punct", "space", "sym", "x", "other"]
-            .contains(tag.toLowerCase()))
-        .toList();
+  /// all morphological tags for the selected morphological category
+  /// that are eligible for setting as the morphological tag
+  List<String> get allMorphTagsForEdit =>
+      getLabelsForMorphCategory(widget.morphFeature)
+          .where(
+            (tag) => !["punct", "space", "sym", "x", "other"]
+                .contains(tag.toLowerCase()),
+          )
+          .toList();
 
-    // as long as the feature is not POS, add a nan tag
-    // this will allow the user to remove the feature from the tags
-    if (widget.morphFeature.toLowerCase() != "pos") {
-      tags.add(L10n.of(context).constructUseNanDesc);
-    }
+  String get morphCopy =>
+      getMorphologicalCategoryCopy(widget.morphFeature, context) ??
+      widget.morphFeature;
 
-    return tags;
-  }
+  String get tagCopy =>
+      getGrammarCopy(
+        category: widget.morphFeature,
+        lemma: selectedMorphTag,
+        context: context,
+      ) ??
+      selectedMorphTag;
 
   @override
   Widget build(BuildContext context) {
@@ -136,14 +159,13 @@ class MorphologicalCenterWidgetState extends State<MorphologicalCenterWidget> {
       return GestureDetector(
         onLongPress: enterEditMode,
         onDoubleTap: enterEditMode,
-        child: Text(
-          getGrammarCopy(
-                category: widget.morphFeature,
-                lemma: widget.token.morph[widget.morphFeature],
-                context: context,
-              ) ??
-              widget.token.morph[widget.morphFeature]!,
-          textAlign: TextAlign.center,
+        child: Tooltip(
+          message: L10n.of(context).doubleClickToEdit,
+          waitDuration: const Duration(milliseconds: 2000),
+          child: Text(
+            "$morphCopy: $tagCopy",
+            textAlign: TextAlign.center,
+          ),
         ),
       );
     }
@@ -151,8 +173,12 @@ class MorphologicalCenterWidgetState extends State<MorphologicalCenterWidget> {
     return Column(
       children: [
         Text(
-          L10n.of(context).editMorphologicalLabel,
+          "${L10n.of(context).pangeaBotIsFallible} ${L10n.of(context).whatIsTheMorphTag(
+            morphCopy,
+            widget.token.text.content,
+          )}",
           textAlign: TextAlign.center,
+          style: const TextStyle(fontStyle: FontStyle.italic),
         ),
         const SizedBox(height: 10),
         Container(
@@ -206,7 +232,6 @@ class MorphologicalCenterWidgetState extends State<MorphologicalCenterWidget> {
                               context: context,
                             ) ??
                             tag,
-                        style: BotStyle.text(context),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -218,8 +243,20 @@ class MorphologicalCenterWidgetState extends State<MorphologicalCenterWidget> {
         ),
         const SizedBox(height: 10),
         Row(
+          spacing: 10,
           children: [
-            //cancel button
+            // this would allow the user to totally remove the morphological feature from the token
+            // disabled and let's see if someone asks for it
+            // if (widget.morphFeature.toLowerCase() != "pos")
+            //   TextButton(
+            //     onPressed: () => saveChanges(
+            //       (token) {
+            //         token.morph.remove(widget.morphFeature);
+            //         return token;
+            //       },
+            //     ),
+            //     child: Text(L10n.of(context).removeFeature(morphCopy)),
+            //   ),
             ElevatedButton(
               onPressed: () {
                 setState(() {
@@ -228,15 +265,19 @@ class MorphologicalCenterWidgetState extends State<MorphologicalCenterWidget> {
               },
               child: Text(L10n.of(context).cancel),
             ),
-            const SizedBox(width: 10),
             ElevatedButton(
-              onPressed:
-                  selectedMorphTag == widget.token.morph[widget.morphFeature]
-                      ? null
-                      : () => showFutureLoadingDialog(
-                            context: context,
-                            future: confirmChanges,
-                          ),
+              onPressed: selectedMorphTag ==
+                      widget.token.morph[widget.morphFeature]
+                  ? null
+                  : () => showFutureLoadingDialog(
+                        context: context,
+                        future: () => saveChanges(
+                          (token) {
+                            token.morph[widget.morphFeature] = selectedMorphTag;
+                            return token;
+                          },
+                        ),
+                      ),
               child: Text(L10n.of(context).saveChanges),
             ),
           ],

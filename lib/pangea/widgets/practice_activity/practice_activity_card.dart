@@ -70,6 +70,8 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
   PangeaController get pangeaController => MatrixState.pangeaController;
   String? _error;
 
+  String? activityQuestion;
+
   @override
   void initState() {
     super.initState();
@@ -122,7 +124,9 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
       }
 
       currentCompletionRecord = PracticeActivityRecordModel(
-        question: activity.question,
+        question: mounted
+            ? currentActivity?.question(context, widget.morphFeature)
+            : currentActivity?.content.question,
       );
     } catch (e, s) {
       ErrorHandler.logError(

@@ -210,7 +210,10 @@ class PangeaToken {
     );
   }
 
-  bool _isActivityBasicallyEligible(ActivityTypeEnum a) {
+  bool isActivityBasicallyEligible(ActivityTypeEnum a) {
+    if (!lemma.saveVocab) {
+      return false;
+    }
     switch (a) {
       case ActivityTypeEnum.wordMeaning:
         return canBeDefined;
@@ -258,7 +261,7 @@ class PangeaToken {
   //   }
   // }
 
-  bool _didActivitySuccessfully(
+  bool didActivitySuccessfully(
     ActivityTypeEnum a, [
     String? morphFeature,
     String? morphTag,
@@ -308,12 +311,19 @@ class PangeaToken {
           return false;
         }
       case ActivityTypeEnum.wordFocusListening:
-        return !_didActivitySuccessfully(a) || daysSinceLastUseByType(a) > 30;
+        return !didActivitySuccessfully(a) || daysSinceLastUseByType(a) > 30;
       case ActivityTypeEnum.hiddenWordListening:
         return daysSinceLastUseByType(a) > 7;
       case ActivityTypeEnum.lemmaId:
-        return _didActivitySuccessfully(ActivityTypeEnum.wordMeaning) &&
-            daysSinceLastUseByType(a) > 7;
+        return false;
+      // disabling lemma activities for now
+      // It has 2 purposes:• learning value• triangulating our determination of the lemma with
+      // AI plus user verification.However, displaying the lemma during the meaning activity helps
+      // disambiguate what the meaning activity is about. This is probably more valuable than the
+      // lemma activity itself. The piping for the lemma activity will stay there if we want to turn
+      //it back on, maybe in select instances.
+      // return _didActivitySuccessfully(ActivityTypeEnum.wordMeaning) &&
+      //     daysSinceLastUseByType(a) > 7;
       case ActivityTypeEnum.emoji:
         return true;
       case ActivityTypeEnum.morphId:
@@ -395,8 +405,7 @@ class PangeaToken {
     required String? feature,
     required String? tag,
   }) {
-    return lemma.saveVocab &&
-        _isActivityBasicallyEligible(a) &&
+    return isActivityBasicallyEligible(a) &&
         _isActivityProbablyLevelAppropriate(a, feature, tag);
   }
 
@@ -421,13 +430,13 @@ class PangeaToken {
           .getConstructUses(
         ConstructIdentifier(
           lemma: lemma.text,
-          type: ConstructTypeEnum.morph,
+          type: ConstructTypeEnum.vocab,
           category: pos,
         ),
       ) ??
       ConstructUses(
         lemma: lemma.text,
-        constructType: ConstructTypeEnum.morph,
+        constructType: ConstructTypeEnum.vocab,
         category: pos,
         uses: [],
       );
@@ -456,17 +465,20 @@ class PangeaToken {
   }
 
   /// lastUsed by activity type
-  DateTime? _lastUsedByActivityType(ActivityTypeEnum a) =>
-      constructs.where((c) => a.constructFilter(c.id)).fold<DateTime?>(
-        null,
-        (previousValue, element) {
-          if (previousValue == null) return element.lastUsed;
-          if (element.lastUsed == null) return previousValue;
-          return element.lastUsed!.isAfter(previousValue)
-              ? element.lastUsed
-              : previousValue;
-        },
-      );
+  DateTime? _lastUsedByActivityType(ActivityTypeEnum a) {
+    final List<ConstructUses> filteredConstructs =
+        constructs.where((c) => a.constructFilter(c.id)).toList();
+    final correctUseTimestamps = filteredConstructs
+        .expand((c) => c.uses)
+        .where((u) => u.useType == a.correctUse)
+        .map((u) => u.timeStamp)
+        .toList();
+
+    if (correctUseTimestamps.isEmpty) return null;
+
+    // return the most recent timestamp
+    return correctUseTimestamps.reduce((a, b) => a.isAfter(b) ? a : b);
+  }
 
   /// daysSinceLastUse by activity type
   int daysSinceLastUseByType(ActivityTypeEnum a) {
@@ -597,10 +609,10 @@ class PangeaToken {
   }
 
   String get xpEmoji {
-    if (xp < 30) {
+    if (vocabConstruct.points < 30) {
       // bean emoji
       return "🫛";
-    } else if (xp < 100) {
+    } else if (vocabConstruct.points < 100) {
       // sprout emoji
       return "🌱";
     } else {

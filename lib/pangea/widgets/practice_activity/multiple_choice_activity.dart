@@ -259,6 +259,7 @@ class MultipleChoiceActivityState extends State<MultipleChoiceActivity> {
     return practiceActivity.activityType == ActivityTypeEnum.hiddenWordListening
         ? ConstrainedBox(
             constraints: const BoxConstraints(
+              // see https://github.com/pangeachat/client/issues/1422
               maxWidth: AppConfig.toolbarMinWidth,
               maxHeight: AppConfig.toolbarMaxHeight,
             ),

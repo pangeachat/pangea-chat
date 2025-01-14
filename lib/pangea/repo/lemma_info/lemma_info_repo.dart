@@ -19,7 +19,14 @@ class LemmaInfoRepo {
   static final Map<LemmaInfoRequest, LemmaInfoResponse> _cache = {};
   static final Map<LemmaInfoRequest, DateTime> _cacheTimestamps = {};
 
-  static const Duration _cacheDuration = Duration(days: 2);
+  static const Duration _cacheDuration = Duration(days: 30);
+
+  static void set(LemmaInfoRequest request, LemmaInfoResponse response) {
+    _cache[request] = response;
+
+    // set it to sometime in the future so we keep it in the cache for a while
+    _cacheTimestamps[request] = DateTime.now().add(const Duration(days: 365));
+  }
 
   static Future<LemmaInfoResponse> get(
     LemmaInfoRequest request, [
