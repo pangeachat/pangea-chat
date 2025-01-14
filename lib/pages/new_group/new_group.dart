@@ -1,19 +1,21 @@
 import 'dart:typed_data';
 
-import 'package:fluffychat/pages/new_group/new_group_view.dart';
-import 'package:fluffychat/pangea/constants/class_default_values.dart';
-import 'package:fluffychat/pangea/constants/model_keys.dart';
-import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
-import 'package:fluffychat/pangea/utils/bot_name.dart';
-import 'package:fluffychat/pangea/utils/error_handler.dart';
-import 'package:fluffychat/pangea/utils/firebase_analytics.dart';
-import 'package:fluffychat/pangea/utils/space_code.dart';
-import 'package:fluffychat/utils/file_selector.dart';
-import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
+
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart' as sdk;
 import 'package:matrix/matrix.dart';
+
+import 'package:fluffychat/pages/new_group/new_group_view.dart';
+import 'package:fluffychat/pangea/bot/utils/bot_name.dart';
+import 'package:fluffychat/pangea/common/constants/model_keys.dart';
+import 'package:fluffychat/pangea/common/utils/error_handler.dart';
+import 'package:fluffychat/pangea/common/utils/firebase_analytics.dart';
+import 'package:fluffychat/pangea/extensions/pangea_room_extension.dart';
+import 'package:fluffychat/pangea/spaces/constants/space_constants.dart';
+import 'package:fluffychat/pangea/spaces/utils/space_code.dart';
+import 'package:fluffychat/utils/file_selector.dart';
+import 'package:fluffychat/widgets/matrix.dart';
 
 class NewGroup extends StatefulWidget {
   final CreateGroupType createGroupType;
@@ -170,8 +172,7 @@ class NewGroupController extends State<NewGroup> {
           },
           'users_default': 0,
           'users': {
-            Matrix.of(context).client.userID:
-                ClassDefaultValues.powerLevelOfAdmin,
+            Matrix.of(context).client.userID: SpaceConstants.powerLevelOfAdmin,
           },
         },
       ),
