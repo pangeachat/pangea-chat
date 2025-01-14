@@ -1,6 +1,7 @@
+import 'package:flutter/material.dart';
+
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/constants/analytics_constants.dart';
-import 'package:flutter/material.dart';
 
 enum LemmaCategoryEnum {
   flowers,
