@@ -4,20 +4,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:html_unescape/html_unescape.dart';
-import 'package:matrix/matrix.dart' as matrix;
-import 'package:matrix/matrix.dart';
-import 'package:matrix/src/utils/markdown.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-
 import 'package:fluffychat/pangea/constants/bot_mode.dart';
-import 'package:fluffychat/pangea/constants/class_code_constants.dart';
 import 'package:fluffychat/pangea/constants/class_default_values.dart';
 import 'package:fluffychat/pangea/constants/model_keys.dart';
 import 'package:fluffychat/pangea/constants/pangea_room_types.dart';
@@ -31,6 +20,15 @@ import 'package:fluffychat/pangea/utils/error_handler.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:html_unescape/html_unescape.dart';
+import 'package:matrix/matrix.dart' as matrix;
+import 'package:matrix/matrix.dart';
+import 'package:matrix/src/utils/markdown.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+
 import '../../../config/app_config.dart';
 import '../../constants/pangea_event_types.dart';
 import '../../models/choreo_record.dart';
@@ -115,7 +113,7 @@ extension PangeaRoom on Room {
 
   DateTime? get rulesUpdatedAt => _rulesUpdatedAt;
 
-  String get classCode => _classCode;
+  String classCode(BuildContext context) => _classCode(context);
 
   void checkClass() => _checkClass();
 

@@ -2,12 +2,9 @@
 // IGC is running, IGC has run and there are remaining steps (either IT or IGC), or all steps are done
 // Or user does not have a subscription
 
-import 'package:flutter/material.dart';
-
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-
 import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pangea/constants/colors.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
 
 enum AssistanceState {
   noSub,
@@ -27,7 +24,7 @@ extension AssistanceStateExtension on AssistanceState {
       case AssistanceState.fetching:
         return Theme.of(context).colorScheme.primary;
       case AssistanceState.fetched:
-        return PangeaColors.igcError;
+        return AppConfig.error;
       case AssistanceState.complete:
         return AppConfig.success;
     }

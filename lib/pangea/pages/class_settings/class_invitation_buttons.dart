@@ -1,16 +1,15 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:matrix/matrix.dart';
-import 'package:universal_html/html.dart' as html;
-
 import 'package:fluffychat/pangea/config/environment.dart';
 import 'package:fluffychat/pangea/constants/url_query_parameter_keys.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-import '../../../../utils/fluffy_share.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:matrix/matrix.dart';
+import 'package:universal_html/html.dart' as html;
+
+import '../../../utils/fluffy_share.dart';
 
 class ClassInvitationButtons extends StatelessWidget {
   final String roomId;
@@ -66,7 +65,7 @@ class ClassInvitationButtons extends StatelessWidget {
       onTap: () async {
         //PTODO-Lala: Standarize toast
         //PTODO - explore using Fluffyshare for this
-        await Clipboard.setData(ClipboardData(text: room.classCode));
+        await Clipboard.setData(ClipboardData(text: room.classCode(context)));
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(L10n.of(context).copiedToClipboard)),
         );

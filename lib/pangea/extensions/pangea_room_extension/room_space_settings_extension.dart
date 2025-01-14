@@ -6,14 +6,14 @@ extension SpaceRoomExtension on Room {
     return pangeaRoomRulesStateEvent?.originServerTs ?? creationTime;
   }
 
-  String get _classCode {
+  String _classCode(BuildContext context) {
     if (!isSpace) {
       for (final Room potentialClassRoom in pangeaSpaceParents) {
         if (potentialClassRoom.isSpace) {
-          return potentialClassRoom.classCode;
+          return potentialClassRoom.classCode(context);
         }
       }
-      return "Not in a class!";
+      return L10n.of(context).notInClass;
     }
     final roomJoinRules = getState(EventTypes.RoomJoinRules, "");
     if (roomJoinRules != null) {
@@ -22,7 +22,7 @@ extension SpaceRoomExtension on Room {
         return accessCode;
       }
     }
-    return noClassCode;
+    return L10n.of(context).noClassCode;
   }
 
   void _checkClass() {
