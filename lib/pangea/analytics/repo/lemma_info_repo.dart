@@ -1,16 +1,15 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
-
-import 'package:http/http.dart';
-
 import 'package:fluffychat/pangea/analytics/repo/lemma_info_request.dart';
 import 'package:fluffychat/pangea/analytics/repo/lemma_info_response.dart';
 import 'package:fluffychat/pangea/common/network/urls.dart';
 import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/pangea/events/models/content_feedback.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart';
+
 import '../../common/config/environment.dart';
 import '../../common/network/requests.dart';
 
@@ -19,7 +18,7 @@ class LemmaInfoRepo {
   static final Map<LemmaInfoRequest, LemmaInfoResponse> _cache = {};
   static final Map<LemmaInfoRequest, DateTime> _cacheTimestamps = {};
 
-  static const Duration _cacheDuration = Duration(days: 30);
+  static const Duration _cacheDuration = Duration(days: 60);
 
   static void set(LemmaInfoRequest request, LemmaInfoResponse response) {
     _cache[request] = response;
@@ -79,25 +78,6 @@ class LemmaInfoRepo {
     _cacheTimestamps[request] = DateTime.now();
 
     return response;
-  }
-
-  /// From the cache, get a random set of cached definitions that are not for a specific lemma
-  static List<String> getDistractorDefinitions(
-    String lemma,
-    int count,
-  ) {
-    _clearExpiredEntries();
-
-    final Set<String> definitions = {};
-    for (final entry in _cache.entries) {
-      if (entry.key.lemma != lemma) {
-        definitions.add(entry.value.meaning);
-      }
-    }
-
-    definitions.toList().shuffle();
-
-    return definitions.take(count).toList();
   }
 
   static void _clearExpiredEntries() {

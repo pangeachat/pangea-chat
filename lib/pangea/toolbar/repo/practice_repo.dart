@@ -2,12 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
-import 'package:http/http.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:fluffychat/pangea/common/config/environment.dart';
 import 'package:fluffychat/pangea/common/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/common/network/requests.dart';
@@ -21,9 +15,13 @@ import 'package:fluffychat/pangea/toolbar/models/message_activity_request.dart';
 import 'package:fluffychat/pangea/toolbar/models/practice_activity_model.dart';
 import 'package:fluffychat/pangea/toolbar/repo/emoji_activity_generator.dart';
 import 'package:fluffychat/pangea/toolbar/repo/lemma_activity_generator.dart';
+import 'package:fluffychat/pangea/toolbar/repo/lemma_meaning_activity_generator.dart';
 import 'package:fluffychat/pangea/toolbar/repo/morph_activity_generator.dart';
-import 'package:fluffychat/pangea/toolbar/repo/word_meaning_activity_generator.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:matrix/matrix.dart';
 
 /// Represents an item in the completion cache.
 class _RequestCacheItem {
@@ -47,7 +45,7 @@ class PracticeGenerationController {
   final _morph = MorphActivityGenerator();
   final _emoji = EmojiActivityGenerator();
   final _lemma = LemmaActivityGenerator();
-  final _wordMeaning = WordMeaningActivityGenerator();
+  final _wordMeaning = LemmaMeaningActivityGenerator();
 
   PracticeGenerationController() {
     _pangeaController = MatrixState.pangeaController;
