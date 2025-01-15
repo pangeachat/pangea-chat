@@ -4749,5 +4749,7 @@
     }
   },
   "notInClass": "Not in a class!",
-  "noClassCode": "No class code!"
+  "noClassCode": "No class code!",
+  "previous": "Previous",
+  "otherPartyNotLoggedIn": "The other party is currently not logged in and therefore cannot receive messages!"
 }

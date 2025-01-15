@@ -126,6 +126,7 @@ abstract class FluffyThemes {
       ),
       snackBarTheme: const SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
+        width: FluffyThemes.columnWidth * 1.5,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(

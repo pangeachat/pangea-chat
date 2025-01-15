@@ -22,8 +22,8 @@ class HtmlMessage extends StatelessWidget {
   // #Pangea
   final bool isOverlay;
   final PangeaMessageEvent? pangeaMessageEvent;
-  final ChatController controller;
-  final Event event;
+  final ChatController? controller;
+  final Event? event;
   final Event? nextEvent;
   final Event? prevEvent;
   // Pangea#
@@ -34,10 +34,10 @@ class HtmlMessage extends StatelessWidget {
     required this.room,
     this.textColor = Colors.black,
     // #Pangea
-    required this.isOverlay,
-    required this.event,
+    this.isOverlay = false,
+    this.event,
     this.pangeaMessageEvent,
-    required this.controller,
+    this.controller,
     this.nextEvent,
     this.prevEvent,
     // Pangea#
@@ -96,9 +96,12 @@ class HtmlMessage extends StatelessWidget {
     return SelectionArea(
       child: GestureDetector(
         onTap: () {
-          if (!isOverlay) {
-            controller.showToolbar(
-              event,
+          if (event != null &&
+              !isOverlay &&
+              (event!.messageType == MessageTypes.Text ||
+                  event!.messageType == MessageTypes.Audio)) {
+            controller?.showToolbar(
+              event!,
               pangeaMessageEvent: pangeaMessageEvent,
               nextEvent: nextEvent,
               prevEvent: prevEvent,

@@ -14,7 +14,6 @@ import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:uni_links/uni_links.dart';
 
 import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat_list/chat_list_view.dart';
 import 'package:fluffychat/pangea/chat_list/utils/app_version_util.dart';
 import 'package:fluffychat/pangea/chat_list/utils/chat_list_handle_space_tap.dart';
@@ -28,8 +27,6 @@ import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/utils/show_scaffold_dialog.dart';
 import 'package:fluffychat/utils/show_update_snackbar.dart';
-import 'package:fluffychat/utils/tor_stub.dart';
-import 'package:fluffychat/utils/url_launcher.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_modal_action_popup.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
@@ -38,9 +35,14 @@ import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/share_scaffold_dialog.dart';
 import '../../../utils/account_bundles.dart';
 import '../../config/setting_keys.dart';
+import '../../utils/url_launcher.dart';
 import '../../utils/voip/callkeep_manager.dart';
 import '../../widgets/fluffy_chat_app.dart';
 import '../../widgets/matrix.dart';
+
+import 'package:fluffychat/utils/tor_stub.dart'
+    if (dart.library.html) 'package:tor_detector_web/tor_detector_web.dart';
+
 
 enum PopupMenuAction {
   settings,
@@ -112,12 +114,6 @@ class ChatListController extends State<ChatList>
     setState(() {
       _activeSpaceId = spaceId;
     });
-
-    // #Pangea
-    if (FluffyThemes.isColumnMode(context)) {
-      context.go('/rooms/$spaceId/details');
-    }
-    // Pangea#
   }
 
   // #Pangea
@@ -189,13 +185,15 @@ class ChatListController extends State<ChatList>
       case ActiveFilter.groups:
         return (room) =>
             !room.isSpace &&
-            !room.isDirectChat // #Pangea
+            !room.isDirectChat
+            // #Pangea
             &&
             !room.isAnalyticsRoom;
       // Pangea#
       case ActiveFilter.unread:
         return (room) =>
-            room.isUnreadOrInvited // #Pangea
+            room.isUnreadOrInvited
+            // #Pangea
             &&
             !room.isAnalyticsRoom;
       // Pangea#
@@ -461,8 +459,9 @@ class ChatListController extends State<ChatList>
             Matrix.of(context).store.getString(_serverStoreNamespace);
         Matrix.of(context).backgroundPush?.setupPush();
         UpdateNotifier.showUpdateSnackBar(context);
-
+        // #Pangea
         AppVersionUtil.showAppVersionDialog(context);
+        // Pangea#
       }
 
       // Workaround for system UI overlay style not applied on app start
@@ -889,7 +888,9 @@ class ChatListController extends State<ChatList>
               }
             }
           },
+          // Pangea#
         );
+        // #Pangea
         return;
       case ChatContextAction.removeFromSpace:
         await showFutureLoadingDialog(
@@ -902,6 +903,7 @@ class ChatListController extends State<ChatList>
           },
         );
         return;
+      // Pangea#
       case ChatContextAction.block:
         final userId =
             room.getState(EventTypes.RoomMember, room.client.userID!)?.senderId;
@@ -1011,7 +1013,9 @@ class ChatListController extends State<ChatList>
     //   controller = ScaffoldMessenger.of(context).showSnackBar(
     //     SnackBar(
     //       duration: const Duration(seconds: 15),
+    //       showCloseIcon: true,
     //       backgroundColor: theme.colorScheme.errorContainer,
+    //       closeIconColor: theme.colorScheme.onErrorContainer,
     //       content: Text(
     //         L10n.of(context).oneOfYourDevicesIsNotVerified,
     //         style: TextStyle(

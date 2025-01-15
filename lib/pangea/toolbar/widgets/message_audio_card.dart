@@ -201,6 +201,11 @@ class MessageAudioCardState extends State<MessageAudioCard> {
                       fontSize:
                           AppConfig.messageFontSize * AppConfig.fontSizeFactor,
                       padding: 0,
+                      // #Pangea
+                      isOverlay: true,
+                      chatController:
+                          widget.overlayController.widget.chatController,
+                      // Pangea#
                     )
                   : const CardErrorWidget(
                       error: "Null audio file in message_audio_card",

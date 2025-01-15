@@ -174,6 +174,7 @@ class MessageContent extends StatelessWidget {
               fit: fit,
               borderRadius: borderRadius,
               timeline: timeline,
+              textColor: textColor,
             );
           case CuteEventContent.eventType:
             return CuteContent(event);
@@ -189,11 +190,15 @@ class MessageContent extends StatelessWidget {
                 event,
                 color: textColor,
                 fontSize: fontSize,
+                // #Pangea
+                isOverlay: overlayController != null,
+                chatController: controller,
+                // Pangea#
               );
             }
             return MessageDownloadContent(event, textColor);
           case MessageTypes.Video:
-            return EventVideoPlayer(event);
+            return EventVideoPlayer(event, textColor: textColor);
           case MessageTypes.File:
             return MessageDownloadContent(event, textColor);
 
