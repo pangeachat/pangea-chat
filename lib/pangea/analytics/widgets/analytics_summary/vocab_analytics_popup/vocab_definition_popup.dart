@@ -260,19 +260,18 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  if (emoji != null)
-                    Text(
-                      emoji!,
-                    ),
-                  if (emoji == null)
-                    Tooltip(
-                      message: L10n.of(context).noEmojiSelectedTooltip,
-                      child: Icon(
-                        Icons.add_reaction_outlined,
-                        size: 25,
-                        color: textColor.withValues(alpha: 0.7),
-                      ),
-                    ),
+                  emoji == null
+                      ? Tooltip(
+                          message: L10n.of(context).noEmojiSelectedTooltip,
+                          child: Icon(
+                            Icons.add_reaction_outlined,
+                            size: 25,
+                            color: textColor.withValues(alpha: 0.7),
+                          ),
+                        )
+                      : Text(
+                          emoji!,
+                        ),
                   const SizedBox(
                     width: 7,
                   ),
