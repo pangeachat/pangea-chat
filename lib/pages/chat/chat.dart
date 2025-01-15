@@ -388,6 +388,14 @@ class ChatController extends State<ChatPageWithRoom>
 
   void onInsert(int i) {
     // setState will be called by updateView() anyway
+    // #Pangea
+    // If fake event was sent, don't animate in the next event.
+    // It makes the replacement of the fake event jumpy.
+    if (_fakeEventID != null) {
+      animateInEventIndex = null;
+      return;
+    }
+    // Pangea#
     animateInEventIndex = i;
   }
 
@@ -666,9 +674,9 @@ class ChatController extends State<ChatPageWithRoom>
     // );
     final previousEdit = editEvent;
 
-    // tokenization is done and the message is ready to send,
-    // so remove the fake event from the timeline
-    clearFakeEvent();
+    // wait for the next event to come through before clearing any fake event,
+    // to make the replacement look smooth
+    room.client.onEvent.stream.first.then((_) => clearFakeEvent());
 
     room
         .pangeaSendTextEvent(
