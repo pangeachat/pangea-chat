@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/pangea/analytics/constants/morph_categories_and_labels.dart';
 import 'package:fluffychat/pangea/analytics/enums/construct_use_type_enum.dart';
 import 'package:fluffychat/pangea/analytics/enums/learning_skills_enum.dart';
 import 'package:fluffychat/pangea/analytics/enums/lemma_category_enum.dart';
@@ -43,17 +42,12 @@ class VocabDefinitionPopup extends StatefulWidget {
 }
 
 class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
-  String? exampleEventID;
-  LemmaInfoResponse? res;
   late Future<String?> definition;
-  PangeaToken? token;
-  String? morphFeature;
   // Lists of lemma uses for the given exercise types; true if positive XP
   List<bool> writingUses = [];
   List<bool> hearingUses = [];
   List<bool> readingUses = [];
   late Future<List<Widget>> writingExamples;
-  Set<String>? forms;
   String? formString;
 
   @override
@@ -64,17 +58,18 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
     // Get possible forms of lemma
     final ConstructListModel constructsModel =
         MatrixState.pangeaController.getAnalytics.constructListModel;
-    forms = (constructsModel.lemmasToUses())[widget.construct.lemma]
-        ?.first
-        .uses
-        .map((e) => e.form)
-        .whereType<String>()
-        .toSet();
+    final Set<String>? forms =
+        (constructsModel.lemmasToUses())[widget.construct.lemma]
+            ?.first
+            .uses
+            .map((e) => e.form)
+            .whereType<String>()
+            .toSet();
 
     // Save forms as string
     if (forms != null) {
       formString = "  ";
-      for (final String form in forms!) {
+      for (final String form in forms) {
         if (form.isNotEmpty) {
           formString = "${formString!}$form, ";
         }
@@ -86,10 +81,6 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
       }
     }
 
-    exampleEventID = widget.construct.uses
-        .firstWhereOrNull((e) => e.metadata.eventId != null)
-        ?.metadata
-        .eventId;
     super.initState();
   }
 
@@ -108,6 +99,12 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
         pos: widget.construct.category,
         morph: {},
       ).getEmoji();
+
+  /// Get an associated event ID, to provide to audio button
+  String? get exampleEventID => widget.construct.uses
+      .firstWhereOrNull((e) => e.metadata.eventId != null)
+      ?.metadata
+      .eventId;
 
   /// Sort uses of lemma associated with writing, reading, and listening.
   List<OneConstructUse> loadUses() {
@@ -244,8 +241,8 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
               LanguageKeys.defaultLanguage,
       lemma: widget.construct.lemma,
     );
-    res = await LemmaInfoRepo.get(lemmaDefReq);
-    return res?.meaning;
+    final LemmaInfoResponse res = await LemmaInfoRepo.get(lemmaDefReq);
+    return res.meaning;
   }
 
   @override
@@ -328,9 +325,7 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                         Tooltip(
                           message: L10n.of(context).grammarCopyPOS,
                           child: Icon(
-                            (morphFeature != null)
-                                ? getIconForMorphFeature(morphFeature!)
-                                : Symbols.toys_and_games,
+                            Symbols.toys_and_games,
                             size: 23,
                             color: textColor.withValues(alpha: 0.7),
                           ),
