@@ -6,16 +6,16 @@ import 'package:matrix/matrix.dart';
 
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pangea/bot/utils/bot_name.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_modal_action_popup.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
-import 'package:fluffychat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/permission_slider_dialog.dart';
 import '../../widgets/matrix.dart';
 import 'user_bottom_sheet_view.dart';
 
 enum UserBottomSheetAction {
-  report,
+  // #Pangea
+  // report,
+  // Pangea#
   mention,
   ban,
   kick,
@@ -96,54 +96,56 @@ class UserBottomSheetController extends State<UserBottomSheet> {
     if (userId == null) throw ('user or profile must not be null!');
 
     switch (action) {
-      case UserBottomSheetAction.report:
-        if (user == null) throw ('User must not be null for this action!');
+      // #Pangea
+      // case UserBottomSheetAction.report:
+      //   if (user == null) throw ('User must not be null for this action!');
 
-        final score = await showModalActionPopup<int>(
-          context: context,
-          title: L10n.of(context).reportUser,
-          message: L10n.of(context).howOffensiveIsThisContent,
-          cancelLabel: L10n.of(context).cancel,
-          actions: [
-            AdaptiveModalAction(
-              value: -100,
-              label: L10n.of(context).extremeOffensive,
-            ),
-            AdaptiveModalAction(
-              value: -50,
-              label: L10n.of(context).offensive,
-            ),
-            AdaptiveModalAction(
-              value: 0,
-              label: L10n.of(context).inoffensive,
-            ),
-          ],
-        );
-        if (score == null) return;
-        final reason = await showTextInputDialog(
-          useRootNavigator: false,
-          context: context,
-          title: L10n.of(context).whyDoYouWantToReportThis,
-          okLabel: L10n.of(context).ok,
-          cancelLabel: L10n.of(context).cancel,
-          hintText: L10n.of(context).reason,
-        );
-        if (reason == null || reason.isEmpty) return;
+      //   final score = await showModalActionPopup<int>(
+      //     context: context,
+      //     title: L10n.of(context).reportUser,
+      //     message: L10n.of(context).howOffensiveIsThisContent,
+      //     cancelLabel: L10n.of(context).cancel,
+      //     actions: [
+      //       AdaptiveModalAction(
+      //         value: -100,
+      //         label: L10n.of(context).extremeOffensive,
+      //       ),
+      //       AdaptiveModalAction(
+      //         value: -50,
+      //         label: L10n.of(context).offensive,
+      //       ),
+      //       AdaptiveModalAction(
+      //         value: 0,
+      //         label: L10n.of(context).inoffensive,
+      //       ),
+      //     ],
+      //   );
+      //   if (score == null) return;
+      //   final reason = await showTextInputDialog(
+      //     useRootNavigator: false,
+      //     context: context,
+      //     title: L10n.of(context).whyDoYouWantToReportThis,
+      //     okLabel: L10n.of(context).ok,
+      //     cancelLabel: L10n.of(context).cancel,
+      //     hintText: L10n.of(context).reason,
+      //   );
+      //   if (reason == null || reason.isEmpty) return;
 
-        final result = await showFutureLoadingDialog(
-          context: context,
-          future: () => Matrix.of(widget.outerContext).client.reportContent(
-                user.room.id,
-                user.id,
-                reason: reason,
-                score: score,
-              ),
-        );
-        if (result.error != null) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(L10n.of(context).contentHasBeenReported)),
-        );
-        break;
+      //   final result = await showFutureLoadingDialog(
+      //     context: context,
+      //     future: () => Matrix.of(widget.outerContext).client.reportEvent(
+      //           user.room.id,
+      //           user.id,
+      //           reason: reason,
+      //           score: score,
+      //         ),
+      //   );
+      //   if (result.error != null) return;
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(content: Text(L10n.of(context).contentHasBeenReported)),
+      //   );
+      //   break;
+      // Pangea#
       case UserBottomSheetAction.mention:
         if (user == null) throw ('User must not be null for this action!');
         Navigator.of(context).pop();

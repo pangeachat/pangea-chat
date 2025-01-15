@@ -1034,7 +1034,7 @@ class ChatController extends State<ChatPageWithRoom>
     }
     // final result = await showFutureLoadingDialog(
     //   context: context,
-    //   future: () => Matrix.of(context).client.reportContent(
+    //   future: () => Matrix.of(context).client.reportEvent(
     //         event.roomId!,
     //         event.eventId,
     //         reason: reason,
