@@ -80,8 +80,6 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
                 context: context,
                 builder: (c) => VocabDefinitionPopup(
                   construct: construct,
-                  type: LemmaCategoryEnum.seeds,
-                  points: points,
                 ),
               );
             },
@@ -105,8 +103,6 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
                 context: context,
                 builder: (c) => VocabDefinitionPopup(
                   construct: construct,
-                  type: LemmaCategoryEnum.flowers,
-                  points: points,
                 ),
               );
             },
@@ -130,8 +126,6 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
                 context: context,
                 builder: (c) => VocabDefinitionPopup(
                   construct: construct,
-                  type: LemmaCategoryEnum.greens,
-                  points: points,
                 ),
               );
             },

@@ -1,6 +1,7 @@
 import 'package:fluffychat/pangea/analytics/constants/analytics_constants.dart';
 import 'package:fluffychat/pangea/analytics/enums/construct_type_enum.dart';
 import 'package:fluffychat/pangea/analytics/enums/construct_use_type_enum.dart';
+import 'package:fluffychat/pangea/analytics/enums/lemma_category_enum.dart';
 import 'package:fluffychat/pangea/analytics/models/constructs_model.dart';
 import 'package:fluffychat/pangea/toolbar/models/practice_activity_model.dart';
 
@@ -66,18 +67,13 @@ class ConstructUses {
     return json;
   }
 
-  String get xpEmoji {
+  /// Get the lemma category, based on points
+  LemmaCategoryEnum get lemmaCategory {
     if (points < AnalyticsConstants.xpForGreens) {
-      // bean emoji
-      return AnalyticsConstants.emojiForSeed;
+      return LemmaCategoryEnum.seeds;
+    } else if (points >= AnalyticsConstants.xpForFlower) {
+      return LemmaCategoryEnum.flowers;
     }
-
-    if (points < AnalyticsConstants.xpForFlower) {
-      // sprout emoji
-      return AnalyticsConstants.emojiForGreen;
-    }
-
-    // flower emoji
-    return AnalyticsConstants.emojiForFlower;
+    return LemmaCategoryEnum.greens;
   }
 }

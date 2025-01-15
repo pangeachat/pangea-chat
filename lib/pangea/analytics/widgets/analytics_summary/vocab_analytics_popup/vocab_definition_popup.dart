@@ -27,14 +27,10 @@ import 'package:matrix/matrix.dart';
 /// Displays information about selected lemma, and its usage
 class VocabDefinitionPopup extends StatefulWidget {
   final ConstructUses construct;
-  final LemmaCategoryEnum type;
-  final int points;
 
   const VocabDefinitionPopup({
     super.key,
     required this.construct,
-    required this.type,
-    required this.points,
   });
 
   @override
@@ -42,12 +38,12 @@ class VocabDefinitionPopup extends StatefulWidget {
 }
 
 class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
-  late Future<String?> definition;
   // Lists of lemma uses for the given exercise types; true if positive XP
   List<bool> writingUses = [];
   List<bool> hearingUses = [];
   List<bool> readingUses = [];
   late Future<List<Widget>> writingExamples;
+  late Future<String?> definition;
   String? formString;
 
   @override
@@ -65,7 +61,6 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
             .map((e) => e.form)
             .whereType<String>()
             .toSet();
-
     // Save forms as string
     if (forms != null) {
       formString = "  ";
@@ -200,7 +195,7 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
       examples.add(
         Container(
           decoration: BoxDecoration(
-            color: widget.type.color,
+            color: widget.construct.lemmaCategory.color,
             borderRadius: BorderRadius.circular(
               4,
             ),
@@ -248,8 +243,8 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
   @override
   Widget build(BuildContext context) {
     final Color textColor = Theme.of(context).brightness != Brightness.light
-        ? widget.type.color
-        : widget.type.darkColor;
+        ? widget.construct.lemmaCategory.color
+        : widget.construct.lemmaCategory.darkColor;
 
     return Dialog(
       child: ConstrainedBox(
@@ -442,7 +437,7 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                       height: 20,
                     ),
                     Text(
-                      "${widget.type.emoji} ${widget.points} XP",
+                      "${widget.construct.lemmaCategory.emoji} ${widget.construct.points} XP",
                       style: TextStyle(
                         color: textColor,
                         fontSize: 20,
