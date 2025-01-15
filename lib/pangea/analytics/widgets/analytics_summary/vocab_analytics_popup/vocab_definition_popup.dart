@@ -1,14 +1,9 @@
-import 'package:flutter/material.dart';
-
 import 'package:collection/collection.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:material_symbols_icons/symbols.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pangea/analytics/constants/morph_categories_and_labels.dart';
 import 'package:fluffychat/pangea/analytics/enums/construct_use_type_enum.dart';
+import 'package:fluffychat/pangea/analytics/enums/learning_skills_enum.dart';
 import 'package:fluffychat/pangea/analytics/enums/lemma_category_enum.dart';
 import 'package:fluffychat/pangea/analytics/models/construct_list_model.dart';
 import 'package:fluffychat/pangea/analytics/models/construct_use_model.dart';
@@ -25,6 +20,10 @@ import 'package:fluffychat/pangea/toolbar/controllers/tts_controller.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/practice_activity/word_audio_button.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:matrix/matrix.dart';
 
 /// Displays information about selected lemma, and its usage
 class VocabDefinitionPopup extends StatefulWidget {
@@ -47,7 +46,6 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
   String? exampleEventID;
   LemmaInfoResponse? res;
   late Future<String?> definition;
-  String? emoji;
   PangeaToken? token;
   String? morphFeature;
   // Lists of lemma uses for the given exercise types; true if positive XP
@@ -88,28 +86,28 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
       }
     }
 
-    // Find selected emoji, if applicable, using PangeaToken.getEmoji
-    emoji = PangeaToken(
-      text: PangeaTokenText(
-        offset: 0,
-        content: widget.construct.lemma,
-        length: widget.construct.lemma.length,
-      ),
-      lemma: Lemma(
-        text: widget.construct.lemma,
-        saveVocab: false,
-        form: widget.construct.lemma,
-      ),
-      pos: widget.construct.category,
-      morph: {},
-    ).getEmoji();
-
     exampleEventID = widget.construct.uses
         .firstWhereOrNull((e) => e.metadata.eventId != null)
         ?.metadata
         .eventId;
     super.initState();
   }
+
+  /// Find selected emoji, if applicable, using PangeaToken.getEmoji
+  String? get emoji => PangeaToken(
+        text: PangeaTokenText(
+          offset: 0,
+          content: widget.construct.lemma,
+          length: widget.construct.lemma.length,
+        ),
+        lemma: Lemma(
+          text: widget.construct.lemma,
+          saveVocab: false,
+          form: widget.construct.lemma,
+        ),
+        pos: widget.construct.category,
+        morph: {},
+      ).getEmoji();
 
   /// Sort uses of lemma associated with writing, reading, and listening.
   List<OneConstructUse> loadUses() {
@@ -119,37 +117,16 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
         continue;
       }
       final bool positive = use.useType.pointValue > 0;
-      final ConstructUseTypeEnum activityType = use.useType;
+      final LearningSkillsEnum activityType = use.useType.skillsEnumType;
       switch (activityType) {
-        case ConstructUseTypeEnum.wa:
-        case ConstructUseTypeEnum.ga:
-        case ConstructUseTypeEnum.unk:
-        case ConstructUseTypeEnum.corIt:
-        case ConstructUseTypeEnum.ignIt:
-        case ConstructUseTypeEnum.incIt:
-        case ConstructUseTypeEnum.corIGC:
-        case ConstructUseTypeEnum.ignIGC:
-        case ConstructUseTypeEnum.incIGC:
-        case ConstructUseTypeEnum.corL:
-        case ConstructUseTypeEnum.ignL:
-        case ConstructUseTypeEnum.incL:
-        case ConstructUseTypeEnum.corM:
-        case ConstructUseTypeEnum.ignM:
-        case ConstructUseTypeEnum.incM:
+        case LearningSkillsEnum.writing:
           writingUses.add(positive);
           writingUsesDetailed.add(use);
           break;
-        case ConstructUseTypeEnum.corWL:
-        case ConstructUseTypeEnum.ignWL:
-        case ConstructUseTypeEnum.incWL:
-        case ConstructUseTypeEnum.corHWL:
-        case ConstructUseTypeEnum.ignHWL:
-        case ConstructUseTypeEnum.incHWL:
+        case LearningSkillsEnum.hearing:
           hearingUses.add(positive);
           break;
-        case ConstructUseTypeEnum.corPA:
-        case ConstructUseTypeEnum.ignPA:
-        case ConstructUseTypeEnum.incPA:
+        case LearningSkillsEnum.reading:
           readingUses.add(positive);
           break;
         default:
