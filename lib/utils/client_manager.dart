@@ -12,8 +12,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_html/html.dart' as html;
 
 import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pangea/constants/model_keys.dart';
-import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
+import 'package:fluffychat/pangea/common/constants/model_keys.dart';
+import 'package:fluffychat/pangea/events/constants/pangea_event_types.dart';
 import 'package:fluffychat/utils/custom_http_client.dart';
 import 'package:fluffychat/utils/custom_image_resizer.dart';
 import 'package:fluffychat/utils/init_with_restore.dart';
@@ -120,6 +120,7 @@ abstract class ClientManager {
         PangeaEventTypes.capacity,
         EventTypes.RoomPowerLevels,
         PangeaEventTypes.userChosenEmoji,
+        EventTypes.RoomJoinRules,
         // Pangea#
       },
       logLevel: kReleaseMode ? Level.warning : Level.verbose,

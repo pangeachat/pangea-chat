@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/pangea/config/environment.dart';
+import 'package:fluffychat/pangea/common/config/environment.dart';
 
 abstract class AppConfig {
   // #Pangea
@@ -23,7 +23,7 @@ abstract class AppConfig {
   static const double messageFontSize = 16.0;
   static const bool allowOtherHomeservers = true;
   static const bool enableRegistration = true;
-  static const double toolbarMaxHeight = 300.0;
+  static const double toolbarMaxHeight = 440.0;
   static const double toolbarMinHeight = 175.0;
   static const double toolbarMinWidth = 350.0;
   static const double toolbarButtonsHeight = 50.0;
@@ -53,6 +53,7 @@ abstract class AppConfig {
   static const Color warning = Color.fromARGB(255, 210, 124, 12);
   static const Color gold = Color.fromARGB(255, 253, 191, 1);
   static const Color goldLight = Color.fromARGB(255, 254, 223, 73);
+  static const Color error = Colors.red;
   static const int overlayAnimationDuration = 250;
   // static String _privacyUrl =
   //     'https://gitlab.com/famedly/fluffychat/-/blob/main/PRIVACY.md';

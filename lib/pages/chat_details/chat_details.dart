@@ -7,8 +7,8 @@ import 'package:matrix/matrix.dart' as sdk;
 import 'package:matrix/matrix.dart';
 
 import 'package:fluffychat/pages/settings/settings.dart';
-import 'package:fluffychat/pangea/pages/chat_details/pangea_chat_details.dart';
-import 'package:fluffychat/pangea/utils/set_class_name.dart';
+import 'package:fluffychat/pangea/chat_settings/pages/pangea_chat_details.dart';
+import 'package:fluffychat/pangea/spaces/utils/set_class_name.dart';
 import 'package:fluffychat/utils/file_selector.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_modal_action_popup.dart';
@@ -258,12 +258,6 @@ class ChatDetailsController extends State<ChatDetails> {
           sync.accountData!.any((e) => e.type == 'm.push_rules'),
     );
     if (mounted) setState(() {});
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    MatrixState.pangeaController.classController.addMissingRoomRules(roomId);
   }
 
   @override
