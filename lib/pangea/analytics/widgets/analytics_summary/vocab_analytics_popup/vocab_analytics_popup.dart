@@ -1,8 +1,3 @@
-import 'package:flutter/material.dart';
-
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/analytics/constants/analytics_constants.dart';
 import 'package:fluffychat/pangea/analytics/enums/construct_type_enum.dart';
@@ -13,6 +8,9 @@ import 'package:fluffychat/pangea/analytics/models/construct_use_model.dart';
 import 'package:fluffychat/pangea/analytics/utils/get_grammar_copy.dart';
 import 'package:fluffychat/pangea/analytics/widgets/analytics_summary/vocab_analytics_popup/vocab_definition_popup.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:matrix/matrix.dart';
 
 /// Displays vocab analytics, sorted into categories
 /// (flowers, greens, and seeds) by points
@@ -90,11 +88,10 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
           ),
         );
         seedLemmas.add(
-          const Text(
+          Text(
             ", ",
             style: TextStyle(
-              fontSize: 15,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onPrimaryFixed,
             ),
           ),
         );
@@ -116,11 +113,10 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
           ),
         );
         flowerLemmas.add(
-          const Text(
+          Text(
             ", ",
             style: TextStyle(
-              fontSize: 15,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onPrimaryFixed,
             ),
           ),
         );
@@ -142,11 +138,10 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
           ),
         );
         greenLemmas.add(
-          const Text(
+          Text(
             ", ",
             style: TextStyle(
-              fontSize: 15,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onPrimaryFixed,
             ),
           ),
         );
@@ -171,11 +166,10 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
       lemmaList.removeLast();
     } else {
       lemmaList.add(
-        const Text(
+        Text(
           "No lemmas",
           style: TextStyle(
-            fontSize: 15,
-            color: Colors.black,
+            color: Theme.of(context).colorScheme.onPrimaryFixed,
           ),
         ),
       );
@@ -197,23 +191,18 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircleAvatar(
-                    backgroundColor:
-                        Theme.of(context).brightness == Brightness.light
-                            ? Colors.white
-                            : Colors.black,
+                    backgroundColor: Theme.of(context).colorScheme.surface,
                     radius: 16,
                     child: Text(
                       " ${type.emoji}",
-                      style: const TextStyle(
-                        fontSize: 14,
-                      ),
+                      style: const TextStyle(),
                     ),
                   ),
                   Text(
                     " ${type.xpString} XP",
-                    style: const TextStyle(
-                      fontSize: 15,
-                      color: Colors.black,
+                    style: TextStyle(
+                      fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
+                      color: Theme.of(context).colorScheme.onPrimaryFixed,
                     ),
                   ),
                 ],
@@ -289,20 +278,20 @@ class VocabChip extends StatelessWidget {
       onTap: onTap,
       child: Text(
         displayText ?? construct.lemma,
-        style: const TextStyle(
+        style: TextStyle(
           // Workaround to add space between text and underline
           color: Colors.transparent,
           shadows: [
             Shadow(
-              color: Colors.black,
-              offset: Offset(0, -3),
+              color: Theme.of(context).colorScheme.onPrimaryFixed,
+              offset: const Offset(0, -3),
             ),
           ],
           decoration: TextDecoration.underline,
           decorationStyle: TextDecorationStyle.dashed,
-          decorationColor: Colors.black,
+
+          decorationColor: Theme.of(context).colorScheme.onPrimaryFixed,
           decorationThickness: 1,
-          fontSize: 15,
         ),
       ),
     );
