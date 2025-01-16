@@ -58,20 +58,27 @@ class LemmaMeaningActivityGenerator {
     );
   }
 
+  static List<OneConstructUse> eligibleDistractors(String lemma, String pos) {
+    return MatrixState.pangeaController.getAnalytics.constructListModel.uses
+        .where(
+          (c) =>
+              c.lemma.toLowerCase() != lemma.toLowerCase() &&
+              c.category.toLowerCase() == pos.toLowerCase() &&
+              c.constructType == ConstructTypeEnum.vocab,
+        )
+        .toList();
+  }
+
   /// From the cache, get a random set of cached definitions that are not for a specific lemma
   static Future<List<String>> getDistractorMeanings(
     LemmaInfoRequest req,
     int count,
   ) async {
-    final allUses =
-        MatrixState.pangeaController.getAnalytics.constructListModel.uses;
-    final filteredUses = allUses
-        .where((c) => c.lemma != req.lemma && c.category != req.partOfSpeech)
-        .toList();
-    filteredUses.shuffle();
+    final eligible = eligibleDistractors(req.lemma, req.partOfSpeech);
+    eligible.shuffle();
 
     final List<OneConstructUse> distractorConstructUses =
-        filteredUses.take(count).toList();
+        eligible.take(count).toList();
 
     final List<Future<LemmaInfoResponse>> futureDefs = [];
     for (final construct in distractorConstructUses) {
@@ -95,9 +102,6 @@ class LemmaMeaningActivityGenerator {
     return distractorDefs;
   }
 
-  static bool canGenerateDistractors(String lemma, String pos) {
-    return MatrixState.pangeaController.getAnalytics.constructListModel.uses
-        .where((c) => c.lemma != lemma && c.category != pos)
-        .isNotEmpty;
-  }
+  static bool canGenerateDistractors(String lemma, String pos) =>
+      eligibleDistractors(lemma, pos).isNotEmpty;
 }
