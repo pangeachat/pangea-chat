@@ -94,12 +94,12 @@ class LemmaMeaningActivityGenerator {
       );
     }
 
-    final List<String> distractorDefs = [];
+    final Set<String> distractorDefs = {};
     for (final def in await Future.wait(futureDefs)) {
       distractorDefs.add(def.meaning);
     }
 
-    return distractorDefs;
+    return distractorDefs.toList();
   }
 
   static bool canGenerateDistractors(String lemma, String pos) =>
