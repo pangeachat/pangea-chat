@@ -8,33 +8,27 @@ import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/pangea/events/models/content_feedback.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart';
 
 import '../../common/config/environment.dart';
 import '../../common/network/requests.dart';
 
 class LemmaInfoRepo {
-  // In-memory cache with timestamps
-  static final Map<LemmaInfoRequest, LemmaInfoResponse> _cache = {};
-  static final Map<LemmaInfoRequest, DateTime> _cacheTimestamps = {};
-
-  static const Duration _cacheDuration = Duration(days: 60);
+  static final GetStorage _lemmaStorage = GetStorage('lemma_storage');
 
   static void set(LemmaInfoRequest request, LemmaInfoResponse response) {
-    _cache[request] = response;
-
-    // set it to sometime in the future so we keep it in the cache for a while
-    _cacheTimestamps[request] = DateTime.now().add(const Duration(days: 365));
+    _lemmaStorage.write(request.storageKey, response.toJson());
   }
 
   static Future<LemmaInfoResponse> get(
     LemmaInfoRequest request, [
     String? feedback,
   ]) async {
-    _clearExpiredEntries();
+    final cachedJson = _lemmaStorage.read(request.storageKey);
 
-    if (_cache.containsKey(request)) {
-      final cached = _cache[request]!;
+    if (cachedJson != null) {
+      final cached = LemmaInfoResponse.fromJson(cachedJson);
 
       if (feedback == null) {
         // in this case, we just return the cached response
@@ -56,7 +50,7 @@ class LemmaInfoRepo {
         data: request.toJson(),
       );
     } else {
-      debugPrint('No cached response for lemma ${request.lemma}');
+      debugPrint('No cached response for lemma ${request.lemma}, calling API');
     }
 
     final Requests req = Requests(
@@ -64,32 +58,16 @@ class LemmaInfoRepo {
       accessToken: MatrixState.pangeaController.userController.accessToken,
     );
 
-    final requestBody = request.toJson();
     final Response res = await req.post(
       url: PApiUrls.lemmaDictionary,
-      body: requestBody,
+      body: request.toJson(),
     );
 
     final decodedBody = jsonDecode(utf8.decode(res.bodyBytes));
     final response = LemmaInfoResponse.fromJson(decodedBody);
 
-    // Store the response and timestamp in the cache
-    _cache[request] = response;
-    _cacheTimestamps[request] = DateTime.now();
+    set(request, response);
 
     return response;
-  }
-
-  static void _clearExpiredEntries() {
-    final now = DateTime.now();
-    final expiredKeys = _cacheTimestamps.entries
-        .where((entry) => now.difference(entry.value) > _cacheDuration)
-        .map((entry) => entry.key)
-        .toList();
-
-    for (final key in expiredKeys) {
-      _cache.remove(key);
-      _cacheTimestamps.remove(key);
-    }
   }
 }
