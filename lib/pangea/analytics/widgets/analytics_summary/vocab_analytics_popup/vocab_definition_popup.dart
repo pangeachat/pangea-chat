@@ -147,8 +147,11 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
     // Clips content (and enables scrolling) if there are 5 or more rows of dots
     return ConstrainedBox(
       constraints: BoxConstraints(
-        // TODO: May need different maxWidth for android devices
-        maxWidth: PlatformInfos.isMobile ? 250 : 350,
+        maxWidth: PlatformInfos.isMobile
+            ? PlatformInfos.isIOS
+                ? 250
+                : 268
+            : 350,
         maxHeight: 90,
       ),
       child: SingleChildScrollView(
