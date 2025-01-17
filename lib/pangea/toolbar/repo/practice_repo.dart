@@ -21,8 +21,8 @@ import 'package:fluffychat/pangea/toolbar/models/message_activity_request.dart';
 import 'package:fluffychat/pangea/toolbar/models/practice_activity_model.dart';
 import 'package:fluffychat/pangea/toolbar/repo/emoji_activity_generator.dart';
 import 'package:fluffychat/pangea/toolbar/repo/lemma_activity_generator.dart';
+import 'package:fluffychat/pangea/toolbar/repo/lemma_meaning_activity_generator.dart';
 import 'package:fluffychat/pangea/toolbar/repo/morph_activity_generator.dart';
-import 'package:fluffychat/pangea/toolbar/repo/word_meaning_activity_generator.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 
 /// Represents an item in the completion cache.
@@ -47,7 +47,7 @@ class PracticeGenerationController {
   final _morph = MorphActivityGenerator();
   final _emoji = EmojiActivityGenerator();
   final _lemma = LemmaActivityGenerator();
-  final _wordMeaning = WordMeaningActivityGenerator();
+  final _wordMeaning = LemmaMeaningActivityGenerator();
 
   PracticeGenerationController() {
     _pangeaController = MatrixState.pangeaController;
@@ -161,9 +161,9 @@ class PracticeGenerationController {
       req: req,
       context: context,
     );
+    res.activity.content.choices.sort((a, b) => a.length.compareTo(b.length));
 
     // TODO resolve some wierdness here whereby the activity can be null but then... it's not
-
     final eventCompleter = Completer<PracticeActivityEvent?>();
 
     debugPrint('Activity generated: ${res.activity.toJson()}');
