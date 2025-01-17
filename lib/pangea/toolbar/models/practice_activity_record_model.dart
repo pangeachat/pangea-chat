@@ -5,12 +5,13 @@
 
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
+
 import 'package:fluffychat/pangea/analytics/enums/construct_type_enum.dart';
 import 'package:fluffychat/pangea/analytics/enums/construct_use_type_enum.dart';
 import 'package:fluffychat/pangea/analytics/models/constructs_model.dart';
 import 'package:fluffychat/pangea/toolbar/enums/activity_type_enum.dart';
 import 'package:fluffychat/pangea/toolbar/models/practice_activity_model.dart';
-import 'package:flutter/foundation.dart';
 
 class PracticeActivityRecordModel {
   final String? question;
