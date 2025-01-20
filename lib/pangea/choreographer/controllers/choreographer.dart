@@ -1,11 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
-import 'package:sentry_flutter/sentry_flutter.dart';
-
 import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/alternative_translator.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/igc_controller.dart';
@@ -24,6 +19,10 @@ import 'package:fluffychat/pangea/learning_settings/constants/language_constants
 import 'package:fluffychat/pangea/spaces/models/space_model.dart';
 import 'package:fluffychat/pangea/subscription/controllers/subscription_controller.dart';
 import 'package:fluffychat/pangea/toolbar/controllers/tts_controller.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+
 import '../../../widgets/matrix.dart';
 import '../../learning_settings/models/language_model.dart';
 import '../models/choreo_record.dart';
@@ -191,6 +190,15 @@ class Choreographer {
         ? PangeaMessageTokens(tokens: igc.igcTextData!.tokens)
         : null;
 
+    final igcWordCount = igc.igcTextDataFirstAttempt?.matches.length ?? 0;
+    final igcCharCount = igc.igcTextDataFirstAttempt?.matches
+            .fold(0, (acc, i) => acc + i.match.length) ??
+        0;
+    final shouldAskToSubmitChallenge = igcWordCount >= 3 || igcCharCount >= 12;
+    if (shouldAskToSubmitChallenge) {
+      await igc.showSubmitChallengeAsk(context);
+    }
+
     chatController.send(
       // originalWritten: originalWritten,
       originalSent: originalSent,
@@ -241,9 +249,6 @@ class Choreographer {
       _textController.editType = EditType.keyboard;
       return;
     }
-
-    // not sure if this is necessary now
-    MatrixState.pAnyState.closeOverlay();
 
     if (errorService.isError) {
       return;

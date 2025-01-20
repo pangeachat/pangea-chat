@@ -1,11 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
-import 'package:matrix/matrix.dart';
-
 import 'package:fluffychat/pangea/choreographer/controllers/choreographer.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/error_service.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/span_data_controller.dart';
@@ -14,9 +9,14 @@ import 'package:fluffychat/pangea/choreographer/models/pangea_match_model.dart';
 import 'package:fluffychat/pangea/choreographer/repo/igc_repo.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/igc/span_card.dart';
 import 'package:fluffychat/pangea/events/event_wrappers/pangea_message_event.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
+
 import '../../common/utils/error_handler.dart';
 import '../../common/utils/overlay.dart';
 import '../models/span_card_model.dart';
+import '../widgets/igc/submit_challenge_ask_card.dart';
 
 class _IGCTextDataCacheItem {
   Future<IGCTextData> data;
@@ -47,6 +47,7 @@ class _IgnoredMatchCacheItem {
 class IgcController {
   Choreographer choreographer;
   IGCTextData? igcTextData;
+  IGCTextData? igcTextDataFirstAttempt;
   Object? igcError;
   Completer<IGCTextData> igcCompleter = Completer();
   late SpanDataController spanDataController;
@@ -132,6 +133,9 @@ class IgcController {
       // checks for duplicate input
 
       igcTextData = igcTextDataResponse;
+      if (igcTextData != null) {
+        igcTextDataFirstAttempt ??= IGCTextData.fromJson(igcTextData!.toJson());
+      }
 
       final List<PangeaMatch> filteredMatches = List.from(igcTextData!.matches);
       for (final PangeaMatch match in igcTextData!.matches) {
@@ -236,6 +240,26 @@ class IgcController {
     );
   }
 
+  Future<void> showSubmitChallengeAsk(BuildContext context) {
+    final completer = Completer<void>();
+    choreographer.chatController.inputFocus.unfocus();
+    OverlayUtil.showPositionedCard(
+      context: context,
+      cardToShow: SubmitChallengeAskCard(
+        m: SubmitChallengeAskCardModel(
+          onReject: () => completer.complete(),
+          onAccept: () => completer.complete(),
+        ),
+        roomId: choreographer.roomId,
+      ),
+      backDropToDismiss: true,
+      maxHeight: 200,
+      maxWidth: 350,
+      transformTargetId: choreographer.inputTransformTargetKey,
+    );
+    return completer.future;
+  }
+
   /// Get the content of previous text and audio messages in chat.
   /// Passed to IGC request to add context.
   List<PreviousMessage> prevMessages({int numMessages = 5}) {
@@ -300,6 +324,8 @@ class IgcController {
 
   dispose() {
     clear();
+    // leave this defined during regular clear, so we can remember it in future attempts
+    igcTextDataFirstAttempt = null;
     _igcTextDataCache.clear();
     _ignoredMatchCache.clear();
     _cacheClearTimer?.cancel();
