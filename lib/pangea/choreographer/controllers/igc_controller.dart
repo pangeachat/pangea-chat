@@ -102,10 +102,6 @@ class IgcController {
         _initializeCacheClearing();
       }
 
-      if (_igcTextDataCache.containsKey(reqBody.hashCode)) {
-        return;
-      }
-
       // if the request is not in the cache, add it
       if (!_igcTextDataCache.containsKey(reqBody.hashCode)) {
         _igcTextDataCache[reqBody.hashCode] = _IGCTextDataCacheItem(
