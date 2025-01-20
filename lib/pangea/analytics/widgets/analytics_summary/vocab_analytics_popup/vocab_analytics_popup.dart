@@ -283,7 +283,6 @@ class VocabChip extends StatelessWidget {
           ],
           decoration: TextDecoration.underline,
           decorationStyle: TextDecorationStyle.dashed,
-
           decorationColor: Theme.of(context).colorScheme.onPrimaryFixed,
           decorationThickness: 1,
         ),

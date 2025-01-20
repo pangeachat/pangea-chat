@@ -70,22 +70,6 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
       ?.metadata
       .eventId;
 
-  /// Find lemma uses for the given exercise type, to create dot list
-  List<bool> sortedUses(LearningSkillsEnum category) {
-    final List<bool> useList = [];
-    for (final OneConstructUse use in widget.construct.uses) {
-      if (use.useType.pointValue == 0) {
-        continue;
-      }
-      // If the use type matches the given category, save to list
-      // Usage with positive XP is saved as true, else false
-      if (category == use.useType.skillsEnumType) {
-        useList.add(use.useType.pointValue > 0);
-      }
-    }
-    return useList;
-  }
-
   /// Get string representing forms of the given lemma that have been used
   String? get formString {
     // Get possible forms of lemma
@@ -114,6 +98,22 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
       }
     }
     return null;
+  }
+
+  /// Find lemma uses for the given exercise type, to create dot list
+  List<bool> sortedUses(LearningSkillsEnum category) {
+    final List<bool> useList = [];
+    for (final OneConstructUse use in widget.construct.uses) {
+      if (use.useType.pointValue == 0) {
+        continue;
+      }
+      // If the use type matches the given category, save to list
+      // Usage with positive XP is saved as true, else false
+      if (category == use.useType.skillsEnumType) {
+        useList.add(use.useType.pointValue > 0);
+      }
+    }
+    return useList;
   }
 
   /// Returns a wrapping row of dots - green if positive usage, red if negative
@@ -199,8 +199,8 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
           ),
           child: Text(
             text,
-            style: const TextStyle(
-              color: Colors.black,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onPrimaryFixed,
             ),
           ),
         ),
@@ -325,8 +325,9 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                               ) ??
                               widget.construct.category,
                           style: TextStyle(
+                            fontSize:
+                                Theme.of(context).textTheme.bodyLarge?.fontSize,
                             color: textColor,
-                            fontSize: 16,
                           ),
                         ),
                       ],
@@ -349,7 +350,6 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                                 style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.onSurface,
-                                  fontSize: 16,
                                 ),
                                 children: <TextSpan>[
                                   TextSpan(
@@ -370,7 +370,6 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                                   style: TextStyle(
                                     color:
                                         Theme.of(context).colorScheme.onSurface,
-                                    fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -397,7 +396,6 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                         text: TextSpan(
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.onSurface,
-                            fontSize: 16,
                           ),
                           children: <TextSpan>[
                             TextSpan(
@@ -429,7 +427,8 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                       "${widget.construct.lemmaCategory.emoji} ${widget.construct.points} XP",
                       style: TextStyle(
                         color: textColor,
-                        fontSize: 20,
+                        fontSize:
+                            Theme.of(context).textTheme.bodyLarge?.fontSize,
                       ),
                     ),
                     const SizedBox(
