@@ -38,44 +38,13 @@ class VocabDefinitionPopup extends StatefulWidget {
 }
 
 class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
-  // Lists of lemma uses for the given exercise types; true if positive XP
-  List<bool> writingUses = [];
-  List<bool> hearingUses = [];
-  List<bool> readingUses = [];
   late Future<List<Widget>> writingExamples;
   late Future<String?> definition;
-  String? formString;
 
   @override
   void initState() {
     definition = getDefinition();
-    writingExamples = getExamples(loadUses());
-
-    // Get possible forms of lemma
-    final ConstructListModel constructsModel =
-        MatrixState.pangeaController.getAnalytics.constructListModel;
-    final Set<String>? forms =
-        (constructsModel.lemmasToUses())[widget.construct.lemma]
-            ?.first
-            .uses
-            .map((e) => e.form)
-            .whereType<String>()
-            .toSet();
-    // Save forms as string
-    if (forms != null) {
-      formString = "  ";
-      for (final String form in forms) {
-        if (form.isNotEmpty) {
-          formString = "${formString!}$form, ";
-        }
-      }
-      if (formString!.length <= 2) {
-        formString = null;
-      } else {
-        formString = formString!.substring(0, formString!.length - 2);
-      }
-    }
-
+    writingExamples = getExamples();
     super.initState();
   }
 
@@ -101,38 +70,56 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
       ?.metadata
       .eventId;
 
-  /// Sort uses of lemma associated with writing, reading, and listening.
-  List<OneConstructUse> loadUses() {
-    final List<OneConstructUse> writingUsesDetailed = [];
+  /// Find lemma uses for the given exercise type, to create dot list
+  List<bool> sortedUses(LearningSkillsEnum category) {
+    final List<bool> useList = [];
     for (final OneConstructUse use in widget.construct.uses) {
       if (use.useType.pointValue == 0) {
         continue;
       }
-      final bool positive = use.useType.pointValue > 0;
-      final LearningSkillsEnum activityType = use.useType.skillsEnumType;
-      switch (activityType) {
-        case LearningSkillsEnum.writing:
-          writingUses.add(positive);
-          writingUsesDetailed.add(use);
-          break;
-        case LearningSkillsEnum.hearing:
-          hearingUses.add(positive);
-          break;
-        case LearningSkillsEnum.reading:
-          readingUses.add(positive);
-          break;
-        default:
-          break;
+      // If the use type matches the given category, save to list
+      // Usage with positive XP is saved as true, else false
+      if (category == use.useType.skillsEnumType) {
+        useList.add(use.useType.pointValue > 0);
       }
     }
-    // Save writing uses to find usage examples
-    return writingUsesDetailed;
+    return useList;
+  }
+
+  /// Get string representing forms of the given lemma that have been used
+  String? get formString {
+    // Get possible forms of lemma
+    final ConstructListModel constructsModel =
+        MatrixState.pangeaController.getAnalytics.constructListModel;
+    final Set<String>? forms =
+        (constructsModel.lemmasToUses())[widget.construct.lemma]
+            ?.first
+            .uses
+            .map((e) => e.form)
+            .whereType<String>()
+            .toSet();
+    // Save forms as string, with commas in between
+    if (forms != null) {
+      String? tempString;
+      tempString = "  ";
+      for (final String form in forms) {
+        if (form.isNotEmpty) {
+          tempString = "${tempString!}$form, ";
+        }
+      }
+      if (tempString!.length <= 2) {
+        return null;
+      } else {
+        tempString = tempString.substring(0, tempString.length - 2);
+      }
+    }
+    return null;
   }
 
   /// Returns a wrapping row of dots - green if positive usage, red if negative
-  Widget getUsageDots(List<bool> uses) {
+  Widget getUsageDots(LearningSkillsEnum category) {
     final List<Widget> dots = [];
-    for (final bool use in uses) {
+    for (final bool use in sortedUses(category)) {
       dots.add(
         Container(
           width: 15.0,
@@ -165,13 +152,13 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
   }
 
   /// Get examples of messages that uses this lemma
-  Future<List<Widget>> getExamples(
-    List<OneConstructUse> writingUsesDetailed,
-  ) async {
+  Future<List<Widget>> getExamples() async {
     final Set<String> exampleText = {};
     final List<Widget> examples = [];
-    for (final OneConstructUse use in writingUsesDetailed) {
-      if (use.metadata.eventId == null) {
+
+    for (final OneConstructUse use in widget.construct.uses) {
+      if (use.useType.skillsEnumType != LearningSkillsEnum.writing ||
+          use.metadata.eventId == null) {
         continue;
       }
       final Room? room = MatrixState.pangeaController.matrixState.client
@@ -464,7 +451,7 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                         const SizedBox(
                           width: 7,
                         ),
-                        getUsageDots(writingUses),
+                        getUsageDots(LearningSkillsEnum.writing),
                       ],
                     ),
 
@@ -515,7 +502,7 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                         const SizedBox(
                           width: 7,
                         ),
-                        getUsageDots(hearingUses),
+                        getUsageDots(LearningSkillsEnum.hearing),
                       ],
                     ),
                     const SizedBox(
@@ -537,7 +524,7 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                         const SizedBox(
                           width: 7,
                         ),
-                        getUsageDots(readingUses),
+                        getUsageDots(LearningSkillsEnum.reading),
                       ],
                     ),
                   ],
