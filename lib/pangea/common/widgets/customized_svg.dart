@@ -8,12 +8,14 @@ class CustomizedSvg extends StatelessWidget {
   final String svgUrl;
   final String cacheKey;
   final Map<String, String> colorReplacements;
+  final IconData? errorIcon;
 
   const CustomizedSvg({
     super.key,
     required this.svgUrl,
     required this.cacheKey,
     required this.colorReplacements,
+    this.errorIcon = Icons.error_outline,
   });
 
   static final GetStorage _svgStorage = GetStorage('svg_cache');
@@ -38,6 +40,7 @@ class CustomizedSvg extends StatelessWidget {
   Future<String> _getModifiedSvg() async {
     final svgContent = await _fetchSvg();
     String modifiedSvg = svgContent;
+    modifiedSvg = modifiedSvg.replaceAll("fill=\"none\"", '');
     for (final entry in colorReplacements.entries) {
       modifiedSvg = modifiedSvg.replaceAll(entry.key, entry.value);
     }
@@ -52,7 +55,7 @@ class CustomizedSvg extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          return const Icon(Icons.error);
+          return Icon(errorIcon);
         } else if (snapshot.hasData) {
           return SvgPicture.string(snapshot.data!);
         } else {
