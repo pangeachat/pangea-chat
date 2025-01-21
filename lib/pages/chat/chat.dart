@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages, implementation_imports
+
 import 'dart:async';
 import 'dart:core';
 import 'dart:developer';
@@ -27,24 +29,24 @@ import 'package:fluffychat/pages/chat/chat_view.dart';
 import 'package:fluffychat/pages/chat/event_info_dialog.dart';
 import 'package:fluffychat/pages/chat/recording_dialog.dart';
 import 'package:fluffychat/pages/chat_details/chat_details.dart';
+import 'package:fluffychat/pangea/analytics/controllers/put_analytics_controller.dart';
+import 'package:fluffychat/pangea/analytics/models/constructs_model.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/choreographer.dart';
-import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
-import 'package:fluffychat/pangea/controllers/put_analytics_controller.dart';
-import 'package:fluffychat/pangea/enum/message_mode_enum.dart';
-import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
-import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
-import 'package:fluffychat/pangea/models/analytics/constructs_model.dart';
-import 'package:fluffychat/pangea/models/choreo_record.dart';
-import 'package:fluffychat/pangea/models/pangea_token_model.dart';
-import 'package:fluffychat/pangea/models/representation_content_model.dart';
-import 'package:fluffychat/pangea/models/tokens_event_content_model.dart';
-import 'package:fluffychat/pangea/utils/error_handler.dart';
-import 'package:fluffychat/pangea/utils/firebase_analytics.dart';
-import 'package:fluffychat/pangea/utils/overlay.dart';
-import 'package:fluffychat/pangea/utils/report_message.dart';
-import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
-import 'package:fluffychat/pangea/widgets/igc/pangea_text_controller.dart';
-import 'package:fluffychat/pangea/widgets/user_settings/p_language_dialog.dart';
+import 'package:fluffychat/pangea/choreographer/models/choreo_record.dart';
+import 'package:fluffychat/pangea/choreographer/widgets/igc/pangea_text_controller.dart';
+import 'package:fluffychat/pangea/common/controllers/pangea_controller.dart';
+import 'package:fluffychat/pangea/common/utils/error_handler.dart';
+import 'package:fluffychat/pangea/common/utils/firebase_analytics.dart';
+import 'package:fluffychat/pangea/common/utils/overlay.dart';
+import 'package:fluffychat/pangea/events/event_wrappers/pangea_message_event.dart';
+import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
+import 'package:fluffychat/pangea/events/models/representation_content_model.dart';
+import 'package:fluffychat/pangea/events/models/tokens_event_content_model.dart';
+import 'package:fluffychat/pangea/events/utils/report_message.dart';
+import 'package:fluffychat/pangea/extensions/pangea_room_extension.dart';
+import 'package:fluffychat/pangea/learning_settings/widgets/p_language_dialog.dart';
+import 'package:fluffychat/pangea/toolbar/enums/message_mode_enum.dart';
+import 'package:fluffychat/pangea/toolbar/widgets/message_selection_overlay.dart';
 import 'package:fluffychat/utils/error_reporter.dart';
 import 'package:fluffychat/utils/file_selector.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/event_extension.dart';
@@ -386,6 +388,14 @@ class ChatController extends State<ChatPageWithRoom>
 
   void onInsert(int i) {
     // setState will be called by updateView() anyway
+    // #Pangea
+    // If fake event was sent, don't animate in the next event.
+    // It makes the replacement of the fake event jumpy.
+    if (_fakeEventID != null) {
+      animateInEventIndex = null;
+      return;
+    }
+    // Pangea#
     animateInEventIndex = i;
   }
 
@@ -552,6 +562,7 @@ class ChatController extends State<ChatPageWithRoom>
     clearSelectedEvents();
     MatrixState.pAnyState.closeOverlay();
     showToolbarStream.close();
+    hideTextController.dispose();
     //Pangea#
     super.dispose();
   }
@@ -559,6 +570,10 @@ class ChatController extends State<ChatPageWithRoom>
   // #Pangea
   // TextEditingController sendController = TextEditingController();
   PangeaTextController get sendController => choreographer.textController;
+
+  /// used to obscure text in text field after sending fake message without
+  /// changing the actual text in the sendController
+  final TextEditingController hideTextController = TextEditingController();
   // #Pangea
 
   void setSendingClient(Client c) {
@@ -591,6 +606,29 @@ class ChatController extends State<ChatPageWithRoom>
   Event? pangeaEditingEvent;
   void clearEditingEvent() {
     pangeaEditingEvent = null;
+  }
+
+  String? _fakeEventID;
+  bool get obscureText => _fakeEventID != null;
+
+  /// Add a fake event to the timeline to visually indicate that a message is being sent.
+  /// Used when tokenizing after message send, specifically because tokenization for some
+  /// languages takes some time.
+  void sendFakeMessage() {
+    final eventID = room.sendFakeMessage(
+      text: sendController.text,
+      inReplyTo: replyEvent,
+      editEventId: editEvent?.eventId,
+    );
+    setState(() => _fakeEventID = eventID);
+  }
+
+  void clearFakeEvent() {
+    if (_fakeEventID == null) return;
+    timeline?.events.removeWhere((e) => e.eventId == _fakeEventID);
+    setState(() {
+      _fakeEventID = null;
+    });
   }
 
   // Future<void> send() async {
@@ -635,6 +673,11 @@ class ChatController extends State<ChatPageWithRoom>
     //   parseCommands: parseCommands,
     // );
     final previousEdit = editEvent;
+
+    // wait for the next event to come through before clearing any fake event,
+    // to make the replacement look smooth
+    room.client.onEvent.stream.first.then((_) => clearFakeEvent());
+
     room
         .pangeaSendTextEvent(
       sendController.text,
@@ -682,7 +725,7 @@ class ChatController extends State<ChatPageWithRoom>
 
         GoogleAnalytics.sendMessage(
           room.id,
-          room.classCode,
+          room.classCode(context),
         );
 
         if (msgEventId == null) {

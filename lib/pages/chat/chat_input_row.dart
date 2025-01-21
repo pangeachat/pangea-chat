@@ -6,11 +6,12 @@ import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:matrix/matrix.dart';
 
+import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/send_button.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/start_igc_button.dart';
-import 'package:fluffychat/pangea/constants/language_constants.dart';
-import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
-import 'package:fluffychat/pangea/widgets/chat/pangea_reaction_picker.dart';
+import 'package:fluffychat/pangea/learning_settings/constants/language_constants.dart';
+import 'package:fluffychat/pangea/toolbar/widgets/message_selection_overlay.dart';
+import 'package:fluffychat/pangea/toolbar/widgets/pangea_reaction_picker.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import '../../config/themes.dart';
 import 'chat.dart';
@@ -338,10 +339,13 @@ class ChatInputRow extends StatelessWidget {
                           keyboardType: TextInputType.multiline,
                           // #Pangea
                           // textInputAction: AppConfig.sendOnEnter == true &&
-                          //         PlatformInfos.isMobile
-                          //     ? TextInputAction.send
-                          //     : null,
-                          textInputAction: TextInputAction.send,
+                          textInputAction: AppConfig.sendOnEnter ??
+                                  true &&
+                                      // Pangea#
+                                      PlatformInfos.isMobile
+                              ? TextInputAction.send
+                              : null,
+                          // #Pangea
                           // onSubmitted: controller.onInputBarSubmitted,
                           onSubmitted: (String value) =>
                               controller.onInputBarSubmitted(value, context),

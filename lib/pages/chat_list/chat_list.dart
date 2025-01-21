@@ -18,14 +18,13 @@ import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/send_file_dialog.dart';
 import 'package:fluffychat/pages/chat_list/chat_list_view.dart';
-import 'package:fluffychat/pangea/constants/pangea_room_types.dart';
-import 'package:fluffychat/pangea/controllers/app_version_controller.dart';
-import 'package:fluffychat/pangea/extensions/client_extension/client_extension.dart';
-import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
-import 'package:fluffychat/pangea/utils/chat_list_handle_space_tap.dart';
-import 'package:fluffychat/pangea/utils/error_handler.dart';
-import 'package:fluffychat/pangea/utils/firebase_analytics.dart';
-import 'package:fluffychat/pangea/widgets/subscription/subscription_snackbar.dart';
+import 'package:fluffychat/pangea/chat_list/utils/app_version_util.dart';
+import 'package:fluffychat/pangea/chat_list/utils/chat_list_handle_space_tap.dart';
+import 'package:fluffychat/pangea/chat_settings/constants/pangea_room_types.dart';
+import 'package:fluffychat/pangea/common/utils/error_handler.dart';
+import 'package:fluffychat/pangea/common/utils/firebase_analytics.dart';
+import 'package:fluffychat/pangea/extensions/pangea_room_extension.dart';
+import 'package:fluffychat/pangea/subscription/widgets/subscription_snackbar.dart';
 import 'package:fluffychat/utils/localized_exception_extension.dart';
 import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
@@ -574,7 +573,7 @@ class ChatListController extends State<ChatList>
         Matrix.of(context).backgroundPush?.setupPush();
         UpdateNotifier.showUpdateSnackBar(context);
 
-        AppVersionController.showAppVersionDialog(context);
+        AppVersionUtil.showAppVersionDialog(context);
       }
 
       // Workaround for system UI overlay style not applied on app start
@@ -1122,7 +1121,6 @@ class ChatListController extends State<ChatList>
   // #Pangea
   void _initPangeaControllers(Client client) {
     GoogleAnalytics.analyticsUserUpdate(client.userID);
-    client.migrateAnalyticsRooms();
     MatrixState.pangeaController.initControllers();
     if (mounted) {
       MatrixState.pangeaController.classController.joinCachedSpaceCode(context);

@@ -9,19 +9,39 @@ import 'package:matrix/matrix.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/choreographer.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/error_service.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/span_data_controller.dart';
-import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
-import 'package:fluffychat/pangea/models/igc_text_data_model.dart';
-import 'package:fluffychat/pangea/models/pangea_match_model.dart';
-import 'package:fluffychat/pangea/repo/igc_repo.dart';
-import 'package:fluffychat/pangea/widgets/igc/span_card.dart';
-import '../../models/span_card_model.dart';
-import '../../utils/error_handler.dart';
-import '../../utils/overlay.dart';
+import 'package:fluffychat/pangea/choreographer/models/igc_text_data_model.dart';
+import 'package:fluffychat/pangea/choreographer/models/pangea_match_model.dart';
+import 'package:fluffychat/pangea/choreographer/repo/igc_repo.dart';
+import 'package:fluffychat/pangea/choreographer/widgets/igc/span_card.dart';
+import 'package:fluffychat/pangea/events/event_wrappers/pangea_message_event.dart';
+import '../../common/utils/error_handler.dart';
+import '../../common/utils/overlay.dart';
+import '../models/span_card_model.dart';
 
 class _IGCTextDataCacheItem {
   Future<IGCTextData> data;
 
   _IGCTextDataCacheItem({required this.data});
+}
+
+class _IgnoredMatchCacheItem {
+  PangeaMatch match;
+
+  String get spanText => match.match.fullText.substring(
+        match.match.offset,
+        match.match.offset + match.match.length,
+      );
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is _IgnoredMatchCacheItem && other.spanText == spanText;
+  }
+
+  @override
+  int get hashCode => spanText.hashCode;
+
+  _IgnoredMatchCacheItem({required this.match});
 }
 
 class IgcController {
@@ -34,7 +54,9 @@ class IgcController {
   // cache for IGC data and prev message
   final Map<int, _IGCTextDataCacheItem> _igcTextDataCache = {};
 
-  Timer? _igcCacheClearTimer;
+  final Map<int, _IgnoredMatchCacheItem> _ignoredMatchCache = {};
+
+  Timer? _cacheClearTimer;
 
   IgcController(this.choreographer) {
     spanDataController = SpanDataController(choreographer);
@@ -42,9 +64,11 @@ class IgcController {
   }
 
   void _initializeCacheClearing() {
-    const duration = Duration(minutes: 1);
-    _igcCacheClearTimer =
-        Timer.periodic(duration, (Timer t) => _igcTextDataCache.clear());
+    const duration = Duration(minutes: 2);
+    _cacheClearTimer = Timer.periodic(duration, (Timer t) {
+      _igcTextDataCache.clear();
+      _ignoredMatchCache.clear();
+    });
   }
 
   Future<void> getIGCTextData({
@@ -52,6 +76,13 @@ class IgcController {
   }) async {
     try {
       if (choreographer.currentText.isEmpty) return clear();
+
+      // if tokenizing on message send, tokenization might take a while
+      // so add a fake event to the timeline to visually indicate that the message is being sent
+      if (onlyTokensAndLanguageDetection &&
+          choreographer.choreoMode != ChoreoMode.it) {
+        choreographer.chatController.sendFakeMessage();
+      }
 
       debugPrint('getIGCTextData called with ${choreographer.currentText}');
       debugPrint(
@@ -68,7 +99,7 @@ class IgcController {
         prevMessages: prevMessages(),
       );
 
-      if (_igcCacheClearTimer == null || !_igcCacheClearTimer!.isActive) {
+      if (_cacheClearTimer == null || !_cacheClearTimer!.isActive) {
         _initializeCacheClearing();
       }
 
@@ -101,6 +132,17 @@ class IgcController {
       // checks for duplicate input
 
       igcTextData = igcTextDataResponse;
+
+      final List<PangeaMatch> filteredMatches = List.from(igcTextData!.matches);
+      for (final PangeaMatch match in igcTextData!.matches) {
+        final _IgnoredMatchCacheItem cacheEntry =
+            _IgnoredMatchCacheItem(match: match);
+
+        if (_ignoredMatchCache.containsKey(cacheEntry.hashCode)) {
+          filteredMatches.remove(match);
+        }
+      }
+      igcTextData!.matches = filteredMatches;
 
       // TODO - for each new match,
       // check if existing igcTextData has one and only one match with the same error text and correction
@@ -135,6 +177,13 @@ class IgcController {
         },
       );
       clear();
+    }
+  }
+
+  void onIgnoreMatch(PangeaMatch match) {
+    final cacheEntry = _IgnoredMatchCacheItem(match: match);
+    if (!_ignoredMatchCache.containsKey(cacheEntry.hashCode)) {
+      _ignoredMatchCache[cacheEntry.hashCode] = cacheEntry;
     }
   }
 
@@ -252,6 +301,7 @@ class IgcController {
   dispose() {
     clear();
     _igcTextDataCache.clear();
-    _igcCacheClearTimer?.cancel();
+    _ignoredMatchCache.clear();
+    _cacheClearTimer?.cancel();
   }
 }
