@@ -5,23 +5,10 @@ import 'dart:core';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:collection/collection.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:matrix/matrix.dart';
-import 'package:scroll_to_index/scroll_to_index.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:universal_html/html.dart' as html;
-
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/setting_keys.dart';
 import 'package:fluffychat/config/themes.dart';
@@ -55,6 +42,18 @@ import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:matrix/matrix.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:universal_html/html.dart' as html;
+
 import '../../utils/account_bundles.dart';
 import '../../utils/localized_exception_extension.dart';
 import 'send_file_dialog.dart';
@@ -123,6 +122,11 @@ class ChatController extends State<ChatPageWithRoom>
   late Choreographer choreographer = Choreographer(pangeaController, this);
   // Pangea#
   Room get room => sendingClient.getRoomById(roomId) ?? widget.room;
+
+  String? get roomIdForSpace => room.spaceParents.firstOrNull?.roomId;
+  Room? get roomForSpace => roomIdForSpace != null
+      ? sendingClient.getRoomById(roomIdForSpace!)
+      : null;
 
   late Client sendingClient;
 
@@ -641,6 +645,7 @@ class ChatController extends State<ChatPageWithRoom>
     PangeaMessageTokens? tokensSent,
     PangeaMessageTokens? tokensWritten,
     ChoreoRecord? choreo,
+    String? messageTag,
   }) async {
     // Pangea#
     if (sendController.text.trim().isEmpty) return;
@@ -689,6 +694,7 @@ class ChatController extends State<ChatPageWithRoom>
       tokensSent: tokensSent,
       tokensWritten: tokensWritten,
       choreo: choreo,
+      messageTag: messageTag,
     )
         .then(
       (String? msgEventId) async {
@@ -766,6 +772,32 @@ class ChatController extends State<ChatPageWithRoom>
       editEvent = null;
       pendingText = '';
     });
+  }
+
+  Future<void> sendToSpace({
+    required PangeaRepresentation originalSent,
+    PangeaRepresentation? originalWritten,
+    PangeaMessageTokens? tokensSent,
+    PangeaMessageTokens? tokensWritten,
+    ChoreoRecord? choreo,
+    String? messageTag,
+  }) {
+    final roomToUse = roomForSpace;
+    if (roomToUse == null) {
+      return Future.value();
+    }
+    return roomToUse.pangeaSendTextEvent(
+      originalSent.text,
+      inReplyTo: null,
+      editEventId: null,
+      parseCommands: false,
+      originalSent: originalSent,
+      originalWritten: originalWritten,
+      tokensSent: tokensSent,
+      tokensWritten: tokensWritten,
+      choreo: choreo,
+      messageTag: messageTag,
+    );
   }
 
   void sendFileAction() async {

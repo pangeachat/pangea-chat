@@ -89,6 +89,7 @@ class ModelKey {
   /// we want to gather user edits for LLM fine-tuning.
   static const String messageTags = "p.tag";
   static const String messageTagMorphEdit = "morph_edit";
+  static const String messageTagChallengeSubmission = "challenge_submission";
 
   static const String baseDefinition = "base_definition";
   static const String targetDefinition = "target_definition";

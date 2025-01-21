@@ -240,15 +240,15 @@ class IgcController {
     );
   }
 
-  Future<void> showSubmitChallengeAsk(BuildContext context) {
-    final completer = Completer<void>();
+  Future<bool> showSubmitChallengeAsk(BuildContext context) {
+    final completer = Completer<bool>();
     choreographer.chatController.inputFocus.unfocus();
     OverlayUtil.showPositionedCard(
       context: context,
       cardToShow: SubmitChallengeAskCard(
         m: SubmitChallengeAskCardModel(
-          onReject: () => completer.complete(),
-          onAccept: () => completer.complete(),
+          onReject: () => completer.complete(false),
+          onAccept: () => completer.complete(true),
         ),
         roomId: choreographer.roomId,
       ),

@@ -8,6 +8,7 @@ import 'package:fluffychat/pangea/choreographer/enums/assistance_state_enum.dart
 import 'package:fluffychat/pangea/choreographer/enums/edit_type.dart';
 import 'package:fluffychat/pangea/choreographer/models/it_step.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/igc/paywall_card.dart';
+import 'package:fluffychat/pangea/common/constants/model_keys.dart';
 import 'package:fluffychat/pangea/common/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/common/utils/any_state_holder.dart';
 import 'package:fluffychat/pangea/common/utils/error_handler.dart';
@@ -195,8 +196,22 @@ class Choreographer {
             .fold(0, (acc, i) => acc + i.match.length) ??
         0;
     final shouldAskToSubmitChallenge = igcWordCount >= 3 || igcCharCount >= 12;
-    if (shouldAskToSubmitChallenge) {
-      await igc.showSubmitChallengeAsk(context);
+    final willSubmitChallenge =
+        shouldAskToSubmitChallenge && await igc.showSubmitChallengeAsk(context);
+    if (willSubmitChallenge) {
+      final igctd = igc.igcTextDataFirstAttempt!;
+      final PangeaRepresentation toSendToSpace = PangeaRepresentation(
+        langCode: igc.igcTextDataFirstAttempt!.detectedLanguage,
+        text: igctd.originalInput,
+        originalSent: true,
+        originalWritten: true,
+      );
+      chatController.sendToSpace(
+        originalSent: toSendToSpace,
+        tokensSent: PangeaMessageTokens(tokens: igctd.tokens),
+        choreo: choreoRecord,
+        messageTag: ModelKey.messageTagChallengeSubmission,
+      );
     }
 
     chatController.send(
