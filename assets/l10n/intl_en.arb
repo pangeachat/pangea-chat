@@ -4749,5 +4749,12 @@
   },
   "notInClass": "Not in a class!",
   "noClassCode": "No class code!",
-  "chooseCorrectLabel": "Choose the correct label"
+  "chooseCorrectLabel": "Choose the correct label",
+  "levelPopupTitle": "Congratulations on reaching\nLevel {level}",
+  "@levelPopupTitle": {
+    "type": "text",
+    "placeholders": {
+      "level": {}
+    }
+  }
 }

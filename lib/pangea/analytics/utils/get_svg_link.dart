@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
-
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/common/utils/error_handler.dart';
+import 'package:flutter/material.dart';
 
 String? getMorphSvgLink({
   required String morphFeature,
@@ -49,7 +48,7 @@ String? getMorphSvgLink({
       return null;
     }
 
-    return "${AppConfig.svgAssetsBaseURL}/$filename";
+    return "${AppConfig.assetsBaseURL}/$filename";
   }
 
   final key = "${morphFeature.toLowerCase()}${morphTag.toLowerCase()}";
@@ -178,5 +177,5 @@ String? getMorphSvgLink({
     return null;
   }
 
-  return "${AppConfig.svgAssetsBaseURL}/$filename";
+  return "${AppConfig.assetsBaseURL}/$filename";
 }
