@@ -12,6 +12,7 @@ import 'package:fluffychat/pangea/analytics/repo/lemma_info_repo.dart';
 import 'package:fluffychat/pangea/analytics/repo/lemma_info_request.dart';
 import 'package:fluffychat/pangea/analytics/repo/lemma_info_response.dart';
 import 'package:fluffychat/pangea/analytics/utils/get_grammar_copy.dart';
+import 'package:fluffychat/pangea/common/widgets/customized_svg.dart';
 import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/events/models/pangea_token_text_model.dart';
 import 'package:fluffychat/pangea/learning_settings/constants/language_constants.dart';
@@ -423,13 +424,30 @@ class VocabDefinitionPopupState extends State<VocabDefinitionPopup> {
                     const SizedBox(
                       height: 20,
                     ),
-                    Text(
-                      "${widget.construct.lemmaCategory.emoji} ${widget.construct.points} XP",
-                      style: TextStyle(
-                        color: textColor,
-                        fontSize:
-                            Theme.of(context).textTheme.bodyLarge?.fontSize,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: CustomizedSvg(
+                            svgUrl: widget.construct.lemmaCategory.svgURL,
+                            colorReplacements: const {},
+                            errorIcon: Text(
+                              widget.construct.lemmaCategory.emoji,
+                              style: const TextStyle(
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Text(
+                          "${widget.construct.points} XP",
+                          style: TextStyle(
+                            color: textColor,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(
                       height: 20,

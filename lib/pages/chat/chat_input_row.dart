@@ -38,8 +38,10 @@ class ChatInputRow extends StatelessWidget {
         controller.emojiPickerType == EmojiPickerType.reaction) {
       return const SizedBox.shrink();
     }
-    const height = 48.0;
     // #Pangea
+    // const height = 48.0;
+    const height = AppConfig.defaultFooterHeight;
+
     final activel1 =
         controller.pangeaController.languageController.activeL1Model();
     final activel2 =
@@ -337,8 +339,12 @@ class ChatInputRow extends StatelessWidget {
                           maxLines: 8,
                           autofocus: !PlatformInfos.isMobile,
                           keyboardType: TextInputType.multiline,
-                          textInputAction: AppConfig.sendOnEnter == true &&
-                                  PlatformInfos.isMobile
+                          // #Pangea
+                          // textInputAction: AppConfig.sendOnEnter == true &&
+                          textInputAction: AppConfig.sendOnEnter ??
+                                  true &&
+                                      // Pangea#
+                                      PlatformInfos.isMobile
                               ? TextInputAction.send
                               : null,
                           // #Pangea

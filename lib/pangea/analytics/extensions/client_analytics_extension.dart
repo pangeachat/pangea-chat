@@ -11,6 +11,7 @@ import 'package:fluffychat/pangea/chat_settings/constants/pangea_room_types.dart
 import 'package:fluffychat/pangea/common/constants/model_keys.dart';
 import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension.dart';
+import 'package:fluffychat/widgets/matrix.dart';
 
 extension AnalyticsClientExtension on Client {
   /// Get the logged in user's analytics room matching
@@ -24,11 +25,19 @@ extension AnalyticsClientExtension on Client {
   /// Get local analytics room for a given langCode and
   /// optional userId (if not specified, uses current user).
   /// If user is invited to the room, joins the room.
-  Room? analyticsRoomLocal(String langCode, [String? userIdParam]) {
+  Room? analyticsRoomLocal([String? langCode, String? userIdParam]) {
+    langCode ??=
+        MatrixState.pangeaController.languageController.userL2?.langCode;
+
+    if (langCode == null) {
+      debugger(when: kDebugMode);
+      return null;
+    }
+
     final Room? analyticsRoom = rooms.firstWhereOrNull((e) {
       return e.isAnalyticsRoom &&
           e.isAnalyticsRoomOfUser(userIdParam ?? userID!) &&
-          e.isMadeForLang(langCode);
+          e.isMadeForLang(langCode!);
     });
     if (analyticsRoom != null &&
         analyticsRoom.membership == Membership.invite) {
@@ -127,7 +136,7 @@ extension AnalyticsClientExtension on Client {
 
     final Random random = Random();
     for (final space in spaces) {
-      if (userID == null) return;
+      if (userID == null || !space.canSendEvent(EventTypes.SpaceChild)) return;
       final List<Room> roomsNotAdded = _allMyAnalyticsRooms.where((room) {
         return !space.spaceChildren.any((child) => child.roomId == room.id);
       }).toList();
