@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/analytics/controllers/get_analytics_controller.dart';
 import 'package:fluffychat/pangea/events/event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
@@ -254,7 +255,10 @@ class MessageAnalyticsController {
 
     final bool includeHiddenWordActivities = !pangeaMessageEvent.ownMessage &&
         pangeaMessageEvent.messageDisplayRepresentation?.tokens != null &&
-        pangeaMessageEvent.messageDisplayLangIsL2;
+        pangeaMessageEvent.messageDisplayLangIsL2 &&
+        (!AppConfig.renderHtml ||
+            pangeaMessageEvent.event.redacted ||
+            !pangeaMessageEvent.event.isRichMessage);
 
     _cache[key] = MessageAnalyticsEntry(
       tokens: tokens,
