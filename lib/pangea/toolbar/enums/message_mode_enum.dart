@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:matrix/matrix.dart';
@@ -90,7 +89,7 @@ extension MessageModeExtension on MessageMode {
       case MessageMode.translation:
         return proportionOfActivitiesCompleted >= 1;
       case MessageMode.textToSpeech:
-        return proportionOfActivitiesCompleted >= 0.5;
+        return proportionOfActivitiesCompleted >= 0.25;
       case MessageMode.speechToText:
       case MessageMode.practiceActivity:
       case MessageMode.wordZoom:
