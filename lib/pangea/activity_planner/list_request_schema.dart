@@ -16,8 +16,10 @@ class ActivitySettingResponseSchema {
   final String defaultName;
   final String name;
 
-  ActivitySettingResponseSchema(
-      {required this.defaultName, required this.name});
+  ActivitySettingResponseSchema({
+    required this.defaultName,
+    required this.name,
+  });
 
   factory ActivitySettingResponseSchema.fromJson(Map<String, dynamic> json) {
     return ActivitySettingResponseSchema(

@@ -1,12 +1,14 @@
+import 'package:flutter/material.dart';
+
 import 'package:collection/collection.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/learning_settings/widgets/p_language_dropdown.dart';
 import 'package:fluffychat/pangea/login/pages/pangea_login_scaffold.dart';
 import 'package:fluffychat/pangea/login/pages/user_settings.dart';
 import 'package:fluffychat/pangea/login/widgets/full_width_button.dart';
 import 'package:fluffychat/pangea/login/widgets/tos_checkbox.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
 
 class UserSettingsView extends StatelessWidget {
   final UserSettingsState controller;

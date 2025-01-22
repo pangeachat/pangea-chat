@@ -1,6 +1,12 @@
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:matrix/matrix.dart';
+
 import 'package:fluffychat/pangea/activity_planner/activity_mode_list_repo.dart';
 import 'package:fluffychat/pangea/activity_planner/activity_plan_generation_repo.dart';
 import 'package:fluffychat/pangea/activity_planner/activity_plan_tile.dart';
@@ -21,10 +27,6 @@ import 'package:fluffychat/pangea/learning_settings/constants/language_constants
 import 'package:fluffychat/pangea/learning_settings/widgets/p_language_dropdown.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:matrix/matrix.dart';
 
 // a page to allow the user to choose settings and then generate a list of activities
 // has app bar with a back button to go back to content 1 (disabled if on content 1), and a title of "Activity Planner", and close button to close the activity planner

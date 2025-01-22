@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 
 class ActivityPlanTile extends StatefulWidget {
@@ -14,10 +15,10 @@ class ActivityPlanTile extends StatefulWidget {
   });
 
   @override
-  _ActivityPlanTileState createState() => _ActivityPlanTileState();
+  ActivityPlanTileState createState() => ActivityPlanTileState();
 }
 
-class _ActivityPlanTileState extends State<ActivityPlanTile> {
+class ActivityPlanTileState extends State<ActivityPlanTile> {
   late TextEditingController _controller;
   bool editMode = false;
 
