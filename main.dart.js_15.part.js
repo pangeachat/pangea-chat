@@ -1240,6 +1240,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$interactiveGrammarSliderHeader() {
       return "Interactive Grammar Checker";
     },
+    get$interactiveTranslatorRequired() {
+      return "Required";
+    },
     get$multiLingualSpace() {
       return "Multilingual Space";
     },
@@ -4603,6 +4606,57 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$chooseCorrectLabel() {
       return "Choose the correct label";
     },
+    get$activityPlannerTitle() {
+      return "Activity Planner";
+    },
+    get$topicLabel() {
+      return "Topic";
+    },
+    get$topicPlaceholder() {
+      return "Choose a topic...";
+    },
+    get$modeLabel() {
+      return "Mode";
+    },
+    get$modePlaceholder() {
+      return "Choose a mode...";
+    },
+    get$learningObjectiveLabel() {
+      return "Learning Objective";
+    },
+    get$learningObjectivePlaceholder() {
+      return "Choose a learning objective...";
+    },
+    get$mediaLabel() {
+      return "Media students should share";
+    },
+    get$languageOfInstructionsLabel() {
+      return "Language of activity instructions";
+    },
+    get$targetLanguageLabel() {
+      return "Target language";
+    },
+    get$cefrLevelLabel() {
+      return "CEFR Level";
+    },
+    get$generateActivitiesButton() {
+      return "Generate Activities";
+    },
+    get$launchActivityButton() {
+      return "Launch Activity";
+    },
+    get$image(_) {
+      return "Image";
+    },
+    get$video(_) {
+      return "Video";
+    },
+    get$nan() {
+      return "Not applicable";
+    },
+    get$activityPlannerOverviewInstructionsBody() {
+      return "Choose a topic, mode, learning objective and generate an activity for the chat!";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -6613,6 +6667,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_15", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "ftuAl+3GvbQYLCCn2IFyO3RrPJM=");
+})($__dart_deferred_initializers__, "uGwq1alwm393lNmQfuTK01R4sAs=");
 ;
 //# sourceMappingURL=main.dart.js_15.part.js.map
