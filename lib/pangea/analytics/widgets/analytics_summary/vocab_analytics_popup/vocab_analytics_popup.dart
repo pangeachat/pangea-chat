@@ -1,8 +1,3 @@
-import 'package:flutter/material.dart';
-
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/analytics/constants/analytics_constants.dart';
 import 'package:fluffychat/pangea/analytics/enums/construct_type_enum.dart';
@@ -15,6 +10,9 @@ import 'package:fluffychat/pangea/analytics/widgets/analytics_summary/vocab_anal
 import 'package:fluffychat/pangea/common/widgets/customized_svg.dart';
 import 'package:fluffychat/pangea/common/widgets/full_width_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:matrix/matrix.dart';
 
 /// Displays vocab analytics, sorted into categories
 /// (flowers, greens, and seeds) by points
@@ -211,17 +209,10 @@ class VocabAnalyticsPopupState extends State<VocabAnalyticsPopup> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircleAvatar(
-                    backgroundColor:
-                        Theme.of(context).brightness == Brightness.light
-                            ? Colors.white
-                            : Colors.black,
-                    radius: 16,
-                    child: CustomizedSvg(
-                      svgUrl: type.svgURL,
-                      colorReplacements: const {},
-                      errorIcon: Text(type.emoji),
-                    ),
+                  CustomizedSvg(
+                    svgUrl: type.svgURL,
+                    colorReplacements: const {},
+                    errorIcon: Text(type.emoji),
                   ),
                   Text(
                     " ${type.xpString} XP",

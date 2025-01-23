@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
-
 import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/toolbar/enums/activity_type_enum.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/practice_activity/word_zoom_activity_button.dart';
+import 'package:flutter/material.dart';
 
 class EmojiPracticeButton extends StatelessWidget {
   final PangeaToken token;
@@ -33,6 +32,6 @@ class EmojiPracticeButton extends StatelessWidget {
             isSelected: isSelected,
             onPressed: onPressed,
           )
-        : const SizedBox(width: 40);
+        : const SizedBox(width: 60);
   }
 }

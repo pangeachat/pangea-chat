@@ -1,10 +1,9 @@
-import 'package:flutter/material.dart';
-
 import 'package:fluffychat/pangea/analytics/enums/morph_categories_enum.dart';
 import 'package:fluffychat/pangea/analytics/utils/get_grammar_copy.dart';
 import 'package:fluffychat/pangea/common/widgets/customized_svg.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/practice_activity/word_zoom_activity_button.dart';
 import 'package:fluffychat/utils/color_value.dart';
+import 'package:flutter/material.dart';
 
 class MorphologicalListItem extends StatelessWidget {
   final Function(String) onPressed;
@@ -36,12 +35,14 @@ class MorphologicalListItem extends StatelessWidget {
         icon: svgLink != null
             ? CustomizedSvg(
                 svgUrl: svgLink!,
-                colorReplacements: {
-                  "white": Theme.of(context).cardColor.hexValue.toString(),
-                  "black": Theme.of(context).brightness == Brightness.dark
-                      ? "white"
-                      : "black",
-                },
+                colorReplacements:
+                    Theme.of(context).brightness == Brightness.dark
+                        ? {
+                            "white":
+                                Theme.of(context).cardColor.hexValue.toString(),
+                            "black": "white",
+                          }
+                        : {},
                 errorIcon: Icon(icon),
               )
             : Icon(icon),
