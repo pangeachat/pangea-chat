@@ -22,10 +22,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 3: Install project dependencies
-      - name: Install dependencies
-        run: flutter pub get
-
       # Step 4: Run Dart formatter and check for changes
       - name: Auto-format Dart code
         run: |
