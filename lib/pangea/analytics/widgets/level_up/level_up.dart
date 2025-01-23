@@ -16,7 +16,39 @@ class LevelUpAnimation extends StatefulWidget {
   LevelUpAnimationState createState() => LevelUpAnimationState();
 }
 
-class LevelUpAnimationState extends State<LevelUpAnimation> {
+class LevelUpAnimationState extends State<LevelUpAnimation>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 1), // Start just below the screen
+      end: Offset.zero, // Slide into its position
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeOut,
+      ),
+    );
+
+    // Start the animation
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget content = Image.network(
@@ -36,23 +68,26 @@ class LevelUpAnimationState extends State<LevelUpAnimation> {
       child: Dialog.fullscreen(
         backgroundColor: Colors.transparent,
         child: Center(
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              content,
-              Padding(
-                padding: const EdgeInsets.only(top: 100),
-                child: Text(
-                  L10n.of(context).levelPopupTitle(widget.level),
-                  style: const TextStyle(
-                    fontSize: kIsWeb ? 40 : 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+          child: SlideTransition(
+            position: _slideAnimation,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                content,
+                Padding(
+                  padding: const EdgeInsets.only(top: 100),
+                  child: Text(
+                    L10n.of(context).levelPopupTitle(widget.level),
+                    style: const TextStyle(
+                      fontSize: kIsWeb ? 40 : 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
