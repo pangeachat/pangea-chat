@@ -1,10 +1,6 @@
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
-
 import 'package:collection/collection.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:fluffychat/pangea/analytics/constants/analytics_constants.dart';
 import 'package:fluffychat/pangea/analytics/enums/construct_type_enum.dart';
 import 'package:fluffychat/pangea/analytics/enums/construct_use_type_enum.dart';
@@ -23,6 +19,9 @@ import 'package:fluffychat/pangea/toolbar/models/practice_activity_model.dart';
 import 'package:fluffychat/pangea/toolbar/repo/lemma_activity_generator.dart';
 import 'package:fluffychat/pangea/toolbar/repo/lemma_meaning_activity_generator.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/foundation.dart';
+import 'package:matrix/matrix.dart';
+
 import '../../analytics/models/lemma.dart';
 import '../../common/constants/model_keys.dart';
 
@@ -323,7 +322,7 @@ class PangeaToken {
         if (isContentWord) {
           return vocabConstruct.points < 3;
         } else if (canBeDefined) {
-          return vocabConstruct.points < 1;
+          return vocabConstruct.points < 2;
         } else {
           return false;
         }
