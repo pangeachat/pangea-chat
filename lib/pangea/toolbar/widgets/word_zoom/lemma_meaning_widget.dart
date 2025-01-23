@@ -147,12 +147,11 @@ class LemmaMeaningWidgetState extends State<LemmaMeaningWidget> {
         }
 
         return Flexible(
-          child: GestureDetector(
-            onLongPress: () => _toggleEditMode(true),
-            onDoubleTap: () => _toggleEditMode(true),
-            child: Tooltip(
-              message: L10n.of(context).doubleClickToEdit,
-              waitDuration: const Duration(milliseconds: 2000),
+          child: Tooltip(
+            message: L10n.of(context).doubleClickToEdit,
+            child: GestureDetector(
+              onLongPress: () => _toggleEditMode(true),
+              onDoubleTap: () => _toggleEditMode(true),
               child: Text(
                 snapshot.data!.meaning,
                 textAlign: TextAlign.center,

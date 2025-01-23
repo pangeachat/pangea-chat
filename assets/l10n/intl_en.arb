@@ -4756,5 +4756,23 @@
     "placeholders": {
       "level": {}
     }
-  }
+  },
+  "activityPlannerTitle": "Activity Planner",
+  "topicLabel": "Topic",
+  "topicPlaceholder": "Choose a topic...",
+  "modeLabel": "Mode",
+  "modePlaceholder": "Choose a mode...",
+  "learningObjectiveLabel": "Learning Objective",
+  "learningObjectivePlaceholder": "Choose a learning objective...",
+  "mediaLabel": "Media students should share",
+  "languageOfInstructionsLabel": "Language of activity instructions",
+  "targetLanguageLabel": "Target language",
+  "cefrLevelLabel": "CEFR Level",
+  "generateActivitiesButton": "Generate Activities",
+  "launchActivityButton": "Launch Activity",
+  "image": "Image",
+  "video": "Video",
+  "voiceMessage": "Voice message",
+  "nan": "Not applicable",
+  "activityPlannerOverviewInstructionsBody": "Choose a topic, mode, learning objective and generate an activity for the chat!"
 }

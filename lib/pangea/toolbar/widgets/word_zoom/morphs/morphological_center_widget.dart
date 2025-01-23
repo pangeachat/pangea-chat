@@ -165,12 +165,11 @@ class MorphologicalCenterWidgetState extends State<MorphologicalCenterWidget> {
   Widget build(BuildContext context) {
     if (!editMode) {
       return Flexible(
-        child: GestureDetector(
-          onLongPress: enterEditMode,
-          onDoubleTap: enterEditMode,
-          child: Tooltip(
-            message: L10n.of(context).doubleClickToEdit,
-            waitDuration: const Duration(milliseconds: 2000),
+        child: Tooltip(
+          message: L10n.of(context).doubleClickToEdit,
+          child: GestureDetector(
+            onLongPress: enterEditMode,
+            onDoubleTap: enterEditMode,
             child: Text(
               "$morphCopy: $tagCopy",
               textAlign: TextAlign.center,
