@@ -10,16 +10,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the code
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # Step 2: Set up the Dart SDK
-      - name: Set up Flutter
+      - uses: actions/checkout@v4
+      - run: cat .github/workflows/versions.env >> $GITHUB_ENV
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
+      - run: flutter pub get
+
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       # Step 3: Install project dependencies
       - name: Install dependencies
