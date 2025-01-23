@@ -525,7 +525,6 @@ class Message extends StatelessWidget {
                                                   // #Pangea
                                                   pangeaMessageEvent:
                                                       pangeaMessageEvent,
-                                                  immersionMode: immersionMode,
                                                   overlayController:
                                                       overlayController,
                                                   controller: controller,

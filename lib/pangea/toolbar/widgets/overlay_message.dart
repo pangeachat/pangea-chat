@@ -174,7 +174,6 @@ class OverlayMessage extends StatelessWidget {
                 event,
                 textColor: textColor,
                 pangeaMessageEvent: pangeaMessageEvent,
-                immersionMode: immersionMode,
                 overlayController: overlayController,
                 controller: controller,
                 nextEvent: nextEvent,

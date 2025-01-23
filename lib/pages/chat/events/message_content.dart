@@ -8,7 +8,6 @@ import 'package:matrix/matrix.dart';
 
 import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pages/chat/events/video_player.dart';
-import 'package:fluffychat/pangea/choreographer/widgets/igc/pangea_rich_text.dart';
 import 'package:fluffychat/pangea/events/event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/message_selection_overlay.dart';
@@ -35,7 +34,6 @@ class MessageContent extends StatelessWidget {
   //question: are there any performance benefits to using booleans
   //here rather than passing the choreographer? pangea rich text, a widget
   //further down in the chain is also using pangeaController so its not constant
-  final bool immersionMode;
   final MessageOverlayController? overlayController;
   final ChatController controller;
   final Event? nextEvent;
@@ -49,7 +47,6 @@ class MessageContent extends StatelessWidget {
     required this.textColor,
     // #Pangea
     this.pangeaMessageEvent,
-    required this.immersionMode,
     this.overlayController,
     required this.controller,
     this.nextEvent,
@@ -331,17 +328,17 @@ class MessageContent extends StatelessWidget {
             final messageTextStyle =
                 AppConfig.messageTextStyle(event, textColor);
 
-            if (immersionMode && pangeaMessageEvent != null) {
-              return Flexible(
-                child: PangeaRichText(
-                  style: messageTextStyle,
-                  pangeaMessageEvent: pangeaMessageEvent!,
-                  immersionMode: immersionMode,
-                  isOverlay: overlayController != null,
-                  controller: controller,
-                ),
-              );
-            }
+            // if (immersionMode && pangeaMessageEvent != null) {
+            //   return Flexible(
+            //     child: PangeaRichText(
+            //       style: messageTextStyle,
+            //       pangeaMessageEvent: pangeaMessageEvent!,
+            //       immersionMode: immersionMode,
+            //       isOverlay: overlayController != null,
+            //       controller: controller,
+            //     ),
+            //   );
+            // }
 
             if (pangeaMessageEvent != null) {
               return MessageTokenText(
