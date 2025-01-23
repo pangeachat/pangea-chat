@@ -3,6 +3,7 @@ import 'package:fluffychat/pangea/analytics/constants/analytics_constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:http/http.dart' as http;
 
 class LevelUpAnimation extends StatefulWidget {
   final int level;
@@ -21,26 +22,54 @@ class LevelUpAnimationState extends State<LevelUpAnimation>
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
 
+  Uint8List? bytes;
+  final imageURL =
+      "${AppConfig.assetsBaseURL}/${AnalyticsConstants.levelUpImageFileName}";
+
   @override
   void initState() {
     super.initState();
+    _loadImageData().then((resp) {
+      if (bytes == null) return;
+      _animationController.forward().then((_) {
+        if (mounted) Navigator.of(context).pop();
+      });
+    }).catchError((e) {
+      if (mounted) Navigator.of(context).pop();
+    });
+
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 2500),
       vsync: this,
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 1), // Start just below the screen
-      end: Offset.zero, // Slide into its position
+    _slideAnimation = TweenSequence<Offset>(
+      <TweenSequenceItem<Offset>>[
+        // Slide up from the bottom of the screen to the middle
+        TweenSequenceItem<Offset>(
+          tween: Tween<Offset>(begin: const Offset(0, 2), end: Offset.zero)
+              .chain(CurveTween(curve: Curves.easeInOut)),
+          weight: 2.0, // Adjust weight for the duration of the slide-up
+        ),
+        // Pause in the middle
+        TweenSequenceItem<Offset>(
+          tween: Tween<Offset>(begin: Offset.zero, end: Offset.zero)
+              .chain(CurveTween(curve: Curves.linear)),
+          weight: 8.0, // Adjust weight for the pause duration
+        ),
+        // Slide up and off the screen
+        TweenSequenceItem<Offset>(
+          tween: Tween<Offset>(begin: Offset.zero, end: const Offset(0, -2))
+              .chain(CurveTween(curve: Curves.easeInOut)),
+          weight: 2.0, // Adjust weight for the slide-off duration
+        ),
+      ],
     ).animate(
       CurvedAnimation(
         parent: _animationController,
-        curve: Curves.easeOut,
+        curve: Curves.linear, // Keep overall animation smooth
       ),
     );
-
-    // Start the animation
-    _animationController.forward();
   }
 
   @override
@@ -49,10 +78,23 @@ class LevelUpAnimationState extends State<LevelUpAnimation>
     super.dispose();
   }
 
+  Future<void> _loadImageData() async {
+    final resp =
+        await http.get(Uri.parse(imageURL)).timeout(const Duration(seconds: 5));
+    if (resp.statusCode != 200) return;
+    if (mounted) {
+      setState(() => bytes = resp.bodyBytes);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    Widget content = Image.network(
-      "${AppConfig.assetsBaseURL}/${AnalyticsConstants.levelUpImageFileName}",
+    if (bytes == null) {
+      return const SizedBox();
+    }
+
+    Widget content = Image.memory(
+      bytes!,
       height: kIsWeb ? 350 : 250,
     );
 
