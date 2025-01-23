@@ -1,14 +1,16 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import 'package:matrix/matrix.dart';
+
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pangea/toolbar/enums/message_mode_enum.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/message_selection_overlay.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/toolbar_button.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:matrix/matrix.dart';
 
 class ToolbarButtonAndProgressRow extends StatelessWidget {
   final Event event;
