@@ -1,0 +1,42 @@
+name: Dart Code Formatter
+
+on:
+  pull_request:
+    branches:
+      - main  # Replace with the branch you want this to run on, if not `main`
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up the Dart SDK
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      # Step 3: Install project dependencies
+      - name: Install dependencies
+        run: dart pub get
+
+      # Step 4: Run Dart formatter and check for changes
+      - name: Auto-format Dart code
+        run: |
+          dart format lib/ test/
+          dart run import_sorter:main --no-comments
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -am "chore: format code"
+          git push
+        continue-on-error: true  # Avoid failing the workflow if no changes need to be committed
+
+      # Step 5: Fail the workflow if unformatted files were found
+      - name: Check for unformatted files
+        if: ${{ failure() }}
+        run: |
+          echo "Code was formatted. Please verify the changes in the PR."
