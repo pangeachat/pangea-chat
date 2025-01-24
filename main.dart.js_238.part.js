@@ -4591,7 +4591,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "No class code!";
     },
     get$chooseCorrectLabel() {
-      return "Choose the correct label";
+      return "Choose the correct label.";
     },
     get$activityPlannerTitle() {
       return "Activity Planner";
@@ -4662,6 +4662,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_238", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "eUAVpThae53luhriJK9RV8l76eM=");
+})($__dart_deferred_initializers__, "4pnPibLrdEO8tLn8sxC3EfQ0O5E=");
 ;
 //# sourceMappingURL=main.dart.js_238.part.js.map
