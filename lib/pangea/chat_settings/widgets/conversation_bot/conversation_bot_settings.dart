@@ -170,8 +170,8 @@ class ConversationBotSettingsDialogState
     setState(() => botOptions.targetVoice = voice);
   }
 
-  void onUpdateBotLanguageLevel(int? level) {
-    setState(() => LanguageLevelTypeEnumExtension.toEnum(level!));
+  void onUpdateBotLanguageLevel(LanguageLevelTypeEnum? level) {
+    setState(() => botOptions.languageLevel = level!);
   }
 
   @override

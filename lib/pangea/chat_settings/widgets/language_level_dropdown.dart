@@ -9,7 +9,7 @@ import 'package:fluffychat/pangea/learning_settings/enums/language_level_type_en
 
 class LanguageLevelDropdown extends StatelessWidget {
   final LanguageLevelTypeEnum initialLevel;
-  final ValueChanged<Object?>? onChanged;
+  final Function(LanguageLevelTypeEnum)? onChanged;
   final FormFieldValidator<Object>? validator;
   final bool enabled;
 
@@ -44,7 +44,7 @@ class LanguageLevelDropdown extends StatelessWidget {
           ),
         );
       }).toList(),
-      onChanged: enabled ? onChanged : null,
+      onChanged: enabled ? (value) => onChanged?.call(value as LanguageLevelTypeEnum) : null,
       validator: validator,
     );
   }

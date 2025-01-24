@@ -1,3 +1,4 @@
+import 'package:fluffychat/pangea/learning_settings/enums/language_level_type_enum.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -24,7 +25,7 @@ class ConversationBotSettingsForm extends StatelessWidget {
   final void Function(String?) onUpdateBotMode;
   final void Function(String?) onUpdateBotLanguage;
   final void Function(String?) onUpdateBotVoice;
-  final void Function(int?) onUpdateBotLanguageLevel;
+  final void Function(LanguageLevelTypeEnum?) onUpdateBotLanguageLevel;
 
   const ConversationBotSettingsForm({
     super.key,
@@ -93,7 +94,7 @@ class ConversationBotSettingsForm extends StatelessWidget {
           child: LanguageLevelDropdown(
             initialLevel: botOptions.languageLevel,
             onChanged:
-                hasPermission && enabled ? (value) => onUpdateBotLanguageLevel(value as int?) : null,
+                hasPermission && enabled ? (value) => onUpdateBotLanguageLevel(value as LanguageLevelTypeEnum?) : null,
             validator: (value) => enabled && value == null
                 ? L10n.of(context).enterLanguageLevel
                 : null,
