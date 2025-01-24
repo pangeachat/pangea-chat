@@ -1369,7 +1369,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Perfil p\xfablico";
     },
     get$publicProfileDesc() {
-      return "Su perfil debe ser p\xfablico para poder buscar o ser encontrado como compa\xf1ero de conversaci\xf3n.";
+      return "Al activarlo, permite que otros usuarios encuentren su perfil en la barra de b\xfasqueda global y env\xeden solicitudes para chatear. En este punto, puede optar por aceptar o rechazar la solicitud.";
     },
     get$errorDisableIT() {
       return "La asistencia de traducci\xf3n est\xe1 deshabilitada.";
@@ -4659,6 +4659,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_221", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "ErkjTdeMzlBiXpD4c1gijxbIaHg=");
+})($__dart_deferred_initializers__, "mbjJBRYevSCxt6iRtiz8ND+oxMY=");
 ;
 //# sourceMappingURL=main.dart.js_221.part.js.map

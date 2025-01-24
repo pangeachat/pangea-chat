@@ -1369,7 +1369,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Allow my profile to be found in search";
     },
     get$publicProfileDesc() {
-      return "By enabling this option, I confirm that I am of legal age in my country of residence";
+      return "By turning on, you enable other users to find your profile in the global search bar and send requests to chat. At this point, you can choose to accept or deny the request.";
     },
     get$errorDisableIT() {
       return "Translation assistance is turned off.";
@@ -4662,6 +4662,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_236", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "AgWjeJZtTw0vfs2CRAp8CCcOcRk=");
+})($__dart_deferred_initializers__, "LZPppfAnpcweqXGlbtcI2l2J8Kk=");
 ;
 //# sourceMappingURL=main.dart.js_236.part.js.map
