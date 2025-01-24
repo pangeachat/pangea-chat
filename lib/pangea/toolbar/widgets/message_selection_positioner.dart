@@ -511,6 +511,7 @@ class ToolbarOverlay extends StatelessWidget {
               ToolbarButtonAndProgressRow(
                 event: event,
                 overlayController: overlayController,
+                langCode: pangeaMessageEvent!.messageDisplayLangCode,
               ),
           ],
         ),

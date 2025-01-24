@@ -10,6 +10,7 @@ import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/analytics/controllers/message_analytics_controller.dart';
 import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/pangea/events/event_wrappers/pangea_message_event.dart';
+import 'package:fluffychat/pangea/events/extensions/pangea_event_extension.dart';
 import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/events/models/pangea_token_text_model.dart';
 import 'package:fluffychat/pangea/toolbar/controllers/text_to_speech_controller.dart';
@@ -22,23 +23,24 @@ import 'package:fluffychat/widgets/matrix.dart';
 class MessageSelectionOverlay extends StatefulWidget {
   final ChatController chatController;
   final Event _event;
+  final Timeline _timeline;
   final Event? _nextEvent;
   final Event? _prevEvent;
-  final PangeaMessageEvent? _pangeaMessageEvent;
   final PangeaToken? _initialSelectedToken;
 
   const MessageSelectionOverlay({
     required this.chatController,
     required Event event,
+    required Timeline timeline,
     required PangeaMessageEvent? pangeaMessageEvent,
     required PangeaToken? initialSelectedToken,
     required Event? nextEvent,
     required Event? prevEvent,
     super.key,
   })  : _initialSelectedToken = initialSelectedToken,
-        _pangeaMessageEvent = pangeaMessageEvent,
         _nextEvent = nextEvent,
         _prevEvent = prevEvent,
+        _timeline = timeline,
         _event = event;
 
   @override
@@ -54,7 +56,18 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
   List<PangeaToken>? tokens;
   bool initialized = false;
 
-  PangeaMessageEvent? get pangeaMessageEvent => widget._pangeaMessageEvent;
+  PangeaMessageEvent? get pangeaMessageEvent {
+    if (![MessageTypes.Audio, MessageTypes.Text]
+            .contains(widget._event.messageType) ||
+        widget._event.isActivityMessage) {
+      return null;
+    }
+    return PangeaMessageEvent(
+      event: widget._event,
+      timeline: widget._timeline,
+      ownMessage: widget._event.senderId == widget._event.room.client.userID,
+    );
+  }
 
   bool isPlayingAudio = false;
 
@@ -104,7 +117,7 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
       widget.chatController.choreographer.tts.tryToSpeak(
         selectedSpan.content,
         context,
-        widget._pangeaMessageEvent?.eventId,
+        pangeaMessageEvent?.eventId,
       );
     }
 
@@ -174,7 +187,7 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
       MatrixState.pangeaController.languageController.userL2?.langCode;
 
   Future<void> _setInitialToolbarMode() async {
-    if (widget._pangeaMessageEvent?.isAudioMessage ?? false) {
+    if (pangeaMessageEvent?.isAudioMessage ?? false) {
       toolbarMode = MessageMode.speechToText;
       return setState(() {});
     }
@@ -269,11 +282,10 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
   /// If there is a selectedSpan, then the target is the selected text
   String get targetText {
     if (_selectedSpan == null || pangeaMessageEvent == null) {
-      return widget._pangeaMessageEvent?.messageDisplayText ??
-          widget._event.body;
+      return pangeaMessageEvent?.messageDisplayText ?? widget._event.body;
     }
 
-    return widget._pangeaMessageEvent!.messageDisplayText.substring(
+    return pangeaMessageEvent!.messageDisplayText.substring(
       _selectedSpan!.offset,
       _selectedSpan!.offset + _selectedSpan!.length,
     );

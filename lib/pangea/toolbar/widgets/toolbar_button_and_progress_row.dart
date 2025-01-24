@@ -9,16 +9,19 @@ import 'package:matrix/matrix.dart';
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pangea/toolbar/enums/message_mode_enum.dart';
+import 'package:fluffychat/pangea/toolbar/widgets/change_message_lang_button.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/message_selection_overlay.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/toolbar_button.dart';
 
 class ToolbarButtonAndProgressRow extends StatelessWidget {
   final Event event;
   final MessageOverlayController overlayController;
+  final String langCode;
 
   const ToolbarButtonAndProgressRow({
     required this.event,
     required this.overlayController,
+    required this.langCode,
     super.key,
   });
 
@@ -47,7 +50,7 @@ class ToolbarButtonAndProgressRow extends StatelessWidget {
       width: totalRowWidth,
       height: AppConfig.toolbarButtonsHeight,
       child: Stack(
-        alignment: Alignment.center,
+        alignment: Alignment.centerLeft,
         children: [
           Stack(
             children: [
@@ -76,6 +79,10 @@ class ToolbarButtonAndProgressRow extends StatelessWidget {
                 margin: const EdgeInsets.symmetric(horizontal: iconWidth / 2),
               ),
             ],
+          ),
+          ChangeMessageLangButton(
+            pangeaMessageEvent: overlayController.pangeaMessageEvent!,
+            overlayController: overlayController,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

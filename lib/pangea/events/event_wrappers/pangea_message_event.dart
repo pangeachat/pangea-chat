@@ -603,9 +603,7 @@ class PangeaMessageEvent {
         .pangeaController.permissionsController
         .isToolEnabled(ToolSetting.immersionMode, room);
 
-    final String? originalLangCode =
-        (originalWritten ?? originalSent)?.langCode;
-
+    final String? originalLangCode = originalSent?.langCode;
     final String? langCode = immersionMode ? l2Code : originalLangCode;
     return langCode ?? LanguageKeys.unknownLanguage;
   }

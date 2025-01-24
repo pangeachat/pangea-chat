@@ -1743,6 +1743,7 @@ class ChatController extends State<ChatPageWithRoom>
         initialSelectedToken: selectedToken,
         nextEvent: nextEvent,
         prevEvent: prevEvent,
+        timeline: timeline!,
       );
     } catch (err) {
       debugger(when: kDebugMode);
