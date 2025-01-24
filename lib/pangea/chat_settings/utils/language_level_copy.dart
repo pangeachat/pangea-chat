@@ -1,9 +1,10 @@
+import 'package:fluffychat/pangea/learning_settings/enums/language_level_type_enum.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 
 class LanguageLevelTextPicker {
-  static String languageLevelText(BuildContext context, int languageLevel) {
+  static String languageLevelText(BuildContext context, LanguageLevelTypeEnum languageLevel) {
     final L10n copy = L10n.of(context);
     switch (languageLevel) {
       case 0:

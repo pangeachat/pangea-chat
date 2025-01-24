@@ -23,7 +23,7 @@ class LanguageLevelDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonFormField2(
+    return DropdownButtonFormField2<LanguageLevelTypeEnum>(
       decoration: InputDecoration(labelText: L10n.of(context).cefrLevelLabel),
       hint: Text(
         L10n.of(context).selectLanguageLevel,
@@ -33,11 +33,11 @@ class LanguageLevelDropdown extends StatelessWidget {
       value: initialLevel,
       items: LanguageLevelTypeEnum.values.map((LanguageLevelTypeEnum levelOption) {
         return DropdownMenuItem(
-          value: levelOption.index,
+          value: levelOption,
           child: Text(
             LanguageLevelTextPicker.languageLevelText(
               context,
-              levelOption.index,
+              levelOption,
             ),
             overflow: TextOverflow.clip,
             textAlign: TextAlign.center,

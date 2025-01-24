@@ -92,6 +92,8 @@ extension LanguageLevelTypeEnumExtension on LanguageLevelTypeEnum {
             return LanguageLevelTypeEnum.c1;
           case 'C2':
             return LanguageLevelTypeEnum.c2;
+          case 'PREA1':
+            return LanguageLevelTypeEnum.preA1;
     }
       } else {
         throw value;
