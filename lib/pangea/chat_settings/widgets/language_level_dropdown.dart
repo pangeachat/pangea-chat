@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/l10n.dart';
 
 import 'package:fluffychat/pangea/chat_settings/utils/language_level_copy.dart';
 import 'package:fluffychat/pangea/learning_settings/constants/language_constants.dart';
+import 'package:fluffychat/pangea/learning_settings/enums/language_level_type_enum.dart';
 
 class LanguageLevelDropdown extends StatelessWidget {
   final int? initialLevel;
@@ -30,13 +31,13 @@ class LanguageLevelDropdown extends StatelessWidget {
         textAlign: TextAlign.center,
       ),
       value: initialLevel,
-      items: LanguageLevelType.allInts.map((int levelOption) {
+      items: LanguageLevelTypeEnum.values.map((LanguageLevelTypeEnum levelOption) {
         return DropdownMenuItem(
-          value: levelOption,
+          value: levelOption.index,
           child: Text(
             LanguageLevelTextPicker.languageLevelText(
               context,
-              levelOption,
+              levelOption.index,
             ),
             overflow: TextOverflow.clip,
             textAlign: TextAlign.center,

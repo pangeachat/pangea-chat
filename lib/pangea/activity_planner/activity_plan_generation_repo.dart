@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:fluffychat/pangea/learning_settings/enums/language_level_type_enum.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart';
 
@@ -14,7 +15,7 @@ class ActivityPlanRequest {
   final String mode;
   final String objective;
   final MediaEnum media;
-  final int cefrLevel;
+  final LanguageLevelTypeEnum cefrLevel;
   final String languageOfInstructions;
   final String targetLanguage;
   final int count;
@@ -36,7 +37,7 @@ class ActivityPlanRequest {
       'mode': mode,
       'objective': objective,
       'media': media.string,
-      'cefr_level': cefrLanguageLevel,
+      'cefr_level': cefrLevel.string,
       'language_of_instructions': languageOfInstructions,
       'target_language': targetLanguage,
       'count': count,
@@ -46,26 +47,6 @@ class ActivityPlanRequest {
   String get storageKey =>
       '$topic-$mode-$objective-${media.string}-$cefrLevel-$languageOfInstructions-$targetLanguage';
 
-  String get cefrLanguageLevel {
-    switch (cefrLevel) {
-      case 0:
-        return 'Pre-A1';
-      case 1:
-        return 'A1';
-      case 2:
-        return 'A2';
-      case 3:
-        return 'B1';
-      case 4:
-        return 'B2';
-      case 5:
-        return 'C1';
-      case 6:
-        return 'C2';
-      default:
-        return 'Pre-A1';
-    }
-  }
 }
 
 class ActivityPlanResponse {
