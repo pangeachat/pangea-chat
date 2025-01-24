@@ -51,6 +51,9 @@ class TosCheckboxState extends State<TosCheckbox>
                             decoration: TextDecoration.underline,
                           ),
                         ),
+                        TextSpan(
+                          text: L10n.of(context).andCertifyIAmAtLeast13YearsOfAge,
+                        ),
                       ],
                       style: TextStyle(
                         fontSize: 14,
