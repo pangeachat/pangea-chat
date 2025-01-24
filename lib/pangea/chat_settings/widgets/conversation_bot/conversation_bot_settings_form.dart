@@ -91,9 +91,9 @@ class ConversationBotSettingsForm extends StatelessWidget {
         InkWell(
           onTap: hasPermission ? null : () => showNoPermissionDialog(context),
           child: LanguageLevelDropdown(
-            initialLevel: botOptions.languageLevel?.index,
+            initialLevel: botOptions.languageLevel,
             onChanged:
-                hasPermission && enabled ? onUpdateBotLanguageLevel : null,
+                hasPermission && enabled ? (value) => onUpdateBotLanguageLevel(value as int?) : null,
             validator: (value) => enabled && value == null
                 ? L10n.of(context).enterLanguageLevel
                 : null,

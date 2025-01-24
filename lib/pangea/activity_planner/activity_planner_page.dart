@@ -376,8 +376,8 @@ class ActivityPlannerPageState extends State<ActivityPlannerPage> {
               ),
               const SizedBox(height: 24),
               LanguageLevelDropdown(
-                initialLevel: 0,
-                onChanged: (val) => _selectedCefrLevel = val,
+                initialLevel: LanguageLevelTypeEnum.a1,
+                onChanged: (val) => _selectedCefrLevel = val as int?,
               ),
               const SizedBox(height: 24),
               PLanguageDropdown(

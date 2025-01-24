@@ -8,14 +8,14 @@ import 'package:fluffychat/pangea/learning_settings/constants/language_constants
 import 'package:fluffychat/pangea/learning_settings/enums/language_level_type_enum.dart';
 
 class LanguageLevelDropdown extends StatelessWidget {
-  final int? initialLevel;
-  final void Function(int?)? onChanged;
-  final String? Function(int?)? validator;
+  final LanguageLevelTypeEnum initialLevel;
+  final ValueChanged<Object?>? onChanged;
+  final FormFieldValidator<Object>? validator;
   final bool enabled;
 
   const LanguageLevelDropdown({
     super.key,
-    this.initialLevel,
+    this.initialLevel = LanguageLevelTypeEnum.a1,
     this.onChanged,
     this.validator,
     this.enabled = true,
