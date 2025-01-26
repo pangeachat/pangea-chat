@@ -928,6 +928,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$theyMatch() {
       return "\u5b83\u4eec\u5339\u914d";
     },
+    get$title(_) {
+      return "FluffyChat";
+    },
     get$tooManyRequestsWarning() {
       return "\u8bf7\u6c42\u8fc7\u591a\u3002\u8bf7\u7a0d\u540e\u518d\u8bd5\uff01";
     },
@@ -4654,6 +4657,12 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$completeActivitiesToUnlock() {
       return "Complete the highlighted word activities to unlock";
     },
+    get$myBookmarkedActivities() {
+      return "My Bookmarked Activities";
+    },
+    get$noBookmarkedActivities() {
+      return "No bookmarked activities";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -5550,6 +5559,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$theyMatch() {
       return "\u5b83\u5011\u76f8\u7b26";
     },
+    get$title(_) {
+      return "FluffyChat";
+    },
     get$tooManyRequestsWarning() {
       return "\u592a\u591a\u8acb\u6c42\u4e86\u3002\u8acb\u7a0d\u5019\u518d\u8a66\uff01";
     },
@@ -6013,6 +6025,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_1", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "zdXfkCHL4bMwNsDWfs2/KGPpoxE=");
+})($__dart_deferred_initializers__, "WfXmB3nVO30pWjPJGOkztNu1upA=");
 ;
 //# sourceMappingURL=main.dart.js_1.part.js.map
