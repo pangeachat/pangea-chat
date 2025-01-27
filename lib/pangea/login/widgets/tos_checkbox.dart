@@ -40,7 +40,7 @@ class TosCheckboxState extends State<TosCheckbox>
                 onTap: () => UrlLauncher(context, AppConfig.termsOfServiceUrl)
                     .launchUrl(),
                 child: Padding(
-                  padding: const EdgeInsets.only(left: 15),
+                  padding: const EdgeInsets.fromLTRB(15, 8, 0, 8),
                   child: RichText(
                     text: TextSpan(
                       text: L10n.of(context).iAgreeToThe,
@@ -52,7 +52,8 @@ class TosCheckboxState extends State<TosCheckbox>
                           ),
                         ),
                         TextSpan(
-                          text: L10n.of(context).andCertifyIAmAtLeast13YearsOfAge,
+                          text:
+                              L10n.of(context).andCertifyIAmAtLeast13YearsOfAge,
                         ),
                       ],
                       style: TextStyle(
