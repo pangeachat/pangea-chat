@@ -143,24 +143,26 @@ class SpanCardState extends State<SpanCard> {
 
   Future<void> onChoiceSelect(String value, int index) async {
     selectedChoiceIndex = index;
-    if (!selectedChoice!.selected) {
-      MatrixState.pangeaController.putAnalytics.addDraftUses(
-        selectedChoice!.tokens,
-        widget.roomId,
-        selectedChoice!.isBestCorrection
-            ? ConstructUseTypeEnum.corIGC
-            : ConstructUseTypeEnum.incIGC,
-        AnalyticsUpdateOrigin.igc,
+    if (selectedChoice != null) {
+      if (!selectedChoice!.selected) {
+        MatrixState.pangeaController.putAnalytics.addDraftUses(
+          selectedChoice!.tokens,
+          widget.roomId,
+          selectedChoice!.isBestCorrection
+              ? ConstructUseTypeEnum.corIGC
+              : ConstructUseTypeEnum.incIGC,
+          AnalyticsUpdateOrigin.igc,
+        );
+      }
+
+      selectedChoice!.timestamp = DateTime.now();
+      selectedChoice!.selected = true;
+      setState(
+        () => (selectedChoice!.isBestCorrection
+            ? BotExpression.gold
+            : BotExpression.surprised),
       );
     }
-
-    selectedChoice!.timestamp = DateTime.now();
-    selectedChoice!.selected = true;
-    setState(
-      () => (selectedChoice!.isBestCorrection
-          ? BotExpression.gold
-          : BotExpression.surprised),
-    );
   }
 
   /// Returns the list of distractor choices that are not selected
