@@ -1,10 +1,12 @@
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pages/chat/chat.dart';
-import 'package:fluffychat/pangea/common/constants/model_keys.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:matrix/matrix.dart';
+
+import 'package:fluffychat/config/app_config.dart';
+import 'package:fluffychat/pages/chat/chat.dart';
+import 'package:fluffychat/pangea/common/constants/model_keys.dart';
 
 class OverlayHeader extends StatelessWidget {
   final ChatController controller;
