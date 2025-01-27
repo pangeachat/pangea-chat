@@ -4,11 +4,10 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 
 import 'package:fluffychat/pangea/chat_settings/utils/language_level_copy.dart';
-import 'package:fluffychat/pangea/learning_settings/constants/language_constants.dart';
 import 'package:fluffychat/pangea/learning_settings/enums/language_level_type_enum.dart';
 
 class LanguageLevelDropdown extends StatelessWidget {
-  final LanguageLevelTypeEnum initialLevel;
+  final LanguageLevelTypeEnum? initialLevel;
   final Function(LanguageLevelTypeEnum)? onChanged;
   final FormFieldValidator<Object>? validator;
   final bool enabled;
@@ -31,7 +30,8 @@ class LanguageLevelDropdown extends StatelessWidget {
         textAlign: TextAlign.center,
       ),
       value: initialLevel,
-      items: LanguageLevelTypeEnum.values.map((LanguageLevelTypeEnum levelOption) {
+      items:
+          LanguageLevelTypeEnum.values.map((LanguageLevelTypeEnum levelOption) {
         return DropdownMenuItem(
           value: levelOption,
           child: Text(
@@ -44,7 +44,9 @@ class LanguageLevelDropdown extends StatelessWidget {
           ),
         );
       }).toList(),
-      onChanged: enabled ? (value) => onChanged?.call(value as LanguageLevelTypeEnum) : null,
+      onChanged: enabled
+          ? (value) => onChanged?.call(value as LanguageLevelTypeEnum)
+          : null,
       validator: validator,
     );
   }

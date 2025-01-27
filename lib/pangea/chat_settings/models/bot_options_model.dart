@@ -11,7 +11,7 @@ import 'package:fluffychat/pangea/events/constants/pangea_event_types.dart';
 import 'package:fluffychat/pangea/learning_settings/enums/language_level_type_enum.dart';
 
 class BotOptionsModel {
-  LanguageLevelTypeEnum languageLevel;  
+  LanguageLevelTypeEnum languageLevel;
   String topic;
   List<String> keywords;
   bool safetyModeration;
@@ -65,7 +65,13 @@ class BotOptionsModel {
       //////////////////////////////////////////////////////////////////////////
       // General Bot Options
       //////////////////////////////////////////////////////////////////////////
-      languageLevel: LanguageLevelTypeEnumExtension.toEnum(json[ModelKey.languageLevel]),
+      languageLevel: json[ModelKey.languageLevel] is int
+          ? LanguageLevelTypeEnumExtension.fromInt(json[ModelKey.languageLevel])
+          : json[ModelKey.languageLevel] is String
+              ? LanguageLevelTypeEnumExtension.fromString(
+                  json[ModelKey.languageLevel],
+                )
+              : LanguageLevelTypeEnum.a1,
       safetyModeration: json[ModelKey.safetyModeration] ?? true,
       mode: json[ModelKey.mode] ?? BotMode.discussion,
       targetLanguage: json[ModelKey.targetLanguage],

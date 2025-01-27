@@ -1,20 +1,6 @@
-
-import 'dart:developer';
-
-import 'package:flutter/foundation.dart';
-
-enum LanguageLevelTypeEnum {
-  preA1,
-  a1,
-  a2,
-  b1,
-  b2,
-  c1,
-  c2
-}
+enum LanguageLevelTypeEnum { preA1, a1, a2, b1, b2, c1, c2 }
 
 extension LanguageLevelTypeEnumExtension on LanguageLevelTypeEnum {
-
   // Makes enum a string
   String get string {
     switch (this) {
@@ -55,52 +41,46 @@ extension LanguageLevelTypeEnumExtension on LanguageLevelTypeEnum {
     }
   }
 
-  static LanguageLevelTypeEnum toEnum(dynamic value) {
-    try {
-      if (value == null) {
+  static LanguageLevelTypeEnum fromInt(int? value) {
+    switch (value) {
+      case 0:
+        return LanguageLevelTypeEnum.preA1;
+      case 1:
         return LanguageLevelTypeEnum.a1;
-      } else if (value is int) {
-          switch (value) {
-            case 0:
-              return LanguageLevelTypeEnum.preA1;
-            case 1:
-              return LanguageLevelTypeEnum.a1;
-            case 2:
-              return LanguageLevelTypeEnum.a2;
-            case 3:
-              return LanguageLevelTypeEnum.b1;
-            case 4:
-              return LanguageLevelTypeEnum.b2;
-            case 5:
-              return LanguageLevelTypeEnum.c1;
-            case 6:
-              return LanguageLevelTypeEnum.c2;
+      case 2:
+        return LanguageLevelTypeEnum.a2;
+      case 3:
+        return LanguageLevelTypeEnum.b1;
+      case 4:
+        return LanguageLevelTypeEnum.b2;
+      case 5:
+        return LanguageLevelTypeEnum.c1;
+      case 6:
+        return LanguageLevelTypeEnum.c2;
+      default:
+        return LanguageLevelTypeEnum.a1;
     }
-      } else if (value is String) {
-        switch (value) {
-          case 'Pre-A1':
-            return LanguageLevelTypeEnum.preA1;
-          case 'A1':
-            return LanguageLevelTypeEnum.a1;
-          case 'A2':
-            return LanguageLevelTypeEnum.a2;
-          case 'B1':
-            return LanguageLevelTypeEnum.b1;
-          case 'B2':
-            return LanguageLevelTypeEnum.b2;
-          case 'C1':
-            return LanguageLevelTypeEnum.c1;
-          case 'C2':
-            return LanguageLevelTypeEnum.c2;
-          case 'PREA1':
-            return LanguageLevelTypeEnum.preA1;
+  }
+
+  static LanguageLevelTypeEnum fromString(String? value) {
+    switch (value) {
+      case 'PREA1':
+      case 'Pre-A1':
+        return LanguageLevelTypeEnum.preA1;
+      case 'A1':
+        return LanguageLevelTypeEnum.a1;
+      case 'A2':
+        return LanguageLevelTypeEnum.a2;
+      case 'B1':
+        return LanguageLevelTypeEnum.b1;
+      case 'B2':
+        return LanguageLevelTypeEnum.b2;
+      case 'C1':
+        return LanguageLevelTypeEnum.c1;
+      case 'C2':
+        return LanguageLevelTypeEnum.c2;
+      default:
+        return LanguageLevelTypeEnum.a1;
     }
-      } else {
-        throw value;
-      }
-    } catch (err){
-      debugger(when: kDebugMode);
-    }
-    throw ArgumentError('Invalid value type for LanguageLevelTypeEnum');
   }
 }

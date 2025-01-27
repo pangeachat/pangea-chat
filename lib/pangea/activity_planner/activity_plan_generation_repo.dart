@@ -1,71 +1,14 @@
 import 'dart:convert';
 
-import 'package:fluffychat/pangea/learning_settings/enums/language_level_type_enum.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart';
 
-import 'package:fluffychat/pangea/activity_planner/media_enum.dart';
+import 'package:fluffychat/pangea/activity_planner/activity_plan_request.dart';
+import 'package:fluffychat/pangea/activity_planner/activity_plan_response.dart';
 import 'package:fluffychat/pangea/common/config/environment.dart';
 import 'package:fluffychat/pangea/common/network/urls.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import '../common/network/requests.dart';
-
-class ActivityPlanRequest {
-  final String topic;
-  final String mode;
-  final String objective;
-  final MediaEnum media;
-  final LanguageLevelTypeEnum cefrLevel;
-  final String languageOfInstructions;
-  final String targetLanguage;
-  final int count;
-
-  ActivityPlanRequest({
-    required this.topic,
-    required this.mode,
-    required this.objective,
-    required this.media,
-    required this.cefrLevel,
-    required this.languageOfInstructions,
-    required this.targetLanguage,
-    this.count = 3,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'topic': topic,
-      'mode': mode,
-      'objective': objective,
-      'media': media.string,
-      'cefr_level': cefrLevel.string,
-      'language_of_instructions': languageOfInstructions,
-      'target_language': targetLanguage,
-      'count': count,
-    };
-  }
-
-  String get storageKey =>
-      '$topic-$mode-$objective-${media.string}-$cefrLevel-$languageOfInstructions-$targetLanguage';
-
-}
-
-class ActivityPlanResponse {
-  final List<String> activityPlans;
-
-  ActivityPlanResponse({required this.activityPlans});
-
-  factory ActivityPlanResponse.fromJson(Map<String, dynamic> json) {
-    return ActivityPlanResponse(
-      activityPlans: List<String>.from(json['activity_plans']),
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'activity_plans': activityPlans,
-    };
-  }
-}
 
 class ActivityPlanGenerationRepo {
   static final GetStorage _activityPlanStorage =
