@@ -928,9 +928,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$theyMatch() {
       return "\u5b83\u4eec\u5339\u914d";
     },
-    get$title(_) {
-      return "FluffyChat";
-    },
     get$tooManyRequestsWarning() {
       return "\u8bf7\u6c42\u8fc7\u591a\u3002\u8bf7\u7a0d\u540e\u518d\u8bd5\uff01";
     },
@@ -4625,7 +4622,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Choose a learning objective...";
     },
     get$mediaLabel() {
-      return "Media students should share";
+      return "Media learners should share";
     },
     get$languageOfInstructionsLabel() {
       return "Language of activity instructions";
@@ -4662,6 +4659,21 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$noBookmarkedActivities() {
       return "No bookmarked activities";
+    },
+    get$activityTitle() {
+      return "Activity Title";
+    },
+    get$addVocabulary() {
+      return "Add Vocabulary";
+    },
+    get$instructions() {
+      return "Instructions";
+    },
+    get$numberOfLearners() {
+      return "Number of learners";
+    },
+    get$mustBeInteger() {
+      return "Must be an integer e.g. 1, 2, 3, ...";
     },
     get$noLemmasFound() {
       return "No lemmas found";
@@ -5562,9 +5574,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$theyMatch() {
       return "\u5b83\u5011\u76f8\u7b26";
     },
-    get$title(_) {
-      return "FluffyChat";
-    },
     get$tooManyRequestsWarning() {
       return "\u592a\u591a\u8acb\u6c42\u4e86\u3002\u8acb\u7a0d\u5019\u518d\u8a66\uff01";
     },
@@ -6028,6 +6037,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_1", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "lsXZV/zryH7rfP2gtmxra+yF1sc=");
+})($__dart_deferred_initializers__, "nGpx1Z2y+dUAm+g1R7+EqYnqgDA=");
 ;
 //# sourceMappingURL=main.dart.js_1.part.js.map
