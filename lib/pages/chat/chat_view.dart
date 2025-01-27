@@ -287,6 +287,8 @@ class ChatView extends StatelessWidget {
                 ),
               ),
               // #Pangea
+              // floatingActionButtonLocation:
+              //     FloatingActionButtonLocation.miniCenterFloat,
               // floatingActionButton: controller.showScrollDownButton &&
               //         controller.selectedEvents.isEmpty
               //     ? Padding(
@@ -295,6 +297,8 @@ class ChatView extends StatelessWidget {
               //           onPressed: controller.scrollDown,
               //           heroTag: null,
               //           mini: true,
+              //           backgroundColor: theme.colorScheme.surface,
+              //           foregroundColor: theme.colorScheme.onSurface,
               //           child: const Icon(Icons.arrow_downward_outlined),
               //         ),
               //       )

@@ -506,28 +506,43 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                   ),
                 ),
                 // #Pangea
-                // ),
                 // const SizedBox(width: 8),
-                // Badge(
-                //   isLabelVisible: audioPlayer != null,
-                //   label: audioPlayer == null
-                //       ? null
-                //       : Text(
-                //           '${audioPlayer.speed.toString()}x',
-                //         ),
-                //   backgroundColor: theme.colorScheme.secondary,
-                //   textColor: theme.colorScheme.onSecondary,
-                //   child: InkWell(
-                //     splashColor: widget.color.withAlpha(128),
-                //     borderRadius: BorderRadius.circular(64),
-                //     onTap: audioPlayer == null ? null : _toggleSpeed,
+                // AnimatedCrossFade(
+                //   firstChild: Padding(
+                //     padding: const EdgeInsets.only(right: 8.0),
                 //     child: Icon(
                 //       Icons.mic_none_outlined,
                 //       color: widget.color,
                 //     ),
                 //   ),
+                //   secondChild: Material(
+                //     color: widget.color.withAlpha(64),
+                //     borderRadius: BorderRadius.circular(AppConfig.borderRadius),
+                //     child: InkWell(
+                //       borderRadius:
+                //           BorderRadius.circular(AppConfig.borderRadius),
+                //       onTap: _toggleSpeed,
+                //       child: SizedBox(
+                //         width: 32,
+                //         height: 20,
+                //         child: Center(
+                //           child: Text(
+                //             '${audioPlayer?.speed.toString()}x',
+                //             style: TextStyle(
+                //               color: widget.color,
+                //               fontSize: 9,
+                //             ),
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                //   alignment: Alignment.center,
+                //   crossFadeState: audioPlayer == null
+                //       ? CrossFadeState.showFirst
+                //       : CrossFadeState.showSecond,
+                //   duration: FluffyThemes.animationDuration,
                 // ),
-                // const SizedBox(width: 8),
                 // Pangea#
               ],
             ),

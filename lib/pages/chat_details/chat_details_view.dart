@@ -151,6 +151,7 @@ class ChatDetailsView extends StatelessWidget {
                                     style: TextButton.styleFrom(
                                       foregroundColor:
                                           theme.colorScheme.onSurface,
+                                      iconColor: theme.colorScheme.onSurface,
                                     ),
                                     label: Text(
                                       room.isDirectChat
@@ -174,6 +175,7 @@ class ChatDetailsView extends StatelessWidget {
                                     style: TextButton.styleFrom(
                                       foregroundColor:
                                           theme.colorScheme.secondary,
+                                      iconColor: theme.colorScheme.secondary,
                                     ),
                                     label: Text(
                                       L10n.of(context).countParticipants(

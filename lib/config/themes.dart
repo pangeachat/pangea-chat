@@ -68,6 +68,7 @@ abstract class FluffyThemes {
       brightness: brightness,
       seedColor: seed ?? AppConfig.colorSchemeSeed ?? AppConfig.primaryColor,
     );
+    final isColumnMode = FluffyThemes.isColumnMode(context);
     return ThemeData(
       visualDensity: VisualDensity.standard,
       useMaterial3: true,
@@ -84,6 +85,12 @@ abstract class FluffyThemes {
           borderRadius: BorderRadius.circular(AppConfig.borderRadius),
         ),
       ),
+      segmentedButtonTheme: SegmentedButtonThemeData(
+        style: SegmentedButton.styleFrom(
+          iconColor: colorScheme.onSurface,
+          disabledIconColor: colorScheme.onSurface,
+        ),
+      ),
       textSelectionTheme: TextSelectionThemeData(
         selectionColor: colorScheme.onSurface.withAlpha(128),
         selectionHandleColor: colorScheme.secondary,
@@ -96,14 +103,11 @@ abstract class FluffyThemes {
         filled: false,
       ),
       appBarTheme: AppBarTheme(
-        toolbarHeight: FluffyThemes.isColumnMode(context) ? 72 : 56,
-        shadowColor: FluffyThemes.isColumnMode(context)
-            ? colorScheme.surfaceContainer.withAlpha(128)
-            : null,
-        surfaceTintColor:
-            FluffyThemes.isColumnMode(context) ? colorScheme.surface : null,
-        backgroundColor:
-            FluffyThemes.isColumnMode(context) ? colorScheme.surface : null,
+        toolbarHeight: isColumnMode ? 72 : 56,
+        shadowColor:
+            isColumnMode ? colorScheme.surfaceContainer.withAlpha(128) : null,
+        surfaceTintColor: isColumnMode ? colorScheme.surface : null,
+        backgroundColor: isColumnMode ? colorScheme.surface : null,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
           statusBarIconBrightness: brightness.reversed,
@@ -124,10 +128,12 @@ abstract class FluffyThemes {
           ),
         ),
       ),
-      snackBarTheme: const SnackBarThemeData(
-        behavior: SnackBarBehavior.floating,
-        width: FluffyThemes.columnWidth * 1.5,
-      ),
+      snackBarTheme: isColumnMode
+          ? const SnackBarThemeData(
+              behavior: SnackBarBehavior.floating,
+              width: FluffyThemes.columnWidth * 1.5,
+            )
+          : const SnackBarThemeData(behavior: SnackBarBehavior.floating),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: colorScheme.secondaryContainer,
