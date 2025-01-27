@@ -11,13 +11,14 @@ import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pages/chat/events/message_reactions.dart';
 import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/pangea/events/event_wrappers/pangea_message_event.dart';
+import 'package:fluffychat/pangea/events/extensions/pangea_event_extension.dart';
 import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/message_selection_overlay.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/message_toolbar.dart';
-import 'package:fluffychat/pangea/toolbar/widgets/message_toolbar_buttons.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/overlay_footer.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/overlay_header.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/overlay_message.dart';
+import 'package:fluffychat/pangea/toolbar/widgets/toolbar_button_and_progress_row.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 
@@ -152,8 +153,10 @@ class MessageSelectionPositionerState extends State<MessageSelectionPositioner>
       _adjustedMessageHeight ?? _messageSize?.height ?? 0;
 
   double get _messageMaxWidth {
-    const double messageMargin = Avatar.defaultSize + 16 + 8;
-    const totalMaxWidth = (FluffyThemes.columnWidth * 2.5) - messageMargin;
+    final double messageMargin =
+        widget.event.isActivityMessage ? 0 : Avatar.defaultSize + 16 + 8;
+    final double totalMaxWidth =
+        (FluffyThemes.columnWidth * 2.5) - messageMargin;
     double? maxWidth;
 
     if (_mediaQuery != null) {
@@ -252,6 +255,7 @@ class MessageSelectionPositionerState extends State<MessageSelectionPositioner>
 
   bool get showToolbarButtons =>
       widget.pangeaMessageEvent != null &&
+      widget.pangeaMessageEvent!.shouldShowToolbar &&
       widget.pangeaMessageEvent!.event.messageType == MessageTypes.Text;
 
   double get _toolbarButtonsHeight =>
@@ -374,6 +378,7 @@ class MessageSelectionPositionerState extends State<MessageSelectionPositioner>
             overlayController: widget.overlayController,
             chatController: widget.chatController,
             hasReactions: _hasReactions,
+            shouldShowToolbarButtons: showToolbarButtons,
           ),
         );
       },
@@ -436,6 +441,8 @@ class ToolbarOverlay extends StatelessWidget {
   final Event? prevEvent;
 
   final bool hasReactions;
+  final bool shouldShowToolbarButtons;
+
   final PangeaMessageEvent? pangeaMessageEvent;
   final MessageOverlayController overlayController;
   final ChatController chatController;
@@ -449,6 +456,7 @@ class ToolbarOverlay extends StatelessWidget {
     required this.overlayController,
     required this.chatController,
     required this.hasReactions,
+    required this.shouldShowToolbarButtons,
     this.pangeaMessageEvent,
     this.nextEvent,
     this.prevEvent,
@@ -466,7 +474,8 @@ class ToolbarOverlay extends StatelessWidget {
               ? CrossAxisAlignment.end
               : CrossAxisAlignment.start,
           children: [
-            if (pangeaMessageEvent != null)
+            if (pangeaMessageEvent != null &&
+                pangeaMessageEvent!.shouldShowToolbar)
               MessageToolbar(
                 pangeaMessageEvent: pangeaMessageEvent!,
                 overlayController: overlayController,
@@ -498,10 +507,11 @@ class ToolbarOverlay extends StatelessWidget {
                   ),
                 ),
               ),
-            ToolbarButtons(
-              event: event,
-              overlayController: overlayController,
-            ),
+            if (shouldShowToolbarButtons)
+              ToolbarButtonAndProgressRow(
+                event: event,
+                overlayController: overlayController,
+              ),
           ],
         ),
       ),
