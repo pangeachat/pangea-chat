@@ -144,21 +144,12 @@ class SpanCardState extends State<SpanCard> {
   Future<void> onChoiceSelect(String value, int index) async {
     selectedChoiceIndex = index;
     if (!selectedChoice!.selected) {
-      final isNormalizationError = widget
-          .scm.choreographer.igc.spanDataController
-          .isNormalizationError(index);
-
-      ConstructUseTypeEnum useType = ConstructUseTypeEnum.incIGC;
-      if (isNormalizationError) {
-        useType = ConstructUseTypeEnum.wa;
-      } else if (selectedChoice!.isBestCorrection) {
-        useType = ConstructUseTypeEnum.corIGC;
-      }
-
       MatrixState.pangeaController.putAnalytics.addDraftUses(
         selectedChoice!.tokens,
         widget.roomId,
-        useType,
+        selectedChoice!.isBestCorrection
+            ? ConstructUseTypeEnum.corIGC
+            : ConstructUseTypeEnum.incIGC,
         AnalyticsUpdateOrigin.igc,
       );
     }
