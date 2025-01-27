@@ -1408,6 +1408,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$termsAndConditions() {
       return "Terms and Conditions";
     },
+    get$andCertifyIAmAtLeast13YearsOfAge() {
+      return " and certify I am at least 16 years of age.";
+    },
     get$error502504Title() {
       return "Wow, there are a lot of students online!";
     },
@@ -4687,6 +4690,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_197", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "eYoltD1e86IP3v9mdxN5uODr4BQ=");
+})($__dart_deferred_initializers__, "i1XK+gSnAwVO8rlnP3GbgZ9Ym8c=");
 ;
 //# sourceMappingURL=main.dart.js_197.part.js.map
