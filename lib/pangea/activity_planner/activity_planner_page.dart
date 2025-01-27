@@ -1,9 +1,6 @@
-import 'package:flutter/material.dart';
+import 'dart:math';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:fluffychat/pangea/activity_planner/activity_list_view.dart';
 import 'package:fluffychat/pangea/activity_planner/activity_mode_list_repo.dart';
 import 'package:fluffychat/pangea/activity_planner/activity_plan_request.dart';
@@ -18,6 +15,9 @@ import 'package:fluffychat/pangea/instructions/instructions_inline_tooltip.dart'
 import 'package:fluffychat/pangea/learning_settings/constants/language_constants.dart';
 import 'package:fluffychat/pangea/learning_settings/widgets/p_language_dropdown.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:matrix/matrix.dart';
 
 enum _PageMode {
   settings,
@@ -47,6 +47,7 @@ class ActivityPlannerPageState extends State<ActivityPlannerPage> {
   String? _selectedLanguageOfInstructions;
   String? _selectedTargetLanguage;
   int? _selectedCefrLevel;
+  int? _selectedNumberOfParticipants;
 
   List<String> activities = [];
 
@@ -65,6 +66,7 @@ class ActivityPlannerPageState extends State<ActivityPlannerPage> {
     _selectedTargetLanguage =
         MatrixState.pangeaController.languageController.userL2?.langCode;
     _selectedCefrLevel = 0;
+    _selectedNumberOfParticipants = max(room?.getParticipants().length ?? 1, 1);
   }
 
   final _topicController = TextEditingController();
@@ -149,13 +151,34 @@ class ActivityPlannerPageState extends State<ActivityPlannerPage> {
                 icon: const Icon(Icons.arrow_back),
               ),
         title: _pageMode == _PageMode.savedActivities
-            ? Text(l10n.myBookmarkedActivities)
-            : Text(l10n.activityPlannerTitle),
+            ? Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.bookmarks),
+                    const SizedBox(width: 8),
+                    Text(l10n.myBookmarkedActivities),
+                  ],
+                ),
+              )
+            : Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.event_note_outlined),
+                    const SizedBox(width: 8),
+                    Text(l10n.activityPlannerTitle),
+                  ],
+                ),
+              ),
         actions: [
-          IconButton(
-            onPressed: () =>
-                setState(() => _pageMode = _PageMode.savedActivities),
-            icon: const Icon(Icons.bookmarks),
+          Tooltip(
+            message: l10n.myBookmarkedActivities,
+            child: IconButton(
+              onPressed: () =>
+                  setState(() => _pageMode = _PageMode.savedActivities),
+              icon: const Icon(Icons.bookmarks),
+            ),
           ),
         ],
       ),
@@ -172,6 +195,7 @@ class ActivityPlannerPageState extends State<ActivityPlannerPage> {
                       languageOfInstructions: _selectedLanguageOfInstructions!,
                       targetLanguage: _selectedTargetLanguage!,
                       cefrLevel: _selectedCefrLevel!,
+                      numberOfParticipants: _selectedNumberOfParticipants!,
                     ),
             )
           : Center(
@@ -277,6 +301,26 @@ class ActivityPlannerPageState extends State<ActivityPlannerPage> {
                             .pangeaController.languageController.userL2,
                         decorationText: L10n.of(context).targetLanguageLabel,
                         isL2List: true,
+                      ),
+                      const SizedBox(height: 24),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: l10n.numberOfLearners,
+                        ),
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return l10n.mustBeInteger;
+                          }
+                          final n = int.tryParse(value);
+                          if (n == null || n <= 0) {
+                            return l10n.mustBeInteger;
+                          }
+                          return null;
+                        },
+                        onChanged: (val) =>
+                            _selectedNumberOfParticipants = int.tryParse(val),
+                        initialValue: _selectedNumberOfParticipants?.toString(),
                       ),
                       const SizedBox(height: 24),
                       ElevatedButton(

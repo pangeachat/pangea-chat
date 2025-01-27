@@ -1,11 +1,5 @@
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:fluffychat/pangea/activity_planner/activity_plan_generation_repo.dart';
 import 'package:fluffychat/pangea/activity_planner/activity_plan_model.dart';
 import 'package:fluffychat/pangea/activity_planner/activity_plan_request.dart';
@@ -15,6 +9,11 @@ import 'package:fluffychat/pangea/common/constants/model_keys.dart';
 import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:matrix/matrix.dart';
+
 import 'activity_plan_card.dart';
 
 class ActivityListView extends StatefulWidget {
@@ -124,7 +123,15 @@ class ActivityListViewState extends State<ActivityListView> {
           );
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           if (showBookmarkedActivities) {
-            return Center(child: Text(l10n.noBookmarkedActivities));
+            return Center(
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 200),
+                child: Text(
+                  l10n.noBookmarkedActivities,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
           }
           return Center(child: Text(l10n.noDataFound));
         } else {

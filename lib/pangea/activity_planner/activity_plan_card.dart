@@ -1,14 +1,12 @@
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:material_symbols_icons/symbols.dart';
-
 import 'package:fluffychat/pangea/activity_planner/activity_plan_model.dart';
 import 'package:fluffychat/pangea/activity_planner/bookmarked_activities_repo.dart';
 import 'package:fluffychat/pangea/common/utils/error_handler.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class ActivityPlanCard extends StatefulWidget {
   final ActivityPlanModel activity;
@@ -35,6 +33,7 @@ class ActivityPlanCardState extends State<ActivityPlanCard> {
   late TextEditingController _learningObjectiveController;
   late TextEditingController _instructionsController;
   final TextEditingController _newVocabController = TextEditingController();
+  final FocusNode _vocabFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -47,7 +46,7 @@ class ActivityPlanCardState extends State<ActivityPlanCard> {
         TextEditingController(text: _tempActivity.instructions);
   }
 
-  static const double itemPadding = 8;
+  static const double itemPadding = 12;
 
   @override
   void dispose() {
@@ -55,6 +54,7 @@ class ActivityPlanCardState extends State<ActivityPlanCard> {
     _learningObjectiveController.dispose();
     _instructionsController.dispose();
     _newVocabController.dispose();
+    _vocabFocusNode.dispose();
     super.dispose();
   }
 
@@ -99,6 +99,7 @@ class ActivityPlanCardState extends State<ActivityPlanCard> {
     setState(() {
       _tempActivity.vocab.add(Vocab(lemma: _newVocabController.text, pos: ''));
       _newVocabController.clear();
+      _vocabFocusNode.requestFocus();
     });
   }
 
@@ -134,7 +135,7 @@ class ActivityPlanCardState extends State<ActivityPlanCard> {
                           ? TextField(
                               controller: _titleController,
                               decoration: InputDecoration(
-                                labelText: L10n.of(context).title,
+                                labelText: L10n.of(context).activityTitle,
                               ),
                               maxLines: null,
                             )
@@ -166,8 +167,8 @@ class ActivityPlanCardState extends State<ActivityPlanCard> {
                       child: _isEditing
                           ? TextField(
                               controller: _learningObjectiveController,
-                              decoration: const InputDecoration(
-                                labelText: 'Learning Objective',
+                              decoration: InputDecoration(
+                                labelText: l10n.learningObjectiveLabel,
                               ),
                               maxLines: null,
                             )
@@ -190,8 +191,8 @@ class ActivityPlanCardState extends State<ActivityPlanCard> {
                       child: _isEditing
                           ? TextField(
                               controller: _instructionsController,
-                              decoration: const InputDecoration(
-                                labelText: 'Instructions',
+                              decoration: InputDecoration(
+                                labelText: l10n.instructions,
                               ),
                               maxLines: null,
                             )
@@ -244,50 +245,62 @@ class ActivityPlanCardState extends State<ActivityPlanCard> {
                       ),
                     ],
                   ),
-                  if (_isEditing)
-                    Padding(
-                      padding: const EdgeInsets.only(top: itemPadding),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _newVocabController,
-                              decoration: const InputDecoration(
-                                labelText: 'Add Vocabulary',
-                              ),
-                            ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.add),
-                            onPressed: _addVocab,
-                          ),
-                        ],
-                      ),
-                    ),
                 ],
-                const SizedBox(height: 16),
+                if (_isEditing) ...[
+                  const SizedBox(height: itemPadding),
+                  Padding(
+                    padding: const EdgeInsets.only(top: itemPadding),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _newVocabController,
+                            focusNode: _vocabFocusNode,
+                            decoration: InputDecoration(
+                              labelText: l10n.addVocabulary,
+                            ),
+                            onSubmitted: (value) {
+                              _addVocab();
+                            },
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed: _addVocab,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+                const SizedBox(height: itemPadding),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       children: [
-                        IconButton(
-                          icon: Icon(!_isEditing ? Icons.edit : Icons.save),
-                          onPressed: () => !_isEditing
-                              ? setState(() {
-                                  _isEditing = true;
-                                })
-                              : _saveEdits(),
-                          isSelected: _isEditing,
+                        Tooltip(
+                          message: !_isEditing ? l10n.edit : l10n.saveChanges,
+                          child: IconButton(
+                            icon: Icon(!_isEditing ? Icons.edit : Icons.save),
+                            onPressed: () => !_isEditing
+                                ? setState(() {
+                                    _isEditing = true;
+                                  })
+                                : _saveEdits(),
+                            isSelected: _isEditing,
+                          ),
                         ),
                         if (_isEditing)
-                          IconButton(
-                            icon: const Icon(Icons.cancel),
-                            onPressed: () {
-                              setState(() {
-                                _isEditing = false;
-                              });
-                            },
+                          Tooltip(
+                            message: l10n.cancel,
+                            child: IconButton(
+                              icon: const Icon(Icons.cancel),
+                              onPressed: () {
+                                setState(() {
+                                  _isEditing = false;
+                                });
+                              },
+                            ),
                           ),
                       ],
                     ),
