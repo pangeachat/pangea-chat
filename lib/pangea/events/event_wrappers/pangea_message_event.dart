@@ -12,6 +12,7 @@ import 'package:fluffychat/pangea/choreographer/models/pangea_match_model.dart';
 import 'package:fluffychat/pangea/choreographer/repo/full_text_translation_repo.dart';
 import 'package:fluffychat/pangea/common/constants/model_keys.dart';
 import 'package:fluffychat/pangea/events/event_wrappers/pangea_representation_event.dart';
+import 'package:fluffychat/pangea/events/extensions/pangea_event_extension.dart';
 import 'package:fluffychat/pangea/events/models/representation_content_model.dart';
 import 'package:fluffychat/pangea/events/models/tokens_event_content_model.dart';
 import 'package:fluffychat/pangea/spaces/models/space_model.dart';
@@ -569,37 +570,22 @@ class PangeaMessageEvent {
     }
 
     final eligibleTokens = messageDisplayRepresentation!.tokens!.where(
-      (token) => token.shouldDoActivity(
+      (token) => token.isActivityBasicallyEligible(
+        ActivityTypeEnum.wordMeaning,
+      ),
+    );
+
+    if (eligibleTokens.isEmpty) return 1;
+
+    final alreadyDid = eligibleTokens.where(
+      (token) => !token.shouldDoActivity(
         a: ActivityTypeEnum.wordMeaning,
         feature: null,
         tag: null,
       ),
     );
 
-    final int total = eligibleTokens.length;
-    if (total == 0) return 1;
-
-    final didActivity = eligibleTokens.where(
-      (token) => token.didActivitySuccessfully(ActivityTypeEnum.wordMeaning),
-    );
-
-    final double proportion = 1 - ((total - didActivity.length) / total);
-
-    if (proportion < 0) {
-      debugger(when: kDebugMode);
-      ErrorHandler.logError(
-        m: "proportion of activities completed is less than 0",
-        data: {
-          "proportion": proportion,
-          "total": total,
-          "toDo": didActivity,
-          "tokens": messageDisplayRepresentation!.tokens,
-        },
-      );
-      return 0;
-    }
-
-    return proportion;
+    return alreadyDid.length / eligibleTokens.length;
   }
 
   String? get l2Code =>
@@ -704,4 +690,6 @@ class PangeaMessageEvent {
   /// Returns a list of [PracticeActivityEvent] for the user's active l2.
   List<PracticeActivityEvent> get practiceActivities =>
       l2Code == null ? [] : practiceActivitiesByLangCode(l2Code!);
+
+  bool get shouldShowToolbar => !event.isActivityMessage;
 }

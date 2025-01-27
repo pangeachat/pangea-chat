@@ -23,22 +23,28 @@ abstract class AppConfig {
   static const double messageFontSize = 16.0;
   static const bool allowOtherHomeservers = true;
   static const bool enableRegistration = true;
-  static const double toolbarMaxHeight = 440.0;
+  static const double toolbarMaxHeight = 300.0;
   static const double toolbarMinHeight = 175.0;
   static const double toolbarMinWidth = 350.0;
   static const double toolbarButtonsHeight = 50.0;
+  static const double defaultHeaderHeight = 56.0;
+  static const double defaultFooterHeight = 48.0;
+  static const double toolbarSpacing = 8.0;
   static TextStyle messageTextStyle(
-    Event event,
+    Event? event,
     Color textColor,
   ) {
     final fontSize = messageFontSize * fontSizeFactor;
-    final bigEmotes =
-        event.onlyEmotes && event.numberEmotes > 0 && event.numberEmotes <= 10;
+    final bigEmotes = event != null &&
+        event.onlyEmotes &&
+        event.numberEmotes > 0 &&
+        event.numberEmotes <= 10;
 
     return TextStyle(
       color: textColor,
       fontSize: bigEmotes ? fontSize * 5 : fontSize,
-      decoration: event.redacted ? TextDecoration.lineThrough : null,
+      decoration:
+          (event?.redacted ?? false) ? TextDecoration.lineThrough : null,
       height: 1.3,
     );
   }
@@ -164,6 +170,8 @@ abstract class AppConfig {
       "https://support.microsoft.com/en-us/topic/download-languages-and-voices-for-immersive-reader-read-mode-and-read-aloud-4c83a8d8-7486-42f7-8e46-2b0fdf753130";
   static String androidTTSDownloadInstructions =
       "https://support.google.com/accessibility/android/answer/6006983?hl=en";
+  static String svgAssetsBaseURL =
+      "https://pangea-chat-client-assets.s3.us-east-1.amazonaws.com";
   // Pangea#
 
   static void loadFromJson(Map<String, dynamic> json) {

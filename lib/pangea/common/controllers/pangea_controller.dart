@@ -186,7 +186,7 @@ class PangeaController {
 
       final List<Room> botDMs = [];
       for (final room in matrixState.client.rooms) {
-        if (await room.isBotDM) {
+        if (room.isBotDM) {
           botDMs.add(room);
         }
       }

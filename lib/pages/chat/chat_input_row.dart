@@ -1,11 +1,4 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
 import 'package:animations/animations.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:material_symbols_icons/symbols.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/send_button.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/start_igc_button.dart';
@@ -14,6 +7,12 @@ import 'package:fluffychat/pangea/toolbar/widgets/message_selection_overlay.dart
 import 'package:fluffychat/pangea/toolbar/widgets/pangea_reaction_picker.dart';
 import 'package:fluffychat/utils/other_party_can_receive.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:material_symbols_icons/symbols.dart';
+import 'package:matrix/matrix.dart';
+
 import '../../config/themes.dart';
 import 'chat.dart';
 import 'input_bar.dart';
@@ -39,7 +38,6 @@ class ChatInputRow extends StatelessWidget {
         controller.emojiPickerType == EmojiPickerType.reaction) {
       return const SizedBox.shrink();
     }
-    const height = 48.0;
 
     if (!controller.room.otherPartyCanReceiveMessages) {
       return Center(
@@ -55,6 +53,9 @@ class ChatInputRow extends StatelessWidget {
     }
 
     // #Pangea
+    // const height = 48.0;
+    const height = AppConfig.defaultFooterHeight;
+
     final activel1 =
         controller.pangeaController.languageController.activeL1Model();
     final activel2 =
@@ -328,8 +329,12 @@ class ChatInputRow extends StatelessWidget {
                           maxLines: 8,
                           autofocus: !PlatformInfos.isMobile,
                           keyboardType: TextInputType.multiline,
-                          textInputAction: AppConfig.sendOnEnter == true &&
-                                  PlatformInfos.isMobile
+                          // #Pangea
+                          // textInputAction: AppConfig.sendOnEnter == true &&
+                          textInputAction: AppConfig.sendOnEnter ??
+                                  true &&
+                                      // Pangea#
+                                      PlatformInfos.isMobile
                               ? TextInputAction.send
                               : null,
                           // #Pangea

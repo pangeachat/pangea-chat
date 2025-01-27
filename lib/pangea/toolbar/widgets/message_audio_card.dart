@@ -1,11 +1,6 @@
 import 'dart:developer';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
-import 'package:matrix/matrix.dart';
-
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pages/chat/events/audio_player.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/igc/card_error_widget.dart';
@@ -17,6 +12,9 @@ import 'package:fluffychat/pangea/toolbar/controllers/text_to_speech_controller.
 import 'package:fluffychat/pangea/toolbar/controllers/tts_controller.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/message_selection_overlay.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/toolbar_content_loading_indicator.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:matrix/matrix.dart';
 
 class MessageAudioCard extends StatefulWidget {
   final PangeaMessageEvent messageEvent;
@@ -205,6 +203,7 @@ class MessageAudioCardState extends State<MessageAudioCard> {
                       isOverlay: true,
                       chatController:
                           widget.overlayController.widget.chatController,
+                      overlayController: widget.overlayController,
                       // Pangea#
                     )
                   : const CardErrorWidget(

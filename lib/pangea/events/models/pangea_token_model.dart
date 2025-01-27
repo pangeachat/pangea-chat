@@ -1,13 +1,14 @@
 import 'dart:developer';
-import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 
 import 'package:collection/collection.dart';
 import 'package:matrix/matrix.dart';
 
+import 'package:fluffychat/pangea/analytics/constants/analytics_constants.dart';
 import 'package:fluffychat/pangea/analytics/enums/construct_type_enum.dart';
 import 'package:fluffychat/pangea/analytics/enums/construct_use_type_enum.dart';
+import 'package:fluffychat/pangea/analytics/enums/lemma_category_enum.dart';
 import 'package:fluffychat/pangea/analytics/extensions/client_analytics_extension.dart';
 import 'package:fluffychat/pangea/analytics/models/construct_use_model.dart';
 import 'package:fluffychat/pangea/analytics/models/constructs_model.dart';
@@ -19,6 +20,8 @@ import 'package:fluffychat/pangea/events/models/pangea_token_text_model.dart';
 import 'package:fluffychat/pangea/learning_settings/constants/language_constants.dart';
 import 'package:fluffychat/pangea/toolbar/enums/activity_type_enum.dart';
 import 'package:fluffychat/pangea/toolbar/models/practice_activity_model.dart';
+import 'package:fluffychat/pangea/toolbar/repo/lemma_activity_generator.dart';
+import 'package:fluffychat/pangea/toolbar/repo/lemma_meaning_activity_generator.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import '../../analytics/models/lemma.dart';
 import '../../common/constants/model_keys.dart';
@@ -174,7 +177,6 @@ class PangeaToken {
         "NOUN",
         "NUM",
         "PRON",
-        "PROPN",
         "SCONJ",
         "VERB",
       ].contains(pos) &&
@@ -211,7 +213,7 @@ class PangeaToken {
     );
   }
 
-  bool _isActivityBasicallyEligible(
+  bool isActivityBasicallyEligible(
     ActivityTypeEnum a, [
     String? morphFeature,
     String? morphTag,
@@ -314,14 +316,14 @@ class PangeaToken {
   ]) {
     switch (a) {
       case ActivityTypeEnum.wordMeaning:
-        if (daysSinceLastUseByType(ActivityTypeEnum.wordMeaning) < 1) {
+        if (daysSinceLastUseByType(ActivityTypeEnum.wordMeaning) < 7) {
           return false;
         }
 
         if (isContentWord) {
-          return vocabConstruct.points < 30;
+          return vocabConstruct.points < 3;
         } else if (canBeDefined) {
-          return vocabConstruct.points < 5;
+          return vocabConstruct.points < 2;
         } else {
           return false;
         }
@@ -398,10 +400,10 @@ class PangeaToken {
         );
         return distractors.isNotEmpty;
       case ActivityTypeEnum.wordMeaning:
-        return LemmaInfoRepo.getDistractorDefinitions(
+        return LemmaMeaningActivityGenerator.canGenerateDistractors(
           lemma.text,
-          1,
-        ).isNotEmpty;
+          pos,
+        );
       case ActivityTypeEnum.emoji:
       case ActivityTypeEnum.wordFocusListening:
       case ActivityTypeEnum.hiddenWordListening:
@@ -410,7 +412,8 @@ class PangeaToken {
   }
 
   Future<bool> canGenerateLemmaDistractors() async {
-    final distractors = await lemmaActivityDistractors(this);
+    final distractors =
+        await LemmaActivityGenerator().lemmaActivityDistractors(this);
     return distractors.isNotEmpty;
   }
 
@@ -420,7 +423,7 @@ class PangeaToken {
     required String? feature,
     required String? tag,
   }) {
-    return _isActivityBasicallyEligible(a, feature, tag) &&
+    return isActivityBasicallyEligible(a, feature, tag) &&
         _isActivityProbablyLevelAppropriate(a, feature, tag);
   }
 
@@ -565,37 +568,20 @@ class PangeaToken {
         category: pos,
       );
 
-  Room? get analyticsRoom {
-    final String? l2 =
-        MatrixState.pangeaController.languageController.userL2?.langCode;
-
-    if (l2 == null) {
-      debugger(when: kDebugMode);
-      return null;
-    }
-
-    final Room? analyticsRoom =
-        MatrixState.pangeaController.matrixState.client.analyticsRoomLocal(l2);
-
-    if (analyticsRoom == null) {
-      debugger(when: kDebugMode);
-    }
-
-    return analyticsRoom;
-  }
-
   /// [setEmoji] sets the emoji for the lemma
   /// NOTE: assumes that the language of the lemma is the same as the user's current l2
   Future<void> setEmoji(String emoji) async {
+    final analyticsRoom =
+        MatrixState.pangeaController.matrixState.client.analyticsRoomLocal();
     if (analyticsRoom == null) return;
     try {
       final client = MatrixState.pangeaController.matrixState.client;
       final syncFuture = client.onRoomState.stream.firstWhere((event) {
-        return event.roomId == analyticsRoom!.id &&
+        return event.roomId == analyticsRoom.id &&
             event.state.type == PangeaEventTypes.userChosenEmoji;
       });
       client.setRoomStateWithKey(
-        analyticsRoom!.id,
+        analyticsRoom.id,
         PangeaEventTypes.userChosenEmoji,
         vocabConstructID.string,
         {ModelKey.emoji: emoji},
@@ -617,6 +603,8 @@ class PangeaToken {
   /// [getEmoji] gets the emoji for the lemma
   /// NOTE: assumes that the language of the lemma is the same as the user's current l2
   String? getEmoji() {
+    final analyticsRoom =
+        MatrixState.pangeaController.matrixState.client.analyticsRoomLocal();
     return analyticsRoom
         ?.getState(PangeaEventTypes.userChosenEmoji, vocabConstructID.string)
         ?.content
@@ -633,6 +621,16 @@ class PangeaToken {
     } else {
       // flower emoji
       return "🌺";
+    }
+  }
+
+  LemmaCategoryEnum get lemmaXPCategory {
+    if (vocabConstruct.points >= AnalyticsConstants.xpForFlower) {
+      return LemmaCategoryEnum.flowers;
+    } else if (vocabConstruct.points >= AnalyticsConstants.xpForGreens) {
+      return LemmaCategoryEnum.greens;
+    } else {
+      return LemmaCategoryEnum.seeds;
     }
   }
 
@@ -656,73 +654,5 @@ class PangeaToken {
 
     possibleDistractors.shuffle();
     return possibleDistractors.take(3).toList();
-  }
-
-  Future<List<String>> lemmaActivityDistractors(PangeaToken token) async {
-    final List<String> lemmas = MatrixState
-        .pangeaController.getAnalytics.constructListModel
-        .constructList(type: ConstructTypeEnum.vocab)
-        .map((c) => c.lemma)
-        .toSet()
-        .toList();
-
-    // Offload computation to an isolate
-    final Map<String, int> distances =
-        await compute(_computeDistancesInIsolate, {
-      'lemmas': lemmas,
-      'target': token.lemma.text,
-    });
-
-    // Sort lemmas by distance
-    final sortedLemmas = distances.keys.toList()
-      ..sort((a, b) => distances[a]!.compareTo(distances[b]!));
-
-    // Take the shortest 4
-    final choices = sortedLemmas.take(4).toList();
-    if (!choices.contains(token.lemma.text)) {
-      final random = Random();
-      choices[random.nextInt(4)] = token.lemma.text;
-    }
-    return choices;
-  }
-
-  // isolate helper function
-  Map<String, int> _computeDistancesInIsolate(Map<String, dynamic> params) {
-    final List<String> lemmas = params['lemmas'];
-    final String target = params['target'];
-
-    // Calculate Levenshtein distances
-    final Map<String, int> distances = {};
-    for (final lemma in lemmas) {
-      distances[lemma] = levenshteinDistanceSync(target, lemma);
-    }
-    return distances;
-  }
-
-  int levenshteinDistanceSync(String s, String t) {
-    final int m = s.length;
-    final int n = t.length;
-    final List<List<int>> dp = List.generate(
-      m + 1,
-      (_) => List.generate(n + 1, (_) => 0),
-    );
-
-    for (int i = 0; i <= m; i++) {
-      for (int j = 0; j <= n; j++) {
-        if (i == 0) {
-          dp[i][j] = j;
-        } else if (j == 0) {
-          dp[i][j] = i;
-        } else if (s[i - 1] == t[j - 1]) {
-          dp[i][j] = dp[i - 1][j - 1];
-        } else {
-          dp[i][j] = 1 +
-              [dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]]
-                  .reduce((a, b) => a < b ? a : b);
-        }
-      }
-    }
-
-    return dp[m][n];
   }
 }

@@ -44,8 +44,6 @@ part "room_user_permissions_extension.dart";
 extension PangeaRoom on Room {
 // analytics
 
-  Future<void> joinAnalyticsRooms() async => await _joinAnalyticsRooms();
-
   Future<DateTime?> analyticsLastUpdated(String userId) async {
     return await _analyticsLastUpdated(userId);
   }
@@ -172,6 +170,17 @@ extension PangeaRoom on Room {
         messageTag: messageTag,
       );
 
+  String sendFakeMessage({
+    required String text,
+    Event? inReplyTo,
+    String? editEventId,
+  }) =>
+      _sendFakeMessage(
+        text: text,
+        inReplyTo: inReplyTo,
+        editEventId: editEventId,
+      );
+
 // room_information
 
   Future<int> get numNonAdmins async => await _numNonAdmins;
@@ -186,7 +195,7 @@ extension PangeaRoom on Room {
 
   Future<bool> get botIsInRoom async => await _botIsInRoom;
 
-  Future<bool> get isBotDM async => await _isBotDM;
+  bool get isBotDM => _isBotDM;
 
   // bool get isLocked => _isLocked;
 
