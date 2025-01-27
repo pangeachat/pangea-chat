@@ -4453,13 +4453,13 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "No emoji selected";
     },
     get$writingExercisesTooltip() {
-      return "Writing exercises";
+      return "Writing activities";
     },
     get$listeningExercisesTooltip() {
-      return "Listening exercises";
+      return "Listening activities";
     },
     get$readingExercisesTooltip() {
-      return "Reading exercises";
+      return "Reading activities";
     },
     get$meaningNotFound() {
       return "Meaning could not be found.";
@@ -4656,6 +4656,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$noBookmarkedActivities() {
       return "No bookmarked activities";
     },
+    get$noLemmasFound() {
+      return "No lemmas found";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4671,6 +4674,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_251", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "e9l/zBdweOThbZIqK+Blel8Bbq8=");
+})($__dart_deferred_initializers__, "id5MKXoCy6l3Q/+Ysj1yE46bjAg=");
 ;
 //# sourceMappingURL=main.dart.js_251.part.js.map
