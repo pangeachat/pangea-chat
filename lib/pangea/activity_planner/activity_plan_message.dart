@@ -117,6 +117,7 @@ class ActivityPlanMessage extends StatelessWidget {
                                     borderRadius: borderRadius,
                                     controller: controller,
                                     immersionMode: false,
+                                    timeline: timeline,
                                   ),
                                   if (event.hasAggregatedEvents(
                                     timeline,
