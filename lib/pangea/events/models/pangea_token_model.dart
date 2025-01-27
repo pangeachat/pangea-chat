@@ -5,8 +5,10 @@ import 'package:flutter/foundation.dart';
 import 'package:collection/collection.dart';
 import 'package:matrix/matrix.dart';
 
+import 'package:fluffychat/pangea/analytics/constants/analytics_constants.dart';
 import 'package:fluffychat/pangea/analytics/enums/construct_type_enum.dart';
 import 'package:fluffychat/pangea/analytics/enums/construct_use_type_enum.dart';
+import 'package:fluffychat/pangea/analytics/enums/lemma_category_enum.dart';
 import 'package:fluffychat/pangea/analytics/extensions/client_analytics_extension.dart';
 import 'package:fluffychat/pangea/analytics/models/construct_use_model.dart';
 import 'package:fluffychat/pangea/analytics/models/constructs_model.dart';
@@ -321,7 +323,7 @@ class PangeaToken {
         if (isContentWord) {
           return vocabConstruct.points < 3;
         } else if (canBeDefined) {
-          return vocabConstruct.points < 1;
+          return vocabConstruct.points < 2;
         } else {
           return false;
         }
@@ -566,37 +568,20 @@ class PangeaToken {
         category: pos,
       );
 
-  Room? get analyticsRoom {
-    final String? l2 =
-        MatrixState.pangeaController.languageController.userL2?.langCode;
-
-    if (l2 == null) {
-      debugger(when: kDebugMode);
-      return null;
-    }
-
-    final Room? analyticsRoom =
-        MatrixState.pangeaController.matrixState.client.analyticsRoomLocal(l2);
-
-    if (analyticsRoom == null) {
-      debugger(when: kDebugMode);
-    }
-
-    return analyticsRoom;
-  }
-
   /// [setEmoji] sets the emoji for the lemma
   /// NOTE: assumes that the language of the lemma is the same as the user's current l2
   Future<void> setEmoji(String emoji) async {
+    final analyticsRoom =
+        MatrixState.pangeaController.matrixState.client.analyticsRoomLocal();
     if (analyticsRoom == null) return;
     try {
       final client = MatrixState.pangeaController.matrixState.client;
       final syncFuture = client.onRoomState.stream.firstWhere((event) {
-        return event.roomId == analyticsRoom!.id &&
+        return event.roomId == analyticsRoom.id &&
             event.state.type == PangeaEventTypes.userChosenEmoji;
       });
       client.setRoomStateWithKey(
-        analyticsRoom!.id,
+        analyticsRoom.id,
         PangeaEventTypes.userChosenEmoji,
         vocabConstructID.string,
         {ModelKey.emoji: emoji},
@@ -618,6 +603,8 @@ class PangeaToken {
   /// [getEmoji] gets the emoji for the lemma
   /// NOTE: assumes that the language of the lemma is the same as the user's current l2
   String? getEmoji() {
+    final analyticsRoom =
+        MatrixState.pangeaController.matrixState.client.analyticsRoomLocal();
     return analyticsRoom
         ?.getState(PangeaEventTypes.userChosenEmoji, vocabConstructID.string)
         ?.content
@@ -634,6 +621,16 @@ class PangeaToken {
     } else {
       // flower emoji
       return "🌺";
+    }
+  }
+
+  LemmaCategoryEnum get lemmaXPCategory {
+    if (vocabConstruct.points >= AnalyticsConstants.xpForFlower) {
+      return LemmaCategoryEnum.flowers;
+    } else if (vocabConstruct.points >= AnalyticsConstants.xpForGreens) {
+      return LemmaCategoryEnum.greens;
+    } else {
+      return LemmaCategoryEnum.seeds;
     }
   }
 

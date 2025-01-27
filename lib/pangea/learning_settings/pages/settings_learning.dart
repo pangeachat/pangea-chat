@@ -33,19 +33,21 @@ class SettingsLearningController extends State<SettingsLearning> {
     super.dispose();
   }
 
-  setPublicProfile(bool isPublic) {
+  void setPublicProfile(bool isPublic) {
     pangeaController.userController.updateProfile(
       (profile) {
         // set user DOB to younger that 18 if private and older than 18 if public
-        if (isPublic) {
-          profile.userSettings.dateOfBirth = DateTime.now().subtract(
-            const Duration(days: 18 * 365),
-          );
-        } else {
-          profile.userSettings.dateOfBirth = DateTime.now().subtract(
-            const Duration(days: 17 * 365),
-          );
-        }
+        profile.userSettings.publicProfile = isPublic;
+        return profile;
+      },
+    );
+    setState(() {});
+  }
+
+  void setCefrLevel(int? cefrLevel) {
+    pangeaController.userController.updateProfile(
+      (profile) {
+        profile.userSettings.cefrLevel = cefrLevel;
         return profile;
       },
     );
@@ -102,11 +104,10 @@ class SettingsLearningController extends State<SettingsLearning> {
   }
 
   bool get publicProfile =>
-      pangeaController.userController.profile.userSettings.dateOfBirth
-          ?.isBefore(
-        DateTime.now().subtract(const Duration(days: 18 * 365)),
-      ) ??
-      false;
+      pangeaController.userController.profile.userSettings.publicProfile;
+
+  int? get cefrLevel =>
+      pangeaController.userController.profile.userSettings.cefrLevel;
 
   @override
   Widget build(BuildContext context) {

@@ -103,18 +103,16 @@ class IgcController {
         _initializeCacheClearing();
       }
 
-      // Check if cached data exists
-      if (_igcTextDataCache.containsKey(reqBody.hashCode)) {
-        igcTextData = await _igcTextDataCache[reqBody.hashCode]!.data;
-        return;
+      // if the request is not in the cache, add it
+      if (!_igcTextDataCache.containsKey(reqBody.hashCode)) {
+        _igcTextDataCache[reqBody.hashCode] = _IGCTextDataCacheItem(
+          data: IgcRepo.getIGC(
+            choreographer.accessToken,
+            igcRequest: reqBody,
+          ),
+        );
       }
 
-      final igcFuture = IgcRepo.getIGC(
-        choreographer.accessToken,
-        igcRequest: reqBody,
-      );
-      _igcTextDataCache[reqBody.hashCode] =
-          _IGCTextDataCacheItem(data: igcFuture);
       final IGCTextData igcTextDataResponse =
           await _igcTextDataCache[reqBody.hashCode]!.data;
 
