@@ -20,7 +20,6 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
-      - run: flutter pub get
 
       - name: Auto-format Dart code
         run: |
