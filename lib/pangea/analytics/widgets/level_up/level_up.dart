@@ -1,9 +1,27 @@
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pangea/analytics/constants/analytics_constants.dart';
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:http/http.dart' as http;
+
+import 'package:fluffychat/config/app_config.dart';
+import 'package:fluffychat/pangea/analytics/constants/analytics_constants.dart';
+
+class LevelUpUtil {
+  static void showLevelUpDialog(
+    int level,
+    BuildContext context,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => LevelUpAnimation(
+        level: level,
+      ),
+    );
+  }
+}
 
 class LevelUpAnimation extends StatefulWidget {
   final int level;
