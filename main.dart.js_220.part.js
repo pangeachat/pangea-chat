@@ -3162,9 +3162,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$commandHint_unignore() {
       return "Designorar el ID de matriz dado";
     },
-    get$accuracy(_) {
-      return "Precisi\xf3n";
-    },
     get$conversationBotModeSelectDescription() {
       return "Modo bot";
     },
@@ -3280,7 +3277,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Pr\xe1ctica";
     },
     get$speechToTextBody() {
-      return "Ve qu\xe9 tan bien lo hiciste al mirar tus puntajes de Precisi\xf3n y Palabras Por Minuto.";
+      return "Para los mensajes de voz, puedes ver una transcripci\xf3n y la puntuaci\xf3n de palabras por minuto del orador.";
     },
     get$versionNotFound() {
       return "Versi\xf3n no encontrada";
@@ -4674,6 +4671,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$noLemmasFound() {
       return "No lemmas found";
     },
+    get$constructUsePvmDesc() {
+      return "Produced in voice message";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4689,6 +4689,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_220", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "woAjucZepP1ppFhnwNsR4zzP57c=");
+})($__dart_deferred_initializers__, "BOaAlgiX9d05vJSll6jmltuux2U=");
 ;
 //# sourceMappingURL=main.dart.js_220.part.js.map

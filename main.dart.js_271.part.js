@@ -3162,9 +3162,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$commandHint_unignore() {
       return "\u041d\u0435 \u0438\u0433\u043d\u043e\u0440\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0434\u0430\u043d\u043d\u044b\u0439 matrix ID";
     },
-    get$accuracy(_) {
-      return "Accuracy";
-    },
     get$conversationBotModeSelectDescription() {
       return "Chat activity";
     },
@@ -3280,7 +3277,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Practice";
     },
     get$speechToTextBody() {
-      return "See how well you did by looking at your Accuracy and Words Per Minute scores";
+      return "For voice messages, you can see a transcript as well as the speaker's Words Per Minute score.";
     },
     get$versionNotFound() {
       return "Version Not Found";
@@ -4674,6 +4671,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$noLemmasFound() {
       return "No lemmas found";
     },
+    get$constructUsePvmDesc() {
+      return "Produced in voice message";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4689,6 +4689,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_271", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "i/8I3d+Zgp4q0jum1Xvfj7QR+cg=");
+})($__dart_deferred_initializers__, "rCWsbh+j+yWEZr39yIceKJVgMuc=");
 ;
 //# sourceMappingURL=main.dart.js_271.part.js.map

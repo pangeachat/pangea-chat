@@ -3162,9 +3162,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$commandHint_unignore() {
       return "Unignore the given matrix ID";
     },
-    get$accuracy(_) {
-      return "Accuracy";
-    },
     get$conversationBotModeSelectDescription() {
       return "Chat activity";
     },
@@ -3280,7 +3277,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Practice";
     },
     get$speechToTextBody() {
-      return "See how well you did by looking at your Accuracy and Words Per Minute scores";
+      return "For voice messages, you can see a transcript as well as the speaker's Words Per Minute score.";
     },
     get$versionNotFound() {
       return "Version Not Found";
@@ -4674,6 +4671,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$noLemmasFound() {
       return "No lemmas found";
     },
+    get$constructUsePvmDesc() {
+      return "Produced in voice message";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4689,6 +4689,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_276", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "J33I3oM1M8gG5wakDJERthen+qE=");
+})($__dart_deferred_initializers__, "bxZWRBzYBKMey6YiW8E8yazpGvU=");
 ;
 //# sourceMappingURL=main.dart.js_276.part.js.map
