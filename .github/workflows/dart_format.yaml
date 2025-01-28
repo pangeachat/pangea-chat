@@ -12,17 +12,18 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
 
       - run: cat .github/workflows/versions.env >> $GITHUB_ENV
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
-      - run: flutter pub get
+      # - run: flutter pub get
 
       - name: Auto-format Dart code
         run: |
-          git checkout ${{ github.ref_name }}
           dart format lib/ test/
           dart run import_sorter:main --no-comments
           git config user.name "github-actions[bot]"
