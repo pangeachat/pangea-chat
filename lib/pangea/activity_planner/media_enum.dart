@@ -11,7 +11,7 @@ enum MediaEnum {
 
 extension MediaEnumExtension on MediaEnum {
   //fromString
-  static MediaEnum fromString(String value) {
+  MediaEnum fromString(String value) {
     switch (value) {
       case 'images':
         return MediaEnum.images;
