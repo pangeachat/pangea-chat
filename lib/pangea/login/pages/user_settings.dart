@@ -10,6 +10,7 @@ import 'package:matrix/matrix.dart';
 import 'package:fluffychat/pangea/common/constants/local.key.dart';
 import 'package:fluffychat/pangea/common/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/common/utils/error_handler.dart';
+import 'package:fluffychat/pangea/learning_settings/enums/language_level_type_enum.dart';
 import 'package:fluffychat/pangea/learning_settings/models/language_model.dart';
 import 'package:fluffychat/pangea/learning_settings/utils/language_list_util.dart';
 import 'package:fluffychat/pangea/login/pages/user_settings_view.dart';
@@ -28,6 +29,7 @@ class UserSettingsState extends State<UserSettingsPage> {
   PangeaController get _pangeaController => MatrixState.pangeaController;
 
   LanguageModel? selectedTargetLanguage;
+  LanguageLevelTypeEnum selectedCefrLevel = LanguageLevelTypeEnum.a1;
 
   String? selectedLanguageError;
   String? profileCreationError;
@@ -94,6 +96,12 @@ class UserSettingsState extends State<UserSettingsPage> {
     setState(() {
       selectedTargetLanguage = language;
       selectedLanguageError = null;
+    });
+  }
+
+  void setSelectedCefrLevel(LanguageLevelTypeEnum? cefrLevel) {
+    setState(() {
+      selectedCefrLevel = cefrLevel ?? LanguageLevelTypeEnum.a1;
     });
   }
 
@@ -201,6 +209,7 @@ class UserSettingsState extends State<UserSettingsPage> {
             }
             profile.userSettings.targetLanguage =
                 selectedTargetLanguage!.langCode;
+            profile.userSettings.cefrLevel = selectedCefrLevel;
             profile.userSettings.createdAt = DateTime.now();
             return profile;
           },

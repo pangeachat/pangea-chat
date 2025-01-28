@@ -195,7 +195,7 @@ extension PangeaRoom on Room {
 
   Future<bool> get botIsInRoom async => await _botIsInRoom;
 
-  Future<bool> get isBotDM async => await _isBotDM;
+  bool get isBotDM => _isBotDM;
 
   // bool get isLocked => _isLocked;
 
