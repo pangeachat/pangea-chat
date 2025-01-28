@@ -1,21 +1,22 @@
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/pages/chat/chat.dart';
-import 'package:fluffychat/pages/chat/events/room_creation_state_event.dart';
-import 'package:fluffychat/pangea/enum/use_type.dart';
-import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
-import 'package:fluffychat/pangea/utils/any_state_holder.dart';
-import 'package:fluffychat/pangea/widgets/chat/message_buttons.dart';
-import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
-import 'package:fluffychat/pangea/widgets/pressable_button.dart';
-import 'package:fluffychat/utils/date_time_extension.dart';
-import 'package:fluffychat/utils/string_color.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/matrix.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
 import 'package:swipe_to_action/swipe_to_action.dart';
 
+import 'package:fluffychat/config/themes.dart';
+import 'package:fluffychat/pages/chat/chat.dart';
+import 'package:fluffychat/pages/chat/events/room_creation_state_event.dart';
+import 'package:fluffychat/pangea/choreographer/enums/use_type.dart';
+import 'package:fluffychat/pangea/common/utils/any_state_holder.dart';
+import 'package:fluffychat/pangea/common/widgets/pressable_button.dart';
+import 'package:fluffychat/pangea/events/event_wrappers/pangea_message_event.dart';
+import 'package:fluffychat/pangea/toolbar/widgets/message_buttons.dart';
+import 'package:fluffychat/pangea/toolbar/widgets/message_selection_overlay.dart';
+import 'package:fluffychat/utils/date_time_extension.dart';
+import 'package:fluffychat/utils/string_color.dart';
+import 'package:fluffychat/widgets/avatar.dart';
+import 'package:fluffychat/widgets/matrix.dart';
 import '../../../config/app_config.dart';
 import 'message_content.dart';
 import 'message_reactions.dart';
@@ -153,8 +154,13 @@ class Message extends StatelessWidget {
         previousEvent!.senderId == event.senderId &&
         previousEvent!.originServerTs.sameEnvironment(event.originServerTs);
 
-    final textColor =
-        ownMessage ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface;
+    final textColor = ownMessage
+        ?
+        // #Pangea
+        // theme.colorScheme.onPrimary
+        ThemeData.dark().colorScheme.onPrimary
+        // Pangea#
+        : theme.colorScheme.onSurface;
     final rowMainAxisAlignment =
         ownMessage ? MainAxisAlignment.end : MainAxisAlignment.start;
 
@@ -188,7 +194,13 @@ class Message extends StatelessWidget {
     if (ownMessage) {
       color = displayEvent.status.isError
           ? Colors.redAccent
-          : theme.colorScheme.primary;
+          // #Pangea
+          // : ThemeData.dark().colorScheme.primary;
+          : Color.alphaBlend(
+              Colors.white.withAlpha(180),
+              ThemeData.dark().colorScheme.primary,
+            );
+      // Pangea#
     }
 
     final resetAnimateIn = this.resetAnimateIn;
@@ -391,8 +403,6 @@ class Message extends StatelessWidget {
                                         showToolbar(pangeaMessageEvent);
                                       },
                                       color: color,
-                                      clickPlayer:
-                                          controller.choreographer.clickPlayer,
                                       child:
                                           // Pangea#
                                           Container(
@@ -521,7 +531,6 @@ class Message extends StatelessWidget {
                                                   controller: controller,
                                                   nextEvent: nextEvent,
                                                   prevEvent: previousEvent,
-                                                  isButton: isButton,
                                                   // Pangea#
                                                 ),
                                                 if (event.hasAggregatedEvents(

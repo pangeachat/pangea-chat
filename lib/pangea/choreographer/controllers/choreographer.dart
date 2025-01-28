@@ -1,34 +1,34 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+
+import 'package:sentry_flutter/sentry_flutter.dart';
+
 import 'package:fluffychat/pages/chat/chat.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/alternative_translator.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/igc_controller.dart';
-import 'package:fluffychat/pangea/constants/language_constants.dart';
-import 'package:fluffychat/pangea/controllers/pangea_controller.dart';
-import 'package:fluffychat/pangea/controllers/subscription_controller.dart';
-import 'package:fluffychat/pangea/enum/assistance_state_enum.dart';
-import 'package:fluffychat/pangea/enum/edit_type.dart';
-import 'package:fluffychat/pangea/models/it_step.dart';
-import 'package:fluffychat/pangea/models/pangea_token_model.dart';
-import 'package:fluffychat/pangea/models/representation_content_model.dart';
-import 'package:fluffychat/pangea/models/space_model.dart';
-import 'package:fluffychat/pangea/models/tokens_event_content_model.dart';
-import 'package:fluffychat/pangea/utils/any_state_holder.dart';
-import 'package:fluffychat/pangea/utils/error_handler.dart';
-import 'package:fluffychat/pangea/utils/overlay.dart';
-import 'package:fluffychat/pangea/utils/play_click_sound.dart';
-import 'package:fluffychat/pangea/widgets/chat/tts_controller.dart';
-import 'package:fluffychat/pangea/widgets/igc/paywall_card.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-
+import 'package:fluffychat/pangea/choreographer/enums/assistance_state_enum.dart';
+import 'package:fluffychat/pangea/choreographer/enums/edit_type.dart';
+import 'package:fluffychat/pangea/choreographer/models/it_step.dart';
+import 'package:fluffychat/pangea/choreographer/widgets/igc/paywall_card.dart';
+import 'package:fluffychat/pangea/common/controllers/pangea_controller.dart';
+import 'package:fluffychat/pangea/common/utils/any_state_holder.dart';
+import 'package:fluffychat/pangea/common/utils/error_handler.dart';
+import 'package:fluffychat/pangea/common/utils/overlay.dart';
+import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
+import 'package:fluffychat/pangea/events/models/representation_content_model.dart';
+import 'package:fluffychat/pangea/events/models/tokens_event_content_model.dart';
+import 'package:fluffychat/pangea/learning_settings/constants/language_constants.dart';
+import 'package:fluffychat/pangea/spaces/models/space_model.dart';
+import 'package:fluffychat/pangea/subscription/controllers/subscription_controller.dart';
+import 'package:fluffychat/pangea/toolbar/controllers/tts_controller.dart';
 import '../../../widgets/matrix.dart';
-import '../../models/choreo_record.dart';
-import '../../models/language_model.dart';
-import '../../models/pangea_match_model.dart';
-import '../../widgets/igc/pangea_text_controller.dart';
+import '../../learning_settings/models/language_model.dart';
+import '../models/choreo_record.dart';
+import '../models/pangea_match_model.dart';
+import '../widgets/igc/pangea_text_controller.dart';
 import 'error_service.dart';
 import 'it_controller.dart';
 
@@ -43,10 +43,11 @@ class Choreographer {
   late AlternativeTranslator altTranslator;
   late ErrorService errorService;
   final tts = TtsController();
-  final clickPlayer = ClickPlayer();
 
   bool isFetching = false;
   int _timesClicked = 0;
+
+  final int msBeforeIGCStart = 10000;
 
   Timer? debounceTimer;
   ChoreoRecord choreoRecord = ChoreoRecord.newRecord;
@@ -77,24 +78,36 @@ class Choreographer {
 
   void send(BuildContext context) {
     debugPrint("can send message: $canSendMessage");
-    if (!canSendMessage) {
-      if (igc.igcTextData != null && igc.igcTextData!.matches.isNotEmpty) {
-        igc.showFirstMatch(context);
-      }
+
+    // if isFetching, already called to getLanguageHelp and hasn't completed yet
+    // could happen if user clicked send button multiple times in a row
+    if (isFetching) return;
+
+    if (igc.igcTextData != null && igc.igcTextData!.matches.isNotEmpty) {
+      igc.showFirstMatch(context);
+      return;
+    } else if (isRunningIT) {
+      // If the user is in the middle of IT, don't send the message.
+      // If they've already clicked the send button once, this will
+      // not be true, so they can still send it if they want.
       return;
     }
 
-    if (pangeaController.subscriptionController.subscriptionStatus ==
-        SubscriptionStatus.showPaywall) {
-      OverlayUtil.showPositionedCard(
-        context: context,
-        cardToShow: PaywallCard(
-          chatController: chatController,
-        ),
-        maxHeight: 325,
-        maxWidth: 325,
-        transformTargetId: inputTransformTargetKey,
-      );
+    if (!pangeaController.subscriptionController.isSubscribed) {
+      // don't want to run IGC if user isn't subscribed, so either
+      // show the paywall if applicable or just send the message
+      final status = pangeaController.subscriptionController.subscriptionStatus;
+      status == SubscriptionStatus.showPaywall
+          ? OverlayUtil.showPositionedCard(
+              context: context,
+              cardToShow: PaywallCard(
+                chatController: chatController,
+              ),
+              maxHeight: 325,
+              maxWidth: 325,
+              transformTargetId: inputTransformTargetKey,
+            )
+          : chatController.send();
       return;
     }
 
@@ -107,7 +120,11 @@ class Choreographer {
 
   Future<void> _sendWithIGC(BuildContext context) async {
     if (!canSendMessage) {
-      igc.showFirstMatch(context);
+      // It's possible that the reason user can't send message is because they're in the middle of IT. If this is the case,
+      // do nothing (there's no matches to show). The user can click the send button again to override this.
+      if (!isRunningIT) {
+        igc.showFirstMatch(context);
+      }
       return;
     }
 
@@ -141,6 +158,7 @@ class Choreographer {
           "choreoRecord": choreoRecord.toJson(),
         },
       );
+
       await igc.getIGCTextData(onlyTokensAndLanguageDetection: true);
     }
 
@@ -237,7 +255,7 @@ class Choreographer {
 
     if (editTypeIsKeyboard) {
       debounceTimer ??= Timer(
-        const Duration(milliseconds: 1500),
+        Duration(milliseconds: msBeforeIGCStart),
         () => getLanguageHelp(),
       );
     } else {
@@ -365,12 +383,17 @@ class Choreographer {
       igc.igcTextData!.matches[matchIndex].match.choices![choiceIndex]
           .selected = true;
 
+      final isNormalizationError =
+          igc.spanDataController.isNormalizationError(matchIndex);
+
       //if it's the right choice, replace in text
-      choreoRecord.addRecord(
-        _textController.text,
-        match: igc.igcTextData!.matches[matchIndex].copyWith
-          ..status = PangeaMatchStatus.accepted,
-      );
+      if (!isNormalizationError) {
+        choreoRecord.addRecord(
+          _textController.text,
+          match: igc.igcTextData!.matches[matchIndex].copyWith
+            ..status = PangeaMatchStatus.accepted,
+        );
+      }
 
       igc.igcTextData!.acceptReplacement(
         matchIndex,
@@ -397,7 +420,6 @@ class Choreographer {
       );
       igc.igcTextData?.matches.clear();
     } finally {
-      giveInputFocus();
       setState();
     }
   }
@@ -423,11 +445,18 @@ class Choreographer {
         throw Exception("Cannot find the ignored match in igcTextData");
       }
 
+      igc.onIgnoreMatch(igc.igcTextData!.matches[matchIndex]);
       igc.igcTextData!.matches[matchIndex].status = PangeaMatchStatus.ignored;
-      choreoRecord.addRecord(
-        _textController.text,
-        match: igc.igcTextData!.matches[matchIndex],
-      );
+
+      final isNormalizationError =
+          igc.spanDataController.isNormalizationError(matchIndex);
+
+      if (!isNormalizationError) {
+        choreoRecord.addRecord(
+          _textController.text,
+          match: igc.igcTextData!.matches[matchIndex],
+        );
+      }
 
       igc.igcTextData!.matches.removeAt(matchIndex);
     } catch (err, stack) {
@@ -447,7 +476,6 @@ class Choreographer {
       igc.igcTextData?.matches.clear();
     } finally {
       setState();
-      giveInputFocus();
     }
   }
 
@@ -511,7 +539,6 @@ class Choreographer {
     _textController.dispose();
     trialStream?.cancel();
     tts.dispose();
-    clickPlayer.dispose();
   }
 
   LanguageModel? get l2Lang {
@@ -631,6 +658,10 @@ class Choreographer {
       );
 
   AssistanceState get assistanceState {
+    if (!pangeaController.subscriptionController.isSubscribed) {
+      return AssistanceState.noSub;
+    }
+
     if (currentText.isEmpty && itController.sourceText == null) {
       return AssistanceState.noMessage;
     }

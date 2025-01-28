@@ -1,7 +1,7 @@
-import 'package:fluffychat/pangea/choreographer/controllers/choreographer.dart';
 import 'package:flutter/material.dart';
 
-import '../../utils/error_handler.dart';
+import 'package:fluffychat/pangea/choreographer/controllers/choreographer.dart';
+import '../../common/utils/error_handler.dart';
 
 enum ChoreoErrorType {
   unknown,

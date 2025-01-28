@@ -1,9 +1,10 @@
 import 'dart:async';
 
-import 'package:fluffychat/pangea/enum/assistance_state_enum.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 
+import 'package:fluffychat/pangea/choreographer/enums/assistance_state_enum.dart';
 import '../../../pages/chat/chat.dart';
 
 class ChoreographerSendButton extends StatefulWidget {
@@ -40,27 +41,19 @@ class ChoreographerSendButtonState extends State<ChoreographerSendButton> {
 
   @override
   Widget build(BuildContext context) {
-    return
-        // widget.controller.choreographer.isFetching &&
-        //         widget.controller.choreographer.isAutoIGCEnabled
-        //     ? Container(
-        //         height: 56,
-        //         width: 56,
-        //         padding: const EdgeInsets.all(13),
-        //         child: const CircularProgressIndicator(),
-        //       )
-        //     :
-        Container(
+    return Container(
       height: 56,
       alignment: Alignment.center,
       child: IconButton(
         icon: const Icon(Icons.send_outlined),
         color:
             widget.controller.choreographer.assistanceState.stateColor(context),
-        onPressed: () {
-          widget.controller.choreographer.incrementTimesClicked();
-          widget.controller.choreographer.send(context);
-        },
+        onPressed: widget.controller.choreographer.isFetching
+            ? null
+            : () {
+                widget.controller.choreographer.incrementTimesClicked();
+                widget.controller.choreographer.send(context);
+              },
         tooltip: L10n.of(context).send,
       ),
     );

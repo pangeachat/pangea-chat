@@ -1,19 +1,21 @@
-import 'package:emojis/emoji.dart';
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pages/chat/command_hints.dart';
-import 'package:fluffychat/pangea/widgets/igc/pangea_text_controller.dart';
-import 'package:fluffychat/utils/markdown_context_builder.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/matrix.dart';
-import 'package:fluffychat/widgets/mxc_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import 'package:emojis/emoji.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:matrix/matrix.dart';
 import 'package:pasteboard/pasteboard.dart';
 import 'package:slugify/slugify.dart';
+
+import 'package:fluffychat/config/app_config.dart';
+import 'package:fluffychat/pages/chat/command_hints.dart';
+import 'package:fluffychat/pangea/choreographer/widgets/igc/pangea_text_controller.dart';
+import 'package:fluffychat/utils/markdown_context_builder.dart';
+import 'package:fluffychat/utils/platform_infos.dart';
+import 'package:fluffychat/widgets/avatar.dart';
+import 'package:fluffychat/widgets/matrix.dart';
+import 'package:fluffychat/widgets/mxc_image.dart';
 
 class InputBar extends StatelessWidget {
   final Room room;
@@ -358,7 +360,10 @@ class InputBar extends StatelessWidget {
     if (suggestion['type'] == 'emoji') {
       insertText = '${suggestion['emoji']!} ';
       startText = replaceText.replaceAllMapped(
-        suggestion['current_word']!,
+        // #Pangea
+        RegExp(suggestion['current_word']!, caseSensitive: false),
+        // suggestion['current_word']!,
+        // Pangea#
         (Match m) => insertText,
       );
     }
@@ -465,7 +470,16 @@ class InputBar extends StatelessWidget {
           direction: VerticalDirection.up,
           hideOnEmpty: true,
           hideOnLoading: true,
-          controller: controller,
+          // #Pangea
+          // if should obscure text (to make it looks that a message has been sent after sending fake message),
+          // use hideTextController
+
+          // controller: controller,
+          controller:
+              (controller?.choreographer.chatController.obscureText) ?? false
+                  ? controller?.choreographer.chatController.hideTextController
+                  : controller,
+          // Pangea#
           focusNode: focusNode,
           hideOnSelect: false,
           debounceDuration: const Duration(milliseconds: 50),
@@ -478,8 +492,13 @@ class InputBar extends StatelessWidget {
               readOnly:
                   controller != null && controller!.choreographer.isRunningIT,
               autocorrect: false,
+              // controller: controller,
+              controller: (controller
+                          ?.choreographer.chatController.obscureText) ??
+                      false
+                  ? controller?.choreographer.chatController.hideTextController
+                  : controller,
               // Pangea#
-              controller: controller,
               focusNode: focusNode,
               contextMenuBuilder: (c, e) => markdownContextBuilder(
                 c,

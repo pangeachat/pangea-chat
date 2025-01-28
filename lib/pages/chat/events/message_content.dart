@@ -1,21 +1,20 @@
 import 'dart:math';
 
-import 'package:fluffychat/pages/chat/chat.dart';
-import 'package:fluffychat/pages/chat/events/video_player.dart';
-import 'package:fluffychat/pangea/matrix_event_wrappers/pangea_message_event.dart';
-import 'package:fluffychat/pangea/widgets/chat/message_selection_overlay.dart';
-import 'package:fluffychat/pangea/widgets/chat/message_token_text.dart';
-import 'package:fluffychat/pangea/widgets/chat/message_toolbar_selection_area.dart';
-import 'package:fluffychat/pangea/widgets/igc/pangea_rich_text.dart';
-import 'package:fluffychat/utils/adaptive_bottom_sheet.dart';
-import 'package:fluffychat/utils/date_time_extension.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/widgets/avatar.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:matrix/matrix.dart';
 
+import 'package:fluffychat/pages/chat/chat.dart';
+import 'package:fluffychat/pages/chat/events/video_player.dart';
+import 'package:fluffychat/pangea/choreographer/widgets/igc/pangea_rich_text.dart';
+import 'package:fluffychat/pangea/events/event_wrappers/pangea_message_event.dart';
+import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
+import 'package:fluffychat/pangea/toolbar/widgets/message_selection_overlay.dart';
+import 'package:fluffychat/pangea/toolbar/widgets/message_token_text.dart';
+import 'package:fluffychat/pangea/toolbar/widgets/message_toolbar_selection_area.dart';
+import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import '../../../config/app_config.dart';
 import '../../../utils/platform_infos.dart';
 import '../../../utils/url_launcher.dart';
@@ -41,7 +40,6 @@ class MessageContent extends StatelessWidget {
   final ChatController controller;
   final Event? nextEvent;
   final Event? prevEvent;
-  final bool isButton;
   // Pangea#
 
   const MessageContent(
@@ -56,72 +54,93 @@ class MessageContent extends StatelessWidget {
     required this.controller,
     this.nextEvent,
     this.prevEvent,
-    this.isButton = false,
     // Pangea#
     required this.borderRadius,
   });
 
-  void _verifyOrRequestKey(BuildContext context) async {
-    final l10n = L10n.of(context);
-    if (event.content['can_request_session'] != true) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            event.calcLocalizedBodyFallback(MatrixLocals(l10n)),
-          ),
-        ),
-      );
+  // #Pangea
+  // void _verifyOrRequestKey(BuildContext context) async {
+  //   final l10n = L10n.of(context);
+  //   if (event.content['can_request_session'] != true) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text(
+  //           event.calcLocalizedBodyFallback(MatrixLocals(l10n)),
+  //         ),
+  //       ),
+  //     );
+  //     return;
+  //   }
+  //   final client = Matrix.of(context).client;
+  //   if (client.isUnknownSession && client.encryption!.crossSigning.enabled) {
+  //     final success = await BootstrapDialog(
+  //       client: Matrix.of(context).client,
+  //     ).show(context);
+  //     if (success != true) return;
+  //   }
+  //   event.requestKey();
+  //   final sender = event.senderFromMemoryOrFallback;
+  //   await showAdaptiveBottomSheet(
+  //     context: context,
+  //     builder: (context) => Scaffold(
+  //       appBar: AppBar(
+  //         leading: CloseButton(onPressed: Navigator.of(context).pop),
+  //         title: Text(
+  //           l10n.whyIsThisMessageEncrypted,
+  //           style: const TextStyle(fontSize: 16),
+  //         ),
+  //       ),
+  //       body: SafeArea(
+  //         child: ListView(
+  //           padding: const EdgeInsets.all(16),
+  //           children: [
+  //             ListTile(
+  //               contentPadding: EdgeInsets.zero,
+  //               leading: Avatar(
+  //                 mxContent: sender.avatarUrl,
+  //                 name: sender.calcDisplayname(),
+  //                 presenceUserId: sender.stateKey,
+  //                 client: event.room.client,
+  //               ),
+  //               title: Text(sender.calcDisplayname()),
+  //               subtitle: Text(event.originServerTs.localizedTime(context)),
+  //               trailing: const Icon(Icons.lock_outlined),
+  //             ),
+  //             const Divider(),
+  //             Text(
+  //               event.calcLocalizedBodyFallback(
+  //                 MatrixLocals(l10n),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  void onClick(PangeaToken token) {
+    token = pangeaMessageEvent?.messageDisplayRepresentation
+            ?.getClosestNonPunctToken(token) ??
+        token;
+
+    if (overlayController != null) {
+      overlayController?.onClickOverlayMessageToken(token);
       return;
     }
-    // #Pangea
-    // final client = Matrix.of(context).client;
-    // if (client.isUnknownSession && client.encryption!.crossSigning.enabled) {
-    //   final success = await BootstrapDialog(
-    //     client: Matrix.of(context).client,
-    //   ).show(context);
-    //   if (success != true) return;
-    // }
-    // Pangea#
-    event.requestKey();
-    final sender = event.senderFromMemoryOrFallback;
-    await showAdaptiveBottomSheet(
-      context: context,
-      builder: (context) => Scaffold(
-        appBar: AppBar(
-          leading: CloseButton(onPressed: Navigator.of(context).pop),
-          title: Text(
-            l10n.whyIsThisMessageEncrypted,
-            style: const TextStyle(fontSize: 16),
-          ),
-        ),
-        body: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: Avatar(
-                  mxContent: sender.avatarUrl,
-                  name: sender.calcDisplayname(),
-                  presenceUserId: sender.stateKey,
-                  client: event.room.client,
-                ),
-                title: Text(sender.calcDisplayname()),
-                subtitle: Text(event.originServerTs.localizedTime(context)),
-                trailing: const Icon(Icons.lock_outlined),
-              ),
-              const Divider(),
-              Text(
-                event.calcLocalizedBodyFallback(
-                  MatrixLocals(l10n),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+
+    controller.showToolbar(
+      pangeaMessageEvent!.event,
+      pangeaMessageEvent: pangeaMessageEvent,
+      selectedToken: token,
     );
   }
+
+  bool isSelected(PangeaToken token) {
+    return overlayController!.isTokenSelected(token) ||
+        overlayController!.isTokenHighlighted(token);
+  }
+  // Pangea#
 
   @override
   Widget build(BuildContext context) {
@@ -190,6 +209,9 @@ class MessageContent extends StatelessWidget {
                 event,
                 color: textColor,
                 fontSize: fontSize,
+                // #Pangea
+                chatController: controller,
+                // Pangea#
               );
             }
             return MessageDownloadContent(event, textColor);
@@ -219,6 +241,8 @@ class MessageContent extends StatelessWidget {
                 pangeaMessageEvent: pangeaMessageEvent,
                 nextEvent: nextEvent,
                 prevEvent: prevEvent,
+                isSelected: overlayController != null ? isSelected : null,
+                onClick: onClick,
                 // Pangea#
               );
             }
@@ -297,9 +321,11 @@ class MessageContent extends StatelessWidget {
                 },
               );
             }
-            final bigEmotes = event.onlyEmotes &&
-                event.numberEmotes > 0 &&
-                event.numberEmotes <= 3;
+            // #Pangea
+            // final bigEmotes = event.onlyEmotes &&
+            //     event.numberEmotes > 0 &&
+            //     event.numberEmotes <= 3;
+            // Pangea#
 
             // #Pangea
             final messageTextStyle =
@@ -323,27 +349,8 @@ class MessageContent extends StatelessWidget {
                 tokens:
                     pangeaMessageEvent!.messageDisplayRepresentation?.tokens,
                 style: messageTextStyle,
-                onClick: (token) {
-                  token = pangeaMessageEvent?.messageDisplayRepresentation
-                          ?.getClosestNonPunctToken(token) ??
-                      token;
-
-                  if (overlayController != null) {
-                    overlayController?.onClickOverlayMessageToken(token);
-                    return;
-                  }
-
-                  if (isButton) {
-                    controller.choreographer.clickPlayer.play();
-                  }
-
-                  controller.showToolbar(
-                    event,
-                    pangeaMessageEvent: pangeaMessageEvent,
-                    selectedToken: token,
-                  );
-                },
-                isSelected: overlayController?.isTokenSelected,
+                onClick: onClick,
+                isSelected: overlayController != null ? isSelected : null,
               );
             }
 

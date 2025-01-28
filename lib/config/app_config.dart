@@ -1,6 +1,8 @@
-import 'package:fluffychat/pangea/config/environment.dart';
 import 'package:flutter/material.dart';
+
 import 'package:matrix/matrix.dart';
+
+import 'package:fluffychat/pangea/common/config/environment.dart';
 
 abstract class AppConfig {
   // #Pangea
@@ -25,18 +27,24 @@ abstract class AppConfig {
   static const double toolbarMinHeight = 175.0;
   static const double toolbarMinWidth = 350.0;
   static const double toolbarButtonsHeight = 50.0;
+  static const double defaultHeaderHeight = 56.0;
+  static const double defaultFooterHeight = 48.0;
+  static const double toolbarSpacing = 8.0;
   static TextStyle messageTextStyle(
-    Event event,
+    Event? event,
     Color textColor,
   ) {
     final fontSize = messageFontSize * fontSizeFactor;
-    final bigEmotes =
-        event.onlyEmotes && event.numberEmotes > 0 && event.numberEmotes <= 10;
+    final bigEmotes = event != null &&
+        event.onlyEmotes &&
+        event.numberEmotes > 0 &&
+        event.numberEmotes <= 10;
 
     return TextStyle(
       color: textColor,
       fontSize: bigEmotes ? fontSize * 5 : fontSize,
-      decoration: event.redacted ? TextDecoration.lineThrough : null,
+      decoration:
+          (event?.redacted ?? false) ? TextDecoration.lineThrough : null,
       height: 1.3,
     );
   }
@@ -51,6 +59,7 @@ abstract class AppConfig {
   static const Color warning = Color.fromARGB(255, 210, 124, 12);
   static const Color gold = Color.fromARGB(255, 253, 191, 1);
   static const Color goldLight = Color.fromARGB(255, 254, 223, 73);
+  static const Color error = Colors.red;
   static const int overlayAnimationDuration = 250;
   // static String _privacyUrl =
   //     'https://gitlab.com/famedly/fluffychat/-/blob/main/PRIVACY.md';
@@ -103,10 +112,7 @@ abstract class AppConfig {
   static bool sendTypingNotifications = true;
   static bool sendPublicReadReceipts = true;
   static bool swipeRightToLeftToReply = true;
-  //#Pangea
-  static bool sendOnEnter = true;
-  // static bool sendOnEnter = false;
-  //Pangea#
+  static bool? sendOnEnter;
   static bool showPresences = true;
   static bool experimentalVoip = false;
   static const bool hideTypingUsernames = false;
@@ -164,6 +170,8 @@ abstract class AppConfig {
       "https://support.microsoft.com/en-us/topic/download-languages-and-voices-for-immersive-reader-read-mode-and-read-aloud-4c83a8d8-7486-42f7-8e46-2b0fdf753130";
   static String androidTTSDownloadInstructions =
       "https://support.google.com/accessibility/android/answer/6006983?hl=en";
+  static String svgAssetsBaseURL =
+      "https://pangea-chat-client-assets.s3.us-east-1.amazonaws.com";
   // Pangea#
 
   static void loadFromJson(Map<String, dynamic> json) {

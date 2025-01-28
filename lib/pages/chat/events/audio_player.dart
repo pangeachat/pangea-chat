@@ -2,20 +2,22 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/pangea/widgets/chat/message_audio_card.dart';
-import 'package:fluffychat/utils/error_reporter.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/utils/url_launcher.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:matrix/matrix.dart';
 import 'package:opus_caf_converter_dart/opus_caf_converter_dart.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'package:fluffychat/config/app_config.dart';
+import 'package:fluffychat/pages/chat/chat.dart';
+import 'package:fluffychat/pangea/toolbar/widgets/message_audio_card.dart';
+import 'package:fluffychat/pangea/toolbar/widgets/message_selection_overlay.dart';
+import 'package:fluffychat/utils/error_reporter.dart';
+import 'package:fluffychat/utils/localized_exception_extension.dart';
+import 'package:fluffychat/utils/url_launcher.dart';
 import '../../../utils/matrix_sdk_extensions/event_extension.dart';
 
 class AudioPlayerWidget extends StatefulWidget {
@@ -27,6 +29,9 @@ class AudioPlayerWidget extends StatefulWidget {
   final PangeaAudioFile? matrixFile;
   final bool autoplay;
   final Function(bool)? setIsPlayingAudio;
+  final double padding;
+  final MessageOverlayController? overlayController;
+  final ChatController? chatController;
   // Pangea#
 
   static String? currentId;
@@ -48,6 +53,9 @@ class AudioPlayerWidget extends StatefulWidget {
     this.sectionStartMS,
     this.sectionEndMS,
     this.setIsPlayingAudio,
+    this.padding = 12.0,
+    this.overlayController,
+    this.chatController,
     // Pangea#
     super.key,
   });
@@ -74,6 +82,10 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
   MatrixFile? matrixFile;
   File? audioFile;
 
+  // #Pangea
+  StreamSubscription? _onShowToolbar;
+  // Pangea#
+
   @override
   void dispose() {
     if (audioPlayer?.playerState.playing == true) {
@@ -83,6 +95,9 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
     onDurationChanged?.cancel();
     onPlayerStateChanged?.cancel();
     onPlayerError?.cancel();
+    // #Pangea
+    _onShowToolbar?.cancel();
+    // Pangea#
 
     super.dispose();
   }
@@ -185,6 +200,15 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
         audioPlayer.stop();
         audioPlayer.seek(null);
       }
+      // #Pangea
+      // Pass current timestamp to overlay, so it can highlight as necessary
+      if (widget.matrixFile != null) {
+        widget.overlayController?.highlightCurrentText(
+          state.inMilliseconds,
+          widget.matrixFile!.tokens,
+        );
+      }
+      // Pangea#
     });
     onDurationChanged ??= audioPlayer.durationStream.listen((max) {
       if (max == null || max == Duration.zero) return;
@@ -274,29 +298,31 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
 
   late final List<int>? _waveform;
 
-  void _toggleSpeed() async {
-    final audioPlayer = this.audioPlayer;
-    if (audioPlayer == null) return;
-    switch (audioPlayer.speed) {
-      case 1.0:
-        await audioPlayer.setSpeed(1.25);
-        break;
-      case 1.25:
-        await audioPlayer.setSpeed(1.5);
-        break;
-      case 1.5:
-        await audioPlayer.setSpeed(2.0);
-        break;
-      case 2.0:
-        await audioPlayer.setSpeed(0.5);
-        break;
-      case 0.5:
-      default:
-        await audioPlayer.setSpeed(1.0);
-        break;
-    }
-    setState(() {});
-  }
+  // #Pangea
+  // void _toggleSpeed() async {
+  //   final audioPlayer = this.audioPlayer;
+  //   if (audioPlayer == null) return;
+  //   switch (audioPlayer.speed) {
+  //     case 1.0:
+  //       await audioPlayer.setSpeed(1.25);
+  //       break;
+  //     case 1.25:
+  //       await audioPlayer.setSpeed(1.5);
+  //       break;
+  //     case 1.5:
+  //       await audioPlayer.setSpeed(2.0);
+  //       break;
+  //     case 2.0:
+  //       await audioPlayer.setSpeed(0.5);
+  //       break;
+  //     case 0.5:
+  //     default:
+  //       await audioPlayer.setSpeed(1.0);
+  //       break;
+  //   }
+  //   setState(() {});
+  // }
+  // Pangea#
 
   // #Pangea
   Future<void> _downloadMatrixFile() async {
@@ -329,6 +355,13 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
           ? _playAction()
           : _downloadAction();
     }
+
+    _onShowToolbar = widget.chatController?.showToolbarStream.stream
+        .where((eventID) => eventID == widget.event?.eventId)
+        .listen((eventID) {
+      audioPlayer?.pause();
+      audioPlayer?.seek(Duration.zero);
+    });
     // Pangea#
   }
 
@@ -354,15 +387,18 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
     return Padding(
       // #Pangea
       // padding: const EdgeInsets.all(12.0),
-      padding: const EdgeInsets.all(5.0),
+      padding: EdgeInsets.all(widget.padding),
       // Pangea#
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ConstrainedBox(
-            constraints:
-                const BoxConstraints(maxWidth: FluffyThemes.columnWidth),
+            // #Pangea
+            // constraints:
+            //     const BoxConstraints(maxWidth: FluffyThemes.columnWidth),
+            constraints: const BoxConstraints(maxWidth: 250),
+            // Pangea#
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -393,7 +429,9 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                           ),
                         ),
                 ),
-                const SizedBox(width: 8),
+                // #Pangea
+                // const SizedBox(width: 8),
+                // Pangea#
                 Expanded(
                   child: Stack(
                     children: [
@@ -410,9 +448,14 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                                     height: 32,
                                     alignment: Alignment.center,
                                     child: Container(
-                                      margin: const EdgeInsets.symmetric(
-                                        horizontal: 1,
+                                      // #Pangea
+                                      // margin: const EdgeInsets.symmetric(
+                                      //   horizontal: 1,
+                                      // ),
+                                      margin: const EdgeInsets.only(
+                                        right: 0.5,
                                       ),
+                                      // Pangea#
                                       decoration: BoxDecoration(
                                         color: i < wavePosition
                                             ? widget.color
@@ -453,7 +496,6 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                 ),
                 // #Pangea
                 // const SizedBox(width: 8),
-                const SizedBox(width: 5),
                 // SizedBox(
                 //   width: 36,
                 //   child:

@@ -1,5 +1,9 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
+
+import 'package:go_router/go_router.dart';
+
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/archive/archive.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
@@ -25,19 +29,18 @@ import 'package:fluffychat/pages/settings_notifications/settings_notifications.d
 import 'package:fluffychat/pages/settings_password/settings_password.dart';
 import 'package:fluffychat/pages/settings_security/settings_security.dart';
 import 'package:fluffychat/pages/settings_style/settings_style.dart';
+import 'package:fluffychat/pangea/activity_planner/activity_planner_page.dart';
 import 'package:fluffychat/pangea/guard/p_vguard.dart';
-import 'package:fluffychat/pangea/pages/find_partner/find_partner.dart';
-import 'package:fluffychat/pangea/pages/settings_subscription/settings_subscription.dart';
-import 'package:fluffychat/pangea/pages/sign_up/login_or_signup_view.dart';
-import 'package:fluffychat/pangea/pages/sign_up/signup.dart';
-import 'package:fluffychat/pangea/pages/sign_up/user_settings.dart';
-import 'package:fluffychat/pangea/widgets/class/join_with_link.dart';
+import 'package:fluffychat/pangea/login/pages/login_or_signup_view.dart';
+import 'package:fluffychat/pangea/login/pages/signup.dart';
+import 'package:fluffychat/pangea/login/pages/user_settings.dart';
+import 'package:fluffychat/pangea/spaces/utils/join_with_link.dart';
+import 'package:fluffychat/pangea/subscription/pages/settings_subscription.dart';
+import 'package:fluffychat/pangea/user/pages/find_partner.dart';
 import 'package:fluffychat/widgets/layouts/empty_page.dart';
 import 'package:fluffychat/widgets/layouts/two_column_layout.dart';
 import 'package:fluffychat/widgets/log_view.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 abstract class AppRoutes {
   static FutureOr<String?> loggedInRedirect(
@@ -481,6 +484,17 @@ abstract class AppRoutes {
                   redirect: loggedOutRedirect,
                 ),
                 // #Pangea
+                GoRoute(
+                  path: 'planner',
+                  pageBuilder: (context, state) => defaultPageBuilder(
+                    context,
+                    state,
+                    ActivityPlannerPage(
+                      roomID: state.pathParameters['roomid']!,
+                    ),
+                  ),
+                  redirect: loggedOutRedirect,
+                ),
                 // GoRoute(
                 //   path: 'encryption',
                 //   pageBuilder: (context, state) => defaultPageBuilder(

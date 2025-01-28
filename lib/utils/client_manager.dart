@@ -1,13 +1,8 @@
 import 'dart:io';
 
-import 'package:desktop_notifications/desktop_notifications.dart';
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pangea/constants/pangea_event_types.dart';
-import 'package:fluffychat/utils/custom_http_client.dart';
-import 'package:fluffychat/utils/custom_image_resizer.dart';
-import 'package:fluffychat/utils/init_with_restore.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:flutter/foundation.dart';
+
+import 'package:desktop_notifications/desktop_notifications.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:matrix/encryption/utils/key_verification.dart';
@@ -16,6 +11,13 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_html/html.dart' as html;
 
+import 'package:fluffychat/config/app_config.dart';
+import 'package:fluffychat/pangea/common/constants/model_keys.dart';
+import 'package:fluffychat/pangea/events/constants/pangea_event_types.dart';
+import 'package:fluffychat/utils/custom_http_client.dart';
+import 'package:fluffychat/utils/custom_image_resizer.dart';
+import 'package:fluffychat/utils/init_with_restore.dart';
+import 'package:fluffychat/utils/platform_infos.dart';
 import 'matrix_sdk_extensions/flutter_matrix_dart_sdk_database/builder.dart';
 
 abstract class ClientManager {
@@ -117,6 +119,8 @@ abstract class ClientManager {
         PangeaEventTypes.botOptions,
         PangeaEventTypes.capacity,
         EventTypes.RoomPowerLevels,
+        PangeaEventTypes.userChosenEmoji,
+        EventTypes.RoomJoinRules,
         // Pangea#
       },
       logLevel: kReleaseMode ? Level.warning : Level.verbose,
@@ -144,6 +148,12 @@ abstract class ClientManager {
           ),
         ),
       ),
+      shouldReplaceRoomLastEvent: (_, event) {
+        return event.content.tryGet(ModelKey.transcription) == null &&
+            !event.type.startsWith("p.") &&
+            !event.type.startsWith("pangea.") &&
+            event.type != EventTypes.RoomPinnedEvents;
+      },
       // Pangea#
     );
   }

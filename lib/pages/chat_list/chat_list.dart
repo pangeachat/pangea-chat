@@ -1,31 +1,11 @@
 import 'dart:async';
 
-import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:cross_file/cross_file.dart';
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/pages/chat/send_file_dialog.dart';
-import 'package:fluffychat/pages/chat_list/chat_list_view.dart';
-import 'package:fluffychat/pangea/constants/pangea_room_types.dart';
-import 'package:fluffychat/pangea/controllers/app_version_controller.dart';
-import 'package:fluffychat/pangea/extensions/client_extension/client_extension.dart';
-import 'package:fluffychat/pangea/extensions/pangea_room_extension/pangea_room_extension.dart';
-import 'package:fluffychat/pangea/utils/chat_list_handle_space_tap.dart';
-import 'package:fluffychat/pangea/utils/error_handler.dart';
-import 'package:fluffychat/pangea/utils/firebase_analytics.dart';
-import 'package:fluffychat/pangea/widgets/subscription/subscription_snackbar.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/show_update_snackbar.dart';
-import 'package:fluffychat/utils/tor_stub.dart'
-    if (dart.library.html) 'package:tor_detector_web/tor_detector_web.dart';
-import 'package:fluffychat/utils/url_launcher.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:cross_file/cross_file.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:flutter_shortcuts/flutter_shortcuts.dart';
 import 'package:go_router/go_router.dart';
@@ -34,11 +14,33 @@ import 'package:matrix/matrix.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:uni_links/uni_links.dart';
 
+import 'package:fluffychat/config/app_config.dart';
+import 'package:fluffychat/config/themes.dart';
+import 'package:fluffychat/pages/chat/send_file_dialog.dart';
+import 'package:fluffychat/pages/chat_list/chat_list_view.dart';
+import 'package:fluffychat/pangea/chat_list/utils/app_version_util.dart';
+import 'package:fluffychat/pangea/chat_list/utils/chat_list_handle_space_tap.dart';
+import 'package:fluffychat/pangea/chat_settings/constants/pangea_room_types.dart';
+import 'package:fluffychat/pangea/common/constants/local.key.dart';
+import 'package:fluffychat/pangea/common/utils/error_handler.dart';
+import 'package:fluffychat/pangea/common/utils/firebase_analytics.dart';
+import 'package:fluffychat/pangea/extensions/pangea_room_extension.dart';
+import 'package:fluffychat/pangea/subscription/widgets/subscription_snackbar.dart';
+import 'package:fluffychat/utils/localized_exception_extension.dart';
+import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:fluffychat/utils/platform_infos.dart';
+import 'package:fluffychat/utils/show_update_snackbar.dart';
+import 'package:fluffychat/utils/url_launcher.dart';
+import 'package:fluffychat/widgets/avatar.dart';
+import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import '../../../utils/account_bundles.dart';
 import '../../config/setting_keys.dart';
 import '../../utils/voip/callkeep_manager.dart';
 import '../../widgets/fluffy_chat_app.dart';
 import '../../widgets/matrix.dart';
+
+import 'package:fluffychat/utils/tor_stub.dart'
+    if (dart.library.html) 'package:tor_detector_web/tor_detector_web.dart';
 
 enum SelectMode {
   normal,
@@ -572,7 +574,7 @@ class ChatListController extends State<ChatList>
         Matrix.of(context).backgroundPush?.setupPush();
         UpdateNotifier.showUpdateSnackBar(context);
 
-        AppVersionController.showAppVersionDialog(context);
+        AppVersionUtil.showAppVersionDialog(context);
       }
 
       // Workaround for system UI overlay style not applied on app start
@@ -619,6 +621,15 @@ class ChatListController extends State<ChatList>
               MatrixState.pangeaController.matrixState.client.getRoomById(
             spaceId,
           );
+
+          final String? justInputtedCode =
+              MatrixState.pangeaController.pStoreService.read(
+            PLocalKey.justInputtedCode,
+            isAccountData: false,
+          );
+          final newSpaceCode = space?.classCode(context);
+          if (newSpaceCode == justInputtedCode) return;
+
           if (space != null) {
             chatListHandleSpaceTap(
               context,
@@ -1053,7 +1064,9 @@ class ChatListController extends State<ChatList>
   bool waitForFirstSync = false;
 
   Future<void> _waitForFirstSync() async {
-    final router = GoRouter.of(context);
+    // #Pangea
+    // final router = GoRouter.of(context);
+    // Pangea#
     final client = Matrix.of(context).client;
     await client.roomsLoading;
     await client.accountDataLoading;
@@ -1118,7 +1131,6 @@ class ChatListController extends State<ChatList>
   // #Pangea
   void _initPangeaControllers(Client client) {
     GoogleAnalytics.analyticsUserUpdate(client.userID);
-    client.migrateAnalyticsRooms();
     MatrixState.pangeaController.initControllers();
     if (mounted) {
       MatrixState.pangeaController.classController.joinCachedSpaceCode(context);
