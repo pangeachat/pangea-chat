@@ -426,7 +426,7 @@
   },
   "chatHasBeenAddedToThisSpace": "Chat has been added to this space",
   "@chatHasBeenAddedToThisSpace": {},
-  "chats": "Group Chats",
+  "chats": "Chats",
   "@chats": {
     "type": "text",
     "placeholders": {}
@@ -3065,7 +3065,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "andCertifyIAmAtLeast13YearsOfAge": " and certify I am at least 13 years of age.",
+  "andCertifyIAmAtLeast13YearsOfAge": " and certify I am at least 16 years of age.",
   "@andCertifyIAmAtLeast13YearsOfAge": {
     "type": "text",
     "placeholders": {}
@@ -4664,9 +4664,9 @@
   "meaningSectionHeader": "Meaning:",
   "formSectionHeader": "Forms used in chats:",
   "noEmojiSelectedTooltip": "No emoji selected",
-  "writingExercisesTooltip": "Writing exercises",
-  "listeningExercisesTooltip": "Listening exercises",
-  "readingExercisesTooltip": "Reading exercises",
+  "writingExercisesTooltip": "Writing activities",
+  "listeningExercisesTooltip": "Listening activities",
+  "readingExercisesTooltip": "Reading activities",
   "meaningNotFound": "Meaning could not be found.",
   "formsNotFound": "Forms could not be found.",
   "chooseBestDefinition": "What does this word mean?",
@@ -4760,7 +4760,7 @@
   "modePlaceholder": "Choose a mode...",
   "learningObjectiveLabel": "Learning Objective",
   "learningObjectivePlaceholder": "Choose a learning objective...",
-  "mediaLabel": "Media students should share",
+  "mediaLabel": "Media learners should share",
   "languageOfInstructionsLabel": "Language of activity instructions",
   "targetLanguageLabel": "Target language",
   "cefrLevelLabel": "CEFR Level",
@@ -4773,5 +4773,14 @@
   "activityPlannerOverviewInstructionsBody": "Choose a topic, mode, learning objective and generate an activity for the chat!",
   "completeActivitiesToUnlock": "Complete the highlighted word activities to unlock",
   "myBookmarkedActivities": "My Bookmarked Activities",
-  "noBookmarkedActivities": "No bookmarked activities"
+  "noBookmarkedActivities": "No bookmarked activities",
+  "noBookmarkedActivities": "When you bookmark activities, they will appear here. Bookmarked activities can be re-used across spaces and chats.",
+  "activityTitle": "Activity Title",
+  "addVocabulary": "Add Vocabulary",
+  "instructions": "Instructions",
+  "bookmark": "Bookmark this activity",
+  "numberOfLearners": "Number of learners",
+  "mustBeInteger": "Must be an integer e.g. 1, 2, 3, ...",
+  "noBookmarkedActivities": "No bookmarked activities",
+  "noLemmasFound": "No lemmas found"
 }

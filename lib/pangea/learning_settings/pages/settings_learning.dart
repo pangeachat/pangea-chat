@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:country_picker/country_picker.dart';
 
 import 'package:fluffychat/pangea/common/controllers/pangea_controller.dart';
+import 'package:fluffychat/pangea/learning_settings/enums/language_level_type_enum.dart';
 import 'package:fluffychat/pangea/learning_settings/pages/settings_learning_view.dart';
 import 'package:fluffychat/pangea/learning_settings/widgets/p_language_dialog.dart';
 import 'package:fluffychat/pangea/spaces/models/space_model.dart';
@@ -33,11 +34,21 @@ class SettingsLearningController extends State<SettingsLearning> {
     super.dispose();
   }
 
-  setPublicProfile(bool isPublic) {
+  void setPublicProfile(bool isPublic) {
     pangeaController.userController.updateProfile(
       (profile) {
         // set user DOB to younger that 18 if private and older than 18 if public
         profile.userSettings.publicProfile = isPublic;
+        return profile;
+      },
+    );
+    setState(() {});
+  }
+
+  void setCefrLevel(LanguageLevelTypeEnum? cefrLevel) {
+    pangeaController.userController.updateProfile(
+      (profile) {
+        profile.userSettings.cefrLevel = cefrLevel ?? LanguageLevelTypeEnum.a1;
         return profile;
       },
     );
@@ -95,6 +106,9 @@ class SettingsLearningController extends State<SettingsLearning> {
 
   bool get publicProfile =>
       pangeaController.userController.profile.userSettings.publicProfile;
+
+  LanguageLevelTypeEnum get cefrLevel =>
+      pangeaController.userController.profile.userSettings.cefrLevel;
 
   @override
   Widget build(BuildContext context) {
