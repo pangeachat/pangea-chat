@@ -47,13 +47,13 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(seconds: 5),
+      duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
 
     _offsetAnimation = Tween<Offset>(
-      begin: const Offset(0.0, -1.75),
-      end: const Offset(0.0, -2.75),
+      begin: const Offset(0.0, 0),
+      end: const Offset(0.0, -3),
     ).animate(
       CurvedAnimation(
         parent: _controller,
@@ -78,7 +78,7 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
 
   void initParticleTrajectories() {
     _particleTrajectories.clear();
-    for (int i = 0; i < (_addedPoints ?? 0); i++) {
+    for (int i = 0; i < (_addedPoints?.abs() ?? 0); i++) {
       final angle = _random.nextDouble() * (pi / 2) +
           pi / 4; // Random angle in the V-shaped range.
       const baseSpeed = 20; // Initial base speed.
@@ -141,6 +141,18 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
 
     final textColor = _addedPoints! > 0 ? widget.gainColor : widget.loseColor;
 
+    final plusWidget = Text(
+      _addedPoints! > 0 ? "+" : "-",
+      style: BotStyle.text(
+        context,
+        big: true,
+        setColor: textColor == null,
+        existingStyle: TextStyle(
+          color: textColor,
+        ),
+      ),
+    );
+
     return SlideTransition(
       position: _offsetAnimation,
       child: FadeTransition(
@@ -148,52 +160,22 @@ class PointsGainedAnimationState extends State<PointsGainedAnimation>
         child: IgnorePointer(
           ignoring: _controller.isAnimating,
           child: Stack(
-            children: _addedPoints! > 0
-                ?
-                //If gain, show number of "+"s equal to _addedPoints.
-                List.generate(_addedPoints!, (index) {
-                    return AnimatedBuilder(
-                      animation: _controller,
-                      builder: (context, child) {
-                        final progress = _controller.value;
-                        final trajectory = _particleTrajectories[index];
-                        final swayOffsetX = sin(_swayAnimation[index].value +
-                                _randomSwayOffset[index]) *
-                            5;
-                        return Transform.translate(
-                          offset: Offset(
-                            trajectory.dx * pow(progress, 2),
-                            trajectory.dy * pow(progress, 2),
-                          ),
-                          child: Text(
-                            "+",
-                            style: BotStyle.text(
-                              context,
-                              big: true,
-                              setColor: textColor == null,
-                              existingStyle: TextStyle(
-                                color: textColor,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  })
-                //If loss, just show negative number of points lost.
-                : [
-                    Text(
-                      '$_addedPoints',
-                      style: BotStyle.text(
-                        context,
-                        big: true,
-                        setColor: textColor == null,
-                        existingStyle: TextStyle(
-                          color: textColor,
-                        ),
-                      ),
+            children: List.generate(_addedPoints!.abs(), (index) {
+              return AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  final progress = _controller.value;
+                  final trajectory = _particleTrajectories[index];
+                  return Transform.translate(
+                    offset: Offset(
+                      trajectory.dx * pow(progress, 2),
+                      trajectory.dy * pow(progress, 2),
                     ),
-                  ],
+                    child: plusWidget,
+                  );
+                },
+              );
+            }),
           ),
         ),
       ),
