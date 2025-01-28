@@ -22,6 +22,7 @@ jobs:
 
       - name: Auto-format Dart code
         run: |
+          git checkout ${{ github.ref_name }}
           dart format lib/ test/
           dart run import_sorter:main --no-comments
           git config user.name "github-actions[bot]"
