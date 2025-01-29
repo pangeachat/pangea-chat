@@ -287,7 +287,7 @@ class ActivityPlannerPageState extends State<ActivityPlannerPage> {
                         languages: MatrixState
                             .pangeaController.pLanguageStore.baseOptions,
                         onChange: (val) =>
-                            _selectedTargetLanguage = val.langCode,
+                            _selectedLanguageOfInstructions = val.langCode,
                         initialLanguage: MatrixState
                             .pangeaController.languageController.userL1,
                         isL2List: false,
