@@ -1,9 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pages/chat_list/chat_list.dart';
 import 'package:fluffychat/pages/chat_list/chat_list_item.dart';
@@ -17,6 +11,11 @@ import 'package:fluffychat/utils/stream_extension.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/hover_builder.dart';
 import 'package:fluffychat/widgets/public_room_bottom_sheet.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:matrix/matrix.dart';
+
 import '../../config/themes.dart';
 import '../../widgets/connection_status_header.dart';
 import '../../widgets/matrix.dart';
@@ -308,6 +307,25 @@ class ChatListViewBody extends StatelessWidget {
                   ],
                 ),
               ),
+              // Add a close-able join with code tile in the chat list body
+              // if (!controller.isSearchMode)
+              //   ListTile(
+              //     tileColor: theme.colorScheme.secondaryContainer,
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(8.0),
+              //     ),
+              //     leading: const Icon(Icons.code),
+              //     title: Text(L10n.of(context).joinWithCode),
+              //     trailing: IconButton(
+              //       icon: const Icon(Icons.close),
+              //       onPressed: () {
+              //         // Handle the close button press
+              //       },
+              //     ),
+              //     onTap: () {
+              //       // Handle the tile tap
+              //     },
+              //   ),
               if (client.prevBatch == null)
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
