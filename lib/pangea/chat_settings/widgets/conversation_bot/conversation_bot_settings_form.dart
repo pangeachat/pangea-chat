@@ -9,6 +9,8 @@ import 'package:fluffychat/pangea/chat_settings/widgets/conversation_bot/convers
 import 'package:fluffychat/pangea/chat_settings/widgets/conversation_bot/conversation_bot_no_permission_dialog.dart';
 import 'package:fluffychat/pangea/chat_settings/widgets/language_level_dropdown.dart';
 import 'package:fluffychat/pangea/learning_settings/enums/language_level_type_enum.dart';
+import 'package:fluffychat/pangea/learning_settings/utils/language_list_util.dart';
+import 'package:fluffychat/pangea/learning_settings/widgets/p_language_dropdown.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 
 class ConversationBotSettingsForm extends StatelessWidget {
@@ -48,29 +50,15 @@ class ConversationBotSettingsForm extends StatelessWidget {
       children: [
         InkWell(
           onTap: hasPermission ? null : () => showNoPermissionDialog(context),
-          child: DropdownButtonFormField2(
-            dropdownStyleData: const DropdownStyleData(
-              padding: EdgeInsets.zero,
-            ),
-            hint: Text(
-              L10n.of(context).selectBotLanguage,
-              overflow: TextOverflow.clip,
-              textAlign: TextAlign.center,
-            ),
-            value: botOptions.targetLanguage,
-            isExpanded: true,
-            items: MatrixState.pangeaController.pLanguageStore.targetOptions
-                .map((language) {
-              return DropdownMenuItem(
-                value: language.langCode,
-                child: Text(
-                  language.getDisplayName(context) ?? language.langCode,
-                  overflow: TextOverflow.clip,
-                  textAlign: TextAlign.center,
-                ),
-              );
-            }).toList(),
-            onChanged: hasPermission && enabled ? onUpdateBotLanguage : null,
+          child: PLanguageDropdown(
+            languages:
+                MatrixState.pangeaController.pLanguageStore.targetOptions,
+            onChange: hasPermission && enabled ? onUpdateBotLanguage : null,
+            initialLanguage: botOptions.targetLanguage != null
+                ? PangeaLanguage.byLangCode(botOptions.targetLanguage!)
+                : null,
+            decorationText: L10n.of(context).selectBotLanguage,
+            hintText: L10n.of(context).botLanguage,
           ),
         ),
         const SizedBox(height: 12),

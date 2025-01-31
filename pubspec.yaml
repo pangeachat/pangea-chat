@@ -119,6 +119,9 @@ dependencies:
   # #Pangea
   android_intent_plus: ^5.2.0
   audioplayers: ^6.1.0
+  country_flags:
+    git:
+      url: https://github.com/pangeachat/country_flags.git
   country_picker: ^2.0.25
   csv: ^6.0.0
   dropdown_button2: ^2.3.9

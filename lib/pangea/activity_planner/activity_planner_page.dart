@@ -286,8 +286,7 @@ class ActivityPlannerPageState extends State<ActivityPlannerPage> {
                       PLanguageDropdown(
                         languages: MatrixState
                             .pangeaController.pLanguageStore.baseOptions,
-                        onChange: (val) =>
-                            _selectedTargetLanguage = val.langCode,
+                        onChange: (val) => _selectedTargetLanguage = val,
                         initialLanguage: MatrixState
                             .pangeaController.languageController.userL1,
                         isL2List: false,
@@ -298,8 +297,7 @@ class ActivityPlannerPageState extends State<ActivityPlannerPage> {
                       PLanguageDropdown(
                         languages: MatrixState
                             .pangeaController.pLanguageStore.targetOptions,
-                        onChange: (val) =>
-                            _selectedTargetLanguage = val.langCode,
+                        onChange: (val) => _selectedTargetLanguage = val,
                         initialLanguage: MatrixState
                             .pangeaController.languageController.userL2,
                         decorationText: L10n.of(context).targetLanguageLabel,

@@ -297,6 +297,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.1"
+  country_flags:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "02c9af56e73a5a223a54c119411bdde8a9b858a9"
+      url: "https://github.com/pangeachat/country_flags.git"
+    source: git
+    version: "3.2.0"
   country_picker:
     dependency: "direct main"
     description:
@@ -1334,6 +1343,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
+  jovial_misc:
+    dependency: transitive
+    description:
+      name: jovial_misc
+      sha256: b3f115b3e05c88e926c2db4cefcf1365fb27e9db03ce77ee1f554dc962748ea6
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.1"
+  jovial_svg:
+    dependency: transitive
+    description:
+      name: jovial_svg
+      sha256: ca14d42956b9949c36333065c9141f100e930c918f57f4bd8dd59d35581bd3fc
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.24"
   js:
     dependency: transitive
     description:

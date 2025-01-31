@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 
 import 'package:fluffychat/pangea/learning_settings/models/language_model.dart';
+import 'package:fluffychat/pangea/learning_settings/utils/language_list_util.dart';
 import 'package:fluffychat/pangea/learning_settings/widgets/p_language_dropdown.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 
@@ -44,7 +45,7 @@ class ChangeMessageLangDialogState extends State<ChangeMessageLangDialog> {
                 languages:
                     MatrixState.pangeaController.pLanguageStore.targetOptions,
                 onChange: (lang) => setState(() {
-                  _selectedLanguage = lang;
+                  _selectedLanguage = PangeaLanguage.byLangCode(lang);
                 }),
                 initialLanguage: widget.initialLanguage,
                 decorationText: L10n.of(context).changeMessageLanguage,

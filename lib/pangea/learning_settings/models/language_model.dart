@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import 'package:country_flags/country_flags.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 
 import 'package:fluffychat/pangea/learning_settings/constants/language_constants.dart';
@@ -11,7 +12,6 @@ import '../../common/utils/error_handler.dart';
 
 class LanguageModel {
   final String langCode;
-  final String languageFlag;
   final String displayName;
   final String? languageEmoji;
   final bool l1;
@@ -19,12 +19,13 @@ class LanguageModel {
 
   LanguageModel({
     required this.langCode,
-    required this.languageFlag,
     required this.displayName,
     required this.l1,
     this.l2Support = L2SupportEnum.na,
     this.languageEmoji,
   });
+
+  String? get flagCode => FlagCode.fromLanguageCode(langCode);
 
   factory LanguageModel.fromJson(json) {
     final String code = json['language_code'] ??
@@ -35,7 +36,6 @@ class LanguageModel {
 
     return LanguageModel(
       langCode: code,
-      languageFlag: json['language_flag'] ?? "",
       displayName: _LanguageLocal.getDisplayName(
         code != LanguageKeys.unknownLanguage ? code : json['language_name'],
       ),
@@ -50,10 +50,10 @@ class LanguageModel {
   toJson() => {
         'language_code': langCode,
         'language_name': displayName,
-        'language_flag': languageFlag,
         'l1': l1,
         'language_emoji': languageEmoji,
         'l2_support': l2Support.storageString,
+        'flag_code': flagCode,
       };
 
   bool get l2 => l2Support != L2SupportEnum.na;
@@ -77,7 +77,6 @@ class LanguageModel {
   //PTODO - add flag for unknown
   static LanguageModel get unknown => LanguageModel(
         langCode: LanguageKeys.unknownLanguage,
-        languageFlag: "",
         displayName: "Unknown",
         l1: false,
       );
@@ -88,12 +87,11 @@ class LanguageModel {
             : "Multilingual Space",
         l1: false,
         langCode: LanguageKeys.multiLanguage,
-        languageFlag: 'assets/colors.png',
         languageEmoji: "🌎",
       );
 
   String? getDisplayName(BuildContext context) {
-    switch (langCode) {
+    switch (langCode.split("-").first) {
       case 'ab':
         return L10n.of(context).abDisplayName;
       case 'aa':
@@ -491,6 +489,36 @@ class LanguageModel {
     );
     return null;
   }
+
+  LanguageModel copyWith({String? langCode}) {
+    return LanguageModel(
+      langCode: langCode ?? this.langCode,
+      displayName: displayName,
+      l1: l1,
+      l2Support: l2Support,
+      languageEmoji: languageEmoji,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is LanguageModel &&
+        langCode == other.langCode &&
+        displayName == other.displayName &&
+        languageEmoji == other.languageEmoji &&
+        l1 == other.l1 &&
+        l2Support == other.l2Support;
+  }
+
+  @override
+  int get hashCode =>
+      langCode.hashCode ^
+      displayName.hashCode ^
+      languageEmoji.hashCode ^
+      l1.hashCode ^
+      l2Support.hashCode;
 }
 
 class _LanguageLocal {

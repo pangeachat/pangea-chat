@@ -60,8 +60,10 @@ Future<void> pLanguageDialog(
                       title: L10n.of(context).whatIsYourBaseLanguage,
                     ),
                     PLanguageDropdown(
-                      onChange: (p0) =>
-                          setState(() => selectedSourceLanguage = p0),
+                      onChange: (p0) => setState(
+                        () => selectedSourceLanguage =
+                            PangeaLanguage.byLangCode(p0),
+                      ),
                       initialLanguage:
                           selectedSourceLanguage ?? LanguageModel.unknown,
                       languages: pangeaController.pLanguageStore.baseOptions,
@@ -72,8 +74,11 @@ Future<void> pLanguageDialog(
                       title: L10n.of(context).whatLanguageYouWantToLearn,
                     ),
                     PLanguageDropdown(
-                      onChange: (p0) =>
-                          setState(() => selectedTargetLanguage = p0),
+                      onChange: (p0) => setState(
+                        () => selectedTargetLanguage =
+                            PangeaLanguage.byLangCode(p0) ??
+                                LanguageModel.unknown,
+                      ),
                       initialLanguage: selectedTargetLanguage,
                       languages: pangeaController.pLanguageStore.targetOptions,
                       isL2List: true,

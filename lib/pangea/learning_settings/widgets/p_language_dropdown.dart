@@ -12,21 +12,25 @@ import 'flag.dart';
 class PLanguageDropdown extends StatefulWidget {
   final List<LanguageModel> languages;
   final LanguageModel? initialLanguage;
-  final Function(LanguageModel) onChange;
+  final Function(String)? onChange;
   final bool showMultilingual;
   final bool isL2List;
+  final String? hintText;
   final String decorationText;
   final String? error;
+  final double? padding;
 
   const PLanguageDropdown({
     super.key,
     required this.languages,
     required this.onChange,
+    this.hintText,
     required this.initialLanguage,
     this.showMultilingual = false,
     required this.decorationText,
     this.isL2List = false,
     this.error,
+    this.padding,
   });
 
   @override
@@ -38,26 +42,42 @@ class _PLanguageDropdownState extends State<PLanguageDropdown> {
   Widget build(BuildContext context) {
     final List<LanguageModel> sortedLanguages = widget.languages;
     final String systemLang = Localizations.localeOf(context).languageCode;
-    final List<String> languagePriority = [systemLang, 'en', 'es'];
+    final List<String> languagePriority = [
+      systemLang,
+      'en',
+      'en-us',
+      'es',
+      'es-mx',
+      'es-es',
+    ];
 
     int sortLanguages(LanguageModel a, LanguageModel b) {
-      final String aLang = a.langCode;
-      final String bLang = b.langCode;
+      final String aLang = a.langCode.toLowerCase();
+      final String bLang = b.langCode.toLowerCase();
       if (aLang == bLang) return 0;
 
-      final bool aIsPriority = languagePriority.contains(a.langCode);
-      final bool bIsPriority = languagePriority.contains(b.langCode);
-      if (!aIsPriority && !bIsPriority) {
-        return a.getDisplayName(context)!.compareTo(b.getDisplayName(context)!);
-      }
+      final int aPriority =
+          languagePriority.indexWhere((code) => code == aLang);
+      final int bPriority =
+          languagePriority.indexWhere((code) => code == bLang);
 
-      if (aIsPriority && bIsPriority) {
-        final int aPriority = languagePriority.indexOf(a.langCode);
-        final int bPriority = languagePriority.indexOf(b.langCode);
+      if (aPriority != -1 && bPriority != -1) {
+        // Both are in the priority list, compare by priority index
         return aPriority - bPriority;
       }
 
-      return aIsPriority ? -1 : 1;
+      if (aPriority != -1) {
+        // `a` is in the priority list, it comes first
+        return -1;
+      }
+
+      if (bPriority != -1) {
+        // `b` is in the priority list, it comes first
+        return 1;
+      }
+
+      // Neither is in the priority list, sort alphabetically by display name
+      return a.getDisplayName(context)!.compareTo(b.getDisplayName(context)!);
     }
 
     sortedLanguages.sort((a, b) => sortLanguages(a, b));
@@ -68,6 +88,12 @@ class _PLanguageDropdownState extends State<PLanguageDropdown> {
         DropdownButtonFormField2<LanguageModel>(
           decoration: InputDecoration(labelText: widget.decorationText),
           isExpanded: true,
+          hint: Text(
+            widget.hintText ?? "",
+            overflow: TextOverflow.clip,
+            textAlign: TextAlign.center,
+          ),
+          value: widget.initialLanguage,
           items: [
             if (widget.showMultilingual)
               DropdownMenuItem(
@@ -87,8 +113,9 @@ class _PLanguageDropdownState extends State<PLanguageDropdown> {
               ),
             ),
           ],
-          onChanged: (value) => widget.onChange(value!),
-          value: widget.initialLanguage,
+          onChanged: widget.onChange != null
+              ? (value) => widget.onChange!(value!.langCode)
+              : null,
         ),
         AnimatedSize(
           duration: FluffyThemes.animationDuration,
@@ -125,7 +152,7 @@ class LanguageDropDownEntry extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 12),
+      padding: const EdgeInsets.only(left: 12, right: 6),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -136,7 +163,7 @@ class LanguageDropDownEntry extends StatelessWidget {
           const SizedBox(width: 10),
           Flexible(
             child: Text(
-              languageModel.getDisplayName(context) ?? "",
+              "${languageModel.getDisplayName(context) ?? ""} - ${languageModel.langCode}",
               style: const TextStyle().copyWith(
                 color: Theme.of(context).textTheme.bodyLarge!.color,
                 fontSize: 14,

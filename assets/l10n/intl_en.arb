@@ -4780,5 +4780,6 @@
   "mustBeInteger": "Must be an integer e.g. 1, 2, 3, ...",
   "noBookmarkedActivities": "No bookmarked activities",
   "noLemmasFound": "No lemmas found",
-  "constructUsePvmDesc": "Produced in voice message"
+  "constructUsePvmDesc": "Produced in voice message",
+  "botLanguage": "Bot language"
 }

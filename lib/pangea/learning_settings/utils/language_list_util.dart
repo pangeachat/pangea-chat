@@ -3,6 +3,8 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 
+import 'package:country_flags/country_flags.dart';
+
 import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/pangea/learning_settings/constants/language_constants.dart';
 import 'package:fluffychat/pangea/learning_settings/models/language_model.dart';
@@ -16,13 +18,27 @@ class PangeaLanguage {
 
   static List<LanguageModel> _langList = [];
 
-  List<LanguageModel> get langList => _langList;
+  static List<LanguageModel> get langList {
+    final List<LanguageModel> languages = [];
+    for (final element in _langList) {
+      final langCodes = FlagCode.allCodesForLang(element.langCode);
+      if (langCodes.isEmpty) {
+        languages.add(element);
+        continue;
+      }
+
+      for (final code in langCodes) {
+        languages.add(element.copyWith(langCode: code));
+      }
+    }
+    return languages;
+  }
 
   List<LanguageModel> get targetOptions =>
-      _langList.where((element) => element.l2).toList();
+      langList.where((element) => element.l2).toList();
 
   List<LanguageModel> get baseOptions =>
-      _langList.where((element) => element.l1).toList();
+      langList.where((element) => element.l1).toList();
 
   static Future<void> initialize() async {
     try {
@@ -101,7 +117,7 @@ class PangeaLanguage {
   }
 
   static LanguageModel? byLangCode(String langCode) {
-    for (final element in _langList) {
+    for (final element in langList) {
       if (element.langCode == langCode) return element;
     }
     return null;

@@ -92,9 +92,9 @@ class UserSettingsState extends State<UserSettingsPage> {
     });
   }
 
-  void setSelectedTargetLanguage(LanguageModel? language) {
+  void setSelectedTargetLanguage(String langCode) {
     setState(() {
-      selectedTargetLanguage = language;
+      selectedTargetLanguage = PangeaLanguage.byLangCode(langCode);
       selectedLanguageError = null;
     });
   }

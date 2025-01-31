@@ -9,6 +9,7 @@ import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pangea/common/widgets/pangea_logo_svg.dart';
 import 'package:fluffychat/pangea/learning_settings/utils/country_display.dart';
+import 'package:fluffychat/pangea/learning_settings/utils/language_list_util.dart';
 import 'package:fluffychat/pangea/learning_settings/widgets/p_language_dropdown.dart';
 import 'package:fluffychat/pangea/user/models/user_model.dart';
 import 'package:fluffychat/pangea/user/widgets/list_placeholder.dart';
@@ -231,8 +232,10 @@ class LanguageSelectionRow extends StatelessWidget {
                 : controller.pangeaController.pLanguageStore.targetOptions,
             onChange: (language) {
               controller.filterUserProfiles(
-                sourceLanguage: isSource ? language : null,
-                targetLanguage: isSource ? null : language,
+                sourceLanguage:
+                    isSource ? PangeaLanguage.byLangCode(language) : null,
+                targetLanguage:
+                    isSource ? null : PangeaLanguage.byLangCode(language),
               );
             },
             isL2List: !isSource,
