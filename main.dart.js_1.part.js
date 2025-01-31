@@ -3211,15 +3211,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$autoIGCToolDescription() {
       return "Automatically run language assistance after typing messages";
     },
-    get$leaveRoomDescription() {
-      return "The chat will be moved to the archive. Other users will be able to see that you have left the chat.";
-    },
-    get$leaveSpaceDescription() {
-      return "All chats within this space will be moved to the archive. Other users will be able to see that you have left the space.";
-    },
-    get$onlyAdminDescription() {
-      return "Since there are no other admins, all other participants will also be removed.";
-    },
     get$tooltipInstructionsTitle() {
       return "Not sure what that does?";
     },
@@ -4684,6 +4675,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$lockedMorphFeature() {
       return "Waiting to be unlocked";
     },
+    get$leaveSpaceDescription() {
+      return "The space will be moved to the archive. Other users will be able to see that you have left the chat.";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -6043,6 +6037,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_1", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "N7K6JQSbKPg0RptY0Z+k9v76X2M=");
+})($__dart_deferred_initializers__, "aAgEvkurokftFp4Ahkf1cmbJ07k=");
 ;
 //# sourceMappingURL=main.dart.js_1.part.js.map

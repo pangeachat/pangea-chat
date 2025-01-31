@@ -7,18 +7,18 @@
 $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersList, $) {
   var A,
   B = {
-    L10nBo$() {
-      return new B.L10nBo(A.canonicalizedLocale("bo"));
+    L10nBn$() {
+      return new B.L10nBn(A.canonicalizedLocale("bn"));
     },
-    L10nBo: function L10nBo(t0) {
+    L10nBn: function L10nBn(t0) {
       this.localeName = t0;
     }
   },
   C;
   A = holdersList[0];
-  B = hunkHelpers.updateHolder(holdersList[8], B);
+  B = hunkHelpers.updateHolder(holdersList[7], B);
   C = holdersList[51];
-  B.L10nBo.prototype = {
+  B.L10nBn.prototype = {
     get$alwaysUse24HourFormat() {
       return "false";
     },
@@ -50,13 +50,13 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "About " + homeserver;
     },
     get$accept(_) {
-      return "Accept";
+      return "\u09b8\u09cd\u09ac\u09c0\u0995\u09be\u09b0 \u0995\u09b0\u09bf";
     },
     acceptedTheInvitation$1(username) {
-      return "\ud83d\udc4d " + username + " accepted the invitation";
+      return username + " \u0986\u09ae\u09a8\u09cd\u09a4\u09cd\u09b0\u09a3 \u0997\u09cd\u09b0\u09b9\u09a3 \u0995\u09b0\u09c7\u099b\u09c7";
     },
     get$account() {
-      return "Account";
+      return "\u0985\u09cd\u09af\u09be\u0995\u09be\u0989\u09a8\u09cd\u099f";
     },
     activatedEndToEndEncryption$1(username) {
       return "\ud83d\udd10 " + username + " activated end to end encryption";
@@ -2963,7 +2963,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Please enter a number greater than 0";
     },
     get$archiveRoomDescription() {
-      return "The chat will be moved to the archive for yourself and other non-admin users.";
+      return "The chat will be moved to the archive. Other users will be able to see that you have left the chat.";
     },
     get$roomUpgradeDescription() {
       return "The chat will then be recreated with the new room version. All participants will be notified that they need to switch to the new chat. You can find out more about room versions at https://spec.matrix.org/latest/rooms/";
@@ -3204,15 +3204,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$autoIGCToolDescription() {
       return "Automatically run language assistance after typing messages";
-    },
-    get$leaveRoomDescription() {
-      return "The chat will be moved to the archive. Other users will be able to see that you have left the chat.";
-    },
-    get$leaveSpaceDescription() {
-      return "All chats within this space will be moved to the archive. Other users will be able to see that you have left the space.";
-    },
-    get$onlyAdminDescription() {
-      return "Since there are no other admins, all other participants will also be removed.";
     },
     get$tooltipInstructionsTitle() {
       return "Not sure what that does?";
@@ -4678,6 +4669,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$lockedMorphFeature() {
       return "Waiting to be unlocked";
     },
+    get$leaveSpaceDescription() {
+      return "The space will be moved to the archive. Other users will be able to see that you have left the chat.";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4685,14 +4679,14 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
   var typesOffset = hunkHelpers.updateTypes([]);
   (function inheritance() {
     var _inherit = hunkHelpers.inherit;
-    _inherit(B.L10nBo, C.L10n);
+    _inherit(B.L10nBn, C.L10n);
   })();
-  A._Universe_addRules(init.typeUniverse, JSON.parse('{"L10nBo":{"L10n":[]}}'));
+  A._Universe_addRules(init.typeUniverse, JSON.parse('{"L10nBn":{"L10n":[]}}'));
 };
 ;
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_196", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "cHa1DAdplsq/IdP2tYIj6YpFuI8=");
+})($__dart_deferred_initializers__, "1FJCsiIUgNE/fXZyU187LVBvmd8=");
 ;
 //# sourceMappingURL=main.dart.js_196.part.js.map
