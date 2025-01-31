@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:http/http.dart' as http;
 
@@ -14,12 +15,19 @@ class LevelUpUtil {
     int level,
     BuildContext context,
   ) {
+    final player = AudioPlayer();
+    player.play(
+      UrlSource(
+        "${AppConfig.assetsBaseURL}/${AnalyticsConstants.levelUpAudioFileName}",
+      ),
+    );
+
     showDialog(
       context: context,
       builder: (context) => LevelUpAnimation(
         level: level,
       ),
-    );
+    ).then((_) => player.dispose());
   }
 }
 
