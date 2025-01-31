@@ -4674,6 +4674,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$constructUsePvmDesc() {
       return "Produced in voice message";
     },
+    get$lockedMorphFeature() {
+      return "Waiting to be unlocked";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4689,6 +4692,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_277", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "NDoEv9ium9eRkSYkKMtLZM9H2qo=");
+})($__dart_deferred_initializers__, "BJMF3PqWgr/JhZgCcZzI/ZDGc9c=");
 ;
 //# sourceMappingURL=main.dart.js_277.part.js.map
