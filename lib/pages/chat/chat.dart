@@ -45,6 +45,7 @@ import 'package:fluffychat/pangea/events/models/representation_content_model.dar
 import 'package:fluffychat/pangea/events/models/tokens_event_content_model.dart';
 import 'package:fluffychat/pangea/events/utils/report_message.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension.dart';
+import 'package:fluffychat/pangea/instructions/instructions_enum.dart';
 import 'package:fluffychat/pangea/learning_settings/widgets/p_language_dialog.dart';
 import 'package:fluffychat/pangea/toolbar/enums/message_mode_enum.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/message_selection_overlay.dart';
@@ -225,17 +226,6 @@ class ChatController extends State<ChatPageWithRoom>
     if (success.error != null) return;
     context.go('/rooms');
   }
-
-  // #Pangea
-  void archiveChat() async {
-    final success = await showFutureLoadingDialog(
-      context: context,
-      future: room.archive,
-    );
-    if (success.error != null) return;
-    context.go('/rooms');
-  }
-  // Pangea#
 
   EmojiPickerType emojiPickerType = EmojiPickerType.keyboard;
 
@@ -1770,6 +1760,9 @@ class ChatController extends State<ChatPageWithRoom>
       );
       return;
     }
+
+    // you've clicked a message so lets turn this off
+    InstructionsEnum.clickMessage.setToggledOff(true);
 
     showToolbarStream.add(event.eventId);
     if (!kIsWeb) {

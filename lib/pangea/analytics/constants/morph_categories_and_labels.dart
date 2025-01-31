@@ -1,12 +1,9 @@
-import 'dart:developer';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:material_symbols_icons/symbols.dart';
 
 const Map<String, List<String>> morphCategoriesAndLabels = {
-  "Pos": [
+  "pos": [
     "ADJ",
     "ADP",
     "ADV",
@@ -27,14 +24,14 @@ const Map<String, List<String>> morphCategoriesAndLabels = {
     "VERB",
     "X",
   ],
-  "AdvType": ["Adverbial", "Tim"],
-  "Aspect": [
+  "advtype": ["Adverbial", "Tim"],
+  "aspect": [
     "Imp",
     "Perf",
     "Prog",
     "Hab",
   ],
-  "Case": [
+  "case": [
     "Nom",
     "Acc",
     "Dat",
@@ -65,18 +62,18 @@ const Map<String, List<String>> morphCategoriesAndLabels = {
     "Acc,Nom",
     "Pre",
   ],
-  "ConjType": ["Coord", "Sub", "Cmp"],
-  "Definite": ["Def", "Ind", "Cons"],
-  "Degree": [
+  "conjtype": ["Coord", "Sub", "Cmp"],
+  "definite": ["Def", "Ind", "Cons"],
+  "degree": [
     "Pos",
     "Cmp",
     "Sup",
     "Abs",
   ],
-  "Evident": ["Fh", "Nfh"],
-  "Foreign": ["Yes"],
-  "Gender": ["Masc", "Fem", "Neut", "Com"],
-  "Mood": [
+  "evident": ["Fh", "Nfh"],
+  "foreign": ["Yes"],
+  "gender": ["Masc", "Fem", "Neut", "Com"],
+  "mood": [
     "Ind",
     "Imp",
     "Sub",
@@ -91,14 +88,14 @@ const Map<String, List<String>> morphCategoriesAndLabels = {
     "Qot",
     "Int",
   ],
-  "NounType": ["Prop", "Comm", "Not_proper"],
-  "NumForm": [
+  "nountype": ["Prop", "Comm", "Not_proper"],
+  "numform": [
     "Digit",
     "Word",
     "Roman",
     "Letter",
   ],
-  "NumType": [
+  "numtype": [
     "Card",
     "Ord",
     "Mult",
@@ -107,7 +104,7 @@ const Map<String, List<String>> morphCategoriesAndLabels = {
     "Range",
     "Dist",
   ],
-  "Number": [
+  "number": [
     "Sing",
     "Plur",
     "Dual",
@@ -117,19 +114,19 @@ const Map<String, List<String>> morphCategoriesAndLabels = {
     "Grpl",
     "Inv",
   ],
-  "Number[psor]": ["Sing", "Plur", "Dual"],
-  "Person": [
+  "number[psor]": ["Sing", "Plur", "Dual"],
+  "person": [
     "0",
     "1",
     "2",
     "3",
     "4",
   ],
-  "Polarity": ["Pos", "Neg"],
-  "Polite": ["Infm", "Form", "Elev", "Humb"],
-  "Poss": ["Yes"],
-  "PrepCase": ["Npr"],
-  "PronType": [
+  "polarity": ["Pos", "Neg"],
+  "polite": ["Infm", "Form", "Elev", "Humb"],
+  "poss": ["Yes"],
+  "prepcase": ["Npr"],
+  "prontype": [
     "Prs",
     "Int",
     "Rel",
@@ -143,8 +140,8 @@ const Map<String, List<String>> morphCategoriesAndLabels = {
     "Rcp",
     "Int,Rel",
   ],
-  "PunctSide": ["Ini", "Fin"],
-  "PunctType": [
+  "punctside": ["Ini", "Fin"],
+  "puncttype": [
     "Brck",
     "Dash",
     "Excl",
@@ -155,9 +152,9 @@ const Map<String, List<String>> morphCategoriesAndLabels = {
     "Colo",
     "Comm",
   ],
-  "Reflex": ["Yes"],
-  "Tense": ["Pres", "Past", "Fut", "Imp", "Pqp", "Aor", "Eps", "Prosp"],
-  "VerbForm": [
+  "reflex": ["Yes"],
+  "tense": ["Pres", "Past", "Fut", "Imp", "Pqp", "Aor", "Eps", "Prosp"],
+  "verbform": [
     "Fin",
     "Inf",
     "Sup",
@@ -168,9 +165,9 @@ const Map<String, List<String>> morphCategoriesAndLabels = {
     "Adn",
     "Lng",
   ],
-  "VerbType": ["Mod", "Caus"],
-  "Voice": ["Act", "Mid", "Pass", "Antip", "Cau", "Dir", "Inv", "Rcp", "Caus"],
-  "X": ["X"],
+  "verbtype": ["Mod", "Caus"],
+  "voice": ["Act", "Mid", "Pass", "Antip", "Cau", "Dir", "Inv", "Rcp", "Caus"],
+  "x": ["X"],
 };
 
 // TODO Use the icons that Khue is creating
@@ -223,16 +220,11 @@ IconData getIconForMorphFeature(String feature) {
     case 'conjtype':
       return Icons.compare_arrows;
     default:
-      debugger(when: kDebugMode);
       return Icons.help_outline;
   }
 }
 
-List<String> getLabelsForMorphCategory(String category) {
-  for (final feat in morphCategoriesAndLabels.keys) {
-    if (feat.toLowerCase() == category.toLowerCase()) {
-      return morphCategoriesAndLabels[feat]!;
-    }
-  }
-  return [];
-}
+List<String> getLabelsForMorphCategory(String feature) =>
+    morphCategoriesAndLabels[feature.toLowerCase()] ?? [];
+
+List<String> getMorphCategories() => morphCategoriesAndLabels.keys.toList();
