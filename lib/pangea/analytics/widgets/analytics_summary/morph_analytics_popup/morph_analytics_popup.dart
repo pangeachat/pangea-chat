@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/analytics/enums/construct_type_enum.dart';
 import 'package:fluffychat/pangea/analytics/enums/progress_indicators_enum.dart';
@@ -11,9 +15,6 @@ import 'package:fluffychat/pangea/morphs/get_icon_for_morph_feature.dart';
 import 'package:fluffychat/pangea/morphs/morph_models.dart';
 import 'package:fluffychat/utils/color_value.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-
 import '../../../../morphs/morph_repo.dart';
 
 class MorphAnalyticsPopup extends StatelessWidget {
