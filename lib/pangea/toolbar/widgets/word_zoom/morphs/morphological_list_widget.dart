@@ -1,6 +1,6 @@
 import 'package:fluffychat/pangea/analytics/utils/get_svg_link.dart';
 import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
-import 'package:fluffychat/pangea/morphs/morph_categories_and_labels.dart';
+import 'package:fluffychat/pangea/morphs/get_icon_for_morph_feature.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/word_zoom/morphs/morphological_list_item.dart';
 import 'package:flutter/material.dart';
 

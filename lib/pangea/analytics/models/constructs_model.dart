@@ -3,14 +3,11 @@ import 'dart:developer';
 import 'package:fluffychat/pangea/analytics/enums/construct_use_type_enum.dart';
 import 'package:fluffychat/pangea/analytics/models/construct_identifier.dart';
 import 'package:fluffychat/pangea/common/utils/error_handler.dart';
-<<<<<<< Updated upstream
-=======
-import 'package:fluffychat/pangea/morphs/morph_categories_and_labels.dart';
-import 'package:fluffychat/pangea/toolbar/models/practice_activity_model.dart';
+import 'package:fluffychat/pangea/morphs/morph_models.dart';
 import 'package:flutter/foundation.dart';
 import 'package:matrix/matrix.dart';
 
->>>>>>> Stashed changes
+import '../../morphs/morph_repo.dart';
 import '../enums/construct_type_enum.dart';
 
 class ConstructAnalyticsModel {
@@ -157,13 +154,15 @@ class OneConstructUse {
       return category ?? "Other";
     }
 
+    final MorphsByLanguage morphs = MorphsRepo.get();
+
     if (categoryEntry == null) {
-      return _guessGrammarCategory(json["lemma"]);
+      return morphs.guessMorphCategory(json["lemma"]);
     }
 
     if ((categoryEntry is List)) {
       if (categoryEntry.isEmpty) {
-        return _guessGrammarCategory(json["lemma"]);
+        return morphs.guessMorphCategory(json["lemma"]);
       }
       return categoryEntry.first;
     } else if (categoryEntry is String) {
@@ -173,25 +172,7 @@ class OneConstructUse {
     debugPrint(
       "Category entry is not a list or string -${json['cat'] ?? json['categories']}-",
     );
-    return _guessGrammarCategory(json["lemma"]);
-  }
-
-  static String _guessGrammarCategory(String morphLemma) {
-    for (final String category in morphCategoriesAndLabels.keys) {
-      if (morphCategoriesAndLabels[category]!.contains(morphLemma)) {
-        // debugPrint(
-        //   "found missing construct category for $morphLemma: $category",
-        // );
-        return category;
-      }
-    }
-    ErrorHandler.logError(
-      m: "Morph construct lemma $morphLemma not found in morph categories and labels",
-      data: {
-        "morphLemma": morphLemma,
-      },
-    );
-    return "Other";
+    return morphs.guessMorphCategory(json["lemma"]);
   }
 
   Room? getRoom(Client client) {

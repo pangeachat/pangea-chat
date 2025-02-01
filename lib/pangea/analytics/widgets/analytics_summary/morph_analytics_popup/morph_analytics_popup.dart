@@ -1,9 +1,4 @@
-import 'package:flutter/material.dart';
-
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-
 import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pangea/analytics/constants/morph_categories_and_labels.dart';
 import 'package:fluffychat/pangea/analytics/enums/construct_type_enum.dart';
 import 'package:fluffychat/pangea/analytics/enums/progress_indicators_enum.dart';
 import 'package:fluffychat/pangea/analytics/models/construct_list_model.dart';
@@ -12,8 +7,14 @@ import 'package:fluffychat/pangea/analytics/utils/get_grammar_copy.dart';
 import 'package:fluffychat/pangea/analytics/utils/get_svg_link.dart';
 import 'package:fluffychat/pangea/common/widgets/customized_svg.dart';
 import 'package:fluffychat/pangea/common/widgets/full_width_dialog.dart';
+import 'package:fluffychat/pangea/morphs/get_icon_for_morph_feature.dart';
+import 'package:fluffychat/pangea/morphs/morph_models.dart';
 import 'package:fluffychat/utils/color_value.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+
+import '../../../../morphs/morph_repo.dart';
 
 class MorphAnalyticsPopup extends StatelessWidget {
   const MorphAnalyticsPopup({
@@ -48,9 +49,10 @@ class MorphAnalyticsPopup extends StatelessWidget {
     return entries;
   }
 
+  List<MorphFeature> get availableFeatures => MorphsRepo.get().features;
+
   @override
   Widget build(BuildContext context) {
-    final availableFeatures = getMorphCategories();
     final List<MapEntry<String, List<ConstructUses>>> morphUses =
         List.from(_sortedEntries);
 
@@ -127,10 +129,12 @@ class MorphFeatureBox extends StatelessWidget {
         category;
   }
 
+  Set<String> get availableLabels => MorphsRepo.get()
+      .getLabelsForMorphCategory(_morphFeature)
+      .map((tag) => tag.toLowerCase())
+      .toSet();
+
   Set<String> get _lockedTags {
-    final availableLabels = getLabelsForMorphCategory(_morphFeature)
-        .map((tag) => tag.toLowerCase())
-        .toSet();
     final usedLabels =
         morphIdentifiers.map((morph) => morph.morphTag.toLowerCase()).toSet();
     return availableLabels.difference(usedLabels);

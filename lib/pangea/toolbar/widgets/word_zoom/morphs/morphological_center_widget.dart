@@ -9,7 +9,7 @@ import 'package:fluffychat/pangea/events/event_wrappers/pangea_message_event.dar
 import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/events/models/tokens_event_content_model.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension.dart';
-import 'package:fluffychat/pangea/morphs/morph_categories_and_labels.dart';
+import 'package:fluffychat/pangea/morphs/morph_repo.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/message_selection_overlay.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:flutter/material.dart';
@@ -137,13 +137,13 @@ class MorphologicalCenterWidgetState extends State<MorphologicalCenterWidget> {
 
   /// all morphological tags for the selected morphological category
   /// that are eligible for setting as the morphological tag
-  List<String> get allMorphTagsForEdit =>
-      getLabelsForMorphCategory(widget.morphFeature)
-          .where(
-            (tag) => !["punct", "space", "sym", "x", "other"]
-                .contains(tag.toLowerCase()),
-          )
-          .toList();
+  List<String> get allMorphTagsForEdit => MorphsRepo.get()
+      .getLabelsForMorphCategory(widget.morphFeature)
+      .where(
+        (tag) => !["punct", "space", "sym", "x", "other"]
+            .contains(tag.toLowerCase()),
+      )
+      .toList();
 
   String get morphCopy =>
       getMorphologicalCategoryCopy(widget.morphFeature, context) ??
