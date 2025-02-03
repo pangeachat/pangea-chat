@@ -1,5 +1,8 @@
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+
 import 'package:fluffychat/pangea/analytics_misc/message_analytics_controller.dart';
 import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/message_selection_overlay.dart';
@@ -8,8 +11,6 @@ import 'package:fluffychat/pangea/toolbar/widgets/toolbar_content_loading_indica
 import 'package:fluffychat/pangea/toolbar/widgets/word_zoom/lemma_meaning_widget.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/word_zoom/morphs/morphological_center_widget.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/word_zoom/word_zoom_widget.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 
 class WordZoomCenterWidget extends StatelessWidget {
   final WordZoomSelection? selectionType;

@@ -1,9 +1,10 @@
+import 'package:flutter/material.dart';
+
 import 'package:fluffychat/pangea/analytics_misc/message_analytics_controller.dart';
 import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/pangea/events/event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/message_token_text.dart';
-import 'package:flutter/material.dart';
 
 class MessageTextUtil {
   static List<TokenPosition>? getTokenPositions(

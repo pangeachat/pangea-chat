@@ -1,9 +1,10 @@
+import 'package:flutter/material.dart';
+
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/analytics_misc/construct_type_enum.dart';
 import 'package:fluffychat/pangea/analytics_misc/construct_use_model.dart';
 import 'package:fluffychat/pangea/analytics_summary/progress_indicators_enum.dart';
 import 'package:fluffychat/pangea/morphs/get_grammar_copy.dart';
-import 'package:flutter/material.dart';
 
 class ConstructUsesXPTile extends StatelessWidget {
   final ConstructUses constructUses;

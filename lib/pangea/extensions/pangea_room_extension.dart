@@ -4,7 +4,17 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+
 import 'package:collection/collection.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:html_unescape/html_unescape.dart';
+import 'package:matrix/matrix.dart' as matrix;
+import 'package:matrix/matrix.dart';
+import 'package:matrix/src/utils/markdown.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+
 import 'package:fluffychat/pangea/analytics_misc/constructs_event.dart';
 import 'package:fluffychat/pangea/analytics_misc/constructs_model.dart';
 import 'package:fluffychat/pangea/bot/utils/bot_name.dart';
@@ -16,15 +26,6 @@ import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/pangea/events/models/tokens_event_content_model.dart';
 import 'package:fluffychat/pangea/spaces/constants/space_constants.dart';
 import 'package:fluffychat/pangea/spaces/models/space_model.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:html_unescape/html_unescape.dart';
-import 'package:matrix/matrix.dart' as matrix;
-import 'package:matrix/matrix.dart';
-import 'package:matrix/src/utils/markdown.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-
 import '../choreographer/models/choreo_record.dart';
 import '../events/constants/pangea_event_types.dart';
 import '../events/models/representation_content_model.dart';

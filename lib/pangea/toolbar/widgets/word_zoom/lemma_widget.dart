@@ -1,7 +1,8 @@
+import 'package:flutter/material.dart';
+
 import 'package:fluffychat/pangea/analytics_misc/construct_level_enum.dart';
 import 'package:fluffychat/pangea/common/widgets/customized_svg.dart';
 import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
-import 'package:flutter/material.dart';
 
 class LemmaWidget extends StatelessWidget {
   final PangeaToken token;

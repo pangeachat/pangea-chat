@@ -1,6 +1,7 @@
+import 'package:flutter/material.dart';
+
 import 'package:fluffychat/pangea/analytics_summary/progress_indicators_enum.dart';
 import 'package:fluffychat/pangea/common/widgets/pressable_button.dart';
-import 'package:flutter/material.dart';
 
 /// A badge that represents one learning progress indicator (i.e., construct uses)
 class ProgressIndicatorBadge extends StatelessWidget {

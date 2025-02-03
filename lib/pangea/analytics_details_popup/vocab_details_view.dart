@@ -1,3 +1,8 @@
+import 'package:flutter/material.dart';
+
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:material_symbols_icons/symbols.dart';
+
 import 'package:fluffychat/pangea/analytics_details_popup/lemma_usage_dots.dart';
 import 'package:fluffychat/pangea/analytics_details_popup/lemma_use_example_messages.dart';
 import 'package:fluffychat/pangea/analytics_misc/construct_identifier.dart';
@@ -17,9 +22,6 @@ import 'package:fluffychat/pangea/morphs/get_grammar_copy.dart';
 import 'package:fluffychat/pangea/toolbar/controllers/tts_controller.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/practice_activity/word_audio_button.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:material_symbols_icons/symbols.dart';
 
 /// Displays information about selected lemma, and its usage
 class VocabDetailsView extends StatelessWidget {
