@@ -1918,6 +1918,13 @@
     "type": "text",
     "placeholders": {}
   },
+  "synchronizingPleaseWaitCounter": " Synchronizing… ({percentage}%)",
+  "@synchronizingPleaseWaitCounter": {
+    "type": "text",
+    "placeholders": {
+      "percentage": {}
+    }
+  },
   "systemTheme": "System",
   "@systemTheme": {
     "type": "text",
@@ -4789,5 +4796,17 @@
   "noLemmasFound": "No lemmas found",
   "constructUsePvmDesc": "Produced in voice message",
   "lockedMorphFeature": "Waiting to be unlocked",
-  "leaveSpaceDescription": "The space will be moved to the archive. Other users will be able to see that you have left the chat."
+  "leaveSpaceDescription": "The space will be moved to the archive. Other users will be able to see that you have left the chat.",
+  "otherPartyNotLoggedIn": "The other party is currently not logged in and therefore cannot receive messages!",
+  "appWantsToUseForLogin": "Use '{server}' to log in",
+  "@appWantsToUseForLogin": {
+    "type": "text",
+    "placeholders": {
+      "server": {}
+    }
+  },
+  "appWantsToUseForLoginDescription": "You hereby allow the app and website to share information about you.",
+  "open": "Open",
+  "waitingForServer": "Waiting for server...",
+  "appIntroduction": "FluffyChat lets you chat with your friends across different messengers. Learn more at https://matrix.org or just tap *Continue*."
 }

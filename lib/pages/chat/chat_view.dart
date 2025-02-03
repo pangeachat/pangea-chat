@@ -25,7 +25,6 @@ import 'package:fluffychat/pangea/choreographer/widgets/it_bar.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension.dart';
 import 'package:fluffychat/utils/account_config.dart';
 import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/widgets/connection_status_header.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:fluffychat/widgets/mxc_image.dart';
@@ -144,7 +143,8 @@ class ChatView extends StatelessWidget {
     }
     // } else if (!controller.room.isArchived) {
     //   return [
-    //     if (Matrix.of(context).voipPlugin != null &&
+    //     if (AppConfig.experimentalVoip &&
+    //         Matrix.of(context).voipPlugin != null &&
     //         controller.room.isDirectChat)
     //       IconButton(
     //         onPressed: controller.onPhoneButtonTap,
@@ -303,16 +303,13 @@ class ChatView extends StatelessWidget {
               //         ),
               //       )
               //     : null,
-              // Pangea#
-              body:
-                  // #Pangea
-                  // DropTarget(
-                  //   onDragDone: controller.onDragDone,
-                  //   onDragEntered: controller.onDragEntered,
-                  //   onDragExited: controller.onDragExited,
-                  //   child:
-                  // Pangea#
-                  Stack(
+              // body: DropTarget(
+              //   onDragDone: controller.onDragDone,
+              //   onDragEntered: controller.onDragEntered,
+              //   onDragExited: controller.onDragExited,
+              //   child: Stack(
+              body: Stack(
+                // Pangea#
                 children: <Widget>[
                   if (accountConfig.wallpaperUrl != null)
                     Opacity(
@@ -409,7 +406,6 @@ class ChatView extends StatelessWidget {
                                   // : Column(
                                   //     mainAxisSize: MainAxisSize.min,
                                   //     children: [
-                                  //       const ConnectionStatusHeader(),
                                   //       ReactionsPicker(controller),
                                   //       ReplyDisplay(controller),
                                   //       ChatInputRow(controller),
@@ -428,9 +424,7 @@ class ChatView extends StatelessWidget {
                           ],
                         ),
                         // #Pangea
-                        ChatViewBackground(
-                          choreographer: controller.choreographer,
-                        ),
+                        ChatViewBackground(controller.choreographer),
                         Positioned(
                           left: 0,
                           right: 0,
@@ -476,13 +470,18 @@ class ChatView extends StatelessWidget {
                                 alignment: Alignment.center,
                                 child: Material(
                                   clipBehavior: Clip.hardEdge,
+                                  // #Pangea
+                                  // color: Theme.of(context)
+                                  //     .colorScheme
+                                  //     .surfaceContainerHighest,
                                   type: MaterialType.transparency,
+                                  // Pangea#
                                   borderRadius: const BorderRadius.all(
                                     Radius.circular(24),
                                   ),
+
                                   child: Column(
                                     children: [
-                                      const ConnectionStatusHeader(),
                                       ITBar(
                                         choreographer: controller.choreographer,
                                       ),

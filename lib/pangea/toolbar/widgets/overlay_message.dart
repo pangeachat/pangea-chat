@@ -190,6 +190,11 @@ class OverlayMessage extends StatelessWidget {
                 prevEvent: prevEvent,
                 borderRadius: borderRadius,
                 timeline: timeline,
+                linkColor: ownMessage
+                    ? theme.brightness == Brightness.light
+                        ? theme.colorScheme.primaryFixed
+                        : theme.colorScheme.onTertiaryContainer
+                    : theme.colorScheme.primary,
               ),
               if (event.hasAggregatedEvents(
                 timeline,

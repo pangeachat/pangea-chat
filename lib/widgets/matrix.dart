@@ -18,7 +18,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:fluffychat/pangea/common/constants/model_keys.dart';
 import 'package:fluffychat/pangea/common/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/common/utils/any_state_holder.dart';
 import 'package:fluffychat/utils/client_manager.dart';
@@ -34,7 +33,6 @@ import '../config/setting_keys.dart';
 import '../pages/key_verification/key_verification_dialog.dart';
 import '../utils/account_bundles.dart';
 import '../utils/background_push.dart';
-import 'local_notifications_extension.dart';
 
 // import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -356,17 +354,17 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
     if (PlatformInfos.isWeb || PlatformInfos.isLinux) {
       c.onSync.stream.first.then((s) {
         html.Notification.requestPermission();
-        onNotification[name] ??=
-            // TODO MERGE: update this once matrix sdk is updated
-            // c.onNotification.stream
-            c.onEvent.stream
-                // #Pangea
-                .where(
-                  (e) => !e.content['content']
-                      ?.containsKey(ModelKey.transcription),
-                )
-                // Pangea#
-                .listen(showLocalNotification);
+        // onNotification[name] ??=
+        //     // TODO MERGE: update this once matrix sdk is updated
+        //     // c.onNotification.stream
+        //     c.onEvent.stream
+        //         // #Pangea
+        //         .where(
+        //           (e) => !e.content['content']
+        //               ?.containsKey(ModelKey.transcription),
+        //         )
+        //         // Pangea#
+        //         .listen(showLocalNotification);
       });
     }
   }

@@ -158,10 +158,19 @@ class Message extends StatelessWidget {
     final textColor = ownMessage
         ?
         // #Pangea
-        // theme.colorScheme.onPrimary
+        // theme.brightness == Brightness.light
+        //     ? theme.colorScheme.onPrimary
+        //     : theme.colorScheme.onPrimaryContainer
         ThemeData.dark().colorScheme.onPrimary
         // Pangea#
         : theme.colorScheme.onSurface;
+
+    final linkColor = ownMessage
+        ? theme.brightness == Brightness.light
+            ? theme.colorScheme.primaryFixed
+            : theme.colorScheme.onTertiaryContainer
+        : theme.colorScheme.primary;
+
     final rowMainAxisAlignment =
         ownMessage ? MainAxisAlignment.end : MainAxisAlignment.start;
 
@@ -197,7 +206,9 @@ class Message extends StatelessWidget {
       color = displayEvent.status.isError
           ? Colors.redAccent
           // #Pangea
-          // : ThemeData.dark().colorScheme.primary;
+          // : theme.brightness == Brightness.light
+          //     ? theme.colorScheme.primary
+          //     : theme.colorScheme.primaryContainer;
           : Color.alphaBlend(
               Colors.white.withAlpha(180),
               ThemeData.dark().colorScheme.primary,
@@ -214,10 +225,9 @@ class Message extends StatelessWidget {
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             animateIn = false;
             // #Pangea
-            if (context.mounted) {
-              // Pangea#
-              setState(resetAnimateIn);
-            }
+            // setState(resetAnimateIn);
+            if (context.mounted) setState(resetAnimateIn);
+            // Pangea#
           });
         }
         return AnimatedSize(
@@ -519,6 +529,7 @@ class Message extends StatelessWidget {
                                                 MessageContent(
                                                   displayEvent,
                                                   textColor: textColor,
+                                                  linkColor: linkColor,
                                                   onInfoTab: onInfoTab,
                                                   borderRadius: borderRadius,
                                                   timeline: timeline,

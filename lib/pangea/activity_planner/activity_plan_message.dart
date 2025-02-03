@@ -120,6 +120,10 @@ class ActivityPlanMessage extends StatelessWidget {
                                     controller: controller,
                                     immersionMode: false,
                                     timeline: timeline,
+                                    linkColor: theme.brightness ==
+                                            Brightness.light
+                                        ? theme.colorScheme.primaryFixed
+                                        : theme.colorScheme.onTertiaryContainer,
                                   ),
                                   if (event.hasAggregatedEvents(
                                     timeline,
