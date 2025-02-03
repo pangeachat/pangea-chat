@@ -28,6 +28,7 @@ import 'package:fluffychat/utils/voip_plugin.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/fluffy_chat_app.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
+import 'package:fluffychat/widgets/local_notifications_extension.dart';
 import '../config/app_config.dart';
 import '../config/setting_keys.dart';
 import '../pages/key_verification/key_verification_dialog.dart';
@@ -354,17 +355,8 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
     if (PlatformInfos.isWeb || PlatformInfos.isLinux) {
       c.onSync.stream.first.then((s) {
         html.Notification.requestPermission();
-        // onNotification[name] ??=
-        //     // TODO MERGE: update this once matrix sdk is updated
-        //     // c.onNotification.stream
-        //     c.onEvent.stream
-        //         // #Pangea
-        //         .where(
-        //           (e) => !e.content['content']
-        //               ?.containsKey(ModelKey.transcription),
-        //         )
-        //         // Pangea#
-        //         .listen(showLocalNotification);
+        onNotification[name] ??=
+            c.onNotification.stream.listen(showLocalNotification);
       });
     }
   }

@@ -712,7 +712,7 @@ class ChatController extends State<ChatPageWithRoom>
 
     // wait for the next event to come through before clearing any fake event,
     // to make the replacement look smooth
-    room.client.onEvent.stream.first.then((_) => clearFakeEvent());
+    room.client.onTimelineEvent.stream.first.then((_) => clearFakeEvent());
 
     room
         .pangeaSendTextEvent(

@@ -138,19 +138,10 @@ class HtmlMessage extends StatelessWidget {
     String text,
     int offset,
     int length,
-  ) {
-    debugPrint("TOKEN OFFSET: $offset, LENGTH: $length, tokens: $tokens");
-    if (tokens != null) {
-      for (final token in tokens!) {
-        debugPrint(
-          "offset: ${token.text.offset}, length: ${token.text.length}",
-        );
-      }
-    }
-    return tokens?.firstWhereOrNull(
-      (token) => token.text.offset == offset && token.text.length == length,
-    );
-  }
+  ) =>
+      tokens?.firstWhereOrNull(
+        (token) => token.text.offset == offset && token.text.length == length,
+      );
 
   /// Wrap token spans in token tags so styling / functions can be applied
   dom.Node _tokenizeHtml(
@@ -282,8 +273,6 @@ class HtmlMessage extends StatelessWidget {
               ? AppConfig.success.withAlpha(60)
               : AppConfig.gold.withAlpha(60);
         }
-
-        debugPrint("token: $token");
 
         return TextSpan(
           recognizer: TapGestureRecognizer()
@@ -586,9 +575,6 @@ class HtmlMessage extends StatelessWidget {
     dom.Node parsed = parser.parse(html).body ?? dom.Element.html('');
     if (tokens != null) {
       parsed = _tokenizeHtml(parsed, html, List.from(tokens!));
-      if (parsed is dom.Element) {
-        debugPrint(parsed.innerHtml);
-      }
     }
     return SelectionArea(
       child: GestureDetector(
