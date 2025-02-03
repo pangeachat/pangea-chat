@@ -4662,14 +4662,11 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$mustBeInteger() {
       return "Must be an integer e.g. 1, 2, 3, ...";
     },
-    get$noLemmasFound() {
-      return "No lemmas found";
+    noLemmasFound$1(xp) {
+      return "There are no vocabulary with more than " + xp + " XP. Keep practicing!";
     },
     get$constructUsePvmDesc() {
       return "Produced in voice message";
-    },
-    get$lockedMorphFeature() {
-      return "Waiting to be unlocked";
     },
     get$leaveSpaceDescription() {
       return "The space will be moved to the archive. Other users will be able to see that you have left the chat.";
@@ -4689,6 +4686,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_258", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "nPZIhuscV/5ypcKj1d6VgRtz/Eg=");
+})($__dart_deferred_initializers__, "A7IZJKXM7FSz6Xo1U8wNf3DffDM=");
 ;
 //# sourceMappingURL=main.dart.js_258.part.js.map
