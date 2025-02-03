@@ -367,6 +367,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     createdTheChat$1(username) {
       return "\ud83d\udcac " + username + " \u521b\u5efa\u4e86\u804a\u5929";
     },
+    get$createGroup() {
+      return "\u521b\u5efa\u7fa4\u7ec4";
+    },
     get$currentlyActive() {
       return "\u76ee\u524d\u6d3b\u8dc3";
     },
@@ -832,6 +835,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$send(_) {
       return "\u53d1\u9001";
     },
+    get$sendAMessage() {
+      return "\u53d1\u9001\u4e00\u6761\u6d88\u606f";
+    },
     get$sendAsText() {
       return "\u4ee5\u6587\u672c\u53d1\u9001";
     },
@@ -845,7 +851,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "\u53d1\u9001\u56fe\u50cf";
     },
     sendImages$1(count) {
-      return "Send " + count + " image";
+      return "\u53d1\u9001 " + count + " \u5f20\u56fe\u7247";
     },
     get$sendMessages() {
       return "\u53d1\u9001\u6d88\u606f";
@@ -918,6 +924,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$synchronizingPleaseWait() {
       return "\u540c\u6b65\u4e2d\u2026\u8bf7\u7b49\u5f85\u3002";
+    },
+    synchronizingPleaseWaitCounter$1(percentage) {
+      return " Synchronizing\u2026 (" + percentage + "%)";
     },
     get$systemTheme() {
       return "\u7cfb\u7edf";
@@ -1068,9 +1077,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$markAsRead() {
       return "\u6807\u4e3a\u5df2\u8bfb";
-    },
-    get$reportUser() {
-      return "\u4e3e\u62a5\u7528\u6237";
     },
     reactedWith$2(sender, reaction) {
       return sender + " \u56de\u5e94\u4e86 " + reaction;
@@ -3091,9 +3097,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     restoreSessionBody$2(url, error) {
       return "\u5e94\u7528\u73b0\u5728\u5c1d\u8bd5\u4ece\u5907\u4efd\u4e2d\u6062\u590d\u4f60\u7684\u4f1a\u8bdd\u3002\u8bf7\u5c06\u6b64\u9519\u8bef\u62a5\u544a\u7ed9\u5f00\u53d1\u8005\uff0c\u7f51\u5740\u4e3a " + url + "\u3002\u9519\u8bef\u6d88\u606f\u4e3a\uff1a" + error;
     },
-    forwardMessageTo$1(roomName) {
-      return "\u8f6c\u53d1\u6d88\u606f\u81f3 " + roomName + " \uff1f";
-    },
     get$signUp() {
       return "Sign up";
     },
@@ -3276,6 +3279,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$speechToTextBody() {
       return "For voice messages, you can see a transcript as well as the speaker's Words Per Minute score.";
+    },
+    get$previous() {
+      return "Previous";
     },
     get$versionNotFound() {
       return "Version Not Found";
@@ -4235,7 +4241,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "\u7248\u672c";
     },
     get$compress() {
-      return "Compress";
+      return "\u538b\u7f29";
     },
     get$boldText() {
       return "\u6587\u672c\u52a0\u7c97";
@@ -4588,6 +4594,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$noClassCode() {
       return "No class code!";
     },
+    get$otherPartyNotLoggedIn() {
+      return "The other party is currently not logged in and therefore cannot receive messages!";
+    },
     get$chooseCorrectLabel() {
       return "Choose the correct label.";
     },
@@ -4677,6 +4686,12 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$leaveSpaceDescription() {
       return "The space will be moved to the archive. Other users will be able to see that you have left the chat.";
+    },
+    get$open(_) {
+      return "Open";
+    },
+    get$waitingForServer() {
+      return "Waiting for server...";
     },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
@@ -5018,6 +5033,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     createdTheChat$1(username) {
       return "\ud83d\udcac " + username + " \u5efa\u7acb\u4e86\u804a\u5929\u5ba4";
+    },
+    get$createGroup() {
+      return "\u5efa\u7acb\u7fa4\u7d44";
     },
     get$currentlyActive() {
       return "\u76ee\u524d\u6d3b\u8e8d";
@@ -5481,6 +5499,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$send(_) {
       return "\u50b3\u9001";
     },
+    get$sendAMessage() {
+      return "\u50b3\u9001\u8a0a\u606f";
+    },
     get$sendAsText() {
       return "\u4ee5\u6587\u5b57\u50b3\u9001";
     },
@@ -5711,9 +5732,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$markAsRead() {
       return "\u6a19\u793a\u70ba\u5df2\u8b80";
-    },
-    get$reportUser() {
-      return "\u8209\u5831\u4f7f\u7528\u8005";
     },
     reactedWith$2(sender, reaction) {
       return sender + " \u4ee5 " + reaction + " \u56de\u61c9";
@@ -5946,9 +5964,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     restoreSessionBody$2(url, error) {
       return "\u61c9\u7528\u7a0b\u5f0f\u73fe\u5728\u5617\u8a66\u5f9e\u5099\u4efd\u4e2d\u6062\u5fa9\u60a8\u7684\u6703\u8a71\u3002\u8acb\u5c07\u6b64\u932f\u8aa4\u5831\u544a\u7d66\u958b\u767c\u4eba\u54e1\uff0c\u7db2\u5740\u70ba " + url + "\u3002\u932f\u8aa4\u8a0a\u606f\u70ba\uff1a" + error;
     },
-    forwardMessageTo$1(roomName) {
-      return "\u5c07\u8a0a\u606f\u8f49\u767c\u81f3 " + roomName + "\uff1f";
-    },
     get$sendReadReceipts() {
       return "\u50b3\u9001\u5df2\u8b80\u56de\u689d";
     },
@@ -6037,6 +6052,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_1", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "uA/ifLa1w07/CqGOekVJHSPpQAg=");
+})($__dart_deferred_initializers__, "ioQ99j7nnjg9m+IyqaAIVFgyf4Y=");
 ;
 //# sourceMappingURL=main.dart.js_1.part.js.map

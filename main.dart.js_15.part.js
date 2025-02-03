@@ -373,6 +373,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     createdTheChat$1(username) {
       return "\ud83d\udcac " + username + " created the chat";
     },
+    get$createGroup() {
+      return "Create group";
+    },
     get$currentlyActive() {
       return "Currently active";
     },
@@ -838,6 +841,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$send(_) {
       return "Send";
     },
+    get$sendAMessage() {
+      return "Send a message";
+    },
     get$sendAsText() {
       return "Send as text";
     },
@@ -924,6 +930,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$synchronizingPleaseWait() {
       return "Synchronizing\u2026 Please wait.";
+    },
+    synchronizingPleaseWaitCounter$1(percentage) {
+      return " Synchronizing\u2026 (" + percentage + "%)";
     },
     get$systemTheme() {
       return "System";
@@ -1074,9 +1083,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$markAsRead() {
       return "Mark as read";
-    },
-    get$reportUser() {
-      return "Report user";
     },
     reactedWith$2(sender, reaction) {
       return sender + " reacted with " + reaction;
@@ -3097,9 +3103,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     restoreSessionBody$2(url, error) {
       return "The app now tries to restore your session from the backup. Please report this error to the developers at " + url + ". The error message is: " + error;
     },
-    forwardMessageTo$1(roomName) {
-      return "Forward message to " + roomName + "?";
-    },
     get$signUp() {
       return "Sign up";
     },
@@ -3282,6 +3285,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$speechToTextBody() {
       return "For voice messages, you can see a transcript as well as the speaker's Words Per Minute score.";
+    },
+    get$previous() {
+      return "Previous";
     },
     get$versionNotFound() {
       return "Version Not Found";
@@ -4594,6 +4600,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$noClassCode() {
       return "No class code!";
     },
+    get$otherPartyNotLoggedIn() {
+      return "The other party is currently not logged in and therefore cannot receive messages!";
+    },
     get$chooseCorrectLabel() {
       return "Choose the correct label.";
     },
@@ -4683,6 +4692,12 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$leaveSpaceDescription() {
       return "The space will be moved to the archive. Other users will be able to see that you have left the chat.";
+    },
+    get$open(_) {
+      return "Open";
+    },
+    get$waitingForServer() {
+      return "Waiting for server...";
     },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
@@ -5003,6 +5018,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     createdTheChat$1(username) {
       return "\ud83d\udcac " + username + " criou a conversa";
+    },
+    get$createGroup() {
+      return "Criar grupo";
     },
     get$currentlyActive() {
       return "Ativo";
@@ -5466,6 +5484,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$send(_) {
       return "Enviar";
     },
+    get$sendAMessage() {
+      return "Enviar mensagem";
+    },
     get$sendAsText() {
       return "Enviar como texto";
     },
@@ -5697,9 +5718,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$markAsRead() {
       return "Marcar como lido";
     },
-    get$reportUser() {
-      return "Delatar usu\xe1rio";
-    },
     reactedWith$2(sender, reaction) {
       return sender + " reagiu com " + reaction;
     },
@@ -5930,9 +5948,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     restoreSessionBody$2(url, error) {
       return "O aplicativo tentar\xe1 agora restaurar sua sess\xe3o a partir do backup. Por favor, reporte este ao desenvolvedor em " + url + ". A mensagem de erro \xe9: " + error;
-    },
-    forwardMessageTo$1(roomName) {
-      return "Encaminhar mensagem para " + roomName + "?";
     },
     get$sendReadReceipts() {
       return "Enviar recibos de leitura";
@@ -6638,6 +6653,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$send(_) {
       return "Enviar";
     },
+    get$sendAMessage() {
+      return "Enviar a mensagem";
+    },
     get$sendAsText() {
       return "Enviar como texto";
     },
@@ -6694,6 +6712,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_15", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "CXvT+lG41llFJDldXw3Dox/mdAE=");
+})($__dart_deferred_initializers__, "/kxoZwMOFR3BEgUeD4m3vMUgsKA=");
 ;
 //# sourceMappingURL=main.dart.js_15.part.js.map

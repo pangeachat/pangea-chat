@@ -7,79 +7,79 @@
 $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersList, $) {
   var A, C,
   B = {
-    L10nTa$() {
-      return new B.L10nTa(A.canonicalizedLocale("ta"));
+    L10nVi$() {
+      return new B.L10nVi(A.canonicalizedLocale("vi"));
     },
-    L10nTa: function L10nTa(t0) {
+    L10nVi: function L10nVi(t0) {
       this.localeName = t0;
     }
   };
   A = holdersList[0];
   C = holdersList[51];
-  B = hunkHelpers.updateHolder(holdersList[46], B);
-  B.L10nTa.prototype = {
+  B = hunkHelpers.updateHolder(holdersList[50], B);
+  B.L10nVi.prototype = {
     get$alwaysUse24HourFormat() {
-      return "false";
+      return "Kh\xf4ng";
     },
     get$repeatPassword() {
-      return "Repeat password";
+      return "Nh\u1eadp l\u1ea1i m\u1eadt kh\u1ea9u";
     },
     get$notAnImage() {
-      return "Not an image file.";
+      return "Kh\xf4ng ph\u1ea3i t\u1ec7p \u1ea3nh.";
     },
     get$remove(_) {
-      return "Remove";
+      return "Lo\u1ea1i b\u1ecf";
     },
     get$importNow() {
-      return "Import now";
+      return "Nh\u1eadp v\xe0o";
     },
     get$importEmojis() {
-      return "Import Emojis";
+      return "Nh\u1eadp Bi\u1ec3u c\u1ea3m";
     },
     get$importFromZipFile() {
-      return "Import from .zip file";
+      return "Nh\u1eadp v\xe0o t\u1eeb t\u1ec7p .zip";
     },
     get$exportEmotePack() {
-      return "Export Emote pack as .zip";
+      return "Xu\u1ea5t g\xf3i bi\u1ec3u c\u1ea3m b\u1eb1ng t\u1ec7p .zip";
     },
     get$replace(_) {
-      return "Replace";
+      return "Thay th\u1ebf";
     },
     aboutHomeserver$1(homeserver) {
-      return "About " + homeserver;
+      return "V\u1ec1 " + homeserver;
     },
     get$accept(_) {
-      return "\u0b8f\u0bb1\u0bcd\u0bb1\u0bc1\u0b95\u0bcd\u0b95\u0bca\u0bb3\u0bcd";
+      return "\u0110\u1ed3ng \xfd";
     },
     acceptedTheInvitation$1(username) {
-      return username + " \u0b85\u0bb4\u0bc8\u0baa\u0bcd\u0baa\u0bc8 \u0b8f\u0bb1\u0bcd\u0bb1\u0bc1\u0b95\u0bcd\u0b95\u0bca\u0ba3\u0bcd\u0b9f\u0bbe\u0bb0\u0bcd";
+      return username + " \u0111\xe3 \u0111\u1ed3ng \xfd l\u1eddi m\u1eddi";
     },
     get$account() {
-      return "Account";
+      return "T\xe0i kho\u1ea3n";
     },
     activatedEndToEndEncryption$1(username) {
-      return "\ud83d\udd10 " + username + " activated end to end encryption";
+      return username + " \u0111\xe3 k\xedch ho\u1ea1t m\xe3 h\xf3a \u0111\u1ea7u cu\u1ed1i 2 chi\u1ec1u";
     },
     get$addEmail() {
-      return "Add email";
+      return "Th\xeam email";
     },
     get$confirmMatrixId() {
-      return "Please confirm your Matrix ID in order to delete your account.";
+      return "H\xe3y x\xe1c nh\u1eadn Matrix ID \u0111\u1ec3 xo\xe1 t\xe0i kho\u1ea3n.";
     },
     supposedMxid$1(mxid) {
-      return "This should be " + mxid;
+      return "\u0110\xe2y n\xean l\xe0 " + mxid;
     },
     get$addToSpace() {
-      return "Add to space";
+      return "Th\xeam v\xe0o kh\xf4ng gian";
     },
     get$admin() {
-      return "Admin";
+      return "Qu\u1ea3n tr\u1ecb vi\xean";
     },
     get$alias() {
-      return "alias";
+      return "b\xed danh";
     },
     get$all() {
-      return "All";
+      return "T\u1ea5t c\u1ea3";
     },
     get$commandHint_googly() {
       return "Send some googly eyes";
@@ -88,7 +88,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Send a cuddle";
     },
     get$commandHint_hug() {
-      return "Send a hug";
+      return "G\u1eedi m\u1ed9t c\xe1i \xf4m";
     },
     googlyEyesContent$1(senderName) {
       return senderName + " sends you googly eyes";
@@ -97,34 +97,34 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return senderName + " cuddles you";
     },
     hugContent$1(senderName) {
-      return senderName + " hugs you";
+      return senderName + " \xf4m b\u1ea1n";
     },
     answeredTheCall$1(senderName) {
-      return senderName + " answered the call";
+      return senderName + " \u0111\xe3 tr\u1ea3 l\u1eddi cu\u1ed9c g\u1ecdi";
     },
     get$anyoneCanJoin() {
-      return "Anyone can join";
+      return "M\u1ecdi ng\u01b0\u1eddi \u0111\u1ec1u c\xf3 th\u1ec3 gia nh\u1eadp";
     },
     get$archive() {
-      return "Archive";
+      return "L\u01b0u tr\u1eef";
     },
     get$areGuestsAllowedToJoin() {
-      return "Are guest users allowed to join";
+      return "Kh\xe1ch v\xe3ng lai c\xf3 \u0111\u01b0\u1ee3c tham gia kh\xf4ng";
     },
     get$areYouSure() {
-      return "Are you sure?";
+      return "B\u1ea1n ch\u1eafc ch\u1ee9?";
     },
     get$areYouSureYouWantToLogout() {
-      return "Are you sure you want to log out?";
+      return "B\u1ea1n c\xf3 ch\u1eafc b\u1ea1n mu\u1ed1n \u0111\u0103ng xu\u1ea5t kh\xf4ng?";
     },
     get$askSSSSSign() {
       return "To be able to sign the other person, please enter your secure store passphrase or recovery key.";
     },
     askVerificationRequest$1(username) {
-      return "Accept this verification request from " + username + "?";
+      return "B\u1ea1n c\xf3 \u0111\u1ed3ng \xfd y\xeau c\u1ea7u ch\u1ee9ng th\u1ef1c t\u1eeb " + username + " kh\xf4ng?";
     },
     badServerLoginTypesException$3(serverVersions, supportedVersions, suportedVersions) {
-      return "The homeserver supports the login types:\n" + serverVersions + "\nBut this app supports only:\n" + supportedVersions;
+      return "M\xe1y ch\u1ee7 nh\xe0 h\u1ed7 tr\u1ee3 ki\u1ec3u \u0111\u0103ng nh\u1eadp:\n" + serverVersions + "\nNh\u01b0ng \u1ee9ng d\u1ee5ng n\xe0y ch\u1ec9 h\u1ed7 tr\u1ee3:\n" + supportedVersions;
     },
     get$sendTypingNotifications() {
       return "Send typing notifications";
@@ -136,7 +136,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Send on enter";
     },
     badServerVersionsException$4(serverVersions, supportedVersions, serverVerions, suportedVersions) {
-      return "The homeserver supports the Spec versions:\n" + serverVersions + "\nBut this app supports only " + supportedVersions;
+      return "M\xe1y ch\u1ee7 nh\xe0 h\u1ed7 tr\u1ee3 Spec phi\xean b\u1ea3n:\n" + serverVerions + "\nNh\u01b0ng \u1ee9ng d\u1ee5ng n\xe0y ch\u1ec9 h\u1ed7 tr\u1ee3 " + supportedVersions;
     },
     countChatsAndCountParticipants$2(chats, participants) {
       return A.S(chats) + " chats and " + A.S(participants) + " participants";
@@ -157,52 +157,52 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Spaces";
     },
     get$banFromChat() {
-      return "Ban from chat";
+      return "C\u1ea5m kh\u1ecfi cu\u1ed9c tr\xf2 chuy\u1ec7n";
     },
     get$banned() {
-      return "Banned";
+      return "\u0110\xe3 b\u1ecb c\u1ea5m";
     },
     bannedUser$2(username, targetName) {
-      return username + " banned " + targetName;
+      return username + " \u0111\xe3 c\u1ea5m " + targetName;
     },
     get$blockDevice() {
-      return "Block Device";
+      return "Thi\u1ebft b\u1ecb b\u1ecb ch\u1eb7n";
     },
     get$blocked() {
-      return "Blocked";
+      return "\u0110\xe3 ch\u1eb7n";
     },
     get$botMessages() {
       return "Bot messages";
     },
     get$cancel(_) {
-      return "Cancel";
+      return "H\u1ee7y";
     },
     cantOpenUri$1(uri) {
       return "Can't open the URI " + uri;
     },
     get$changeDeviceName() {
-      return "Change device name";
+      return "Thay \u0111\u1ed5i t\xean thi\u1ebft b\u1ecb";
     },
     changedTheChatAvatar$1(username) {
-      return username + " changed the chat avatar";
+      return username + " \u0111\xe3 thay \u0111\u1ed5i \u1ea3nh ph\xf2ng chat";
     },
     changedTheChatDescriptionTo$2(username, description) {
-      return username + " changed the chat description to: '" + description + "'";
+      return username + " \u0111\xe3 thay \u0111\u1ed5i m\xf4 t\u1ea3 ph\xf2ng chat th\xe0nh: '" + description + "'";
     },
     changedTheChatNameTo$2(username, chatname) {
-      return username + " changed the chat name to: '" + chatname + "'";
+      return username + " \u0111\xe3 thay \u0111\u1ed5i t\xean ph\xf2ng chat th\xe0nh: '" + chatname + "'";
     },
     changedTheChatPermissions$1(username) {
-      return username + " changed the chat permissions";
+      return username + " \u0111\xe3 thay \u0111\u1ed5i quy\u1ec1n trong ph\xf2ng chat";
     },
     changedTheDisplaynameTo$2(username, displayname) {
       return username + " changed their displayname to: '" + displayname + "'";
     },
     changedTheGuestAccessRules$1(username) {
-      return username + " changed the guest access rules";
+      return username + " \u0111\xe3 thay \u0111\u1ed5i quy t\u1eafc truy c\u1eadp \u0111\u1ed1i v\u1edbi kh\xe1ch";
     },
     changedTheGuestAccessRulesTo$2(username, rules) {
-      return username + " changed the guest access rules to: " + rules;
+      return username + " \u0111\xe3 thay \u0111\u1ed5i quy t\u1eafc truy c\u1eadp \u0111\u1ed1i v\u1edbi kh\xe1ch th\xe0nh: " + rules;
     },
     changedTheHistoryVisibility$1(username) {
       return username + " changed the history visibility";
@@ -217,22 +217,22 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return username + " changed the join rules to: " + joinRules;
     },
     changedTheProfileAvatar$1(username) {
-      return username + " changed their avatar";
+      return username + " \u0111\xe3 thay \u0111\u1ed5i \u1ea3nh \u0111\u1ea1i di\u1ec7n c\u1ee7a m\xecnh";
     },
     changedTheRoomAliases$1(username) {
-      return username + " changed the room aliases";
+      return username + " \u0111\xe3 \u0111\u1ed5i \u0111\u1ecba ch\u1ec9 ph\xf2ng chat";
     },
     changedTheRoomInvitationLink$1(username) {
-      return username + " changed the invitation link";
+      return username + " \u0111\xe3 thay \u0111\u1ed5i \u0111\u01b0\u1eddng d\u1eabn m\u1eddi";
     },
     get$changePassword() {
-      return "Change password";
+      return "Thay \u0111\u1ed5i m\u1eadt kh\u1ea9u";
     },
     get$changeTheme() {
       return "Change your style";
     },
     get$changeTheNameOfTheGroup() {
-      return "Change the name of the chat";
+      return "Thay \u0111\u1ed5i t\xean nh\xf3m";
     },
     get$changeYourAvatar() {
       return "Change your avatar";
@@ -244,19 +244,19 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Chat";
     },
     get$chatDetails() {
-      return "Chat details";
+      return "Chi ti\u1ebft cu\u1ed9c tr\xf2 chuy\u1ec7n";
     },
     get$chats() {
       return "Chats";
     },
     get$chooseAStrongPassword() {
-      return "Choose a strong password";
+      return "Ch\u1ecdn m\u1ed9t m\u1eadt kh\u1ea9u m\u1ea1nh";
     },
     get$clearArchive() {
       return "Clear archive";
     },
     get$close(_) {
-      return "Close";
+      return "\u0110\xf3ng";
     },
     get$commandHint_markasdm() {
       return "Mark as direct message room for the giving Matrix ID";
@@ -325,16 +325,16 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return command + " is not a command.";
     },
     get$compareEmojiMatch() {
-      return "Please compare the emojis";
+      return "So s\xe1nh v\xe0 \u0111\u1ea3m b\u1ea3o c\xe1c bi\u1ec3u t\u01b0\u1ee3ng c\u1ea3m x\xfac sau \u0111\xe2y gi\u1ed1ng v\u1edbi c\xe1c bi\u1ec3u t\u01b0\u1ee3ng tr\xean m\xe1y c\xf2n l\u1ea1i";
     },
     get$compareNumbersMatch() {
-      return "Please compare the numbers";
+      return "So s\xe1nh v\xe0 \u0111\u1ea3m b\u1ea3o c\xe1c s\u1ed1 sau \u0111\xe2y gi\u1ed1ng tr\xean m\xe1y c\xf2n l\u1ea1i";
     },
     get$configureChat() {
       return "Configure chat";
     },
     get$confirm(_) {
-      return "Confirm";
+      return "X\xe1c nh\u1eadn";
     },
     get$containsDisplayName() {
       return "Contains display name";
@@ -349,19 +349,22 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Copied to clipboard";
     },
     get$copy(_) {
-      return "Copy";
+      return "Sao ch\xe9p";
     },
     couldNotDecryptMessage$1(error) {
-      return "Could not decrypt message: " + error;
+      return "Kh\xf4ng th\u1ec3 gi\u1ea3i m\xe3 tin nh\u1eafn: " + error;
     },
     countParticipants$1(count) {
-      return A.S(count) + " participants";
+      return A.S(count) + " th\xe0nh vi\xean";
     },
     createdTheChat$1(username) {
-      return "\ud83d\udcac " + username + " created the chat";
+      return username + " \u0111\xe3 t\u1ea1o cu\u1ed9c tr\xf2 chuy\u1ec7n";
+    },
+    get$createGroup() {
+      return "Create group";
     },
     get$currentlyActive() {
-      return "Currently active";
+      return "\u0110ang ho\u1ea1t \u0111\u1ed9ng";
     },
     get$darkTheme() {
       return "Dark";
@@ -370,22 +373,22 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return date + ", " + timeOfDay;
     },
     get$deactivateAccountWarning() {
-      return "This will deactivate your user account. This can not be undone! Are you sure?";
+      return "Vi\u1ec7c n\xe0y s\u1ebd v\xf4 hi\u1ec7u ho\xe1 t\xe0i kho\u1ea3n c\u1ee7a b\u1ea1n. \u0110i\u1ec1u n\xe0y kh\xf4ng th\u1ec3 \u0111\u1ea3o ng\u01b0\u1ee3c \u0111\u01b0\u1ee3c! B\u1ea1n ch\u1eafc l\xe0 v\u1eabn mu\u1ed1n ti\u1ebfp t\u1ee5c ch\u1ee9?";
     },
     get$defaultPermissionLevel() {
       return "Default permission level for new users";
     },
     get$$delete(_) {
-      return "Delete";
+      return "Xo\xe1";
     },
     get$deleteAccount() {
-      return "Delete account";
+      return "Xo\xe1 t\xe0i kho\u1ea3n";
     },
     get$deleteMessage() {
-      return "Delete message";
+      return "Xo\xe1 tin nh\u1eafn";
     },
     get$devices() {
-      return "Devices";
+      return "C\xe1c thi\u1ebft b\u1ecb";
     },
     get$directChats() {
       return "Direct Chats";
@@ -394,10 +397,10 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "All Group Chats";
     },
     get$displaynameHasBeenChanged() {
-      return "Displayname has been changed";
+      return "T\xean hi\u1ec3n th\u1ecb \u0111\xe3 \u0111\u01b0\u1ee3c thay \u0111\u1ed5i";
     },
     get$downloadFile() {
-      return "Download file";
+      return "T\u1ea3i \u1ea3nh xu\u1ed1ng";
     },
     get$edit() {
       return "Edit";
@@ -412,7 +415,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Edit chat permissions";
     },
     get$editDisplayname() {
-      return "Edit displayname";
+      return "S\u1eeda t\xean hi\u1ec3n th\u1ecb";
     },
     get$editRoomAliases() {
       return "Edit room aliases";
@@ -655,7 +658,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "New verification request!";
     },
     get$next(_) {
-      return "Next";
+      return "Ti\u1ebfp";
     },
     get$no() {
       return "No";
@@ -679,7 +682,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "No rooms found\u2026";
     },
     get$notifications() {
-      return "Notifications";
+      return "Th\xf4ng b\xe1o";
     },
     get$notificationsEnabledForThisAccount() {
       return "Notifications enabled for this account";
@@ -733,7 +736,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Overview";
     },
     get$notifyMeFor() {
-      return "Notify me for";
+      return "B\u1eadt th\xf4ng b\xe1o cho";
     },
     get$passwordRecoverySettings() {
       return "Password recovery settings";
@@ -763,7 +766,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Please enter your username";
     },
     get$pleaseFollowInstructionsOnWeb() {
-      return "Please follow the instructions on the website and tap on next.";
+      return "Vui l\xf2ng l\xe0m theo h\u01b0\u1edbng d\u1eabn tr\xean trang web v\xe0 b\u1ea5m ti\u1ebfp";
     },
     get$privacy() {
       return "Privacy";
@@ -825,6 +828,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$send(_) {
       return "Send";
     },
+    get$sendAMessage() {
+      return "Send a message";
+    },
     get$sendAsText() {
       return "Send as text";
     },
@@ -877,7 +883,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Set permissions level";
     },
     get$settings() {
-      return "Settings";
+      return "C\xe0i \u0111\u1eb7t";
     },
     get$share(_) {
       return "Share";
@@ -911,6 +917,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$synchronizingPleaseWait() {
       return "Synchronizing\u2026 Please wait.";
+    },
+    synchronizingPleaseWaitCounter$1(percentage) {
+      return " Synchronizing\u2026 (" + percentage + "%)";
     },
     get$systemTheme() {
       return "System";
@@ -970,7 +979,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Unverified";
     },
     get$verified() {
-      return "Verified";
+      return "\u0110\xe3 x\xe1c th\u1ef1c";
     },
     get$verifyStart() {
       return "Start Verification";
@@ -1062,9 +1071,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$markAsRead() {
       return "Mark as read";
     },
-    get$reportUser() {
-      return "Report user";
-    },
     reactedWith$2(sender, reaction) {
       return sender + " reacted with " + reaction;
     },
@@ -1135,55 +1141,55 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "This can happen if the message was sent before you have signed in to your account at this device.\n\nIt is also possible that the sender has blocked your device or something went wrong with the internet connection.\n\nAre you able to read the message on another session? Then you can transfer the message from it! Go to Settings > Devices and make sure that your devices have verified each other. When you open the room the next time and both sessions are in the foreground, the keys will be transmitted automatically.\n\nDo you not want to lose the keys when logging out or switching devices? Make sure that you have enabled the chat backup in the settings.";
     },
     get$newSpace() {
-      return "New space";
+      return "Kh\xf4ng gian m\u1edbi";
     },
     get$doNotShowAgain() {
-      return "Do not show again";
+      return "Kh\xf4ng hi\u1ec7n l\u1ea1i n\u1eefa";
     },
     wasDirectChatDisplayName$1(oldDisplayName) {
-      return "Empty chat (was " + oldDisplayName + ")";
+      return "H\u1ed9i tho\u1ea1i tr\u1ed1ng (t\u1eebng l\xe0 " + oldDisplayName + ")";
     },
     get$reopenChat() {
-      return "Reopen chat";
+      return "M\u1edf l\u1ea1i cu\u1ed9c tr\xf2 chuy\u1ec7n";
     },
     get$noBackupWarning() {
-      return "Don't forget your password!";
+      return "C\u1ea9n th\u1eadn! N\u1ebfu kh\xf4ng b\u1eadt sao l\u01b0u tr\xf2 chuy\u1ec7n, b\u1ea1n s\u1ebd m\u1ea5t quy\u1ec1n truy c\u1eadp v\xe0o tin nh\u1eafn \u0111\u01b0\u1ee3c m\xe3 h\xf3a c\u1ee7a m\xecnh. Ch\xfang t\xf4i khuy\xean b\u1ea1n n\xean b\u1eadt sao l\u01b0u tr\xf2 chuy\u1ec7n tr\u01b0\u1edbc khi \u0111\u0103ng xu\u1ea5t.";
     },
     get$noOtherDevicesFound() {
-      return "No other devices found";
+      return "Kh\xf4ng t\xecm th\u1ea5y thi\u1ebft b\u1ecb kh\xe1c";
     },
     fileIsTooBigForServer$1(max) {
-      return "Unable to send! The server only supports attachments up to " + max + ".";
+      return "M\xe1y ch\u1ee7 b\xe1o c\xe1o r\u1eb1ng t\u1ec7p tin qu\xe1 l\u1edbn \u0111\u1ec3 g\u1eedi.";
     },
     get$jumpToLastReadMessage() {
-      return "Jump to last read message";
+      return "\u0110i t\u1edbi tin nh\u1eafn \u0111\xe3 \u0111\u1ecdc m\u1edbi nh\u1ea5t";
     },
     get$readUpToHere() {
-      return "Read up to here";
+      return "\u0110\u1ecdc t\u1edbi \u0111\xe2y";
     },
     get$jump() {
-      return "Jump";
+      return "\u0110i t\u1edbi";
     },
     get$openLinkInBrowser() {
-      return "Open link in browser";
+      return "M\u1edf \u0111\u01b0\u1eddng d\u1eabn trong tr\xecnh duy\u1ec7t";
     },
     get$profileNotFound() {
-      return "The user could not be found on the server. Maybe there is a connection problem or the user doesn't exist.";
+      return "Kh\xf4ng t\xecm th\u1ea5y ng\u01b0\u1eddi d\xf9ng n\xe0y t\u1ea1i m\xe1y ch\u1ee7. C\xf3 th\u1ec3 do l\u1ed7i k\u1ebft n\u1ed1i ho\u1eb7c ng\u01b0\u1eddi d\xf9ng kh\xf4ng t\u1ed3n t\u1ea1i.";
     },
     get$setColorTheme() {
-      return "Set color theme:";
+      return "Ch\u1ecdn m\xe0u giao di\u1ec7n:";
     },
     get$invite() {
-      return "Invite";
+      return "M\u1eddi";
     },
     get$invitePrivateChat() {
-      return "\ud83d\udce8 Invite private chat";
+      return "\ud83d\udce8 M\u1eddi tr\xf2 chuy\u1ec7n ri\xeang t\u01b0";
     },
     get$invalidInput() {
-      return "Invalid input!";
+      return "D\u1eef li\u1ec7u nh\u1eadp kh\xf4ng h\u1ee3p l\u1ec7!";
     },
     wrongPinEntered$1(seconds) {
-      return "Wrong pin entered! Try again in " + seconds + " seconds...";
+      return "Nh\u1eadp sai m\xe3 pin! Th\u1eed l\u1ea1i sau " + seconds + " gi\xe2y...";
     },
     get$allCorrect() {
       return "That's how I would say it! Nice!";
@@ -2959,34 +2965,34 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "No teachers found to report to";
     },
     get$pleaseEnterANumber() {
-      return "Please enter a number greater than 0";
+      return "H\xe3y nh\u1eadp s\u1ed1 l\u1edbn h\u01a1n 0";
     },
     get$archiveRoomDescription() {
-      return "The chat will be moved to the archive. Other users will be able to see that you have left the chat.";
+      return "Cu\u1ed9c tr\xf2 chuy\u1ec7n s\u1ebd \u0111\u01b0\u1ee3c chuy\u1ec3n t\u1edbi m\u1ee5c l\u01b0u tr\u1eef. Ng\u01b0\u1eddi d\xf9ng kh\xe1c s\u1ebd th\u1ea5y \u0111\u01b0\u1ee3c b\u1ea1n \u0111\xe3 r\u1eddi kh\u1ecfi cu\u1ed9c tr\xf2 chuy\u1ec7n.";
     },
     get$roomUpgradeDescription() {
-      return "The chat will then be recreated with the new room version. All participants will be notified that they need to switch to the new chat. You can find out more about room versions at https://spec.matrix.org/latest/rooms/";
+      return "Cu\u1ed9c tr\xf2 chuy\u1ec7n s\u1ebd \u0111\u01b0\u1ee3c t\u1ea1o l\u1ea1i v\u1edbi phi\xean b\u1ea3n ph\xf2ng m\u1edbi. T\u1ea5t c\u1ea3 nh\u1eefng ng\u01b0\u1eddi tham gia s\u1ebd \u0111\u01b0\u1ee3c th\xf4ng b\xe1o r\u1eb1ng h\u1ecd c\u1ea7n chuy\u1ec3n sang cu\u1ed9c tr\xf2 chuy\u1ec7n m\u1edbi. B\u1ea1n c\xf3 th\u1ec3 t\xecm hi\u1ec3u th\xeam v\u1ec1 c\xe1c phi\xean b\u1ea3n ph\xf2ng t\u1ea1i https://spec.matrix.org/latest/rooms/";
     },
     get$removeDevicesDescription() {
-      return "You will be logged out of this device and will no longer be able to receive messages.";
+      return "B\u1ea1n s\u1ebd \u0111\u0103ng xu\u1ea5t kh\u1ecfi thi\u1ebft b\u1ecb n\xe0y v\xe0 kh\xf4ng nh\u1eadn \u0111\u01b0\u1ee3c tin nh\u1eafn n\u1eefa.";
     },
     get$banUserDescription() {
-      return "The user will be banned from the chat and will not be able to enter the chat again until they are unbanned.";
+      return "Ng\u01b0\u1eddi d\xf9ng s\u1ebd b\u1ecb c\u1ea5m kh\u1ecfi cu\u1ed9c tr\xf2 chuy\u1ec7n v\xe0 kh\xf4ng th\u1ec3 tham gia l\u1ea1i cho t\u1edbi khi \u0111\u01b0\u1ee3c g\u1ee1 c\u1ea5m.";
     },
     get$unbanUserDescription() {
-      return "The user will be able to enter the chat again if they try.";
+      return "Ng\u01b0\u1eddi d\xf9ng s\u1ebd c\xf3 th\u1ec3 v\xe0o l\u1ea1i cu\u1ed9c tr\xf2 chuy\u1ec7n n\u1ebfu h\u1ecd th\u1eed.";
     },
     get$kickUserDescription() {
-      return "The user is kicked out of the chat but not banned. In public chats, the user can rejoin at any time.";
+      return "Ng\u01b0\u1eddi d\xf9ng b\u1ecb \u0111u\u1ed5i kh\u1ecfi cu\u1ed9c tr\xf2 chuy\u1ec7n nh\u01b0ng kh\xf4ng b\u1ecb c\u1ea5m. Trong c\xe1c cu\u1ed9c tr\xf2 chuy\u1ec7n c\xf4ng khai, ng\u01b0\u1eddi d\xf9ng c\xf3 th\u1ec3 v\xe0o l\u1ea1i b\u1ea5t c\u1ee9 l\xfac n\xe0o.";
     },
     get$makeAdminDescription() {
-      return "Once you make this user admin, you may not be able to undo this as they will then have the same permissions as you.";
+      return "Khi b\u1ea1n \u0111\u1eb7t ng\u01b0\u1eddi d\xf9ng n\xe0y l\xe0m qu\u1ea3n tr\u1ecb vi\xean, b\u1ea1n kh\xf4ng th\u1ec3 ho\xe0n t\xe1c vi\u1ec7c n\xe0y v\xec khi \u0111\xf3 h\u1ecd s\u1ebd c\xf3 quy\u1ec1n ngang b\u1ea1n.";
     },
     get$yourGlobalUserIdIs() {
       return "Your global user-ID is: ";
     },
     noUsersFoundWithQuery$1(query) {
-      return 'Unfortunately no user could be found with "' + query + '". Please check whether you made a typo.';
+      return 'Kh\xf4ng t\xecm th\u1ea5y ng\u01b0\u1eddi d\xf9ng n\xe0o v\u1edbi "' + query + '". H\xe3y ki\u1ec3m tra xem b\u1ea1n c\xf3 nh\u1eadp nh\u1ea7m kh\xf4ng.';
     },
     get$knocking() {
       return "Knocking";
@@ -3084,9 +3090,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     restoreSessionBody$2(url, error) {
       return "The app now tries to restore your session from the backup. Please report this error to the developers at " + url + ". The error message is: " + error;
     },
-    forwardMessageTo$1(roomName) {
-      return "Forward message to " + roomName + "?";
-    },
     get$signUp() {
       return "Sign up";
     },
@@ -3151,16 +3154,16 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Kicking Pangea Bot will remove the conversation bot from this chat.";
     },
     get$stickers() {
-      return "Stickers";
+      return "Nh\xe3n d\xe1n";
     },
     get$discover() {
-      return "Discover";
+      return "Kh\xe1m ph\xe1";
     },
     get$commandHint_ignore() {
-      return "Ignore the given matrix ID";
+      return "Ph\u1edbt l\u1edd matrix ID n\xe0y";
     },
     get$commandHint_unignore() {
-      return "Unignore the given matrix ID";
+      return "B\u1ecf ph\u1edbt l\u1edd matrix ID n\xe0y";
     },
     get$conversationBotModeSelectDescription() {
       return "Chat activity";
@@ -3256,7 +3259,7 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
       return "Right now there are " + count + " users blocked.";
     },
     get$restricted() {
-      return "Restricted";
+      return "B\u1ecb h\u1ea1n ch\u1ebf";
     },
     get$knockRestricted() {
       return "Knock restricted";
@@ -3269,6 +3272,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     },
     get$speechToTextBody() {
       return "For voice messages, you can see a transcript as well as the speaker's Words Per Minute score.";
+    },
+    get$previous() {
+      return "Previous";
     },
     get$versionNotFound() {
       return "Version Not Found";
@@ -4581,6 +4587,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$noClassCode() {
       return "No class code!";
     },
+    get$otherPartyNotLoggedIn() {
+      return "The other party is currently not logged in and therefore cannot receive messages!";
+    },
     get$chooseCorrectLabel() {
       return "Choose the correct label.";
     },
@@ -4671,6 +4680,12 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$leaveSpaceDescription() {
       return "The space will be moved to the archive. Other users will be able to see that you have left the chat.";
     },
+    get$open(_) {
+      return "Open";
+    },
+    get$waitingForServer() {
+      return "Waiting for server...";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4678,14 +4693,14 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
   var typesOffset = hunkHelpers.updateTypes([]);
   (function inheritance() {
     var _inherit = hunkHelpers.inherit;
-    _inherit(B.L10nTa, C.L10n);
+    _inherit(B.L10nVi, C.L10n);
   })();
-  A._Universe_addRules(init.typeUniverse, JSON.parse('{"L10nTa":{"L10n":[]}}'));
+  A._Universe_addRules(init.typeUniverse, JSON.parse('{"L10nVi":{"L10n":[]}}'));
 };
 ;
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_281", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "mV1CbzfvmFMst2558GLuymE/7RA=");
+})($__dart_deferred_initializers__, "8Hsu0xFDrYJ273DHP3hKR3OBcFI=");
 ;
 //# sourceMappingURL=main.dart.js_281.part.js.map
