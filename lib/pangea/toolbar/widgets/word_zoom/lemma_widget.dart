@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:fluffychat/pangea/analytics/enums/lemma_category_enum.dart';
+import 'package:fluffychat/pangea/analytics_misc/construct_level_enum.dart';
 import 'package:fluffychat/pangea/common/widgets/customized_svg.dart';
 import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
 
@@ -19,7 +19,13 @@ class LemmaWidget extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(token.lemma.text),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 180),
+            child: Text(
+              token.lemma.text,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
           const SizedBox(width: 6),
           SizedBox(
             width: 20,

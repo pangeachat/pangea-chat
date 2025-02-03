@@ -29,8 +29,9 @@ import 'package:fluffychat/pages/chat/chat_view.dart';
 import 'package:fluffychat/pages/chat/event_info_dialog.dart';
 import 'package:fluffychat/pages/chat/recording_dialog.dart';
 import 'package:fluffychat/pages/chat_details/chat_details.dart';
-import 'package:fluffychat/pangea/analytics/controllers/put_analytics_controller.dart';
-import 'package:fluffychat/pangea/analytics/models/constructs_model.dart';
+import 'package:fluffychat/pangea/analytics_misc/constructs_model.dart';
+import 'package:fluffychat/pangea/analytics_misc/level_up.dart';
+import 'package:fluffychat/pangea/analytics_misc/put_analytics_controller.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/choreographer.dart';
 import 'package:fluffychat/pangea/choreographer/models/choreo_record.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/igc/pangea_text_controller.dart';
@@ -120,8 +121,8 @@ class ChatController extends State<ChatPageWithRoom>
     with WidgetsBindingObserver {
   // #Pangea
   final PangeaController pangeaController = MatrixState.pangeaController;
-
   late Choreographer choreographer = Choreographer(pangeaController, this);
+  StreamSubscription? _levelSubscription;
   // Pangea#
   Room get room => sendingClient.getRoomById(roomId) ?? widget.room;
 
@@ -226,17 +227,6 @@ class ChatController extends State<ChatPageWithRoom>
     context.go('/rooms');
   }
 
-  // #Pangea
-  void archiveChat() async {
-    final success = await showFutureLoadingDialog(
-      context: context,
-      future: room.archive,
-    );
-    if (success.error != null) return;
-    context.go('/rooms');
-  }
-  // Pangea#
-
   EmojiPickerType emojiPickerType = EmojiPickerType.keyboard;
 
   // #Pangea
@@ -320,6 +310,15 @@ class ChatController extends State<ChatPageWithRoom>
         );
       }
     });
+
+    _levelSubscription = pangeaController.getAnalytics.analyticsStream.stream
+        .where((update) => update.levelUp)
+        .listen(
+          (update) => LevelUpUtil.showLevelUpDialog(
+            pangeaController.getAnalytics.constructListModel.level,
+            context,
+          ),
+        );
     // Pangea#
     tryLoadTimeline();
     if (kIsWeb) {
@@ -564,6 +563,7 @@ class ChatController extends State<ChatPageWithRoom>
     MatrixState.pAnyState.closeOverlay();
     showToolbarStream.close();
     hideTextController.dispose();
+    _levelSubscription?.cancel();
     //Pangea#
     super.dispose();
   }
