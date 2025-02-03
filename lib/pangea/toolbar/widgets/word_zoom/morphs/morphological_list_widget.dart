@@ -1,9 +1,6 @@
-import 'package:flutter/material.dart';
-
-import 'package:fluffychat/pangea/analytics/utils/get_svg_link.dart';
 import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
-import 'package:fluffychat/pangea/morphs/get_icon_for_morph_feature.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/word_zoom/morphs/morphological_list_item.dart';
+import 'package:flutter/material.dart';
 
 class ActivityMorph {
   final String morphFeature;
@@ -76,12 +73,6 @@ class MorphologicalListWidget extends StatelessWidget {
             onPressed: setMorphFeature,
             morphFeature: morph.morphFeature,
             morphTag: morph.morphTag,
-            icon: getIconForMorphFeature(morph.morphFeature),
-            svgLink: getMorphSvgLink(
-              morphFeature: morph.morphFeature,
-              morphTag: morph.revealed ? morph.morphTag : null,
-              context: context,
-            ),
             isUnlocked: morph.revealed,
             isSelected: selectedMorphFeature == morph.morphFeature,
           ),

@@ -1,17 +1,15 @@
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-
-import 'package:fluffychat/pangea/analytics/repo/lemma_info_repo.dart';
-import 'package:fluffychat/pangea/analytics/repo/lemma_info_request.dart';
-import 'package:fluffychat/pangea/analytics/repo/lemma_info_response.dart';
-import 'package:fluffychat/pangea/analytics/widgets/text_loading_shimmer.dart';
+import 'package:fluffychat/pangea/analytics_misc/text_loading_shimmer.dart';
 import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/learning_settings/constants/language_constants.dart';
+import 'package:fluffychat/pangea/lemmas/lemma_info_repo.dart';
+import 'package:fluffychat/pangea/lemmas/lemma_info_request.dart';
+import 'package:fluffychat/pangea/lemmas/lemma_info_response.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
 
 class LemmaMeaningWidget extends StatefulWidget {
   final PangeaToken token;

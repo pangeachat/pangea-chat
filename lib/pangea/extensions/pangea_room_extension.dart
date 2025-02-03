@@ -4,19 +4,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
 import 'package:collection/collection.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:html_unescape/html_unescape.dart';
-import 'package:matrix/matrix.dart' as matrix;
-import 'package:matrix/matrix.dart';
-import 'package:matrix/src/utils/markdown.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-
-import 'package:fluffychat/pangea/analytics/models/constructs_event.dart';
-import 'package:fluffychat/pangea/analytics/models/constructs_model.dart';
+import 'package:fluffychat/pangea/analytics_misc/constructs_event.dart';
+import 'package:fluffychat/pangea/analytics_misc/constructs_model.dart';
 import 'package:fluffychat/pangea/bot/utils/bot_name.dart';
 import 'package:fluffychat/pangea/chat_settings/constants/bot_mode.dart';
 import 'package:fluffychat/pangea/chat_settings/constants/pangea_room_types.dart';
@@ -26,11 +16,20 @@ import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/pangea/events/models/tokens_event_content_model.dart';
 import 'package:fluffychat/pangea/spaces/constants/space_constants.dart';
 import 'package:fluffychat/pangea/spaces/models/space_model.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:html_unescape/html_unescape.dart';
+import 'package:matrix/matrix.dart' as matrix;
+import 'package:matrix/matrix.dart';
+import 'package:matrix/src/utils/markdown.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+
 import '../choreographer/models/choreo_record.dart';
 import '../events/constants/pangea_event_types.dart';
 import '../events/models/representation_content_model.dart';
 
-part "../analytics/extensions/room_analytics_extension.dart";
+part "../analytics_misc/room_analytics_extension.dart";
 part "room_children_and_parents_extension.dart";
 part "room_events_extension.dart";
 part "room_information_extension.dart";

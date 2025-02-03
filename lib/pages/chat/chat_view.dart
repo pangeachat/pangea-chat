@@ -1,12 +1,6 @@
 import 'dart:ui' as ui;
 
-import 'package:flutter/material.dart';
-
 import 'package:badges/badges.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pages/chat/chat.dart';
@@ -17,8 +11,8 @@ import 'package:fluffychat/pages/chat/chat_event_list.dart';
 import 'package:fluffychat/pages/chat/pinned_events.dart';
 import 'package:fluffychat/pages/chat/reply_display.dart';
 import 'package:fluffychat/pangea/activity_planner/activity_plan_page_launch_icon_button.dart';
-import 'package:fluffychat/pangea/analytics/controllers/put_analytics_controller.dart';
-import 'package:fluffychat/pangea/analytics/widgets/gain_points.dart';
+import 'package:fluffychat/pangea/analytics_misc/gain_points_animation.dart';
+import 'package:fluffychat/pangea/analytics_misc/put_analytics_controller.dart';
 import 'package:fluffychat/pangea/chat/widgets/chat_floating_action_button.dart';
 import 'package:fluffychat/pangea/chat/widgets/chat_view_background.dart';
 import 'package:fluffychat/pangea/chat/widgets/input_bar_wrapper.dart';
@@ -31,6 +25,11 @@ import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:fluffychat/widgets/mxc_image.dart';
 import 'package:fluffychat/widgets/unread_rooms_badge.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:go_router/go_router.dart';
+import 'package:matrix/matrix.dart';
+
 import '../../utils/stream_extension.dart';
 
 enum _EventContextAction { info, report }
