@@ -29,6 +29,7 @@ import 'package:fluffychat/pages/chat/recording_dialog.dart';
 import 'package:fluffychat/pages/chat_details/chat_details.dart';
 import 'package:fluffychat/pangea/analytics/controllers/put_analytics_controller.dart';
 import 'package:fluffychat/pangea/analytics/models/constructs_model.dart';
+import 'package:fluffychat/pangea/analytics/widgets/level_up/level_up.dart';
 import 'package:fluffychat/pangea/choreographer/controllers/choreographer.dart';
 import 'package:fluffychat/pangea/choreographer/models/choreo_record.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/igc/pangea_text_controller.dart';
@@ -42,6 +43,7 @@ import 'package:fluffychat/pangea/events/models/representation_content_model.dar
 import 'package:fluffychat/pangea/events/models/tokens_event_content_model.dart';
 import 'package:fluffychat/pangea/events/utils/report_message.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension.dart';
+import 'package:fluffychat/pangea/instructions/instructions_enum.dart';
 import 'package:fluffychat/pangea/learning_settings/widgets/p_language_dialog.dart';
 import 'package:fluffychat/pangea/toolbar/enums/message_mode_enum.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/message_selection_overlay.dart';
@@ -123,8 +125,8 @@ class ChatController extends State<ChatPageWithRoom>
     with WidgetsBindingObserver {
   // #Pangea
   final PangeaController pangeaController = MatrixState.pangeaController;
-
   late Choreographer choreographer = Choreographer(pangeaController, this);
+  StreamSubscription? _levelSubscription;
   // Pangea#
   Room get room => sendingClient.getRoomById(roomId) ?? widget.room;
 
@@ -346,6 +348,15 @@ class ChatController extends State<ChatPageWithRoom>
         );
       }
     });
+
+    _levelSubscription = pangeaController.getAnalytics.analyticsStream.stream
+        .where((update) => update.levelUp)
+        .listen(
+          (update) => LevelUpUtil.showLevelUpDialog(
+            pangeaController.getAnalytics.constructListModel.level,
+            context,
+          ),
+        );
     // Pangea#
     _tryLoadTimeline();
     if (kIsWeb) {
@@ -587,6 +598,7 @@ class ChatController extends State<ChatPageWithRoom>
     MatrixState.pAnyState.closeOverlay();
     showToolbarStream.close();
     hideTextController.dispose();
+    _levelSubscription?.cancel();
     //Pangea#
     super.dispose();
   }
@@ -1782,6 +1794,9 @@ class ChatController extends State<ChatPageWithRoom>
       );
       return;
     }
+
+    // you've clicked a message so lets turn this off
+    InstructionsEnum.clickMessage.setToggledOff(true);
 
     showToolbarStream.add(event.eventId);
     if (!kIsWeb) {

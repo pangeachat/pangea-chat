@@ -1,10 +1,3 @@
-import 'package:flutter/material.dart';
-
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension.dart';
 import 'package:fluffychat/utils/fluffy_share.dart';
@@ -12,7 +5,11 @@ import 'package:fluffychat/utils/url_launcher.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-import 'package:fluffychat/widgets/qr_code_viewer.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:go_router/go_router.dart';
+import 'package:matrix/matrix.dart';
 
 // #Pangea
 // class PublicRoomBottomSheet extends StatelessWidget {
@@ -141,20 +138,22 @@ class PublicRoomBottomSheetState extends State<PublicRoomBottomSheet> {
               onPressed: Navigator.of(context, rootNavigator: false).pop,
             ),
           ),
-          actions: roomAlias == null
-              ? null
-              : [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: IconButton(
-                      icon: const Icon(Icons.qr_code_rounded),
-                      onPressed: () => showQrCodeViewer(
-                        context,
-                        roomAlias,
-                      ),
-                    ),
-                  ),
-                ],
+          // #Pangea
+          // actions: roomAlias == null
+          //     ? null
+          //     : [
+          //         Padding(
+          //           padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          //           child: IconButton(
+          //             icon: const Icon(Icons.qr_code_rounded),
+          //             onPressed: () => showQrCodeViewer(
+          //               context,
+          //               roomAlias,
+          //             ),
+          //           ),
+          //         ),
+          //       ],
+          // Pangea#
         ),
         body: FutureBuilder<PublicRoomsChunk>(
           future: _search(),

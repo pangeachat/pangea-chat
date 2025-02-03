@@ -1,11 +1,3 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:fluffychat/pages/chat_details/chat_details.dart';
 import 'package:fluffychat/pages/chat_details/participant_list_item.dart';
 import 'package:fluffychat/pangea/chat_settings/utils/download_chat.dart';
@@ -26,6 +18,12 @@ import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:go_router/go_router.dart';
+import 'package:matrix/matrix.dart';
 
 class PangeaChatDetailsView extends StatelessWidget {
   final ChatDetailsController controller;
@@ -405,49 +403,26 @@ class PangeaChatDetailsView extends StatelessWidget {
                             ),
                           ),
                           onTap: () async {
-                            OkCancelResult? confirmed = OkCancelResult.ok;
-                            var shouldGo = false;
-                            // If user is only admin, room will be archived
-                            final onlyAdmin = await room.isOnlyAdmin();
-                            // archiveSpace has its own popup; only show if not space
-                            if (!room.isSpace) {
-                              confirmed = await showOkCancelAlertDialog(
-                                useRootNavigator: false,
-                                context: context,
-                                title: L10n.of(context).areYouSure,
-                                okLabel: L10n.of(context).ok,
-                                cancelLabel: L10n.of(context).cancel,
-                                message: onlyAdmin
-                                    ? L10n.of(context).onlyAdminDescription
-                                    : L10n.of(context).leaveRoomDescription,
-                              );
-                            }
-                            if (confirmed == OkCancelResult.ok) {
-                              if (room.isSpace) {
-                                shouldGo = onlyAdmin
-                                    ? await room.archiveSpace(
-                                        context,
-                                        Matrix.of(context).client,
-                                        onlyAdmin: true,
-                                      )
-                                    : await room.leaveSpace(
-                                        context,
-                                        Matrix.of(context).client,
-                                      );
-                              } else {
-                                final success = await showFutureLoadingDialog(
-                                  context: context,
-                                  future: () async {
-                                    onlyAdmin
-                                        ? await room.archive()
-                                        : await room.leave();
-                                  },
-                                );
-                                shouldGo = (success.error == null);
-                              }
-                              if (shouldGo) {
-                                context.go('/rooms');
-                              }
+                            final confirmed = await showOkCancelAlertDialog(
+                              useRootNavigator: false,
+                              context: context,
+                              title: L10n.of(context).areYouSure,
+                              okLabel: L10n.of(context).leave,
+                              cancelLabel: L10n.of(context).no,
+                              message: room.isSpace
+                                  ? L10n.of(context).leaveSpaceDescription
+                                  : L10n.of(context).archiveRoomDescription,
+                              isDestructive: true,
+                            );
+                            if (confirmed == OkCancelResult.cancel) return;
+                            final resp = await showFutureLoadingDialog(
+                              context: context,
+                              future:
+                                  room.isSpace ? room.leaveSpace : room.leave,
+                            );
+                            if (!resp.isError) {
+                              MatrixState.pangeaController.classController
+                                  .setActiveSpaceIdInChatListController(null);
                             }
                           },
                         ),

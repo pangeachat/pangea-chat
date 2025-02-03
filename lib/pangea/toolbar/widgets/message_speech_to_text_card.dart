@@ -5,7 +5,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:material_symbols_icons/symbols.dart';
 
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/choreographer/widgets/igc/card_error_widget.dart';
@@ -194,13 +193,13 @@ class MessageSpeechToTextCardState extends State<MessageSpeechToTextCard> {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    IconNumberWidget(
-                      icon: Symbols.target,
-                      number:
-                          "${selectedToken?.confidence ?? speechToTextResponse!.transcript.confidence}%",
-                      toolTip: L10n.of(context).accuracy,
-                    ),
-                    const SizedBox(width: 16),
+                    // IconNumberWidget(
+                    //   icon: Symbols.target,
+                    //   number:
+                    //       "${selectedToken?.confidence ?? speechToTextResponse!.transcript.confidence}%",
+                    //   toolTip: L10n.of(context).accuracy,
+                    // ),
+                    // const SizedBox(width: 16),
                     IconNumberWidget(
                       icon: Icons.speed,
                       number: wordsPerMinuteString != null

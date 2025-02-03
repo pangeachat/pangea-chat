@@ -1,13 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
-
 import 'package:collection/collection.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart' as sdk;
-import 'package:matrix/matrix.dart';
-
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pages/chat_list/chat_list.dart';
 import 'package:fluffychat/pages/chat_list/chat_list_item.dart';
@@ -23,6 +16,11 @@ import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import 'package:fluffychat/widgets/public_room_bottom_sheet.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:go_router/go_router.dart';
+import 'package:matrix/matrix.dart' as sdk;
+import 'package:matrix/matrix.dart';
 
 enum AddRoomType {
   chat,
@@ -301,7 +299,10 @@ class _SpaceViewState extends State<SpaceView> {
           title: L10n.of(context).areYouSure,
           okLabel: L10n.of(context).ok,
           cancelLabel: L10n.of(context).cancel,
-          message: L10n.of(context).archiveRoomDescription,
+          // #Pangea
+          // message: L10n.of(context).archiveRoomDescription,
+          message: L10n.of(context).leaveSpaceDescription,
+          // Pangea#
           isDestructive: true,
         );
         if (!mounted) return;
@@ -309,7 +310,10 @@ class _SpaceViewState extends State<SpaceView> {
 
         final success = await showFutureLoadingDialog(
           context: context,
-          future: () async => await space?.leave(),
+          // #Pangea
+          // future: () async => await space?.leave(),
+          future: () async => await space?.leaveSpace(),
+          // Pangea#
         );
         if (!mounted) return;
         if (success.error != null) return;
