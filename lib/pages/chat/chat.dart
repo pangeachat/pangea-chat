@@ -1510,29 +1510,27 @@ class ChatController extends State<ChatPageWithRoom>
     }
     // Pangea#
     if (!event.redacted) {
-      if (selectedEvents.contains(event)) {
-        // #Pangea
-        // if (selectedEvents.contains(event)) {
-        //   setState(
-        //     () => selectedEvents.remove(event),
-        //   );
-        // }
+      // #Pangea
+      // if (selectedEvents.contains(event)) {
+      //   setState(
+      //     () => selectedEvents.remove(event),
+      //   );
+      // }
 
-        // If delete first selected event with the selected eventID
-        final matches = selectedEvents.where((e) => e.eventId == event.eventId);
-        if (matches.isNotEmpty) {
-          setState(() => selectedEvents.remove(matches.first));
-        }
-        // Pangea#
-        else {
-          setState(
-            () => selectedEvents.add(event),
-          );
-        }
-        selectedEvents.sort(
-          (a, b) => a.originServerTs.compareTo(b.originServerTs),
+      // If delete first selected event with the selected eventID
+      final matches = selectedEvents.where((e) => e.eventId == event.eventId);
+      if (matches.isNotEmpty) {
+        setState(() => selectedEvents.remove(matches.first));
+      }
+      // Pangea#
+      else {
+        setState(
+          () => selectedEvents.add(event),
         );
       }
+      selectedEvents.sort(
+        (a, b) => a.originServerTs.compareTo(b.originServerTs),
+      );
     }
   }
 

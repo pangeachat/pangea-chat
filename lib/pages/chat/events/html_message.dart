@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'package:collection/collection.dart';
@@ -8,6 +9,11 @@ import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:matrix/matrix.dart';
 
+import 'package:fluffychat/config/app_config.dart';
+import 'package:fluffychat/pages/chat/chat.dart';
+import 'package:fluffychat/pangea/events/event_wrappers/pangea_message_event.dart';
+import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
+import 'package:fluffychat/pangea/toolbar/enums/activity_type_enum.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/mxc_image.dart';
 import '../../../utils/url_launcher.dart';
@@ -19,6 +25,17 @@ class HtmlMessage extends StatelessWidget {
   final double fontSize;
   final TextStyle linkStyle;
   final void Function(LinkableElement) onOpen;
+  // #Pangea
+  final bool isOverlay;
+  final PangeaMessageEvent? pangeaMessageEvent;
+  final ChatController controller;
+  final Event event;
+  final Event? nextEvent;
+  final Event? prevEvent;
+
+  final bool Function(PangeaToken)? isSelected;
+  final void Function(PangeaToken)? onClick;
+  // Pangea#
 
   const HtmlMessage({
     super.key,
@@ -28,6 +45,16 @@ class HtmlMessage extends StatelessWidget {
     required this.linkStyle,
     this.textColor = Colors.black,
     required this.onOpen,
+    // #Pangea
+    required this.isOverlay,
+    required this.event,
+    this.pangeaMessageEvent,
+    required this.controller,
+    this.nextEvent,
+    this.prevEvent,
+    this.isSelected,
+    this.onClick,
+    // Pangea#
   });
 
   /// Keep in sync with: https://spec.matrix.org/latest/client-server-api/#mroommessage-msgtypes
@@ -78,6 +105,9 @@ class HtmlMessage extends StatelessWidget {
     'body',
     // Workaround for https://github.com/krille-chan/fluffychat/issues/507
     'tg-forward',
+    // #Pangea
+    'token',
+    // Pangea#
   };
 
   /// We add line breaks before these tags:
@@ -99,6 +129,82 @@ class HtmlMessage extends StatelessWidget {
     'blockquote',
     'details',
   };
+
+  // #Pangea
+  List<PangeaToken>? get tokens =>
+      pangeaMessageEvent?.messageDisplayRepresentation?.tokens;
+
+  PangeaToken? getToken(
+    String text,
+    int offset,
+    int length,
+  ) {
+    debugPrint("TOKEN OFFSET: $offset, LENGTH: $length, tokens: $tokens");
+    if (tokens != null) {
+      for (final token in tokens!) {
+        debugPrint(
+          "offset: ${token.text.offset}, length: ${token.text.length}",
+        );
+      }
+    }
+    return tokens?.firstWhereOrNull(
+      (token) => token.text.offset == offset && token.text.length == length,
+    );
+  }
+
+  /// Wrap token spans in token tags so styling / functions can be applied
+  dom.Node _tokenizeHtml(
+    dom.Node element,
+    String fullHtml,
+    List<PangeaToken> remainingTokens,
+  ) {
+    for (final node in element.nodes) {
+      node.replaceWith(_tokenizeHtml(node, fullHtml, remainingTokens));
+    }
+
+    if (element is dom.Text) {
+      // once a text element in reached in the HTML tree, find and
+      // wrap all the spans with matching tokens until all tokens
+      // have been wrapped or no more text elements remain
+      String tokenizedText = element.text;
+      while (remainingTokens.isNotEmpty) {
+        final tokenText = remainingTokens.first.text.content;
+
+        int startIndex = tokenizedText.lastIndexOf('</token>');
+        startIndex = startIndex == -1 ? 0 : startIndex + 8;
+        final int tokenIndex = tokenizedText.indexOf(
+          tokenText,
+          startIndex,
+        );
+
+        // if the token is not found in the text, check if the token exist in the full HTML.
+        // If not, remove the token and continue. If so, break to move on to the next node in the HTML.
+        if (tokenIndex == -1) {
+          final fullHtmlIndex = fullHtml.indexOf(tokenText);
+          if (fullHtmlIndex == -1) {
+            remainingTokens.removeAt(0);
+            continue;
+          } else {
+            break;
+          }
+        }
+
+        final token = remainingTokens.removeAt(0);
+        final tokenEnd = tokenIndex + tokenText.length;
+        final before = tokenizedText.substring(0, tokenIndex);
+        final after = tokenizedText.substring(tokenEnd);
+
+        tokenizedText =
+            "$before<token offset=\"${token.text.offset}\" length=\"${token.text.length}\">$tokenText</token>$after";
+      }
+
+      final newElement = dom.Element.html('<span>$tokenizedText</span>');
+      return newElement;
+    }
+
+    return element;
+  }
+  // Pangea#
 
   /// Adding line breaks before block elements.
   List<InlineSpan> _renderWithLineBreaks(
@@ -144,6 +250,53 @@ class HtmlMessage extends StatelessWidget {
     if (!allowedHtmlTags.contains(node.localName)) return const TextSpan();
 
     switch (node.localName) {
+      // #Pangea
+      case 'token':
+        final token = getToken(
+          node.attributes['offset'] ?? '',
+          int.tryParse(node.attributes['offset'] ?? '') ?? 0,
+          int.tryParse(node.attributes['length'] ?? '') ?? 0,
+        );
+
+        final selected = token != null && isSelected != null
+            ? isSelected!.call(token)
+            : false;
+
+        final shouldDo = token?.shouldDoActivity(
+              a: ActivityTypeEnum.wordMeaning,
+              feature: null,
+              tag: null,
+            ) ??
+            false;
+
+        final didMeaningActivity = token?.didActivitySuccessfully(
+              ActivityTypeEnum.wordMeaning,
+            ) ??
+            true;
+
+        Color backgroundColor = Colors.transparent;
+        if (selected) {
+          backgroundColor = AppConfig.primaryColor.withAlpha(80);
+        } else if (isSelected != null && shouldDo) {
+          backgroundColor = !didMeaningActivity
+              ? AppConfig.success.withAlpha(60)
+              : AppConfig.gold.withAlpha(60);
+        }
+
+        debugPrint("token: $token");
+
+        return TextSpan(
+          recognizer: TapGestureRecognizer()
+            ..onTap = onClick != null && token != null
+                ? () => onClick?.call(token)
+                : null,
+          text: node.innerHtml,
+          style: AppConfig.messageTextStyle(
+            pangeaMessageEvent!.event,
+            textColor,
+          ).merge(TextStyle(backgroundColor: backgroundColor)),
+        );
+      // Pangea#
       case 'a':
         final href = node.attributes['href'];
         if (href == null) continue block;
@@ -429,14 +582,40 @@ class HtmlMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text.rich(
-      _renderHtml(
-        parser.parse(html).body ?? dom.Element.html(''),
-        context,
-      ),
-      style: TextStyle(
-        fontSize: fontSize,
-        color: textColor,
+    // #Pangea
+    dom.Node parsed = parser.parse(html).body ?? dom.Element.html('');
+    if (tokens != null) {
+      parsed = _tokenizeHtml(parsed, html, List.from(tokens!));
+      if (parsed is dom.Element) {
+        debugPrint(parsed.innerHtml);
+      }
+    }
+    return SelectionArea(
+      child: GestureDetector(
+        onTap: () {
+          if (!isOverlay) {
+            controller.showToolbar(
+              event,
+              pangeaMessageEvent: pangeaMessageEvent,
+              nextEvent: nextEvent,
+              prevEvent: prevEvent,
+            );
+          }
+        },
+        // Pangea#
+        child: Text.rich(
+          _renderHtml(
+            // #Pangea
+            // parser.parse(html).body ?? dom.Element.html(''),
+            parsed,
+            // Pangea#
+            context,
+          ),
+          style: TextStyle(
+            fontSize: fontSize,
+            color: textColor,
+          ),
+        ),
       ),
     );
   }
