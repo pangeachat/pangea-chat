@@ -1,16 +1,14 @@
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-
 import 'package:fluffychat/pangea/common/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/pangea/learning_settings/constants/language_constants.dart';
 import 'package:fluffychat/pangea/learning_settings/models/language_model.dart';
-import 'package:fluffychat/pangea/learning_settings/utils/language_list_util.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+
 import '../../../config/themes.dart';
 import '../../../widgets/matrix.dart';
 import 'p_language_dropdown.dart';
@@ -37,8 +35,8 @@ Future<void> pLanguageDialog(
     selectedTargetLanguage = userL2;
   } else {
     selectedTargetLanguage = selectedSourceLanguage?.langCode != 'en'
-        ? PangeaLanguage.byLangCode('en')!
-        : PangeaLanguage.byLangCode('es')!;
+        ? MatrixState.pangeaController.pLanguageStore.byLangCode('en')!
+        : MatrixState.pangeaController.pLanguageStore.byLangCode('es')!;
   }
 
   return showDialog(
@@ -61,8 +59,9 @@ Future<void> pLanguageDialog(
                     ),
                     PLanguageDropdown(
                       onChange: (p0) => setState(
-                        () => selectedSourceLanguage =
-                            PangeaLanguage.byLangCode(p0),
+                        () => selectedSourceLanguage = MatrixState
+                            .pangeaController.pLanguageStore
+                            .byLangCode(p0),
                       ),
                       initialLanguage:
                           selectedSourceLanguage ?? LanguageModel.unknown,
@@ -75,9 +74,10 @@ Future<void> pLanguageDialog(
                     ),
                     PLanguageDropdown(
                       onChange: (p0) => setState(
-                        () => selectedTargetLanguage =
-                            PangeaLanguage.byLangCode(p0) ??
-                                LanguageModel.unknown,
+                        () => selectedTargetLanguage = MatrixState
+                                .pangeaController.pLanguageStore
+                                .byLangCode(p0) ??
+                            LanguageModel.unknown,
                       ),
                       initialLanguage: selectedTargetLanguage,
                       languages: pangeaController.pLanguageStore.targetOptions,

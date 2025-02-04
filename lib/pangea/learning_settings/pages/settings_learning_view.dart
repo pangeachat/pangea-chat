@@ -1,21 +1,19 @@
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:url_launcher/url_launcher_string.dart';
-
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/chat_settings/widgets/language_level_dropdown.dart';
 import 'package:fluffychat/pangea/common/constants/model_keys.dart';
 import 'package:fluffychat/pangea/common/widgets/full_width_dialog.dart';
 import 'package:fluffychat/pangea/learning_settings/pages/settings_learning.dart';
 import 'package:fluffychat/pangea/learning_settings/widgets/country_picker_tile.dart';
-import 'package:fluffychat/pangea/learning_settings/widgets/language_tile.dart';
+import 'package:fluffychat/pangea/learning_settings/widgets/p_language_dropdown.dart';
 import 'package:fluffychat/pangea/learning_settings/widgets/p_settings_switch_list_tile.dart';
 import 'package:fluffychat/pangea/spaces/models/space_model.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/widgets/layouts/max_width_body.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class SettingsLearningView extends StatelessWidget {
   final SettingsLearningController controller;
@@ -48,7 +46,27 @@ class SettingsLearningView extends StatelessWidget {
               withScrolling: true,
               child: Column(
                 children: [
-                  LanguageTile(controller),
+                  const SizedBox(height: 8),
+                  PLanguageDropdown(
+                    languages:
+                        MatrixState.pangeaController.pLanguageStore.baseOptions,
+                    onChange: controller.updateTargetLanguage,
+                    initialLanguage:
+                        MatrixState.pangeaController.languageController.userL1,
+                    isL2List: false,
+                    decorationText:
+                        L10n.of(context).languageOfInstructionsLabel,
+                  ),
+                  const SizedBox(height: 16),
+                  PLanguageDropdown(
+                    languages: MatrixState
+                        .pangeaController.pLanguageStore.targetOptions,
+                    onChange: (val) => controller.updateTargetLanguage(val),
+                    initialLanguage:
+                        MatrixState.pangeaController.languageController.userL2,
+                    decorationText: L10n.of(context).targetLanguageLabel,
+                    isL2List: true,
+                  ),
                   CountryPickerTile(controller),
                   Padding(
                     padding: const EdgeInsets.only(top: 16.0, bottom: 24.0),
@@ -57,10 +75,9 @@ class SettingsLearningView extends StatelessWidget {
                       onChanged: controller.setCefrLevel,
                     ),
                   ),
-                  const Divider(height: 1),
-                  ListTile(
-                    title: Text(L10n.of(context).toggleToolSettingsDescription),
-                  ),
+                  // ListTile(
+                  //   title: Text(L10n.of(context).toggleToolSettingsDescription),
+                  // ),
                   for (final toolSetting in ToolSetting.values
                       .where((tool) => tool.isAvailableSetting))
                     Column(

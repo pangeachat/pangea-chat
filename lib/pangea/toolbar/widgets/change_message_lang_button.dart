@@ -1,16 +1,15 @@
-import 'package:flutter/material.dart';
-
 import 'package:fluffychat/pangea/events/event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/events/models/representation_content_model.dart';
 import 'package:fluffychat/pangea/events/models/tokens_event_content_model.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension.dart';
 import 'package:fluffychat/pangea/learning_settings/models/language_model.dart';
-import 'package:fluffychat/pangea/learning_settings/utils/language_list_util.dart';
 import 'package:fluffychat/pangea/learning_settings/widgets/flag.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/change_message_lang_dialog.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/message_selection_overlay.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
+import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/material.dart';
 
 class ChangeMessageLangButton extends StatelessWidget {
   final PangeaMessageEvent pangeaMessageEvent;
@@ -52,7 +51,8 @@ class ChangeMessageLangButton extends StatelessWidget {
       context: context,
       builder: (context) {
         return ChangeMessageLangDialog(
-          initialLanguage: PangeaLanguage.byLangCode(
+          initialLanguage:
+              MatrixState.pangeaController.pLanguageStore.byLangCode(
             pangeaMessageEvent.messageDisplayLangCode,
           ),
         );
@@ -77,9 +77,10 @@ class ChangeMessageLangButton extends StatelessWidget {
       onTap: () => _changeMessageLang(context),
       customBorder: const CircleBorder(),
       child: LanguageFlag(
-        language: PangeaLanguage.byLangCode(
-          pangeaMessageEvent.messageDisplayLangCode,
-        ),
+        language: MatrixState.pangeaController.pLanguageStore.byLangCode(
+              pangeaMessageEvent.messageDisplayLangCode,
+            ) ??
+            LanguageModel.unknown,
       ),
     );
   }

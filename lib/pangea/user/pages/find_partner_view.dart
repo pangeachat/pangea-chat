@@ -1,20 +1,18 @@
-import 'package:flutter/material.dart';
-
 import 'package:country_picker/country_picker.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart' as matrix;
-
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pangea/common/widgets/pangea_logo_svg.dart';
 import 'package:fluffychat/pangea/learning_settings/utils/country_display.dart';
-import 'package:fluffychat/pangea/learning_settings/utils/language_list_util.dart';
 import 'package:fluffychat/pangea/learning_settings/widgets/p_language_dropdown.dart';
 import 'package:fluffychat/pangea/user/models/user_model.dart';
 import 'package:fluffychat/pangea/user/widgets/list_placeholder.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:go_router/go_router.dart';
+import 'package:matrix/matrix.dart' as matrix;
+
 import '../../../widgets/profile_bottom_sheet.dart';
 import 'find_partner.dart';
 
@@ -232,10 +230,14 @@ class LanguageSelectionRow extends StatelessWidget {
                 : controller.pangeaController.pLanguageStore.targetOptions,
             onChange: (language) {
               controller.filterUserProfiles(
-                sourceLanguage:
-                    isSource ? PangeaLanguage.byLangCode(language) : null,
-                targetLanguage:
-                    isSource ? null : PangeaLanguage.byLangCode(language),
+                sourceLanguage: isSource
+                    ? MatrixState.pangeaController.pLanguageStore
+                        .byLangCode(language)
+                    : null,
+                targetLanguage: isSource
+                    ? null
+                    : MatrixState.pangeaController.pLanguageStore
+                        .byLangCode(language),
               );
             },
             isL2List: !isSource,

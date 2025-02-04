@@ -1,14 +1,12 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
-
-import 'package:country_flags/country_flags.dart';
-
 import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/pangea/learning_settings/constants/language_constants.dart';
 import 'package:fluffychat/pangea/learning_settings/models/language_model.dart';
 import 'package:fluffychat/pangea/learning_settings/repo/language_repo.dart';
+import 'package:flutter/foundation.dart';
+
 import 'shared_prefs.dart';
 
 class PangeaLanguage {
@@ -18,27 +16,12 @@ class PangeaLanguage {
 
   static List<LanguageModel> _langList = [];
 
-  static List<LanguageModel> get langList {
-    final List<LanguageModel> languages = [];
-    for (final element in _langList) {
-      final langCodes = FlagCode.allCodesForLang(element.langCode);
-      if (langCodes.isEmpty) {
-        languages.add(element);
-        continue;
-      }
-
-      for (final code in langCodes) {
-        languages.add(element.copyWith(langCode: code));
-      }
-    }
-    return languages;
-  }
+  static List<LanguageModel> get langList => _langList;
 
   List<LanguageModel> get targetOptions =>
       langList.where((element) => element.l2).toList();
 
-  List<LanguageModel> get baseOptions =>
-      langList.where((element) => element.l1).toList();
+  List<LanguageModel> get baseOptions => langList.toList();
 
   static Future<void> initialize() async {
     try {
@@ -51,11 +34,7 @@ class PangeaLanguage {
         await _saveFlags(_langList);
         await saveLastFetchDate();
       }
-      _langList.removeWhere(
-        (element) =>
-            LanguageModel.codeFromNameOrCode(element.langCode) ==
-            LanguageKeys.unknownLanguage,
-      );
+
       _langList.sort((a, b) => a.displayName.compareTo(b.displayName));
       _langList.insert(0, LanguageModel.multiLingual());
     } catch (err, stack) {
@@ -116,9 +95,13 @@ class PangeaLanguage {
     return flags;
   }
 
-  static LanguageModel? byLangCode(String langCode) {
+  LanguageModel? byLangCode(String langCode) {
     for (final element in langList) {
       if (element.langCode == langCode) return element;
+    }
+    final String short = langCode.split("-")[0];
+    for (final element in langList) {
+      if (element.langCode.split("-")[0] == short) return element;
     }
     return null;
   }
