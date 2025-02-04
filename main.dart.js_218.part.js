@@ -1350,14 +1350,8 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$countryInformation() {
       return "Informaci\xf3n de pa\xeds";
     },
-    get$myLanguages() {
-      return "Mi idioma base y idioma a aprender";
-    },
     get$targetLanguage() {
       return "Idioma a aprender";
-    },
-    get$sourceLanguage() {
-      return "Idioma base";
     },
     get$updateLanguage() {
       return "Cambiar mis idiomas";
@@ -4704,6 +4698,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_218", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "zw3H0RzMdVQUxzNZWhA+QsYdSMI=");
+})($__dart_deferred_initializers__, "g01lSjdfkpszEW+nchAQEuo+vBk=");
 ;
 //# sourceMappingURL=main.dart.js_218.part.js.map
