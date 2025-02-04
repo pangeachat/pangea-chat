@@ -4686,6 +4686,9 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$waitingForServer() {
       return "Waiting for server...";
     },
+    get$whatIsLemma() {
+      return "What is the lemma?";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4701,6 +4704,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_214", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "U/ZQBb9JiUAbpMj3TBQkX5R8kLk=");
+})($__dart_deferred_initializers__, "hK31K9QaZmoW2EY2hB98qj9kIAk=");
 ;
 //# sourceMappingURL=main.dart.js_214.part.js.map
