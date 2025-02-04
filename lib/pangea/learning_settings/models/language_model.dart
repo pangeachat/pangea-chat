@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:country_flags/country_flags.dart';
 import 'package:fluffychat/pangea/learning_settings/constants/language_constants.dart';
 import 'package:fluffychat/pangea/learning_settings/enums/l2_support_enum.dart';
 import 'package:flutter/foundation.dart';
@@ -21,11 +20,6 @@ class LanguageModel {
     this.l2Support = L2SupportEnum.na,
     this.languageEmoji,
   });
-
-  String? get flagCode =>
-      FlagCode.fromCountryCode(langCode) ??
-      FlagCode.fromLanguageCode(langCode) ??
-      FlagCode.fromLanguageCode(langCode.split("-").first);
 
   factory LanguageModel.fromJson(json) {
     try {
@@ -58,7 +52,6 @@ class LanguageModel {
         'language_name': displayName,
         'language_emoji': languageEmoji,
         'l2_support': l2Support.storageString,
-        'flag_code': flagCode,
       };
 
   bool get l2 => l2Support != L2SupportEnum.na;

@@ -43,11 +43,11 @@ class _PLanguageDropdownState extends State<PLanguageDropdown> {
     final String systemLang = Localizations.localeOf(context).languageCode;
     final List<String> languagePriority = [
       systemLang,
-      'en',
-      'en-us',
-      'es',
-      'es-mx',
-      'es-es',
+      // 'en',
+      // 'en-us',
+      // 'es',
+      // 'es-mx',
+      // 'es-es',
     ];
 
     int sortLanguages(LanguageModel a, LanguageModel b) {

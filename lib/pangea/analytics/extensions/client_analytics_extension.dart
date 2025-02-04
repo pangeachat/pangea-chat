@@ -1,25 +1,24 @@
 import 'dart:developer';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
-
 import 'package:collection/collection.dart';
-import 'package:matrix/matrix.dart';
-
 import 'package:fluffychat/pangea/bot/utils/bot_name.dart';
 import 'package:fluffychat/pangea/chat_settings/constants/pangea_room_types.dart';
 import 'package:fluffychat/pangea/common/constants/model_keys.dart';
 import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/foundation.dart';
+import 'package:matrix/matrix.dart';
 
 extension AnalyticsClientExtension on Client {
   /// Get the logged in user's analytics room matching
   /// a given langCode. If not present, create it.
   Future<Room?> getMyAnalyticsRoom(String langCode) async {
-    final Room? analyticsRoom = analyticsRoomLocal(langCode);
+    final shortCode = langCode.split("-").first;
+    final Room? analyticsRoom = analyticsRoomLocal(shortCode);
     if (analyticsRoom != null) return analyticsRoom;
-    return _makeAnalyticsRoom(langCode);
+    return _makeAnalyticsRoom(shortCode);
   }
 
   /// Get local analytics room for a given langCode and
@@ -34,10 +33,12 @@ extension AnalyticsClientExtension on Client {
       return null;
     }
 
+    final shortCode = langCode.split("-").first;
+
     final Room? analyticsRoom = rooms.firstWhereOrNull((e) {
       return e.isAnalyticsRoom &&
           e.isAnalyticsRoomOfUser(userIdParam ?? userID!) &&
-          e.isMadeForLang(langCode!);
+          e.isMadeForLang(shortCode);
     });
     if (analyticsRoom != null &&
         analyticsRoom.membership == Membership.invite) {
@@ -47,7 +48,7 @@ extension AnalyticsClientExtension on Client {
               e: error,
               s: stackTrace,
               data: {
-                "langCode": langCode,
+                "langCode": shortCode,
                 "userIdParam": userIdParam,
               },
             ),

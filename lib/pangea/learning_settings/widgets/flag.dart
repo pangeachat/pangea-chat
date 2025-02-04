@@ -1,4 +1,3 @@
-import 'package:country_flags/country_flags.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:flutter/material.dart';
 
@@ -15,16 +14,9 @@ class LanguageFlag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return language.flagCode != null
-        ? CountryFlag.fromCountryCode(
-            language.flagCode!,
-            shape: const Circle(),
-            width: 30,
-            height: 30,
-          )
-        : Avatar(
-            name: language.langCode,
-            size: size,
-          );
+    return Avatar(
+      name: language.langCode,
+      size: size,
+    );
   }
 }
