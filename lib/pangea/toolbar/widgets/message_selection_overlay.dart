@@ -7,7 +7,7 @@ import 'package:collection/collection.dart';
 import 'package:matrix/matrix.dart';
 
 import 'package:fluffychat/pages/chat/chat.dart';
-import 'package:fluffychat/pangea/analytics/controllers/message_analytics_controller.dart';
+import 'package:fluffychat/pangea/analytics_misc/message_analytics_controller.dart';
 import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/pangea/events/event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/events/extensions/pangea_event_extension.dart';
@@ -31,17 +31,16 @@ class MessageSelectionOverlay extends StatefulWidget {
   const MessageSelectionOverlay({
     required this.chatController,
     required Event event,
-    required Timeline timeline,
-    required PangeaMessageEvent? pangeaMessageEvent,
     required PangeaToken? initialSelectedToken,
     required Event? nextEvent,
     required Event? prevEvent,
+    required Timeline timeline,
     super.key,
   })  : _initialSelectedToken = initialSelectedToken,
         _nextEvent = nextEvent,
         _prevEvent = prevEvent,
-        _timeline = timeline,
-        _event = event;
+        _event = event,
+        _timeline = timeline;
 
   @override
   MessageOverlayController createState() => MessageOverlayController();
@@ -107,7 +106,7 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
   @override
   void initState() {
     super.initState();
-    _initializeTokensAndMode();
+    initializeTokensAndMode();
   }
 
   void _updateSelectedSpan(PangeaTokenText selectedSpan) {
@@ -157,7 +156,7 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
             )
           : null;
 
-  Future<void> _initializeTokensAndMode() async {
+  Future<void> initializeTokensAndMode() async {
     try {
       final repEvent = pangeaMessageEvent?.messageDisplayRepresentation;
       if (repEvent != null) {

@@ -56,8 +56,7 @@ class SettingsLearningView extends StatelessWidget {
                     initialLanguage:
                         MatrixState.pangeaController.languageController.userL1,
                     isL2List: false,
-                    decorationText:
-                        L10n.of(context).languageOfInstructionsLabel,
+                    decorationText: L10n.of(context).sourceLanguage,
                   ),
                   const SizedBox(height: 16),
                   PLanguageDropdown(
@@ -77,9 +76,6 @@ class SettingsLearningView extends StatelessWidget {
                       onChanged: controller.setCefrLevel,
                     ),
                   ),
-                  // ListTile(
-                  //   title: Text(L10n.of(context).toggleToolSettingsDescription),
-                  // ),
                   for (final toolSetting in ToolSetting.values
                       .where((tool) => tool.isAvailableSetting))
                     Column(

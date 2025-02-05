@@ -136,26 +136,34 @@ class PublicRoomBottomSheetState extends State<PublicRoomBottomSheet> {
             chunk?.name ?? roomAlias ?? chunk?.roomId ?? 'Unknown',
             overflow: TextOverflow.fade,
           ),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_downward_outlined),
-            onPressed: Navigator.of(context, rootNavigator: false).pop,
-            tooltip: L10n.of(context).close,
-          ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: IconButton(
-                icon: Icon(Icons.adaptive.share_outlined),
-                onPressed: () => FluffyShare.share(
-                  // #Pangea
-                  // 'https://matrix.to/#/${roomAlias ?? chunk?.roomId}',
-                  '${Environment.frontendURL}/#/rooms/${chunk?.roomId}',
-                  // Pangea#
-                  context,
-                ),
-              ),
+          leading: Center(
+            child: CloseButton(
+              onPressed: Navigator.of(context, rootNavigator: false).pop,
             ),
-          ],
+          ),
+          actions: roomAlias == null
+              ? null
+              : [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: IconButton(
+                      icon: const Icon(Icons.qr_code_rounded),
+                      // #Pangea
+                      // onPressed: () => showQrCodeViewer(
+                      //   context,
+                      //   roomAlias,
+                      // ),
+                      onPressed: () {
+                        FluffyShare.share(
+                          "${Environment.frontendURL}/#/join_with_alias?alias=${Uri.encodeComponent(roomAlias)}",
+                          context,
+                        );
+                        Navigator.of(context).pop();
+                      },
+                      // Pangea#
+                    ),
+                  ),
+                ],
         ),
         body: FutureBuilder<PublicRoomsChunk>(
           future: _search(),
@@ -200,6 +208,7 @@ class PublicRoomBottomSheetState extends State<PublicRoomBottomSheet> {
                             ),
                             style: TextButton.styleFrom(
                               foregroundColor: theme.colorScheme.onSurface,
+                              iconColor: theme.colorScheme.onSurface,
                             ),
                             label: Text(
                               roomLink ?? '...',
@@ -215,6 +224,7 @@ class PublicRoomBottomSheetState extends State<PublicRoomBottomSheet> {
                             ),
                             style: TextButton.styleFrom(
                               foregroundColor: theme.colorScheme.onSurface,
+                              iconColor: theme.colorScheme.onSurface,
                             ),
                             label: Text(
                               L10n.of(context).countParticipants(

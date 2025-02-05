@@ -201,7 +201,11 @@ class MessageAudioCardState extends State<MessageAudioCard> {
                       fontSize:
                           AppConfig.messageFontSize * AppConfig.fontSizeFactor,
                       padding: 0,
+                      isOverlay: true,
+                      chatController:
+                          widget.overlayController.widget.chatController,
                       overlayController: widget.overlayController,
+                      linkColor: Theme.of(context).colorScheme.primary,
                     )
                   : const CardErrorWidget(
                       error: "Null audio file in message_audio_card",

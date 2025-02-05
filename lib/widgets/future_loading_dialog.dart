@@ -6,7 +6,7 @@ import 'package:async/async.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 
 import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/widgets/adaptive_dialog_action.dart';
+import 'package:fluffychat/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
 
 /// Displays a loading dialog which reacts to the given [future]. The dialog
 /// will be dismissed and the value will be returned when the future completes.
@@ -37,21 +37,32 @@ Future<Result<T>> showFutureLoadingDialog<T>({
     }
   }
 
-  final result = await showAdaptiveDialog<Result<T>>(
-    context: context,
-    barrierDismissible: barrierDismissible,
-    builder: (BuildContext context) => LoadingDialog<T>(
-      future: futureExec,
-      title: title,
-      backLabel: backLabel,
-      exceptionContext: exceptionContext,
-    ),
+  // #Pangea
+  if (context.mounted) {
+    // Pangea#
+    final result = await showAdaptiveDialog<Result<T>>(
+      context: context,
+      barrierDismissible: barrierDismissible,
+      builder: (BuildContext context) => LoadingDialog<T>(
+        future: futureExec,
+        title: title,
+        backLabel: backLabel,
+        exceptionContext: exceptionContext,
+      ),
+    );
+    return result ??
+        Result.error(
+          Exception('FutureDialog canceled'),
+          StackTrace.current,
+        );
+  }
+
+  // #Pangea
+  return Result.error(
+    Exception('FutureDialog canceled'),
+    StackTrace.current,
   );
-  return result ??
-      Result.error(
-        Exception('FutureDialog canceled'),
-        StackTrace.current,
-      );
+  // Pangea#
 }
 
 class LoadingDialog<T> extends StatefulWidget {

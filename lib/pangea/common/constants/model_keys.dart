@@ -20,7 +20,7 @@ class ModelKey {
   static const String toolSettings = 'tool_settings';
   static const String userSettings = 'user_settings';
   static const String instructionsSettings = 'instructions_settings';
-  static const String cefrLevel = 'cefr_level';
+  static const String cefrLevel = 'user_cefr';
 
   // matrix profile keys
   // making this a random string so that it's harder to guess
@@ -92,6 +92,7 @@ class ModelKey {
   /// something built in to matrix? should talk about this
   static const String messageTags = "p.tag";
   static const String messageTagMorphEdit = "morph_edit";
+  static const String messageTagLemmaEdit = "lemma_edit";
   static const String messageTagActivityPlan = "activity_plan";
 
   static const String baseDefinition = "base_definition";

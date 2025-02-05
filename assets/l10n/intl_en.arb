@@ -1918,6 +1918,13 @@
     "type": "text",
     "placeholders": {}
   },
+  "synchronizingPleaseWaitCounter": " Synchronizing… ({percentage}%)",
+  "@synchronizingPleaseWaitCounter": {
+    "type": "text",
+    "placeholders": {
+      "percentage": {}
+    }
+  },
   "systemTheme": "System",
   "@systemTheme": {
     "type": "text",
@@ -3764,7 +3771,7 @@
   },
   "noTeachersFound": "No teachers found to report to",
   "pleaseEnterANumber": "Please enter a number greater than 0",
-  "archiveRoomDescription": "The chat will be moved to the archive for yourself and other non-admin users.",
+  "archiveRoomDescription": "The chat will be moved to the archive. Other users will be able to see that you have left the chat.",
   "roomUpgradeDescription": "The chat will then be recreated with the new room version. All participants will be notified that they need to switch to the new chat. You can find out more about room versions at https://spec.matrix.org/latest/rooms/",
   "removeDevicesDescription": "You will be logged out of this device and will no longer be able to receive messages.",
   "banUserDescription": "The user will be banned from the chat and will not be able to enter the chat again until they are unbanned.",
@@ -4064,10 +4071,6 @@
   "runGrammarCorrection": "Check message",
   "grammarCorrectionFailed": "Issues to address",
   "grammarCorrectionComplete": "Looks good!",
-  "leaveRoomDescription": "The chat will be moved to the archive. Other users will be able to see that you have left the chat.",
-  "archiveSpaceDescription": "All chats within this space will be moved to the archive for yourself and other non-admin users.",
-  "leaveSpaceDescription": "All chats within this space will be moved to the archive. Other users will be able to see that you have left the space.",
-  "onlyAdminDescription": "Since there are no other admins, all other participants will also be removed.",
   "tooltipInstructionsTitle": "Not sure what that does?",
   "tooltipInstructionsMobileBody": "Press and hold items to view tooltips.",
   "tooltipInstructionsBrowserBody": "Hover over items to view tooltips.",
@@ -4672,6 +4675,7 @@
   "chooseBestDefinition": "What does this word mean?",
   "chooseBaseForm": "Choose the base form",
   "notTheCodeError": "Sorry, that's not the code!",
+  "previous": "Previous",
   "totalXP": "Total XP",
   "numLemmas": "Total number of lemmas",
   "listOfLemmas": "List of lemmas",
@@ -4749,6 +4753,16 @@
   },
   "notInClass": "Not in a class!",
   "noClassCode": "No class code!",
+  "previous": "Previous",
+  "otherPartyNotLoggedIn": "The other party is currently not logged in and therefore cannot receive messages!",
+  "chooseCorrectLabel": "Choose the correct label",
+  "levelPopupTitle": "Congratulations on reaching\nLevel {level}",
+  "@levelPopupTitle": {
+    "type": "text",
+    "placeholders": {
+      "level": {}
+    }
+  },
   "chooseCorrectLabel": "Choose the correct label.",
   "activityPlannerTitle": "Activity Planner",
   "topicLabel": "Topic",
@@ -4771,6 +4785,7 @@
   "changeMessageLanguage": "What language is this message written in?",
   "completeActivitiesToUnlock": "Complete the highlighted word activities to unlock",
   "myBookmarkedActivities": "My Bookmarked Activities",
+  "noBookmarkedActivities": "No bookmarked activities",
   "noBookmarkedActivities": "When you bookmark activities, they will appear here. Bookmarked activities can be re-used across spaces and chats.",
   "activityTitle": "Activity Title",
   "addVocabulary": "Add Vocabulary",
@@ -4781,5 +4796,28 @@
   "noBookmarkedActivities": "No bookmarked activities",
   "noLemmasFound": "No lemmas found",
   "constructUsePvmDesc": "Produced in voice message",
-  "botLanguage": "Bot language"
+  "botLanguage": "Bot language",
+  "noLemmasFound": "There are no vocabulary with more than {xp} XP. Keep practicing!",
+  "@noLemmasFound": {
+    "type": "text",
+    "placeholders": {
+      "xp": {}
+    }
+  },
+  "constructUsePvmDesc": "Produced in voice message",
+  "lockedMorphFeature": "Waiting to be unlocked",
+  "leaveSpaceDescription": "The space will be moved to the archive. Other users will be able to see that you have left the chat.",
+  "otherPartyNotLoggedIn": "The other party is currently not logged in and therefore cannot receive messages!",
+  "appWantsToUseForLogin": "Use '{server}' to log in",
+  "@appWantsToUseForLogin": {
+    "type": "text",
+    "placeholders": {
+      "server": {}
+    }
+  },
+  "appWantsToUseForLoginDescription": "You hereby allow the app and website to share information about you.",
+  "open": "Open",
+  "waitingForServer": "Waiting for server...",
+  "appIntroduction": "FluffyChat lets you chat with your friends across different messengers. Learn more at https://matrix.org or just tap *Continue*.",
+  "whatIsLemma": "What is the lemma?"
 }

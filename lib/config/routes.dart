@@ -34,6 +34,7 @@ import 'package:fluffychat/pangea/guard/p_vguard.dart';
 import 'package:fluffychat/pangea/login/pages/login_or_signup_view.dart';
 import 'package:fluffychat/pangea/login/pages/signup.dart';
 import 'package:fluffychat/pangea/login/pages/user_settings.dart';
+import 'package:fluffychat/pangea/spaces/utils/join_with_alias.dart';
 import 'package:fluffychat/pangea/spaces/utils/join_with_link.dart';
 import 'package:fluffychat/pangea/subscription/pages/settings_subscription.dart';
 import 'package:fluffychat/pangea/user/pages/find_partner.dart';
@@ -41,6 +42,7 @@ import 'package:fluffychat/widgets/layouts/empty_page.dart';
 import 'package:fluffychat/widgets/layouts/two_column_layout.dart';
 import 'package:fluffychat/widgets/log_view.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:fluffychat/widgets/share_scaffold_dialog.dart';
 
 abstract class AppRoutes {
   static FutureOr<String?> loggedInRedirect(
@@ -134,6 +136,20 @@ abstract class AppRoutes {
       ),
     ),
     GoRoute(
+      path: '/join_with_alias',
+      pageBuilder: (context, state) => defaultPageBuilder(
+        context,
+        state,
+        const JoinWithAlias(),
+      ),
+      redirect: (context, state) {
+        if (Matrix.of(context).client.isLogged()) {
+          return '/rooms/join_with_alias?alias=${state.uri.queryParameters['alias']}';
+        }
+        return null;
+      },
+    ),
+    GoRoute(
       path: '/user_age',
       pageBuilder: (context, state) => defaultPageBuilder(
         context,
@@ -208,6 +224,14 @@ abstract class AppRoutes {
             //     ),
             //   ],
             // ),
+            GoRoute(
+              path: '/join_with_alias',
+              pageBuilder: (context, state) => defaultPageBuilder(
+                context,
+                state,
+                const JoinWithAlias(),
+              ),
+            ),
             // Pangea#
             GoRoute(
               path: 'archive',
@@ -461,15 +485,25 @@ abstract class AppRoutes {
             ),
             GoRoute(
               path: ':roomid',
-              pageBuilder: (context, state) => defaultPageBuilder(
-                context,
-                state,
-                ChatPage(
-                  roomId: state.pathParameters['roomid']!,
-                  shareText: state.uri.queryParameters['body'],
-                  eventId: state.uri.queryParameters['event'],
-                ),
-              ),
+              pageBuilder: (context, state) {
+                final body = state.uri.queryParameters['body'];
+                var shareItems = state.extra is List<ShareItem>
+                    ? state.extra as List<ShareItem>
+                    : null;
+                if (body != null && body.isNotEmpty) {
+                  shareItems ??= [];
+                  shareItems.add(TextShareItem(body));
+                }
+                return defaultPageBuilder(
+                  context,
+                  state,
+                  ChatPage(
+                    roomId: state.pathParameters['roomid']!,
+                    shareItems: shareItems,
+                    eventId: state.uri.queryParameters['event'],
+                  ),
+                );
+              },
               redirect: loggedOutRedirect,
               routes: [
                 GoRoute(

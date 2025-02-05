@@ -189,6 +189,8 @@ class OverlayMessage extends StatelessWidget {
                 nextEvent: nextEvent,
                 prevEvent: prevEvent,
                 borderRadius: borderRadius,
+                timeline: timeline,
+                linkColor: theme.colorScheme.primary,
               ),
               if (event.hasAggregatedEvents(
                 timeline,

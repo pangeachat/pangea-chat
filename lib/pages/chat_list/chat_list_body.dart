@@ -18,7 +18,6 @@ import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/hover_builder.dart';
 import 'package:fluffychat/widgets/public_room_bottom_sheet.dart';
 import '../../config/themes.dart';
-import '../../widgets/connection_status_header.dart';
 import '../../widgets/matrix.dart';
 
 class ChatListViewBody extends StatelessWidget {
@@ -152,7 +151,6 @@ class ChatListViewBody extends StatelessWidget {
                     //     ),
                     //   ),
                     // Pangea#
-                    const ConnectionStatusHeader(),
                     AnimatedContainer(
                       height: controller.isTorBrowser ? 64 : 0,
                       duration: FluffyThemes.animationDuration,
@@ -170,7 +168,16 @@ class ChatListViewBody extends StatelessWidget {
                         ),
                       ),
                     ),
-                    if (client.rooms.isNotEmpty && !controller.isSearchMode)
+                    // #Pangea
+                    if (!controller.isSearchMode)
+
+                      // if (client.rooms.isNotEmpty && !controller.isSearchMode)
+                      // let's simplify this UI while the user has less chat than
+                      // can fill this view
+                      if (client.rooms.length <= 7 || controller.isSearchMode)
+                        const SizedBox(height: 8),
+                    if (client.rooms.length > 7 && !controller.isSearchMode)
+                      // Pangea#
                       SizedBox(
                         height: 64,
                         child: ListView(

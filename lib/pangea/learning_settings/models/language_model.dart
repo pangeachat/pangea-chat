@@ -734,20 +734,20 @@ class _LanguageLocal {
     "sh": {"name": "Serbo-Croatian", "nativeName": "Serbo-Croatian"},
   };
 
-  static String getDisplayName(String key, [native = false]) {
-    final Map<String, String>? item = isoLangs[key];
-    if (item == null) {
-      // debugger(when: kDebugMode);
-      // ErrorHandler.logError(m: "Bad language key $key", s: StackTrace.current);
-    }
-    if (item == null ||
-        (native && !item.containsKey("nativeName") ||
-            (!native && !item.containsKey("name")))) {
-      return key;
-    }
+  // static String getDisplayName(String key, [native = false]) {
+  //   final Map<String, String>? item = isoLangs[key];
+  //   if (item == null) {
+  //     // debugger(when: kDebugMode);
+  //     // ErrorHandler.logError(m: "Bad language key $key", s: StackTrace.current);
+  //   }
+  //   if (item == null ||
+  //       (native && !item.containsKey("nativeName") ||
+  //           (!native && !item.containsKey("name")))) {
+  //     return key;
+  //   }
 
-    return (native ? item["nativeName"]! : item["name"]!).split(",")[0];
-  }
+  //   return (native ? item["nativeName"]! : item["name"]!).split(",")[0];
+  // }
 
   static String langCodeFromName(String? name) {
     if (name == null) return LanguageKeys.unknownLanguage;
