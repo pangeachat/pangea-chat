@@ -10,6 +10,7 @@ enum MessageMode {
   speechToText,
   wordZoom,
   noneSelected,
+  messageMeaning,
 }
 
 extension MessageModeExtension on MessageMode {
@@ -27,6 +28,8 @@ extension MessageModeExtension on MessageMode {
         return Symbols.dictionary;
       case MessageMode.noneSelected:
         return Icons.error;
+      case MessageMode.messageMeaning:
+        return Icons.star;
     }
   }
 
@@ -44,6 +47,8 @@ extension MessageModeExtension on MessageMode {
         return L10n.of(context).vocab;
       case MessageMode.noneSelected:
         return '';
+      case MessageMode.messageMeaning:
+        return L10n.of(context).meaning;
     }
   }
 
@@ -61,6 +66,8 @@ extension MessageModeExtension on MessageMode {
         return L10n.of(context).vocab;
       case MessageMode.noneSelected:
         return '';
+      case MessageMode.messageMeaning:
+        return L10n.of(context).meaning;
     }
   }
 
@@ -75,6 +82,7 @@ extension MessageModeExtension on MessageMode {
       case MessageMode.speechToText:
       case MessageMode.wordZoom:
       case MessageMode.noneSelected:
+      case MessageMode.messageMeaning:
         return 0;
     }
   }
@@ -93,6 +101,7 @@ extension MessageModeExtension on MessageMode {
       case MessageMode.practiceActivity:
       case MessageMode.wordZoom:
       case MessageMode.noneSelected:
+      case MessageMode.messageMeaning:
         return true;
     }
   }

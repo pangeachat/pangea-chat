@@ -4819,5 +4819,6 @@
   "constructUseCorMmDesc": "Correct message meaning",
   "constructUseIncMmDesc": "Incorrect message meaning",
   "constructUseIgnMmDesc": "Ignored message meaning",
-  "clickForMeaningActivity": "Or click here for a Meaning Challenge"
+  "clickForMeaningActivity": "Click here for a Meaning Challenge",
+  "meaning": "Meaning"
 }

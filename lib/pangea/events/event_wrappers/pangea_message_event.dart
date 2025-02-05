@@ -685,9 +685,11 @@ class PangeaMessageEvent {
     bool debug = false,
   }) =>
       _practiceActivityEvents
-          .where((event) =>
-              event.practiceActivity.langCode.split("-")[0] ==
-              langCode.split("")[0])
+          .where(
+            (event) =>
+                event.practiceActivity.langCode.split("-")[0] ==
+                langCode.split("")[0],
+          )
           .toList();
 
   /// Returns a list of [PracticeActivityEvent] for the user's active l2.
