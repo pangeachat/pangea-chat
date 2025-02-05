@@ -1,4 +1,10 @@
+import 'package:flutter/material.dart';
+
 import 'package:country_picker/country_picker.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:go_router/go_router.dart';
+import 'package:matrix/matrix.dart' as matrix;
+
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pangea/common/widgets/pangea_logo_svg.dart';
@@ -8,11 +14,6 @@ import 'package:fluffychat/pangea/user/models/user_model.dart';
 import 'package:fluffychat/pangea/user/widgets/list_placeholder.dart';
 import 'package:fluffychat/widgets/avatar.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:go_router/go_router.dart';
-import 'package:matrix/matrix.dart' as matrix;
-
 import '../../../widgets/profile_bottom_sheet.dart';
 import 'find_partner.dart';
 

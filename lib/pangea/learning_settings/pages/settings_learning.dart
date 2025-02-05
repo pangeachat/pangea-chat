@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
+
 import 'package:country_picker/country_picker.dart';
+
 import 'package:fluffychat/pangea/common/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/pangea/learning_settings/enums/language_level_type_enum.dart';
@@ -7,7 +10,6 @@ import 'package:fluffychat/pangea/spaces/models/space_model.dart';
 import 'package:fluffychat/pangea/toolbar/controllers/tts_controller.dart';
 import 'package:fluffychat/pangea/user/models/user_model.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-import 'package:flutter/material.dart';
 
 class SettingsLearning extends StatefulWidget {
   const SettingsLearning({super.key});

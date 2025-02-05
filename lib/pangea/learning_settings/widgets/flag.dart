@@ -1,6 +1,6 @@
-import 'package:fluffychat/widgets/avatar.dart';
 import 'package:flutter/material.dart';
 
+import 'package:fluffychat/widgets/avatar.dart';
 import '../models/language_model.dart';
 
 class LanguageFlag extends StatelessWidget {
