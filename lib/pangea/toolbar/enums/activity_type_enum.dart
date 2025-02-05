@@ -152,7 +152,7 @@ extension ActivityTypeExtension on ActivityTypeEnum {
       case ActivityTypeEnum.morphId:
         return ConstructUseTypeEnum.corM;
       case ActivityTypeEnum.messageMeaning:
-        return ConstructUseTypeEnum.corMM; // TODO: Add to L10n
+        return ConstructUseTypeEnum.corMM;
     }
   }
 

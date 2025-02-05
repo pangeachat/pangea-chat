@@ -104,9 +104,7 @@ class MessageAnalyticsEntry {
   }
 
   void _popQueue() {
-    if (hasHiddenWordActivity) {
-      _activityQueue.removeAt(0);
-    }
+    if (_activityQueue.isNotEmpty) _activityQueue.removeAt(0);
   }
 
   void _filterQueue(ActivityTypeEnum activityType) {
@@ -204,9 +202,7 @@ class MessageAnalyticsEntry {
     );
   }
 
-  void onActivityComplete() {
-    _popQueue();
-  }
+  void onActivityComplete() => _popQueue();
 
   void exitPracticeFlow() => _clearQueue();
 

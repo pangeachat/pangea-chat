@@ -218,9 +218,9 @@ class PangeaToken {
     ConstructUseMetaData metadata,
   ) {
     final List<OneConstructUse> uses = [];
-    if (isContentWord) {
-      uses.add(toVocabUse(type, metadata));
-    }
+    if (!lemma.saveVocab) return uses;
+
+    uses.add(toVocabUse(type, metadata));
     for (final morphFeature in morph.keys) {
       uses.add(
         OneConstructUse(
@@ -233,6 +233,7 @@ class PangeaToken {
         ),
       );
     }
+
     return uses;
   }
 
@@ -348,7 +349,8 @@ class PangeaToken {
   ]) {
     switch (a) {
       case ActivityTypeEnum.wordMeaning:
-        if (daysSinceLastUseByType(ActivityTypeEnum.wordMeaning) < 7) {
+        if (daysSinceLastUseByType(ActivityTypeEnum.wordMeaning) < 7 ||
+            daysSinceLastUseByType(ActivityTypeEnum.messageMeaning) < 7) {
           return false;
         }
 
