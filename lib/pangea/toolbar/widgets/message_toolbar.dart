@@ -45,7 +45,7 @@ class MessageToolbar extends StatelessWidget {
     }
 
     if (overlayController.messageAnalyticsEntry?.hasHiddenWordActivity ??
-        false) {
+        false || overlayController.messageAnalyticsEntry?.hasWordMeaningActivity ?? false) {
       return PracticeActivityCard(
         pangeaMessageEvent: pangeaMessageEvent,
         overlayController: overlayController,

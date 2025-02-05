@@ -123,6 +123,9 @@ class MessageAnalyticsEntry {
   bool get hasHiddenWordActivity =>
       nextActivity?.activityType.hiddenType ?? false;
 
+  bool get hasWordMeaningActivity =>
+      _activityQueue.any((a) => a.activityType == ActivityTypeEnum.wordMeaning);
+
   int get numActivities => _activityQueue.length;
 
   // /// If there are more than 4 tokens that can be heard, we don't want to do word focus listening

@@ -11,6 +11,7 @@ enum MessageMode {
   speechToText,
   wordZoom,
   noneSelected,
+  messageMeaning, // TODO: Add to L10n
 }
 
 extension MessageModeExtension on MessageMode {
@@ -28,6 +29,8 @@ extension MessageModeExtension on MessageMode {
         return Symbols.dictionary;
       case MessageMode.noneSelected:
         return Icons.error;
+      case MessageMode.messageMeaning:
+        return Icons.star; // TODO: Add to L10n
     }
   }
 
@@ -45,6 +48,8 @@ extension MessageModeExtension on MessageMode {
         return L10n.of(context).vocab;
       case MessageMode.noneSelected:
         return '';
+      case MessageMode.messageMeaning:
+        return 'Message Meaning'; // TODO: Add to L10n
     }
   }
 
@@ -62,6 +67,8 @@ extension MessageModeExtension on MessageMode {
         return L10n.of(context).vocab;
       case MessageMode.noneSelected:
         return '';
+      case MessageMode.messageMeaning:
+        return 'Message Meaning'; // TODO: Add to L10n
     }
   }
 
@@ -76,6 +83,7 @@ extension MessageModeExtension on MessageMode {
         return true;
       case MessageMode.wordZoom:
       case MessageMode.noneSelected:
+      case MessageMode.messageMeaning:
         return false;
     }
   }
@@ -91,6 +99,7 @@ extension MessageModeExtension on MessageMode {
       case MessageMode.speechToText:
       case MessageMode.wordZoom:
       case MessageMode.noneSelected:
+      case MessageMode.messageMeaning:
         return 0;
     }
   }
@@ -109,6 +118,7 @@ extension MessageModeExtension on MessageMode {
       case MessageMode.practiceActivity:
       case MessageMode.wordZoom:
       case MessageMode.noneSelected:
+      case MessageMode.messageMeaning:
         return true;
     }
   }

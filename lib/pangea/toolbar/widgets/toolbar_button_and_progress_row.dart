@@ -99,6 +99,11 @@ class ToolbarButtonAndProgressRow extends StatelessWidget {
                 overlayController: overlayController,
                 buttonSize: buttonSize,
               ),
+              ToolbarButton(
+                mode: MessageMode.messageMeaning,
+                overlayController: overlayController,
+                buttonSize: buttonSize,
+              ),
             ],
           ),
         ],

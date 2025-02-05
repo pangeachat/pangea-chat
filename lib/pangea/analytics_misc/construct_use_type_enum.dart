@@ -60,6 +60,11 @@ enum ConstructUseTypeEnum {
   /// User can select any emoji
   em,
 
+  /// message meaning activity
+  corMM, // TODO: Add to L10n
+  incMM, // TODO: Add to L10n
+  ignMM, // TODO: Add to L10n
+
   /// not defined, likely a new construct introduced by choreo and not yet classified by an old version of the client
   nan
 }
@@ -121,6 +126,12 @@ extension ConstructUseTypeExtension on ConstructUseTypeEnum {
         return L10n.of(context).constructUseEmojiDesc;
       case ConstructUseTypeEnum.pvm:
         return L10n.of(context).constructUsePvmDesc;
+      case ConstructUseTypeEnum.corMM:
+        return 'Correct message meaning'; // TODO: Add to L10n
+      case ConstructUseTypeEnum.incMM:
+        return 'Incorrect message meaning'; // TODO: Add to L10n
+      case ConstructUseTypeEnum.ignMM:
+        return 'Ignored message meaning'; // TODO: Add to L10n
       case ConstructUseTypeEnum.nan:
         return L10n.of(context).constructUseNanDesc;
     }
@@ -161,6 +172,10 @@ extension ConstructUseTypeExtension on ConstructUseTypeEnum {
         return ActivityTypeEnum.morphId.icon;
       case ConstructUseTypeEnum.em:
         return ActivityTypeEnum.emoji.icon;
+      case ConstructUseTypeEnum.corMM:
+      case ConstructUseTypeEnum.incMM:
+      case ConstructUseTypeEnum.ignMM:
+        return ActivityTypeEnum.messageMeaning.icon; // TODO: Add to L10n
       case ConstructUseTypeEnum.pvm:
         return Icons.mic;
       case ConstructUseTypeEnum.unk:
