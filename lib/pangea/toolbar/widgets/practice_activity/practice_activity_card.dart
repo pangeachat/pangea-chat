@@ -112,42 +112,42 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
       return;
     }
 
-    // try {
-    _updateFetchingActivity(true);
-    final activity = await _fetchActivityModel(
-      activityFeedback: activityFeedback,
-    );
+    try {
+      _updateFetchingActivity(true);
+      final activity = await _fetchActivityModel(
+        activityFeedback: activityFeedback,
+      );
 
-    currentActivity = activity;
-    if (activity == null) {
-      widget.overlayController.exitPracticeFlow();
-      return;
+      currentActivity = activity;
+      if (activity == null) {
+        widget.overlayController.exitPracticeFlow();
+        return;
+      }
+
+      currentCompletionRecord = PracticeActivityRecordModel(
+        question: mounted
+            ? currentActivity?.question(context, widget.morphFeature)
+            : currentActivity?.content.question,
+      );
+    } catch (e, s) {
+      ErrorHandler.logError(
+        e: e,
+        s: s,
+        data: {
+          'activity': currentActivity?.toJson(),
+          'record': currentCompletionRecord?.toJson(),
+          'targetTokens': widget.targetTokensAndActivityType.tokens
+              .map((token) => token.toJson())
+              .toList(),
+          'activityType': widget.targetTokensAndActivityType.activityType,
+          'morphFeature': widget.morphFeature,
+        },
+      );
+      debugger(when: kDebugMode);
+      _error = e.toString();
+    } finally {
+      _updateFetchingActivity(false);
     }
-
-    currentCompletionRecord = PracticeActivityRecordModel(
-      question: mounted
-          ? currentActivity?.question(context, widget.morphFeature)
-          : currentActivity?.content.question,
-    );
-    // } catch (e, s) {
-    // ErrorHandler.logError(
-    //   e: e,
-    //   s: s,
-    //   data: {
-    //     'activity': currentActivity?.toJson(),
-    //     'record': currentCompletionRecord?.toJson(),
-    //     'targetTokens': widget.targetTokensAndActivityType.tokens
-    //         .map((token) => token.toJson())
-    //         .toList(),
-    //     'activityType': widget.targetTokensAndActivityType.activityType,
-    //     'morphFeature': widget.morphFeature,
-    //   },
-    // );
-    // debugger(when: kDebugMode);
-    // _error = e.toString();
-    // } finally {
-    _updateFetchingActivity(false);
-    // }
   }
 
   Future<PracticeActivityModel?> _fetchActivityModel({

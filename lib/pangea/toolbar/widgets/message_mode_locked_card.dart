@@ -38,7 +38,6 @@ class MessageModeLockedCard extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              // TODO : add L10n
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -49,7 +48,7 @@ class MessageModeLockedCard extends StatelessWidget {
                   const SizedBox(width: 8),
                   TextButton(
                     onPressed: () => controller.onRequestForMeaningChallenge(),
-                    child: const Text("Or click here for a Meaning Challenge"),
+                    child: Text(L10n.of(context).clickForMeaningActivity),
                   ),
                 ],
               ),

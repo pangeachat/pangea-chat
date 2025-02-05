@@ -61,9 +61,9 @@ enum ConstructUseTypeEnum {
   em,
 
   /// message meaning activity
-  corMM, // TODO: Add to L10n
-  incMM, // TODO: Add to L10n
-  ignMM, // TODO: Add to L10n
+  corMM,
+  incMM,
+  ignMM,
 
   /// not defined, likely a new construct introduced by choreo and not yet classified by an old version of the client
   nan
@@ -127,11 +127,11 @@ extension ConstructUseTypeExtension on ConstructUseTypeEnum {
       case ConstructUseTypeEnum.pvm:
         return L10n.of(context).constructUsePvmDesc;
       case ConstructUseTypeEnum.corMM:
-        return 'Correct message meaning'; // TODO: Add to L10n
+        return L10n.of(context).constructUseCorMmDesc;
       case ConstructUseTypeEnum.incMM:
-        return 'Incorrect message meaning'; // TODO: Add to L10n
+        return L10n.of(context).constructUseIncMmDesc;
       case ConstructUseTypeEnum.ignMM:
-        return 'Ignored message meaning'; // TODO: Add to L10n
+        return L10n.of(context).constructUseIgnMmDesc;
       case ConstructUseTypeEnum.nan:
         return L10n.of(context).constructUseNanDesc;
     }
@@ -175,7 +175,7 @@ extension ConstructUseTypeExtension on ConstructUseTypeEnum {
       case ConstructUseTypeEnum.corMM:
       case ConstructUseTypeEnum.incMM:
       case ConstructUseTypeEnum.ignMM:
-        return ActivityTypeEnum.messageMeaning.icon; // TODO: Add to L10n
+        return ActivityTypeEnum.messageMeaning.icon;
       case ConstructUseTypeEnum.pvm:
         return Icons.mic;
       case ConstructUseTypeEnum.unk:
