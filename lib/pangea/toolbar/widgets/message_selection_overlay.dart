@@ -258,8 +258,12 @@ class MessageOverlayController extends State<MessageSelectionOverlay>
 
   /// When an activity is completed, we need to update the state
   /// and check if the toolbar should be unlocked
-  void onActivityFinish() {
+  void onActivityFinish(ActivityTypeEnum activityType) {
     messageAnalyticsEntry!.onActivityComplete();
+    if (activityType == ActivityTypeEnum.messageMeaning) {
+      updateToolbarMode(MessageMode.wordZoom);
+    }
+
     if (!mounted) return;
     setState(() {});
   }
