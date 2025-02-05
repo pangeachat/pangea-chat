@@ -1,11 +1,12 @@
+import 'package:fluffychat/config/app_config.dart';
+import 'package:fluffychat/pangea/toolbar/widgets/message_selection_overlay.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-
 class MessageModeLockedCard extends StatelessWidget {
-  const MessageModeLockedCard({super.key});
+  final MessageOverlayController controller;
+
+  const MessageModeLockedCard({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +35,11 @@ class MessageModeLockedCard extends StatelessWidget {
                   Theme.of(context).colorScheme.primary,
                 ),
                 textAlign: TextAlign.center,
+              ),
+              // TODO : add L10n
+              TextButton(
+                onPressed: () => controller.onRequestForMeaningChallenge(),
+                child: const Text("... or pass an understanding check"),
               ),
             ],
           ),

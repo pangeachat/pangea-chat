@@ -1,9 +1,11 @@
-import 'package:collection/collection.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
+import 'dart:developer';
 
+import 'package:collection/collection.dart';
 import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/toolbar/enums/activity_type_enum.dart';
 import 'package:fluffychat/pangea/toolbar/models/practice_activity_model.dart';
+import 'package:flutter/foundation.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 // includes feedback text and the bad activity model
 class ActivityQualityFeedback {
@@ -75,6 +77,7 @@ class MessageActivityRequest {
     if ([ActivityTypeEnum.wordFocusListening, ActivityTypeEnum.wordMeaning]
             .contains(targetType) &&
         targetTokens.length > 1) {
+      debugger(when: kDebugMode);
       throw Exception(
         'Target tokens must be a single token for this activity type',
       );

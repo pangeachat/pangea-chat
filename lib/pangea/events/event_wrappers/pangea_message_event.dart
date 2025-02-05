@@ -1,12 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
-
 import 'package:collection/collection.dart';
-import 'package:matrix/matrix.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-
 import 'package:fluffychat/pangea/choreographer/models/choreo_record.dart';
 import 'package:fluffychat/pangea/choreographer/models/pangea_match_model.dart';
 import 'package:fluffychat/pangea/choreographer/repo/full_text_translation_repo.dart';
@@ -22,6 +17,10 @@ import 'package:fluffychat/pangea/toolbar/enums/audio_encoding_enum.dart';
 import 'package:fluffychat/pangea/toolbar/event_wrappers/practice_activity_event.dart';
 import 'package:fluffychat/pangea/toolbar/models/speech_to_text_models.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/message_audio_card.dart';
+import 'package:flutter/foundation.dart';
+import 'package:matrix/matrix.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+
 import '../../../widgets/matrix.dart';
 import '../../choreographer/enums/use_type.dart';
 import '../../common/utils/error_handler.dart';
@@ -461,11 +460,11 @@ class PangeaMessageEvent {
 
   RepresentationEvent? representationByLanguage(String langCode) =>
       representations.firstWhereOrNull(
-        (element) => element.langCode == langCode,
+        (element) => element.langCode.split("-")[0] == langCode.split("-")[0],
       );
 
   int translationIndex(String langCode) => representations.indexWhere(
-        (element) => element.langCode == langCode,
+        (element) => element.langCode.split("-")[0] == langCode.split("-")[0],
       );
 
   String translationTextSafe(String langCode) {
@@ -596,7 +595,8 @@ class PangeaMessageEvent {
 
   /// Should almost always be true. Useful in the case that the message
   /// display rep has the langCode "unk"
-  bool get messageDisplayLangIsL2 => messageDisplayLangCode == l2Code;
+  bool get messageDisplayLangIsL2 =>
+      messageDisplayLangCode.split("-")[0] == l2Code?.split("-")[0];
 
   String get messageDisplayLangCode {
     final bool immersionMode = MatrixState
@@ -684,7 +684,9 @@ class PangeaMessageEvent {
     bool debug = false,
   }) =>
       _practiceActivityEvents
-          .where((event) => event.practiceActivity.langCode == langCode)
+          .where((event) =>
+              event.practiceActivity.langCode.split("-")[0] ==
+              langCode.split("")[0])
           .toList();
 
   /// Returns a list of [PracticeActivityEvent] for the user's active l2.

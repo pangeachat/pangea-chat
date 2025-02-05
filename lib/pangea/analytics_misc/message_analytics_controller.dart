@@ -1,13 +1,12 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
-
 import 'package:fluffychat/pangea/analytics_misc/construct_identifier.dart';
 import 'package:fluffychat/pangea/analytics_misc/get_analytics_controller.dart';
 import 'package:fluffychat/pangea/events/event_wrappers/pangea_message_event.dart';
 import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/toolbar/enums/activity_type_enum.dart';
 import 'package:fluffychat/pangea/toolbar/models/practice_activity_model.dart';
+import 'package:flutter/foundation.dart';
 
 /// Picks which tokens to do activities on and what types of activities to do
 /// Caches result so that we don't have to recompute it
@@ -123,8 +122,8 @@ class MessageAnalyticsEntry {
   bool get hasHiddenWordActivity =>
       nextActivity?.activityType.hiddenType ?? false;
 
-  bool get hasWordMeaningActivity =>
-      _activityQueue.any((a) => a.activityType == ActivityTypeEnum.wordMeaning);
+  bool get hasMessageMeaningActivity => _activityQueue
+      .any((a) => a.activityType == ActivityTypeEnum.messageMeaning);
 
   int get numActivities => _activityQueue.length;
 
@@ -144,15 +143,12 @@ class MessageAnalyticsEntry {
     }
   }
 
-  /// Adds a word focus listening activity to the front of the queue
+  /// Add a message meaning activity to the front of the queue
   /// And limits to _maxQueueLength activities
-  void addTokenToActivityQueue(
-    PangeaToken token, {
-    ActivityTypeEnum type = ActivityTypeEnum.wordMeaning,
-  }) {
+  void addMessageMeaningActivity() {
     final entry = TargetTokensAndActivityType(
-      tokens: [token],
-      activityType: ActivityTypeEnum.wordMeaning,
+      tokens: _tokens,
+      activityType: ActivityTypeEnum.messageMeaning,
     );
     _pushQueue(entry);
   }

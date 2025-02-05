@@ -1,10 +1,8 @@
-import 'package:flutter/material.dart';
-
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-
 import 'package:fluffychat/pangea/analytics_downloads/analytics_summary_enum.dart';
 import 'package:fluffychat/pangea/analytics_misc/learning_skills_enum.dart';
 import 'package:fluffychat/pangea/toolbar/enums/activity_type_enum.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
 
 enum ConstructUseTypeEnum {
   /// produced in chat by user, igc was run, and we've judged it to be a correct use
@@ -210,6 +208,7 @@ extension ConstructUseTypeExtension on ConstructUseTypeEnum {
 
       case ConstructUseTypeEnum.corIt:
       case ConstructUseTypeEnum.em:
+      case ConstructUseTypeEnum.corMM:
         return 1;
 
       case ConstructUseTypeEnum.ignIt:
@@ -219,11 +218,13 @@ extension ConstructUseTypeExtension on ConstructUseTypeEnum {
       case ConstructUseTypeEnum.ignHWL:
       case ConstructUseTypeEnum.ignL:
       case ConstructUseTypeEnum.ignM:
+      case ConstructUseTypeEnum.ignMM:
       case ConstructUseTypeEnum.unk:
       case ConstructUseTypeEnum.nan:
         return 0;
 
       case ConstructUseTypeEnum.ga:
+      case ConstructUseTypeEnum.incMM:
         return -1;
 
       case ConstructUseTypeEnum.incIt:
@@ -268,6 +269,9 @@ extension ConstructUseTypeExtension on ConstructUseTypeEnum {
       case ConstructUseTypeEnum.corM:
       case ConstructUseTypeEnum.incM:
       case ConstructUseTypeEnum.ignM:
+      case ConstructUseTypeEnum.corMM:
+      case ConstructUseTypeEnum.incMM:
+      case ConstructUseTypeEnum.ignMM:
       case ConstructUseTypeEnum.em:
       case ConstructUseTypeEnum.nan:
         return false;
@@ -303,6 +307,9 @@ extension ConstructUseTypeExtension on ConstructUseTypeEnum {
       case ConstructUseTypeEnum.corM:
       case ConstructUseTypeEnum.ignM:
       case ConstructUseTypeEnum.incM:
+      case ConstructUseTypeEnum.corMM:
+      case ConstructUseTypeEnum.incMM:
+      case ConstructUseTypeEnum.ignMM:
       case ConstructUseTypeEnum.em:
         return LearningSkillsEnum.reading;
       case ConstructUseTypeEnum.pvm:
@@ -328,6 +335,7 @@ extension ConstructUseTypeExtension on ConstructUseTypeEnum {
       case ConstructUseTypeEnum.corL:
       case ConstructUseTypeEnum.corM:
       case ConstructUseTypeEnum.em:
+      case ConstructUseTypeEnum.corMM:
         return AnalyticsSummaryEnum.numChoicesCorrect;
 
       case ConstructUseTypeEnum.incIt:
@@ -337,6 +345,7 @@ extension ConstructUseTypeExtension on ConstructUseTypeEnum {
       case ConstructUseTypeEnum.incHWL:
       case ConstructUseTypeEnum.incL:
       case ConstructUseTypeEnum.incM:
+      case ConstructUseTypeEnum.incMM:
         return AnalyticsSummaryEnum.numChoicesIncorrect;
 
       case ConstructUseTypeEnum.ignIt:
@@ -346,6 +355,7 @@ extension ConstructUseTypeExtension on ConstructUseTypeEnum {
       case ConstructUseTypeEnum.ignHWL:
       case ConstructUseTypeEnum.ignL:
       case ConstructUseTypeEnum.ignM:
+      case ConstructUseTypeEnum.ignMM:
       case ConstructUseTypeEnum.nan:
         return null;
     }

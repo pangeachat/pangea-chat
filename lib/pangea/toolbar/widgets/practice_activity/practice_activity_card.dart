@@ -1,11 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
 import 'package:collection/collection.dart';
-
 import 'package:fluffychat/pangea/analytics_misc/construct_type_enum.dart';
 import 'package:fluffychat/pangea/analytics_misc/constructs_model.dart';
 import 'package:fluffychat/pangea/analytics_misc/gain_points_animation.dart';
@@ -26,6 +22,8 @@ import 'package:fluffychat/pangea/toolbar/widgets/practice_activity/multiple_cho
 import 'package:fluffychat/pangea/toolbar/widgets/toolbar_content_loading_indicator.dart';
 import 'package:fluffychat/pangea/toolbar/widgets/word_zoom/word_zoom_widget.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 /// The wrapper for practice activity content.
 /// Handles the activities associated with a message,
@@ -103,6 +101,7 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
     ActivityQualityFeedback? activityFeedback,
   }) async {
     _error = null;
+    debugger(when: kDebugMode);
     if (!mounted ||
         !pangeaController.languageController.languagesSet ||
         widget.overlayController.messageAnalyticsEntry == null) {
@@ -111,47 +110,48 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
       return;
     }
 
-    try {
-      _updateFetchingActivity(true);
-      final activity = await _fetchActivityModel(
-        activityFeedback: activityFeedback,
-      );
+    // try {
+    _updateFetchingActivity(true);
+    final activity = await _fetchActivityModel(
+      activityFeedback: activityFeedback,
+    );
 
-      currentActivity = activity;
-      if (activity == null) {
-        widget.overlayController.exitPracticeFlow();
-        return;
-      }
-
-      currentCompletionRecord = PracticeActivityRecordModel(
-        question: mounted
-            ? currentActivity?.question(context, widget.morphFeature)
-            : currentActivity?.content.question,
-      );
-    } catch (e, s) {
-      ErrorHandler.logError(
-        e: e,
-        s: s,
-        data: {
-          'activity': currentActivity?.toJson(),
-          'record': currentCompletionRecord?.toJson(),
-          'targetTokens': widget.targetTokensAndActivityType.tokens
-              .map((token) => token.toJson())
-              .toList(),
-          'activityType': widget.targetTokensAndActivityType.activityType,
-          'morphFeature': widget.morphFeature,
-        },
-      );
-      debugger(when: kDebugMode);
-      _error = e.toString();
-    } finally {
-      _updateFetchingActivity(false);
+    currentActivity = activity;
+    if (activity == null) {
+      widget.overlayController.exitPracticeFlow();
+      return;
     }
+
+    currentCompletionRecord = PracticeActivityRecordModel(
+      question: mounted
+          ? currentActivity?.question(context, widget.morphFeature)
+          : currentActivity?.content.question,
+    );
+    // } catch (e, s) {
+    // ErrorHandler.logError(
+    //   e: e,
+    //   s: s,
+    //   data: {
+    //     'activity': currentActivity?.toJson(),
+    //     'record': currentCompletionRecord?.toJson(),
+    //     'targetTokens': widget.targetTokensAndActivityType.tokens
+    //         .map((token) => token.toJson())
+    //         .toList(),
+    //     'activityType': widget.targetTokensAndActivityType.activityType,
+    //     'morphFeature': widget.morphFeature,
+    //   },
+    // );
+    // debugger(when: kDebugMode);
+    // _error = e.toString();
+    // } finally {
+    _updateFetchingActivity(false);
+    // }
   }
 
   Future<PracticeActivityModel?> _fetchActivityModel({
     ActivityQualityFeedback? activityFeedback,
   }) async {
+    debugger(when: kDebugMode);
     debugPrint(
       "fetching activity model of type: ${widget.targetTokensAndActivityType.activityType}",
     );
@@ -214,6 +214,8 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
       widget.pangeaMessageEvent,
       context,
     );
+
+    debugger(when: kDebugMode);
 
     if (activityResponse.activity == null) return null;
 
@@ -309,6 +311,7 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
       case ActivityTypeEnum.lemmaId:
       case ActivityTypeEnum.emoji:
       case ActivityTypeEnum.morphId:
+      case ActivityTypeEnum.messageMeaning:
         final selectedChoice =
             currentActivity?.activityType == ActivityTypeEnum.emoji &&
                     (currentActivity?.targetTokens?.isNotEmpty ?? false)
@@ -330,6 +333,7 @@ class PracticeActivityCardState extends State<PracticeActivityCard> {
   @override
   Widget build(BuildContext context) {
     if (_error != null) {
+      debugger(when: kDebugMode);
       return CardErrorWidget(
         error: _error!,
         maxWidth: 500,

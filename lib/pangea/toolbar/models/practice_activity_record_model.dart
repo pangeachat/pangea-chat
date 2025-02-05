@@ -5,13 +5,12 @@
 
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
-
 import 'package:fluffychat/pangea/analytics_misc/construct_type_enum.dart';
 import 'package:fluffychat/pangea/analytics_misc/construct_use_type_enum.dart';
 import 'package:fluffychat/pangea/analytics_misc/constructs_model.dart';
 import 'package:fluffychat/pangea/toolbar/enums/activity_type_enum.dart';
 import 'package:fluffychat/pangea/toolbar/models/practice_activity_model.dart';
+import 'package:flutter/foundation.dart';
 
 class PracticeActivityRecordModel {
   final String? question;
@@ -163,6 +162,10 @@ class ActivityRecordResponse {
         return score > 0
             ? ConstructUseTypeEnum.corHWL
             : ConstructUseTypeEnum.incHWL;
+      case ActivityTypeEnum.messageMeaning:
+        return score > 0
+            ? ConstructUseTypeEnum.corMM
+            : ConstructUseTypeEnum.incMM;
     }
   }
 
@@ -199,6 +202,15 @@ class ActivityRecordResponse {
             category: token.pos,
           ),
         ];
+      case ActivityTypeEnum.messageMeaning:
+        return practiceActivity.targetTokens!
+            .expand(
+              (t) => t.allUses(
+                useType(practiceActivity.activityType),
+                metadata,
+              ),
+            )
+            .toList();
       case ActivityTypeEnum.hiddenWordListening:
         return practiceActivity.targetTokens!
             .map(

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:matrix/matrix.dart';
 
 enum MessageMode {
   practiceActivity,
@@ -11,7 +9,6 @@ enum MessageMode {
   speechToText,
   wordZoom,
   noneSelected,
-  messageMeaning, // TODO: Add to L10n
 }
 
 extension MessageModeExtension on MessageMode {
@@ -29,8 +26,6 @@ extension MessageModeExtension on MessageMode {
         return Symbols.dictionary;
       case MessageMode.noneSelected:
         return Icons.error;
-      case MessageMode.messageMeaning:
-        return Icons.star; // TODO: Add to L10n
     }
   }
 
@@ -48,8 +43,6 @@ extension MessageModeExtension on MessageMode {
         return L10n.of(context).vocab;
       case MessageMode.noneSelected:
         return '';
-      case MessageMode.messageMeaning:
-        return 'Message Meaning'; // TODO: Add to L10n
     }
   }
 
@@ -67,24 +60,6 @@ extension MessageModeExtension on MessageMode {
         return L10n.of(context).vocab;
       case MessageMode.noneSelected:
         return '';
-      case MessageMode.messageMeaning:
-        return 'Message Meaning'; // TODO: Add to L10n
-    }
-  }
-
-  bool shouldShowAsToolbarButton(Event event) {
-    switch (this) {
-      case MessageMode.translation:
-      case MessageMode.textToSpeech:
-        return event.messageType == MessageTypes.Text;
-      case MessageMode.speechToText:
-        return event.messageType == MessageTypes.Audio;
-      case MessageMode.practiceActivity:
-        return true;
-      case MessageMode.wordZoom:
-      case MessageMode.noneSelected:
-      case MessageMode.messageMeaning:
-        return false;
     }
   }
 
@@ -99,7 +74,6 @@ extension MessageModeExtension on MessageMode {
       case MessageMode.speechToText:
       case MessageMode.wordZoom:
       case MessageMode.noneSelected:
-      case MessageMode.messageMeaning:
         return 0;
     }
   }
@@ -118,7 +92,6 @@ extension MessageModeExtension on MessageMode {
       case MessageMode.practiceActivity:
       case MessageMode.wordZoom:
       case MessageMode.noneSelected:
-      case MessageMode.messageMeaning:
         return true;
     }
   }
