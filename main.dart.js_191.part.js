@@ -4684,6 +4684,21 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
     get$whatIsLemma() {
       return "What is the lemma?";
     },
+    get$constructUseCorMmDesc() {
+      return "Correct message meaning";
+    },
+    get$constructUseIncMmDesc() {
+      return "Incorrect message meaning";
+    },
+    get$constructUseIgnMmDesc() {
+      return "Ignored message meaning";
+    },
+    get$clickForMeaningActivity() {
+      return "Click here for a Meaning Challenge";
+    },
+    get$meaning() {
+      return "Meaning";
+    },
     remove$1($receiver, arg0) {
       return this.get$remove(this).call$1(arg0);
     }
@@ -4699,6 +4714,6 @@ $__dart_deferred_initializers__.current = function(hunkHelpers, init, holdersLis
 ((d, h) => {
   d[h] = d.current;
   d.eventLog.push({p: "main.dart.js_191", e: "endPart", h: h});
-})($__dart_deferred_initializers__, "wUg2D6azYtPEdb38IkowMqiODhA=");
+})($__dart_deferred_initializers__, "gpG33G6s5fPNLcpsy/BoySVxVvw=");
 ;
 //# sourceMappingURL=main.dart.js_191.part.js.map
