@@ -64,6 +64,8 @@ class PublicProfileModel {
     languageAnalytics![language] ??= LanguageAnalyticsProfileEntry(0);
     languageAnalytics![language]!.level = level;
   }
+
+  int? get level => languageAnalytics?[targetLanguage]?.level;
 }
 
 class LanguageAnalyticsProfileEntry {

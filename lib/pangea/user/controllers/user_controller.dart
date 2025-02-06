@@ -300,4 +300,20 @@ class UserController extends BaseController {
     );
     return email?.address;
   }
+
+  Future<PublicProfileModel> getPublicProfile(String userId) async {
+    try {
+      final resp = await client.getUserProfile(userId);
+      return PublicProfileModel.fromJson(resp.additionalProperties);
+    } catch (e, s) {
+      ErrorHandler.logError(
+        e: e,
+        s: s,
+        data: {
+          userId: userId,
+        },
+      );
+      return PublicProfileModel();
+    }
+  }
 }
