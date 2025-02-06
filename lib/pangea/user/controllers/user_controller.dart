@@ -46,8 +46,6 @@ class UserController extends BaseController {
         _cachedProfile = fromAccountData;
       }
     });
-
-    // Gabby TODO update public profile when level changes and when target language changes
   }
 
   /// The user's profile. Will be empty if the client's accountData hasn't
