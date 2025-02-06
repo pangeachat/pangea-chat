@@ -23,7 +23,6 @@ import 'package:fluffychat/pangea/toolbar/repo/emoji_activity_generator.dart';
 import 'package:fluffychat/pangea/toolbar/repo/lemma_activity_generator.dart';
 import 'package:fluffychat/pangea/toolbar/repo/lemma_meaning_activity_generator.dart';
 import 'package:fluffychat/pangea/toolbar/repo/morph_activity_generator.dart';
-import 'package:fluffychat/pangea/toolbar/repo/word_meaning_static_practice_activity_model.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 
 /// Represents an item in the completion cache.
@@ -137,7 +136,6 @@ class PracticeGenerationController {
         debugger(when: kDebugMode);
         return _wordMeaning.get(req);
       case ActivityTypeEnum.messageMeaning:
-        return Future.value(wordMeaningStaticPracticeActivityModel);
       case ActivityTypeEnum.wordFocusListening:
       case ActivityTypeEnum.hiddenWordListening:
         return _fetchFromServer(
