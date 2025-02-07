@@ -20,6 +20,8 @@ import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:get_storage/get_storage.dart';
+
 
 class AppVersionUtil {
   static Future<AppVersionResponse> _getAppVersion(
@@ -46,6 +48,8 @@ class AppVersionUtil {
     json = jsonDecode(res.body);
     return AppVersionResponse.fromJson(json);
   }
+
+  static final GetStorage _versionBox = GetStorage("version_storage");
 
   static Future<void> showAppVersionDialog(BuildContext context) async {
     final packageInfo = await PackageInfo.fromPlatform();
@@ -148,7 +152,7 @@ class AppVersionUtil {
     );
 
     if (!mandatoryUpdate && dialogResponse != OkCancelResult.ok) {
-      await MatrixState.pangeaController.pStoreService.save(
+      await _versionBox.write(
         PLocalKey.showedUpdateDialog,
         DateTime.now().toIso8601String(),
       );
@@ -210,7 +214,7 @@ class AppVersionUtil {
   }
 
   static DateTime? get showedUpdateDialog {
-    final entry = MatrixState.pangeaController.pStoreService
+    final entry = _versionBox
         .read(PLocalKey.showedUpdateDialog);
     if (entry == null) return null;
     try {

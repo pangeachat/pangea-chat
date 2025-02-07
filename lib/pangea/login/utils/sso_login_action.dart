@@ -13,6 +13,9 @@ import 'package:fluffychat/pangea/common/utils/firebase_analytics.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 
+import 'package:get_storage/get_storage.dart';
+
+
 Future<void> pangeaSSOLoginAction(
   IdentityProvider provider,
   Client client,
@@ -62,6 +65,8 @@ Future<void> pangeaSSOLoginAction(
     token: token,
     initialDeviceDisplayName: PlatformInfos.clientName,
   );
-  MatrixState.pangeaController.pStoreService.save(PLocalKey.loginType, 'sso');
+
+  final GetStorage ssoBox = GetStorage("sso_storage");
+  ssoBox.write(PLocalKey.loginType, 'sso');
   GoogleAnalytics.login(provider.name!, loginRes.userId);
 }

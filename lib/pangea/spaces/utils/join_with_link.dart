@@ -8,6 +8,8 @@ import 'package:fluffychat/pangea/common/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/spaces/constants/space_constants.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 
+import 'package:get_storage/get_storage.dart';
+
 //if on home with classcode in url and not logged in, then save it soemhow and after llogin, join class automatically
 //if on home with classcode in url and logged in, then join class automatically
 class JoinClassWithLink extends StatefulWidget {
@@ -21,6 +23,8 @@ class JoinClassWithLink extends StatefulWidget {
 class _JoinClassWithLinkState extends State<JoinClassWithLink> {
   String? classCode;
   final PangeaController pangeaController = MatrixState.pangeaController;
+
+  final GetStorage _linkBox = GetStorage("link_storage");
 
   @override
   void initState() {
@@ -40,10 +44,9 @@ class _JoinClassWithLinkState extends State<JoinClassWithLink> {
         );
         return;
       }
-      await pangeaController.pStoreService.save(
+      await _linkBox.write(
         PLocalKey.cachedClassCodeToJoin,
         classCode,
-        isAccountData: false,
       );
       context.go("/home");
     });

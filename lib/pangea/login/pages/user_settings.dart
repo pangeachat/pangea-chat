@@ -18,6 +18,8 @@ import 'package:fluffychat/utils/file_selector.dart';
 import 'package:fluffychat/utils/localized_exception_extension.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 
+import 'package:get_storage/get_storage.dart';
+
 class UserSettingsPage extends StatefulWidget {
   const UserSettingsPage({super.key});
 
@@ -41,6 +43,8 @@ class UserSettingsState extends State<UserSettingsPage> {
   String? _selectedFilePath;
 
   bool isTncChecked = false;
+
+  final GetStorage _settingsBox = GetStorage("settings_storage");
 
   List<String> avatarPaths = const [
     "assets/pangea/Avatar_1.png",
@@ -81,7 +85,7 @@ class UserSettingsState extends State<UserSettingsPage> {
 
   bool get isSSOSignup {
     final loginTypeEntry =
-        _pangeaController.pStoreService.read(PLocalKey.loginType);
+        _settingsBox.read(PLocalKey.loginType);
     return loginTypeEntry is String && loginTypeEntry == 'sso';
   }
 

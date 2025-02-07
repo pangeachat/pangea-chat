@@ -44,6 +44,8 @@ import '../../widgets/matrix.dart';
 import 'package:fluffychat/utils/tor_stub.dart'
     if (dart.library.html) 'package:tor_detector_web/tor_detector_web.dart';
 
+import 'package:get_storage/get_storage.dart';
+
 enum PopupMenuAction {
   settings,
   invite,
@@ -100,6 +102,8 @@ class ChatListController extends State<ChatList>
   StreamSubscription? _intentFileStreamSubscription;
 
   StreamSubscription? _intentUriStreamSubscription;
+
+  static final GetStorage chatBox = GetStorage("chat_list_storage");
 
   ActiveFilter activeFilter = AppConfig.separateChatTypes
       ? ActiveFilter.messages
@@ -510,9 +514,8 @@ class ChatListController extends State<ChatList>
           );
 
           final String? justInputtedCode =
-              MatrixState.pangeaController.pStoreService.read(
+              chatBox.read(
             PLocalKey.justInputtedCode,
-            isAccountData: false,
           );
           final newSpaceCode = space?.classCode(context);
           if (newSpaceCode == justInputtedCode) return;

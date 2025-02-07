@@ -17,6 +17,8 @@ import 'package:fluffychat/widgets/adaptive_dialogs/show_text_input_dialog.dart'
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import '../../utils/platform_infos.dart';
+import 'package:get_storage/get_storage.dart';
+
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -45,6 +47,8 @@ class LoginController extends State<Login> {
   // #Pangea
   final PangeaController pangeaController = MatrixState.pangeaController;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  final GetStorage _loginBox = GetStorage("login_storage");
 
   bool get enabledSignIn =>
       !loadingSignIn &&
@@ -198,8 +202,8 @@ class LoginController extends State<Login> {
         },
         // Pangea#
       );
-      MatrixState.pangeaController.pStoreService
-          .save(PLocalKey.loginType, 'password');
+      _loginBox
+          .write(PLocalKey.loginType, 'password');
       // #Pangea
       GoogleAnalytics.login("pangea", loginRes.userId);
       // Pangea#

@@ -6,7 +6,6 @@ import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/pangea/subscription/controllers/subscription_controller.dart';
 import 'package:fluffychat/pangea/subscription/repo/subscription_repo.dart';
 import 'package:fluffychat/pangea/subscription/utils/subscription_app_id.dart';
-import 'package:fluffychat/widgets/matrix.dart';
 
 /// Contains information about the users's current subscription
 class CurrentSubscriptionInfo {
@@ -93,6 +92,8 @@ class AvailableSubscriptionsInfo {
   SubscriptionAppIds? appIds;
   List<SubscriptionDetails>? allProducts;
 
+  final subscriptionBox = SubscriptionController.subscriptionBox;
+
   AvailableSubscriptionsInfo({
     this.appIds,
     this.allProducts,
@@ -113,14 +114,14 @@ class AvailableSubscriptionsInfo {
   }
 
   Future<void> _cacheSubscriptionInfo() async {
-    await MatrixState.pangeaController.pStoreService.save(
+    await subscriptionBox.write(
       PLocalKey.availableSubscriptionInfo,
       toJson(),
     );
   }
 
-  static AvailableSubscriptionsInfo? _getCachedSubscriptionInfo() {
-    final json = MatrixState.pangeaController.pStoreService.read(
+  AvailableSubscriptionsInfo? _getCachedSubscriptionInfo() {
+    final json = subscriptionBox.read(
       PLocalKey.availableSubscriptionInfo,
     );
     if (json is! Map<String, dynamic>) {
