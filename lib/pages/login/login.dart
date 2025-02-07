@@ -47,7 +47,7 @@ class LoginController extends State<Login> {
   final PangeaController pangeaController = MatrixState.pangeaController;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  final GetStorage _loginBox = GetStorage("login_storage");
+  static final GetStorage _loginBox = GetStorage("login_storage");
 
   bool get enabledSignIn =>
       !loadingSignIn &&

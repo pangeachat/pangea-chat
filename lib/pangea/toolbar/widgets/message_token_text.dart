@@ -237,12 +237,12 @@ class MessageTextWidget extends StatelessWidget {
                         TextStyle(
                           backgroundColor: backgroundColor,
                         ),
-                      ),
+                      ), 
                       linkStyle: TextStyle(
                         decoration: TextDecoration.underline,
                         color: Theme.of(context).brightness == Brightness.light
                             ? Theme.of(context).colorScheme.primary
-                            : Theme.of(context).colorScheme.onPrimary,
+                            : Theme.of(context).colorScheme.secondary,
                       ),
                       onOpen: (url) =>
                           UrlLauncher(context, url.url).launchUrl(),

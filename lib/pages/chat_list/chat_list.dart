@@ -102,7 +102,9 @@ class ChatListController extends State<ChatList>
 
   StreamSubscription? _intentUriStreamSubscription;
 
+  // #Pangea
   static final GetStorage chatBox = GetStorage("chat_list_storage");
+  // Pangea#
 
   ActiveFilter activeFilter = AppConfig.separateChatTypes
       ? ActiveFilter.messages
@@ -512,9 +514,11 @@ class ChatListController extends State<ChatList>
             spaceId,
           );
 
+          // #Pangea
           final String? justInputtedCode = chatBox.read(
             PLocalKey.justInputtedCode,
           );
+          // Pangea#
           final newSpaceCode = space?.classCode(context);
           if (newSpaceCode == justInputtedCode) return;
 

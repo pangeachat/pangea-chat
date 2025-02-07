@@ -23,7 +23,7 @@ class _JoinClassWithLinkState extends State<JoinClassWithLink> {
   String? classCode;
   final PangeaController pangeaController = MatrixState.pangeaController;
 
-  final GetStorage _linkBox = GetStorage("link_storage");
+  static final GetStorage _linkBox = GetStorage("link_storage");
 
   @override
   void initState() {
