@@ -29,22 +29,6 @@ class AnalyticsDetailsViewContent extends StatelessWidget {
   });
 
   ConstructUses get construct => constructId.constructUses;
-  // String get morphFeature => constructId.category;
-  // String get morphTag => constructId.lemma;
-
-  // String _categoryCopy(
-  //   BuildContext context,
-  // ) {
-  //   if (morphFeature.toLowerCase() == "other") {
-  //     return L10n.of(context).other;
-  //   }
-
-  //   return ConstructTypeEnum.morph.getDisplayCopy(
-  //         morphFeature,
-  //         context,
-  //       ) ??
-  //       morphFeature;
-  // }
 
   @override
   Widget build(BuildContext context) {
