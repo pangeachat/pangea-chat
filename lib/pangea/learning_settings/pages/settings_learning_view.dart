@@ -14,7 +14,6 @@ import 'package:fluffychat/pangea/learning_settings/widgets/p_language_dropdown.
 import 'package:fluffychat/pangea/learning_settings/widgets/p_settings_switch_list_tile.dart';
 import 'package:fluffychat/pangea/spaces/models/space_model.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/layouts/max_width_body.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 
 class SettingsLearningView extends StatelessWidget {
@@ -44,6 +43,7 @@ class SettingsLearningView extends StatelessWidget {
           ),
           body: ListTileTheme(
             iconColor: Theme.of(context).textTheme.bodyLarge!.color,
+<<<<<<< HEAD
             child: MaxWidthBody(
               withScrolling: true,
               child: Column(
@@ -134,6 +134,180 @@ class SettingsLearningView extends StatelessWidget {
                             ),
                           ),
                       ],
+=======
+            child: Form(
+              key: controller.formKey,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            spacing: 16.0,
+                            children: [
+                              PLanguageDropdown(
+                                onChange: (lang) =>
+                                    controller.setSelectedLanguage(
+                                  sourceLanguage: lang,
+                                ),
+                                initialLanguage:
+                                    controller.selectedSourceLanguage ??
+                                        LanguageModel.unknown,
+                                languages: MatrixState.pangeaController
+                                    .pLanguageStore.baseOptions,
+                                isL2List: false,
+                                decorationText: L10n.of(context).myBaseLanguage,
+                                validator: (lang) {
+                                  if (lang ==
+                                      controller.selectedTargetLanguage) {
+                                    return L10n.of(context)
+                                        .noIdenticalLanguages;
+                                  }
+                                  return null;
+                                },
+                              ),
+                              PLanguageDropdown(
+                                onChange: (lang) =>
+                                    controller.setSelectedLanguage(
+                                  targetLanguage: lang,
+                                ),
+                                initialLanguage:
+                                    controller.selectedTargetLanguage,
+                                languages: MatrixState.pangeaController
+                                    .pLanguageStore.targetOptions,
+                                isL2List: true,
+                                decorationText: L10n.of(context).iWantToLearn,
+                                validator: (lang) {
+                                  if (lang ==
+                                      controller.selectedSourceLanguage) {
+                                    return L10n.of(context)
+                                        .noIdenticalLanguages;
+                                  }
+                                  return null;
+                                },
+                              ),
+                              CountryPickerTile(controller),
+                              LanguageLevelDropdown(
+                                initialLevel: controller.cefrLevel,
+                                onChanged: controller.setCefrLevel,
+                              ),
+                              const Divider(height: 1),
+                              Column(
+                                children: [
+                                  ListTile(
+                                    title: Text(
+                                      L10n.of(context)
+                                          .toggleToolSettingsDescription,
+                                    ),
+                                  ),
+                                  for (final toolSetting in ToolSetting.values
+                                      .where((tool) => tool.isAvailableSetting))
+                                    Column(
+                                      children: [
+                                        ProfileSettingsSwitchListTile.adaptive(
+                                          defaultValue: controller
+                                              .getToolSetting(toolSetting),
+                                          title: toolSetting.toolName(context),
+                                          subtitle: toolSetting ==
+                                                      ToolSetting.enableTTS &&
+                                                  !controller.tts
+                                                      .isLanguageFullySupported
+                                              ? null
+                                              : toolSetting
+                                                  .toolDescription(context),
+                                          onChange: (bool value) =>
+                                              controller.updateToolSetting(
+                                            toolSetting,
+                                            value,
+                                          ),
+                                          enabled: toolSetting ==
+                                                  ToolSetting.enableTTS
+                                              ? controller
+                                                  .tts.isLanguageFullySupported
+                                              : true,
+                                        ),
+                                        if (toolSetting ==
+                                                ToolSetting.enableTTS &&
+                                            !controller
+                                                .tts.isLanguageFullySupported)
+                                          ListTile(
+                                            trailing: const Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 16.0,
+                                              ),
+                                              child: Icon(Icons.info_outlined),
+                                            ),
+                                            subtitle: RichText(
+                                              text: TextSpan(
+                                                text: L10n.of(context)
+                                                    .couldNotFindTTS,
+                                                style:
+                                                    DefaultTextStyle.of(context)
+                                                        .style,
+                                                children: [
+                                                  if (PlatformInfos.isWindows ||
+                                                      PlatformInfos.isAndroid)
+                                                    TextSpan(
+                                                      text: L10n.of(context)
+                                                          .ttsInstructionsHyperlink,
+                                                      style: const TextStyle(
+                                                        color: Colors.blue,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline,
+                                                      ),
+                                                      recognizer:
+                                                          TapGestureRecognizer()
+                                                            ..onTap = () {
+                                                              launchUrlString(
+                                                                PlatformInfos
+                                                                        .isWindows
+                                                                    ? AppConfig
+                                                                        .windowsTTSDownloadInstructions
+                                                                    : AppConfig
+                                                                        .androidTTSDownloadInstructions,
+                                                              );
+                                                            },
+                                                    ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  SwitchListTile.adaptive(
+                                    value: controller.publicProfile,
+                                    onChanged: controller.setPublicProfile,
+                                    title: Text(
+                                      L10n.of(context).publicProfileTitle,
+                                    ),
+                                    subtitle: Text(
+                                      L10n.of(context).publicProfileDesc,
+                                    ),
+                                    activeColor: AppConfig.activeToggleColor,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: controller.submit,
+                          child: Text(L10n.of(context).submit),
+                        ),
+                      ),
+>>>>>>> main
                     ),
                   SwitchListTile.adaptive(
                     value: controller.publicProfile,
@@ -151,7 +325,7 @@ class SettingsLearningView extends StatelessWidget {
         return FullWidthDialog(
           dialogContent: dialogContent,
           maxWidth: 600,
-          maxHeight: 600,
+          maxHeight: 800,
         );
       },
     );
