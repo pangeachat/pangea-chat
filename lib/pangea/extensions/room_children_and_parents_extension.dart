@@ -73,7 +73,8 @@ extension ChildrenAndParentsRoomExtension on Room {
       throw NestedSpaceError();
     }
 
-    final List<Room> spaceParents = ChildrenAndParentsRoomExtension(child).pangeaSpaceParents;
+    final List<Room> spaceParents =
+        ChildrenAndParentsRoomExtension(child).pangeaSpaceParents;
     for (final Room parent in spaceParents) {
       try {
         await parent.removeSpaceChild(roomId);
