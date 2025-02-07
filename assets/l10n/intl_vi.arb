@@ -650,7 +650,7 @@
       "senderName": {}
     }
   },
-  "commandHint_googly": "Gửi theo mắt theo dõi",
+  "commandHint_googly": "Gửi cặp mắt theo dõi",
   "@commandHint_googly": {},
   "commandHint_cuddle": "Gửi một cái âu yếm",
   "@commandHint_cuddle": {},
