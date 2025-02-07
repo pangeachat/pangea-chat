@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
-
 import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/pangea/learning_settings/constants/language_constants.dart';
 import 'package:fluffychat/pangea/learning_settings/models/language_model.dart';
 import 'package:fluffychat/pangea/learning_settings/repo/language_repo.dart';
+import 'package:flutter/foundation.dart';
+
 import 'shared_prefs.dart';
 
 class PangeaLanguage {
@@ -21,8 +21,7 @@ class PangeaLanguage {
   List<LanguageModel> get targetOptions =>
       _langList.where((element) => element.l2).toList();
 
-  List<LanguageModel> get baseOptions =>
-      _langList.where((element) => element.l1).toList();
+  List<LanguageModel> get baseOptions => _langList.toList();
 
   static Future<void> initialize() async {
     try {
