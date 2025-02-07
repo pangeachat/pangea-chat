@@ -30,29 +30,29 @@ class VocabDetailsView extends StatelessWidget {
     required this.constructId,
   });
 
-  ConstructUses get construct => constructId.constructUses;
+  ConstructUses get _construct => constructId.constructUses;
 
-  String? get emoji => PangeaToken(
+  String? get _emoji => PangeaToken(
         text: PangeaTokenText(
           offset: 0,
-          content: construct.lemma,
-          length: construct.lemma.length,
+          content: _construct.lemma,
+          length: _construct.lemma.length,
         ),
         lemma: Lemma(
-          text: construct.lemma,
+          text: _construct.lemma,
           saveVocab: false,
-          form: construct.lemma,
+          form: _construct.lemma,
         ),
-        pos: construct.category,
+        pos: _construct.category,
         morph: {},
       ).getEmoji();
 
   /// Get string representing forms of the given lemma that have been used
-  String? get formString {
+  String? get _formString {
     // Get possible forms of lemma
     final constructs = MatrixState
         .pangeaController.getAnalytics.constructListModel
-        .getConstructUsesByLemma(construct.lemma);
+        .getConstructUsesByLemma(_construct.lemma);
 
     final forms = constructs
         .map((e) => e.uses)
@@ -68,7 +68,7 @@ class VocabDetailsView extends StatelessWidget {
   }
 
   /// Fetch the meaning of the lemma
-  Future<String?> getDefinition(BuildContext context) async {
+  Future<String?> _getDefinition(BuildContext context) async {
     final lang2 =
         MatrixState.pangeaController.languageController.userL2?.langCode;
     if (lang2 == null) {
@@ -77,12 +77,12 @@ class VocabDetailsView extends StatelessWidget {
     }
 
     final LemmaInfoRequest lemmaDefReq = LemmaInfoRequest(
-      partOfSpeech: construct.category,
+      partOfSpeech: _construct.category,
       lemmaLang: lang2,
       userL1:
           MatrixState.pangeaController.languageController.userL1?.langCode ??
               LanguageKeys.defaultLanguage,
-      lemma: construct.lemma,
+      lemma: _construct.lemma,
     );
     final LemmaInfoResponse res = await LemmaInfoRepo.get(lemmaDefReq);
     return res.meaning;
@@ -91,8 +91,8 @@ class VocabDetailsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color textColor = Theme.of(context).brightness != Brightness.light
-        ? construct.lemmaCategory.color
-        : construct.lemmaCategory.darkColor;
+        ? _construct.lemmaCategory.color
+        : _construct.lemmaCategory.darkColor;
 
     return AnalyticsDetailsViewContent(
       title: Row(
@@ -100,7 +100,7 @@ class VocabDetailsView extends StatelessWidget {
         children: [
           SizedBox(
             width: 42,
-            child: emoji == null
+            child: _emoji == null
                 ? Tooltip(
                     message: L10n.of(context).noEmojiSelectedTooltip,
                     child: Icon(
@@ -109,16 +109,16 @@ class VocabDetailsView extends StatelessWidget {
                       color: textColor.withValues(alpha: 0.7),
                     ),
                   )
-                : Text(emoji!),
+                : Text(_emoji!),
           ),
           const SizedBox(width: 10.0),
           Text(
-            construct.lemma,
+            _construct.lemma,
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const SizedBox(width: 10.0),
           WordAudioButton(
-            text: construct.lemma,
+            text: _construct.lemma,
             ttsController: TtsController(),
             size: 24,
           ),
@@ -140,10 +140,10 @@ class VocabDetailsView extends StatelessWidget {
           Text(
             getGrammarCopy(
                   category: "pos",
-                  lemma: construct.category,
+                  lemma: _construct.category,
                   context: context,
                 ) ??
-                construct.category,
+                _construct.category,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: textColor,
                 ),
@@ -159,7 +159,7 @@ class VocabDetailsView extends StatelessWidget {
               child: Align(
                 alignment: Alignment.topLeft,
                 child: FutureBuilder(
-                  future: getDefinition(context),
+                  future: _getDefinition(context),
                   builder: (
                     BuildContext context,
                     AsyncSnapshot<String?> snapshot,
@@ -226,7 +226,7 @@ class VocabDetailsView extends StatelessWidget {
                       ),
                       TextSpan(
                         text:
-                            "  ${formString ?? L10n.of(context).formsNotFound}",
+                            "  ${_formString ?? L10n.of(context).formsNotFound}",
                       ),
                     ],
                   ),
@@ -237,10 +237,10 @@ class VocabDetailsView extends StatelessWidget {
         ),
       ),
       xpIcon: CustomizedSvg(
-        svgUrl: construct.lemmaCategory.svgURL,
+        svgUrl: _construct.lemmaCategory.svgURL,
         colorReplacements: const {},
         errorIcon: Text(
-          construct.lemmaCategory.emoji,
+          _construct.lemmaCategory.emoji,
           style: const TextStyle(
             fontSize: 20,
           ),
