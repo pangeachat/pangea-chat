@@ -237,7 +237,7 @@ class MessageTextWidget extends StatelessWidget {
                         TextStyle(
                           backgroundColor: backgroundColor,
                         ),
-                      ), 
+                      ),
                       linkStyle: TextStyle(
                         decoration: TextDecoration.underline,
                         color: Theme.of(context).brightness == Brightness.light
