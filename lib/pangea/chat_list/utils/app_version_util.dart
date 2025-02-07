@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:universal_html/html.dart' as html;
@@ -20,8 +21,6 @@ import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-import 'package:get_storage/get_storage.dart';
-
 
 class AppVersionUtil {
   static Future<AppVersionResponse> _getAppVersion(
@@ -214,8 +213,7 @@ class AppVersionUtil {
   }
 
   static DateTime? get showedUpdateDialog {
-    final entry = _versionBox
-        .read(PLocalKey.showedUpdateDialog);
+    final entry = _versionBox.read(PLocalKey.showedUpdateDialog);
     if (entry == null) return null;
     try {
       return DateTime.parse(entry);

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:matrix/matrix.dart';
 import 'package:universal_html/html.dart' as html;
 
@@ -12,9 +13,6 @@ import 'package:fluffychat/pangea/common/constants/local.key.dart';
 import 'package:fluffychat/pangea/common/utils/firebase_analytics.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-
-import 'package:get_storage/get_storage.dart';
-
 
 Future<void> pangeaSSOLoginAction(
   IdentityProvider provider,

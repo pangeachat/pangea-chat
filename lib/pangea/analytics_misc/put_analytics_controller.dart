@@ -8,13 +8,13 @@ import 'package:fluffychat/pangea/analytics_misc/client_analytics_extension.dart
 import 'package:fluffychat/pangea/analytics_misc/construct_type_enum.dart';
 import 'package:fluffychat/pangea/analytics_misc/construct_use_type_enum.dart';
 import 'package:fluffychat/pangea/analytics_misc/constructs_model.dart';
+import 'package:fluffychat/pangea/analytics_misc/get_analytics_controller.dart';
 import 'package:fluffychat/pangea/common/constants/local.key.dart';
 import 'package:fluffychat/pangea/common/controllers/base_controller.dart';
 import 'package:fluffychat/pangea/common/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/pangea/events/models/pangea_token_model.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension.dart';
-import 'package:fluffychat/pangea/analytics_misc/get_analytics_controller.dart';
 
 enum AnalyticsUpdateType { server, local }
 

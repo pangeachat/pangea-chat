@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:flutter_shortcuts/flutter_shortcuts.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart' as sdk;
 import 'package:matrix/matrix.dart';
@@ -44,7 +45,6 @@ import '../../widgets/matrix.dart';
 import 'package:fluffychat/utils/tor_stub.dart'
     if (dart.library.html) 'package:tor_detector_web/tor_detector_web.dart';
 
-import 'package:get_storage/get_storage.dart';
 
 enum PopupMenuAction {
   settings,
@@ -513,8 +513,7 @@ class ChatListController extends State<ChatList>
             spaceId,
           );
 
-          final String? justInputtedCode =
-              chatBox.read(
+          final String? justInputtedCode = chatBox.read(
             PLocalKey.justInputtedCode,
           );
           final newSpaceCode = space?.classCode(context);

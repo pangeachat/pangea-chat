@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 
 import 'package:collection/collection.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -27,7 +28,6 @@ import 'package:fluffychat/pangea/subscription/utils/subscription_app_id.dart';
 import 'package:fluffychat/pangea/subscription/widgets/subscription_paywall.dart';
 import 'package:fluffychat/pangea/user/controllers/user_controller.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:get_storage/get_storage.dart';
 
 enum SubscriptionStatus {
   subscribed,
@@ -125,7 +125,8 @@ class SubscriptionController extends BaseController {
           },
         );
       } else {
-        final bool? beganWebPayment = subscriptionBox.read(PLocalKey.beganWebPayment);
+        final bool? beganWebPayment =
+            subscriptionBox.read(PLocalKey.beganWebPayment);
         if (beganWebPayment ?? false) {
           await subscriptionBox.remove(
             PLocalKey.beganWebPayment,

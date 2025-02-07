@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
@@ -17,8 +18,6 @@ import 'package:fluffychat/widgets/adaptive_dialogs/show_text_input_dialog.dart'
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 import '../../utils/platform_infos.dart';
-import 'package:get_storage/get_storage.dart';
-
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -202,8 +201,7 @@ class LoginController extends State<Login> {
         },
         // Pangea#
       );
-      _loginBox
-          .write(PLocalKey.loginType, 'password');
+      _loginBox.write(PLocalKey.loginType, 'password');
       // #Pangea
       GoogleAnalytics.login("pangea", loginRes.userId);
       // Pangea#

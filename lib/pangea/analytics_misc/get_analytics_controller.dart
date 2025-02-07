@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import 'package:get_storage/get_storage.dart';
 import 'package:matrix/matrix.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -18,7 +19,6 @@ import 'package:fluffychat/pangea/common/controllers/base_controller.dart';
 import 'package:fluffychat/pangea/common/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/common/utils/error_handler.dart';
 import 'package:fluffychat/pangea/extensions/pangea_room_extension.dart';
-import 'package:get_storage/get_storage.dart';
 
 /// A minimized version of AnalyticsController that get the logged in user's analytics
 class GetAnalyticsController extends BaseController {

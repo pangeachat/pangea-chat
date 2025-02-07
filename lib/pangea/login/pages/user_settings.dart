@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
@@ -17,8 +18,6 @@ import 'package:fluffychat/pangea/login/pages/user_settings_view.dart';
 import 'package:fluffychat/utils/file_selector.dart';
 import 'package:fluffychat/utils/localized_exception_extension.dart';
 import 'package:fluffychat/widgets/matrix.dart';
-
-import 'package:get_storage/get_storage.dart';
 
 class UserSettingsPage extends StatefulWidget {
   const UserSettingsPage({super.key});
@@ -84,8 +83,7 @@ class UserSettingsState extends State<UserSettingsPage> {
   }
 
   bool get isSSOSignup {
-    final loginTypeEntry =
-        _settingsBox.read(PLocalKey.loginType);
+    final loginTypeEntry = _settingsBox.read(PLocalKey.loginType);
     return loginTypeEntry is String && loginTypeEntry == 'sso';
   }
 
