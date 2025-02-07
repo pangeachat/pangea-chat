@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:flutter_shortcuts/flutter_shortcuts.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart' as sdk;
 import 'package:matrix/matrix.dart';
@@ -100,6 +101,10 @@ class ChatListController extends State<ChatList>
   StreamSubscription? _intentFileStreamSubscription;
 
   StreamSubscription? _intentUriStreamSubscription;
+
+  // #Pangea
+  static final GetStorage chatBox = GetStorage("chat_list_storage");
+  // Pangea#
 
   ActiveFilter activeFilter = AppConfig.separateChatTypes
       ? ActiveFilter.messages
@@ -509,11 +514,11 @@ class ChatListController extends State<ChatList>
             spaceId,
           );
 
-          final String? justInputtedCode =
-              MatrixState.pangeaController.pStoreService.read(
+          // #Pangea
+          final String? justInputtedCode = chatBox.read(
             PLocalKey.justInputtedCode,
-            isAccountData: false,
           );
+          // Pangea#
           final newSpaceCode = space?.classCode(context);
           if (newSpaceCode == justInputtedCode) return;
 

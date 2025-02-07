@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:matrix/matrix.dart';
 import 'package:universal_html/html.dart' as html;
 
@@ -62,6 +63,8 @@ Future<void> pangeaSSOLoginAction(
     token: token,
     initialDeviceDisplayName: PlatformInfos.clientName,
   );
-  MatrixState.pangeaController.pStoreService.save(PLocalKey.loginType, 'sso');
+
+  final GetStorage ssoBox = GetStorage("sso_storage");
+  ssoBox.write(PLocalKey.loginType, 'sso');
   GoogleAnalytics.login(provider.name!, loginRes.userId);
 }

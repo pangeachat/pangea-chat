@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import 'package:get_storage/get_storage.dart';
 import 'package:matrix/matrix.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -23,6 +24,8 @@ import 'package:fluffychat/pangea/extensions/pangea_room_extension.dart';
 class GetAnalyticsController extends BaseController {
   late PangeaController _pangeaController;
   late MessageAnalyticsController perMessage;
+
+  static final GetStorage analyticsBox = GetStorage("analytics_storage");
 
   final List<AnalyticsCacheEntry> _cache = [];
   StreamSubscription<AnalyticsUpdate>? _analyticsUpdateSubscription;
@@ -172,7 +175,7 @@ class GetAnalyticsController extends BaseController {
   /// eventID.
   Map<String, List<OneConstructUse>> get messagesSinceUpdate {
     try {
-      final dynamic locallySaved = _pangeaController.pStoreService.read(
+      final dynamic locallySaved = analyticsBox.read(
         PLocalKey.messagesSinceUpdate,
       );
       if (locallySaved == null) return {};

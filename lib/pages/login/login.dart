@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
@@ -45,6 +46,8 @@ class LoginController extends State<Login> {
   // #Pangea
   final PangeaController pangeaController = MatrixState.pangeaController;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  static final GetStorage _loginBox = GetStorage("login_storage");
 
   bool get enabledSignIn =>
       !loadingSignIn &&
@@ -198,8 +201,7 @@ class LoginController extends State<Login> {
         },
         // Pangea#
       );
-      MatrixState.pangeaController.pStoreService
-          .save(PLocalKey.loginType, 'password');
+      _loginBox.write(PLocalKey.loginType, 'password');
       // #Pangea
       GoogleAnalytics.login("pangea", loginRes.userId);
       // Pangea#

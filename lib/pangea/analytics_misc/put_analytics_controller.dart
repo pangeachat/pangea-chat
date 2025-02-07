@@ -8,6 +8,7 @@ import 'package:fluffychat/pangea/analytics_misc/client_analytics_extension.dart
 import 'package:fluffychat/pangea/analytics_misc/construct_type_enum.dart';
 import 'package:fluffychat/pangea/analytics_misc/construct_use_type_enum.dart';
 import 'package:fluffychat/pangea/analytics_misc/constructs_model.dart';
+import 'package:fluffychat/pangea/analytics_misc/get_analytics_controller.dart';
 import 'package:fluffychat/pangea/common/constants/local.key.dart';
 import 'package:fluffychat/pangea/common/controllers/base_controller.dart';
 import 'package:fluffychat/pangea/common/controllers/pangea_controller.dart';
@@ -313,17 +314,19 @@ class PutAnalyticsController extends BaseController<AnalyticsStream> {
           );
   }
 
+  final analyticsBox = GetAnalyticsController.analyticsBox;
+
   /// Clears the local cache of recently sent constructs. Called before updating analytics
   void clearMessagesSinceUpdate({clearDrafts = false}) {
     if (clearDrafts) {
-      _pangeaController.pStoreService.delete(PLocalKey.messagesSinceUpdate);
+      analyticsBox.remove(PLocalKey.messagesSinceUpdate);
       return;
     }
 
     final localCache = _pangeaController.getAnalytics.messagesSinceUpdate;
     final draftKeys = localCache.keys.where((key) => key.startsWith('draft'));
     if (draftKeys.isEmpty) {
-      _pangeaController.pStoreService.delete(PLocalKey.messagesSinceUpdate);
+      analyticsBox.remove(PLocalKey.messagesSinceUpdate);
       return;
     }
 
@@ -343,7 +346,7 @@ class PutAnalyticsController extends BaseController<AnalyticsStream> {
       final constructJsons = entry.value.map((e) => e.toJson()).toList();
       formattedCache[entry.key] = constructJsons;
     }
-    await _pangeaController.pStoreService.save(
+    await analyticsBox.write(
       PLocalKey.messagesSinceUpdate,
       formattedCache,
     );

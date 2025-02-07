@@ -25,9 +25,11 @@ import 'image_bubble.dart';
 import 'map_bubble.dart';
 import 'message_download_content.dart';
 
+//import 'package:flutter/material.dart';
+
 class MessageContent extends StatelessWidget {
   final Event event;
-  final Color textColor;
+  final Color textColor = Colors.red;
   final Color linkColor;
   final void Function(Event)? onInfoTab;
   final BorderRadius borderRadius;
@@ -49,7 +51,7 @@ class MessageContent extends StatelessWidget {
     this.onInfoTab,
     super.key,
     required this.timeline,
-    required this.textColor,
+    required textColor,
     // #Pangea
     this.pangeaMessageEvent,
     required this.immersionMode,
@@ -150,6 +152,7 @@ class MessageContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final fontSize = AppConfig.messageFontSize * AppConfig.fontSizeFactor;
     final buttonTextColor = textColor;
+
     switch (event.type) {
       // #Pangea
       // case EventTypes.Message:
@@ -246,6 +249,7 @@ class MessageContent extends StatelessWidget {
               if (event.messageType == MessageTypes.Emote) {
                 html = '* $html';
               }
+
               return HtmlMessage(
                 html: html,
                 textColor: textColor,

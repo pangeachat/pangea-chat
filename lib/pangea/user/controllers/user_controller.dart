@@ -14,6 +14,8 @@ import 'package:fluffychat/pangea/learning_settings/models/language_model.dart';
 import 'package:fluffychat/pangea/user/models/profile_model.dart';
 import '../models/user_model.dart';
 
+//PLocalKey.loginType
+
 /// Controller that manages saving and reading of user/profile information
 class UserController extends BaseController {
   late PangeaController _pangeaController;

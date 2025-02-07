@@ -24,19 +24,18 @@ class ClassController extends BaseController {
     _pangeaController = pangeaController;
   }
 
-  static final GetStorage _aliasStorage = GetStorage('alias_storage');
+  static final GetStorage _classStorage = GetStorage('class_storage');
 
   void setActiveSpaceIdInChatListController(String? classId) {
     setState({"activeSpaceId": classId});
   }
 
   Future<void> joinCachedSpaceCode(BuildContext context) async {
-    final String? classCode = _pangeaController.pStoreService.read(
+    final String? classCode = _classStorage.read(
       PLocalKey.cachedClassCodeToJoin,
-      isAccountData: false,
     );
 
-    final String? alias = _aliasStorage.read(PLocalKey.cachedAliasToJoin);
+    final String? alias = _classStorage.read(PLocalKey.cachedAliasToJoin);
 
     if (classCode != null) {
       await joinClasswithCode(
@@ -44,13 +43,12 @@ class ClassController extends BaseController {
         classCode,
       );
 
-      await _pangeaController.pStoreService.delete(
+      await _classStorage.remove(
         PLocalKey.cachedClassCodeToJoin,
-        isAccountData: false,
       );
     } else if (alias != null) {
       await joinCachedRoomAlias(alias, context);
-      await _aliasStorage.remove(PLocalKey.cachedAliasToJoin);
+      await _classStorage.remove(PLocalKey.cachedAliasToJoin);
     }
   }
 
@@ -65,7 +63,7 @@ class ClassController extends BaseController {
 
     final client = Matrix.of(context).client;
     if (!client.isLogged()) {
-      await _aliasStorage.write(PLocalKey.cachedAliasToJoin, alias);
+      await _classStorage.write(PLocalKey.cachedAliasToJoin, alias);
       context.go("/home");
       return;
     }
@@ -140,10 +138,9 @@ class ClassController extends BaseController {
         }
 
         final chosenClassId = foundClasses.first;
-        await _pangeaController.pStoreService.save(
+        await _classStorage.write(
           PLocalKey.justInputtedCode,
           classCode,
-          isAccountData: false,
         );
         return chosenClassId;
       },
