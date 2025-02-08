@@ -1,10 +1,10 @@
 // Flutter imports:
 
+import 'package:flutter/material.dart';
+
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pangea/learning_settings/enums/l2_support_enum.dart';
 import 'package:fluffychat/pangea/learning_settings/models/language_model.dart';
-import 'package:flutter/material.dart';
-
 import 'flag.dart';
 
 class PLanguageDropdown extends StatelessWidget {
