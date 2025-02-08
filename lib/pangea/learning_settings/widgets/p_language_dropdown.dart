@@ -1,10 +1,10 @@
 // Flutter imports:
 
-import 'package:flutter/material.dart';
-
 import 'package:fluffychat/config/themes.dart';
 import 'package:fluffychat/pangea/learning_settings/enums/l2_support_enum.dart';
 import 'package:fluffychat/pangea/learning_settings/models/language_model.dart';
+import 'package:flutter/material.dart';
+
 import 'flag.dart';
 
 class PLanguageDropdown extends StatelessWidget {
@@ -33,7 +33,7 @@ class PLanguageDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<LanguageModel> sortedLanguages = languages;
     final String systemLang = Localizations.localeOf(context).languageCode;
-    final List<String> languagePriority = [systemLang, 'en', 'es'];
+    final List<String> languagePriority = [systemLang];
 
     int sortLanguages(LanguageModel a, LanguageModel b) {
       final String aLang = a.langCode;

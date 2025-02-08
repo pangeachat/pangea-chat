@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-
 import 'package:country_picker/country_picker.dart';
-
 import 'package:fluffychat/pangea/common/controllers/pangea_controller.dart';
 import 'package:fluffychat/pangea/learning_settings/enums/language_level_type_enum.dart';
 import 'package:fluffychat/pangea/learning_settings/models/language_model.dart';
@@ -12,6 +9,7 @@ import 'package:fluffychat/pangea/toolbar/controllers/tts_controller.dart';
 import 'package:fluffychat/pangea/user/models/user_model.dart';
 import 'package:fluffychat/widgets/future_loading_dialog.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/material.dart';
 
 class SettingsLearning extends StatefulWidget {
   const SettingsLearning({super.key});
@@ -131,8 +129,8 @@ class SettingsLearningController extends State<SettingsLearning> {
   LanguageModel? get selectedTargetLanguage {
     return userL2 ??
         ((selectedSourceLanguage?.langCode != 'en')
-            ? PangeaLanguage.byLangCode('en')!
-            : PangeaLanguage.byLangCode('es')!);
+            ? PangeaLanguage.byLangCode('en')
+            : PangeaLanguage.byLangCode('es'));
   }
 
   LanguageModel? get userL1 => _profile.userSettings.sourceLanguage != null

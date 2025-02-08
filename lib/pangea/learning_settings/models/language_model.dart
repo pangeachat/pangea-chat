@@ -65,4 +65,15 @@ class LanguageModel {
   String? getDisplayName(BuildContext context) {
     return displayName;
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is LanguageModel) {
+      return langCode == other.langCode;
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => langCode.hashCode;
 }
