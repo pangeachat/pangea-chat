@@ -1,9 +1,3 @@
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:url_launcher/url_launcher_string.dart';
-
 import 'package:fluffychat/config/app_config.dart';
 import 'package:fluffychat/pangea/chat_settings/widgets/language_level_dropdown.dart';
 import 'package:fluffychat/pangea/common/constants/model_keys.dart';
@@ -16,6 +10,10 @@ import 'package:fluffychat/pangea/learning_settings/widgets/p_settings_switch_li
 import 'package:fluffychat/pangea/spaces/models/space_model.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
 import 'package:fluffychat/widgets/matrix.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class SettingsLearningView extends StatelessWidget {
   final SettingsLearningController controller;
@@ -98,109 +96,94 @@ class SettingsLearningView extends StatelessWidget {
                                   return null;
                                 },
                               ),
-                              CountryPickerTile(controller),
                               LanguageLevelDropdown(
                                 initialLevel: controller.cefrLevel,
                                 onChanged: controller.setCefrLevel,
                               ),
-                              const Divider(height: 1),
-                              Column(
-                                children: [
-                                  ListTile(
-                                    title: Text(
-                                      L10n.of(context)
-                                          .toggleToolSettingsDescription,
-                                    ),
-                                  ),
-                                  for (final toolSetting in ToolSetting.values
-                                      .where((tool) => tool.isAvailableSetting))
-                                    Column(
-                                      children: [
-                                        ProfileSettingsSwitchListTile.adaptive(
-                                          defaultValue: controller
-                                              .getToolSetting(toolSetting),
-                                          title: toolSetting.toolName(context),
-                                          subtitle: toolSetting ==
-                                                      ToolSetting.enableTTS &&
-                                                  !controller.tts
-                                                      .isLanguageFullySupported
-                                              ? null
-                                              : toolSetting
-                                                  .toolDescription(context),
-                                          onChange: (bool value) =>
-                                              controller.updateToolSetting(
-                                            toolSetting,
-                                            value,
-                                          ),
-                                          enabled: toolSetting ==
-                                                  ToolSetting.enableTTS
+                              CountryPickerTile(controller),
+                              for (final toolSetting in ToolSetting.values
+                                  .where((tool) => tool.isAvailableSetting))
+                                Column(
+                                  children: [
+                                    ProfileSettingsSwitchListTile.adaptive(
+                                      defaultValue: controller
+                                          .getToolSetting(toolSetting),
+                                      title: toolSetting.toolName(context),
+                                      subtitle: toolSetting ==
+                                                  ToolSetting.enableTTS &&
+                                              !controller
+                                                  .tts.isLanguageFullySupported
+                                          ? null
+                                          : toolSetting
+                                              .toolDescription(context),
+                                      onChange: (bool value) =>
+                                          controller.updateToolSetting(
+                                        toolSetting,
+                                        value,
+                                      ),
+                                      enabled:
+                                          toolSetting == ToolSetting.enableTTS
                                               ? controller
                                                   .tts.isLanguageFullySupported
                                               : true,
-                                        ),
-                                        if (toolSetting ==
-                                                ToolSetting.enableTTS &&
-                                            !controller
-                                                .tts.isLanguageFullySupported)
-                                          ListTile(
-                                            trailing: const Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: 16.0,
-                                              ),
-                                              child: Icon(Icons.info_outlined),
-                                            ),
-                                            subtitle: RichText(
-                                              text: TextSpan(
-                                                text: L10n.of(context)
-                                                    .couldNotFindTTS,
-                                                style:
-                                                    DefaultTextStyle.of(context)
-                                                        .style,
-                                                children: [
-                                                  if (PlatformInfos.isWindows ||
-                                                      PlatformInfos.isAndroid)
-                                                    TextSpan(
-                                                      text: L10n.of(context)
-                                                          .ttsInstructionsHyperlink,
-                                                      style: const TextStyle(
-                                                        color: Colors.blue,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        decoration:
-                                                            TextDecoration
-                                                                .underline,
-                                                      ),
-                                                      recognizer:
-                                                          TapGestureRecognizer()
-                                                            ..onTap = () {
-                                                              launchUrlString(
-                                                                PlatformInfos
-                                                                        .isWindows
-                                                                    ? AppConfig
-                                                                        .windowsTTSDownloadInstructions
-                                                                    : AppConfig
-                                                                        .androidTTSDownloadInstructions,
-                                                              );
-                                                            },
-                                                    ),
-                                                ],
-                                              ),
-                                            ),
+                                    ),
+                                    if (toolSetting == ToolSetting.enableTTS &&
+                                        !controller
+                                            .tts.isLanguageFullySupported)
+                                      ListTile(
+                                        trailing: const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 16.0,
                                           ),
-                                      ],
-                                    ),
-                                  SwitchListTile.adaptive(
-                                    value: controller.publicProfile,
-                                    onChanged: controller.setPublicProfile,
-                                    title: Text(
-                                      L10n.of(context).publicProfileTitle,
-                                    ),
-                                    subtitle: Text(
-                                      L10n.of(context).publicProfileDesc,
-                                    ),
-                                    activeColor: AppConfig.activeToggleColor,
-                                  ),
-                                ],
+                                          child: Icon(Icons.info_outlined),
+                                        ),
+                                        subtitle: RichText(
+                                          text: TextSpan(
+                                            text: L10n.of(context)
+                                                .couldNotFindTTS,
+                                            style: DefaultTextStyle.of(context)
+                                                .style,
+                                            children: [
+                                              if (PlatformInfos.isWindows ||
+                                                  PlatformInfos.isAndroid)
+                                                TextSpan(
+                                                  text: L10n.of(context)
+                                                      .ttsInstructionsHyperlink,
+                                                  style: const TextStyle(
+                                                    color: Colors.blue,
+                                                    fontWeight: FontWeight.bold,
+                                                    decoration: TextDecoration
+                                                        .underline,
+                                                  ),
+                                                  recognizer:
+                                                      TapGestureRecognizer()
+                                                        ..onTap = () {
+                                                          launchUrlString(
+                                                            PlatformInfos
+                                                                    .isWindows
+                                                                ? AppConfig
+                                                                    .windowsTTSDownloadInstructions
+                                                                : AppConfig
+                                                                    .androidTTSDownloadInstructions,
+                                                          );
+                                                        },
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              SwitchListTile.adaptive(
+                                value: controller.publicProfile,
+                                onChanged: controller.setPublicProfile,
+                                title: Text(
+                                  L10n.of(context).publicProfileTitle,
+                                ),
+                                subtitle: Text(
+                                  L10n.of(context).publicProfileDesc,
+                                ),
+                                activeColor: AppConfig.activeToggleColor,
                               ),
                             ],
                           ),
